@@ -11,6 +11,21 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+			.gallery.style2 article {
+				width: auto !important;
+				flex: 0 0 auto !important;
+				margin: 0 10px 20px 0 !important;
+			}
+			.gallery.style2 article .image {
+				width: auto !important;
+			}
+			.gallery.style2 article .image img {
+				width: auto !important;
+				height: 300px !important;
+				border-radius: 0;
+			}
+		</style>
 	</head>
 	<body class="is-preload">
 
@@ -20,14 +35,11 @@
 				<!-- One -->
 					<section class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
 						<div class="content">
-							<h1>Garrett G. Craig</h1>
-							<p class="major">Welcome to my personal website. Explore my research, photography, and professional work.</p>
-							<ul class="actions stacked">
-								<li><a href="#first" class="button big wide smooth-scroll-middle">Get Started</a></li>
-							</ul>
+							<h1><strong>Garrett G. Craig</strong></h1>
+							<p class="major">Environmental scientist, photographer, and nature enthusiast.</p>
 						</div>
-						<div class="image">
-							<img src="images/banner.jpg" alt="" />
+						<div class="image" style="overflow: hidden;">
+							<img src="https://live.staticflickr.com/65535/54670657554_ab47691769_o.jpg" alt="" style="width: calc(100% + 800px); height: 100%; object-fit: cover; margin-left: -400px;" />
 						</div>
 					</section>
 
@@ -35,14 +47,63 @@
 					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in" id="first">
 						<div class="content">
 							<h2>About Me</h2>
-							<p>Welcome to my personal website. I'm passionate about research, technology, and capturing moments through photography. This space showcases my academic work, research interests, and creative photography projects.</p>
-							<ul class="actions stacked">
-								<li><a href="#research" class="button">View My Research</a></li>
-							</ul>
+							<p>Master's candidate in Environmental Science and Management at UC Santa Barbara's Bren School, studying conservation, environmental policy, climate resilience, and regenerative ways of living with nature. During non-desk hours, I'm often hiking and/or birding, giving far too much effort in beach volleyball, chuckling at clever crossword clues, or photographing neature.</p>
 						</div>
 						<div class="image">
 							<img src="images/spotlight01.jpg" alt="" />
 						</div>
+					</section>
+
+				<!-- Photography -->
+					<section class="wrapper style1 align-center" id="photography">
+						<div class="inner">
+							<h2>Photography</h2>
+							<p>Shooting with a camera is my longest-running hobby. It's outlived Lego set construction, Chicago sports fandom, Pokémon card collecting, and through-the-mail autograph hunting, among other pursuits that fell to the wayside years ago. My photos capture more than just scenes for me; they capture my feelings at the moment the shutter clicked.</p>
+							<ul class="actions stacked">
+								<li><a href="photography.html" class="button">View More Photography</a></li>
+							</ul>
+						</div>
+
+						<!-- Gallery -->
+							<div class="gallery style2 medium lightbox onscroll-fade-in">
+								<article>
+									<a href="https://live.staticflickr.com/65535/54668539227_465fa83d9c_b.jpg" class="image">
+										<img src="https://live.staticflickr.com/65535/54668539227_465fa83d9c_c.jpg" alt="" />
+									</a>
+									<div class="caption">
+										<h3>Treetop Relaxation</h3>
+										<p>Angola Colobus near Diani, Kenya (2024)</p>
+									</div>
+								</article>
+								<article>
+									<a href="https://live.staticflickr.com/65535/54670822814_756c4f5995_b.jpg" class="image">
+										<img src="https://live.staticflickr.com/65535/54670822814_756c4f5995_c.jpg" alt="" />
+									</a>
+									<div class="caption">
+										<h3>Starry Sierra</h3>
+										<p>Evolution Lakes, CA (2024)</p>
+									</div>
+								</article>
+								<article>
+									<a href="https://live.staticflickr.com/65535/54671945286_dfa082ba05_b.jpg" class="image">
+										<img src="https://live.staticflickr.com/65535/54671945286_dfa082ba05_c.jpg" alt="" />
+									</a>
+									<div class="caption">
+										<h3>Border Baldy</h3>
+										<p>Boundary Waters, MN (2024)</p>
+									</div>
+								</article>
+								<article>
+									<a href="https://live.staticflickr.com/65535/53055111778_3786cbde11_b.jpg" class="image">
+										<img src="https://live.staticflickr.com/65535/53055111778_3786cbde11_c.jpg" alt="" />
+									</a>
+									<div class="caption">
+										<h3>Appalachian Eft</h3>
+										<p>Eastern Newt in Pisgah National Forest (2023)</p>
+									</div>
+								</article>
+							</div>
+
 					</section>
 
 				<!-- Research -->
@@ -51,7 +112,7 @@
 							<h2>Research</h2>
 							<p>My research focuses on cutting-edge topics in technology and innovation. I'm particularly interested in exploring how emerging technologies can solve real-world problems and contribute to scientific advancement. Here you'll find information about my current projects, publications, and research interests.</p>
 							<ul class="actions stacked">
-								<li><a href="#photography" class="button">View Photography</a></li>
+								<li><a href="#" class="button">View My Research</a></li>
 							</ul>
 						</div>
 						<div class="image">
@@ -60,10 +121,10 @@
 					</section>
 
 				<!-- Four -->
-					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
+					<!-- <section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
 						<div class="content">
 							<h2>Pharetra etiam nulla</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id ante sed ex pharetra lacinia sit amet vel massa. Donec facilisis laoreet nulla eu bibendum. Donec ut ex risus. Fusce lorem lectus, pharetra pretium massa et, hendrerit vestibulum odio lorem ipsum dolor sit amet.</p>
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id ante sed ex pharetra lacinia sit amet vel massa. Donec facilibus laoreet nulla eu bibendum. Donec ut ex risus. Fusce lorem lectus, pharetra pretium massa et, hendrerit vestibulum odio lorem ipsum dolor sit amet.</p>
 							<ul class="actions stacked">
 								<li><a href="#" class="button">Learn More</a></li>
 							</ul>
@@ -71,167 +132,135 @@
 						<div class="image">
 							<img src="images/spotlight03.jpg" alt="" />
 						</div>
-					</section>
+					</section> -->
 
-				<!-- Photography -->
-					<section class="wrapper style1 align-center" id="photography">
-						<div class="inner">
-							<h2>Photography</h2>
-							<p>Through my lens, I capture moments, emotions, and stories. Photography is my creative outlet where I explore different perspectives and showcase the beauty I find in everyday life. Here's a collection of my favorite shots from various projects and adventures.</p>
-						</div>
-
-						<!-- Gallery -->
-							<div class="gallery style2 medium lightbox onscroll-fade-in">
-								<article>
-									<a href="images/gallery/fulls/01.jpg" class="image">
-										<img src="images/gallery/thumbs/01.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Ipsum Dolor</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/02.jpg" class="image">
-										<img src="images/gallery/thumbs/02.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Feugiat Lorem</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/03.jpg" class="image">
-										<img src="images/gallery/thumbs/03.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Magna Amet</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/04.jpg" class="image">
-										<img src="images/gallery/thumbs/04.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Sed Tempus</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/05.jpg" class="image">
-										<img src="images/gallery/thumbs/05.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Ultrices Magna</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/06.jpg" class="image">
-										<img src="images/gallery/thumbs/06.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Sed Tempus</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/07.jpg" class="image">
-										<img src="images/gallery/thumbs/07.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Ipsum Lorem</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/08.jpg" class="image">
-										<img src="images/gallery/thumbs/08.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Magna Risus</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/09.jpg" class="image">
-										<img src="images/gallery/thumbs/09.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Tempus Dolor</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/10.jpg" class="image">
-										<img src="images/gallery/thumbs/10.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Sed Etiam</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/11.jpg" class="image">
-										<img src="images/gallery/thumbs/11.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Magna Lorem</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
-								<article>
-									<a href="images/gallery/fulls/12.jpg" class="image">
-										<img src="images/gallery/thumbs/12.jpg" alt="" />
-									</a>
-									<div class="caption">
-										<h3>Ipsum Dolor</h3>
-										<p>Lorem ipsum dolor amet, consectetur magna etiam elit. Etiam sed ultrices.</p>
-										<ul class="actions fixed">
-											<li><span class="button small">Details</span></li>
-										</ul>
-									</div>
-								</article>
+				<!-- Field Work -->
+					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in" id="fieldwork">
+						<div class="content">
+							<h2>Nerdy by Nature</h2>
+							<p>I'm an iNaturalist evangelist because I think we all care 
+            more for what we can name.</p>
+               <blockquote style="font-style: italic; margin: 1.5rem 0; 
+            padding: 1rem 2rem; border-left: 4px solid #666; background: 
+            rgba(0,0,0,0.05);">
+                  "Paying attention is a form of reciprocity with the living 
+           world, receiving the gifts with open eyes and open heart."
+                  <footer style="margin-top: 0.5rem; font-size: 0.9em; color: 
+            #666;">— Robin Wall Kimmerer</footer>
+             </blockquote>
+                   <div style="margin: 2rem 0;">
+                  <style type="text/css" media="screen">
+                  .inat-widget { 
+									font-family: "Source Sans Pro", Helvetica, sans-serif; 
+									padding: 30px; 
+									line-height: 1.5;
+									background: #f8f9fa;
+									border-radius: 8px;
+									box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+									margin: 20px 0;
+								}
+								.inat-widget-header {
+									margin-bottom: 20px; 
+									text-align: center;
+									padding-bottom: 15px;
+									border-bottom: 2px solid #e9ecef;
+								}
+								.inat-widget-header img {
+									max-height: 40px;
+								}
+								.inat-widget td {
+									vertical-align: top; 
+									padding-bottom: 15px;
+								}
+								.inat-label { 
+									color: #6c757d; 
+									font-weight: 500;
+								}
+								.inat-meta { 
+									font-size: 0.9em; 
+									margin-top: 5px; 
+									line-height: 1.3;
+									color: #6c757d;
+								}
+								.inat-observation-body, .inat-user-body { 
+									padding-left: 15px; 
+								}
+								.inat-observation-image {
+									text-align: center;
+								}
+								.inat-observation-image, .inat-user-image { 
+									width: 60px; 
+									display: inline-block; 
+								}
+								.inat-observation-image img, .inat-user-image img { 
+									max-width: 60px;
+									border-radius: 6px;
+									box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+								}
+								.inat-observation-image img { 
+									vertical-align: middle; 
+								}
+								.inat-widget-small .inat-observation-image { 
+									display:block; 
+									float: left; 
+									margin: 0 10px 10px 0; 
+									height:60px;
+								}
+								.inat-label, .inat-value, .inat-user { 
+									font-family: "Source Sans Pro", Helvetica, sans-serif; 
+								}
+								.inat-user-body {
+									vertical-align: middle;
+								}
+								.inat-widget td.inat-user-body {
+									vertical-align: middle;
+								}
+								.inat-widget .inat-footer {
+									margin-top: 20px;
+									padding-top: 15px;
+									border-top: 2px solid #e9ecef;
+								}
+								.inat-widget .inat-footer td.inat-value {
+									vertical-align: middle; 
+									padding-left: 15px;
+								}
+								.inat-widget .inat-footer a {
+									color: #212529;
+									text-decoration: none;
+									font-weight: 600;
+								}
+								.inat-widget .inat-footer a:hover {
+									color: #007bff;
+								}
+								</style>
+								<div class="inat-widget">
+								    <div class="inat-widget-header">
+								      <a href="https://www.inaturalist.org"><img alt="iNaturalist" src="https://www.inaturalist.org/assets/logo-small.png" /></a>  
+								    </div>
+								  <script type="text/javascript" charset="utf-8" src="https://www.inaturalist.org/observations/hommedeterre.widget?layout=small&limit=18&order=desc&order_by=observed_on"></script>
+								  <table class="inat-footer">
+								    <tr class="inat-user">
+								        <td class="inat-user-image">
+								          <a border="0" href="https://www.inaturalist.org/observations/hommedeterre"><img class="usericon" src="https://static.inaturalist.org/attachments/users/icons/3185434/thumb.jpg?1693438354" /></a>
+								        </td>
+								      <td class="inat-value">
+								        <strong>
+								            <a href="https://www.inaturalist.org/observations/hommedeterre">View Garrett's observations »</a>
+								        </strong>
+								      </td>
+								    </tr>
+								  </table>
+								</div>
 							</div>
-
+						</div>
+						<div class="image">
+							<img src="images/spotlight03.jpg" alt="" />
+						</div>
 					</section>
+
 
 				<!-- Six -->
-					<section class="wrapper style1 align-center">
+					<!-- <section class="wrapper style1 align-center">
 						<div class="inner">
 							<h2>Ipsum sed consequat</h2>
 							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id ante sed ex pharetra lacinia sit amet vel massa. Donec facilisis laoreet nulla eu bibendum. Donec ut ex risus. Fusce lorem lectus, pharetra pretium massa et, hendrerit vestibulum odio lorem ipsum.</p>
@@ -298,13 +327,13 @@
 								</section>
 							</div>
 						</div>
-					</section>
+					</section> -->
 
 				<!-- Seven -->
 					<section class="wrapper style1 align-center">
 						<div class="inner medium">
 							<h2>Get in touch</h2>
-							<form method="post" action="#">
+							<form method="post" action="mailto:garrettgcraig@gmail.com" enctype="text/plain">
 								<div class="fields">
 									<div class="field half">
 										<label for="name">Name</label>
@@ -331,11 +360,12 @@
 					<footer class="wrapper style1 align-center">
 						<div class="inner">
 							<ul class="icons">
-								<li><a href="#" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
 								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
 								<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
 							</ul>
-							<p>&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							<p>&copy; Garrett Craig. All rights reserved.</p>
 						</div>
 					</footer>
 
