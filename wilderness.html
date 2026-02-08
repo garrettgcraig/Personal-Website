@@ -1,0 +1,742 @@
+<!DOCTYPE HTML>
+<!--
+	Story by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Wilderness Tracker - Garrett G. Craig</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+		<style>
+			/* ── Override template wrapper for app section ── */
+			.app-section {
+				padding: 0 !important;
+			}
+			.app-section > .app-inner {
+				width: 100% !important;
+				max-width: 100% !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			/* Slim header overrides */
+			.slim-header > .inner {
+				padding: 2rem 2rem 1rem !important;
+			}
+			.slim-header h2 {
+				margin-bottom: 0.25rem;
+			}
+			.slim-header p {
+				margin-bottom: 0.5rem;
+				font-size: 0.95rem;
+				color: #666;
+			}
+			.slim-header .home-link {
+				font-size: 0.85rem;
+			}
+
+			/* ── App layout: sidebar left, map right ───────── */
+			.tracker-app {
+				display: flex !important;
+				flex-direction: row !important;
+				width: 100%;
+				height: calc(100vh - 120px);
+				min-height: 500px;
+			}
+
+			/* ── Sidebar panel (left) ─────────────────────── */
+			.sidebar-panel {
+				flex: 0 0 340px;
+				display: flex;
+				flex-direction: column;
+				background: #f8f9fa;
+				border-right: 1px solid #e0e0e0;
+				overflow: hidden;
+			}
+			.sidebar-inner {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+				padding: 1.25rem 1.25rem 1rem;
+				overflow: hidden;
+			}
+
+			/* ── Map panel (right) ─────────────────────────── */
+			.map-panel {
+				flex: 1 1 auto;
+				position: relative;
+				min-width: 0;
+			}
+			#map {
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+			}
+			.leaflet-container { font-family: "Source Sans Pro", Helvetica, sans-serif; }
+
+			/* Legend overlay on map */
+			.map-legend {
+				position: absolute;
+				bottom: 24px;
+				left: 50%;
+				transform: translateX(-50%);
+				z-index: 500;
+				display: flex;
+				gap: 1.25rem;
+				background: rgba(255,255,255,0.92);
+				padding: 0.4rem 1rem;
+				border-radius: 6px;
+				font-size: 0.8rem;
+				color: #555;
+				box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+				pointer-events: none;
+			}
+			.legend-dot {
+				display: inline-block;
+				width: 12px;
+				height: 12px;
+				border-radius: 3px;
+				margin-right: 0.3rem;
+				vertical-align: middle;
+			}
+
+			/* ── Sidebar title ────────────────────────────── */
+			.sidebar-title {
+				font-size: 1.1rem;
+				font-weight: 700;
+				color: #2c6e49;
+				margin-bottom: 0.75rem;
+				flex-shrink: 0;
+				text-align: center;
+			}
+
+			/* ── Stats bar ─────────────────────────────────── */
+			.stats-bar {
+				display: flex;
+				justify-content: space-around;
+				gap: 0.5rem;
+				margin-bottom: 0.6rem;
+				flex-shrink: 0;
+			}
+			.stat-item { text-align: center; }
+			.stat-value {
+				font-size: 1.4rem;
+				font-weight: 700;
+				color: #2c6e49;
+				line-height: 1;
+			}
+			.stat-label {
+				font-size: 0.65rem;
+				color: #888;
+				text-transform: uppercase;
+				letter-spacing: 0.04em;
+				margin-top: 0.15rem;
+			}
+			.progress-outer {
+				width: 100%;
+				height: 6px;
+				background: #e0e0e0;
+				border-radius: 3px;
+				margin-bottom: 0.75rem;
+				overflow: hidden;
+				flex-shrink: 0;
+			}
+			.progress-inner {
+				height: 100%;
+				background: #d4a017;
+				border-radius: 3px;
+				transition: width 0.4s ease;
+			}
+
+			/* ── Search autocomplete ──────────────────────── */
+			.search-wrap {
+				position: relative;
+				margin-bottom: 0.6rem;
+				flex-shrink: 0;
+			}
+			.search-wrap input[type="text"] {
+				width: 100%;
+				padding: 0.55rem 0.8rem;
+				font-size: 0.88rem;
+				border: 2px solid #ddd;
+				border-radius: 6px;
+				outline: none;
+				transition: border-color 0.2s;
+				box-sizing: border-box;
+			}
+			.search-wrap input[type="text"]:focus {
+				border-color: #2c6e49;
+			}
+			.autocomplete-list {
+				position: absolute;
+				top: 100%;
+				left: 0;
+				right: 0;
+				background: #fff;
+				border: 1px solid #ddd;
+				border-top: none;
+				border-radius: 0 0 6px 6px;
+				max-height: 220px;
+				overflow-y: auto;
+				z-index: 1000;
+				display: none;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+			}
+			.autocomplete-list .ac-item {
+				padding: 0.45rem 0.8rem;
+				cursor: pointer;
+				border-bottom: 1px solid #f0f0f0;
+				font-size: 0.85rem;
+				text-align: left;
+			}
+			.autocomplete-list .ac-item:hover,
+			.autocomplete-list .ac-item.active {
+				background: #f0f7f2;
+			}
+			.autocomplete-list .ac-item .ac-state {
+				color: #999;
+				font-size: 0.72rem;
+				margin-left: 0.4rem;
+			}
+
+			/* ── Control buttons row ─────────────────────── */
+			.controls-row {
+				display: flex;
+				gap: 0.4rem;
+				flex-wrap: wrap;
+				margin-bottom: 0.6rem;
+				flex-shrink: 0;
+			}
+			.controls-row .button {
+				font-size: 0.7rem;
+				padding: 0.35rem 0.6rem;
+				flex: 1 1 auto;
+				text-align: center;
+			}
+			.btn-danger {
+				background-color: #c0392b !important;
+				border-color: #c0392b !important;
+				color: #fff !important;
+			}
+			.btn-danger:hover {
+				background-color: #a93226 !important;
+			}
+
+			/* ── Section label ────────────────────────────── */
+			.sidebar-label {
+				font-size: 0.7rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: #999;
+				margin-bottom: 0.35rem;
+				flex-shrink: 0;
+			}
+
+			/* ── Visited table ────────────────────────────── */
+			.visited-table-wrap {
+				flex: 1 1 auto;
+				overflow-y: auto;
+				border-radius: 6px;
+				border: 1px solid #e0e0e0;
+				min-height: 0;
+			}
+			.visited-table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.78rem;
+			}
+			.visited-table thead {
+				position: sticky;
+				top: 0;
+				z-index: 2;
+			}
+			.visited-table th {
+				background: #2c6e49;
+				color: #fff;
+				padding: 0.45rem 0.55rem;
+				text-align: left;
+				font-weight: 600;
+				cursor: pointer;
+				user-select: none;
+				white-space: nowrap;
+				font-size: 0.72rem;
+			}
+			.visited-table th:hover { background: #245a3b; }
+			.visited-table th .sort-arrow { margin-left: 0.2rem; font-size: 0.6rem; }
+			.visited-table td {
+				padding: 0.4rem 0.55rem;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.visited-table tbody tr:hover { background: #f9f9f0; cursor: pointer; }
+			.visited-table .empty-msg {
+				text-align: center;
+				color: #999;
+				padding: 1.5rem 0.75rem;
+				font-style: italic;
+				font-size: 0.82rem;
+			}
+
+			/* ── Sidebar footer ──────────────────────────── */
+			.sidebar-footer {
+				flex-shrink: 0;
+				padding-top: 0.6rem;
+				margin-top: 0.5rem;
+				border-top: 1px solid #e0e0e0;
+				text-align: center;
+			}
+			.sidebar-footer a {
+				font-size: 0.8rem;
+			}
+			.sidebar-footer .credit {
+				font-size: 0.7rem;
+				color: #aaa;
+				margin-top: 0.35rem;
+			}
+			.sidebar-footer .credit a { color: #888; }
+
+			/* ── Tooltip ──────────────────────────────────── */
+			.wild-tooltip {
+				font-family: "Source Sans Pro", sans-serif;
+				font-size: 0.85rem;
+				line-height: 1.4;
+			}
+			.wild-tooltip strong { font-size: 0.95rem; }
+
+			/* ── Hidden file input ────────────────────────── */
+			#import-input { display: none; }
+
+			/* ── Footer override — compact ────────────────── */
+			.compact-footer > .inner {
+				padding: 1.5rem 2rem !important;
+			}
+
+			/* ── Responsive: stack on mobile ──────────────── */
+			@media (max-width: 900px) {
+				.tracker-app {
+					flex-direction: column !important;
+					height: auto;
+				}
+				.map-panel {
+					height: 50vh;
+					min-height: 300px;
+					order: 1;
+				}
+				.sidebar-panel {
+					flex: none;
+					border-right: none;
+					border-bottom: 1px solid #e0e0e0;
+					max-height: 55vh;
+					order: 2;
+				}
+				.visited-table-wrap {
+					max-height: 200px;
+				}
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="divided">
+
+				<!-- App: full-bleed sidebar + map -->
+					<section class="wrapper style1 app-section">
+						<div class="app-inner">
+							<div class="tracker-app">
+
+								<!-- Sidebar (left) -->
+								<div class="sidebar-panel">
+									<div class="sidebar-inner">
+
+										<div class="sidebar-title">Wilderness Tracker</div>
+
+										<!-- Stats -->
+										<div class="stats-bar">
+											<div class="stat-item">
+												<div class="stat-value" id="stat-count">0</div>
+												<div class="stat-label">Visited</div>
+											</div>
+											<div class="stat-item">
+												<div class="stat-value" id="stat-pct">0%</div>
+												<div class="stat-label">of 843</div>
+											</div>
+											<div class="stat-item">
+												<div class="stat-value" id="stat-acres">0</div>
+												<div class="stat-label">Acres</div>
+											</div>
+										</div>
+										<div class="progress-outer">
+											<div class="progress-inner" id="progress-bar" style="width:0%"></div>
+										</div>
+
+										<!-- Search -->
+										<div class="search-wrap">
+											<input type="text" id="search-input" placeholder="Search wilderness areas..." autocomplete="off" />
+											<div class="autocomplete-list" id="ac-list"></div>
+										</div>
+
+										<!-- Controls -->
+										<div class="controls-row">
+											<a href="#" class="button small" id="btn-export"><i class="fa fa-download"></i> Export</a>
+											<a href="#" class="button small" id="btn-import"><i class="fa fa-upload"></i> Import</a>
+											<a href="#" class="button small btn-danger" id="btn-clear"><i class="fa fa-trash"></i> Clear</a>
+											<input type="file" id="import-input" accept=".csv" />
+										</div>
+
+										<!-- Visited list -->
+										<div class="sidebar-label">Visited Areas</div>
+										<div class="visited-table-wrap">
+											<table class="visited-table" id="visited-table">
+												<thead>
+													<tr>
+														<th data-sort="name">Name <span class="sort-arrow"></span></th>
+														<th data-sort="state">State <span class="sort-arrow"></span></th>
+														<th data-sort="acres">Acres <span class="sort-arrow"></span></th>
+													</tr>
+												</thead>
+												<tbody id="visited-tbody">
+													<tr><td colspan="3" class="empty-msg">Click areas on the map to start tracking.</td></tr>
+												</tbody>
+											</table>
+										</div>
+
+										<!-- Sidebar bottom -->
+										<div class="sidebar-footer">
+											<a href="index.html" class="button small">← Back to Home</a>
+											<div class="credit">Data from <a href="https://wilderness.net/visit-wilderness/gis-gps.php" target="_blank" rel="noopener">Wilderness Connect</a></div>
+										</div>
+
+									</div>
+								</div>
+
+								<!-- Map (right) -->
+								<div class="map-panel">
+									<div id="map"></div>
+									<div class="map-legend">
+										<span><span class="legend-dot" style="background:#5a8a5e;"></span> Not visited</span>
+										<span><span class="legend-dot" style="background:#d4a017;"></span> Visited</span>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Site Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+		<!-- Wilderness Tracker App -->
+		<script>
+		(function () {
+			"use strict";
+
+			var PAL_UNVISITED = "#5a8a5e";
+			var PAL_VISITED   = "#d4a017";
+
+			var geojsonData = null;
+			var geojsonLayer = null;
+			var featureIndex = {};
+			var featureData  = {};
+			var allNames     = [];
+			var visited      = new Set();
+			var sortCol      = "name";
+			var sortAsc      = true;
+
+			var STORAGE_KEY = "wilderness_visited_wids";
+
+			function saveVisited() {
+				try { localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(visited))); } catch (_) {}
+			}
+			function loadVisited() {
+				try {
+					var raw = localStorage.getItem(STORAGE_KEY);
+					if (raw) {
+						var arr = JSON.parse(raw);
+						if (Array.isArray(arr)) visited = new Set(arr.map(String));
+					}
+				} catch (_) {}
+			}
+
+			function fmtNum(n) {
+				if (n == null || isNaN(n)) return "—";
+				return Number(n).toLocaleString("en-US");
+			}
+
+			function updateStats() {
+				var total = Object.keys(featureData).length || 843;
+				var count = visited.size;
+				var pct = total > 0 ? (100 * count / total).toFixed(1) : 0;
+				var acres = 0;
+				visited.forEach(function (wid) {
+					if (featureData[wid]) acres += (featureData[wid].acres || 0);
+				});
+				document.getElementById("stat-count").textContent = count;
+				document.getElementById("stat-pct").textContent = pct + "%";
+				document.getElementById("stat-acres").textContent = fmtNum(acres);
+				document.getElementById("progress-bar").style.width = pct + "%";
+			}
+
+			function renderTable() {
+				var tbody = document.getElementById("visited-tbody");
+				if (visited.size === 0) {
+					tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">Click areas on the map to start tracking.</td></tr>';
+					return;
+				}
+				var rows = [];
+				visited.forEach(function (wid) {
+					var d = featureData[wid];
+					if (d) rows.push(d);
+				});
+				rows.sort(function (a, b) {
+					var va = a[sortCol], vb = b[sortCol];
+					if (sortCol === "acres") {
+						va = va || 0; vb = vb || 0;
+						return sortAsc ? va - vb : vb - va;
+					}
+					va = (va || "").toLowerCase();
+					vb = (vb || "").toLowerCase();
+					if (va < vb) return sortAsc ? -1 : 1;
+					if (va > vb) return sortAsc ? 1 : -1;
+					return 0;
+				});
+				var html = "";
+				rows.forEach(function (d) {
+					html += '<tr data-wid="' + d.wid + '">'
+						+ "<td>" + d.name + "</td>"
+						+ "<td>" + (d.state || "") + "</td>"
+						+ "<td>" + fmtNum(d.acres) + "</td>"
+						+ "</tr>";
+				});
+				tbody.innerHTML = html;
+			}
+
+			document.querySelectorAll(".visited-table th[data-sort]").forEach(function (th) {
+				th.addEventListener("click", function () {
+					var col = th.getAttribute("data-sort");
+					if (sortCol === col) { sortAsc = !sortAsc; } else { sortCol = col; sortAsc = true; }
+					document.querySelectorAll(".visited-table th .sort-arrow").forEach(function (s) { s.textContent = ""; });
+					th.querySelector(".sort-arrow").textContent = sortAsc ? " ▲" : " ▼";
+					renderTable();
+				});
+			});
+
+			document.getElementById("visited-tbody").addEventListener("click", function (e) {
+				var row = e.target.closest("tr[data-wid]");
+				if (!row) return;
+				var wid = row.getAttribute("data-wid");
+				if (featureIndex[wid]) {
+					map.flyToBounds(featureIndex[wid].getBounds(), { maxZoom: 11, duration: 1 });
+				}
+			});
+
+			function styleFeature(layer, isVisited) {
+				layer.setStyle({
+					fillColor:   isVisited ? PAL_VISITED : PAL_UNVISITED,
+					fillOpacity: isVisited ? 0.6 : 0.3,
+					color:       isVisited ? PAL_VISITED : PAL_UNVISITED,
+					weight:      isVisited ? 1.8 : 1,
+					opacity:     isVisited ? 0.9 : 0.6
+				});
+			}
+
+			function toggleVisit(wid) {
+				wid = String(wid);
+				if (visited.has(wid)) { visited.delete(wid); } else { visited.add(wid); }
+				if (featureIndex[wid]) styleFeature(featureIndex[wid], visited.has(wid));
+				saveVisited();
+				updateStats();
+				renderTable();
+			}
+
+			var map = L.map("map", { zoomSnap: 0.5 }).setView([39.8, -98.5], 4);
+
+			var baseLayers = {
+				"Light":     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { attribution: '&copy; <a href="https://carto.com/">CARTO</a>', maxZoom: 19 }),
+				"Topo":      L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { attribution: "Esri", maxZoom: 18 }),
+				"Satellite": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { attribution: "Esri", maxZoom: 18 })
+			};
+			baseLayers["Light"].addTo(map);
+			L.control.layers(baseLayers, null, { collapsed: true }).addTo(map);
+
+			loadVisited();
+
+			fetch("data/wilderness_areas.geojson")
+				.then(function (r) { return r.json(); })
+				.then(function (data) {
+					geojsonData = data;
+					geojsonLayer = L.geoJSON(data, {
+						style: function (feature) {
+							var wid = String(feature.properties.wid);
+							var isV = visited.has(wid);
+							return {
+								fillColor:   isV ? PAL_VISITED : PAL_UNVISITED,
+								fillOpacity: isV ? 0.6 : 0.3,
+								color:       isV ? PAL_VISITED : PAL_UNVISITED,
+								weight:      isV ? 1.8 : 1,
+								opacity:     isV ? 0.9 : 0.6
+							};
+						},
+						onEachFeature: function (feature, layer) {
+							var p = feature.properties;
+							var wid = String(p.wid);
+							featureIndex[wid] = layer;
+							featureData[wid] = {
+								wid: wid, name: p.name || "Unknown", state: p.state || "",
+								agency: p.agency || "", acres: Number(p.acres) || 0, designated: p.designated || ""
+							};
+							var tip = '<div class="wild-tooltip"><strong>' + p.name + '</strong><br>'
+								+ (p.state || '') + ' · ' + (p.agency || '') + '<br>'
+								+ fmtNum(p.acres) + ' acres'
+								+ (p.designated ? '<br>Designated ' + p.designated : '') + '</div>';
+							layer.bindTooltip(tip, { sticky: true, direction: "top", offset: [0, -8] });
+							layer.on("mouseover", function () {
+								layer.setStyle({ weight: 3, color: "#fff", fillOpacity: 0.65 });
+								layer.bringToFront();
+							});
+							layer.on("mouseout", function () { styleFeature(layer, visited.has(wid)); });
+							layer.on("click", function () { toggleVisit(wid); });
+						}
+					}).addTo(map);
+
+					allNames = Object.values(featureData)
+						.map(function (d) { return { name: d.name, state: d.state, wid: d.wid }; })
+						.sort(function (a, b) { return a.name.localeCompare(b.name); });
+
+					updateStats();
+					renderTable();
+
+					// Invalidate map size after layout settles
+					setTimeout(function () { map.invalidateSize(); }, 200);
+				})
+				.catch(function (err) {
+					console.error("Failed to load wilderness data:", err);
+					document.getElementById("map").innerHTML = '<p style="padding:2rem;color:#c0392b;">Failed to load wilderness boundary data.</p>';
+				});
+
+			// Autocomplete
+			var searchInput = document.getElementById("search-input");
+			var acList      = document.getElementById("ac-list");
+			var acIdx       = -1;
+
+			searchInput.addEventListener("input", function () {
+				var q = this.value.trim().toLowerCase();
+				acIdx = -1;
+				if (q.length < 2) { acList.style.display = "none"; return; }
+				var matches = allNames.filter(function (d) { return d.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 30);
+				if (matches.length === 0) { acList.style.display = "none"; return; }
+				acList.innerHTML = matches.map(function (d, i) {
+					return '<div class="ac-item" data-wid="' + d.wid + '" data-idx="' + i + '">'
+						+ d.name + '<span class="ac-state">' + d.state + '</span></div>';
+				}).join("");
+				acList.style.display = "block";
+			});
+
+			searchInput.addEventListener("keydown", function (e) {
+				var items = acList.querySelectorAll(".ac-item");
+				if (!items.length) return;
+				if (e.key === "ArrowDown") { e.preventDefault(); acIdx = Math.min(acIdx + 1, items.length - 1); }
+				else if (e.key === "ArrowUp") { e.preventDefault(); acIdx = Math.max(acIdx - 1, 0); }
+				else if (e.key === "Enter") { e.preventDefault(); if (acIdx >= 0 && items[acIdx]) items[acIdx].click(); return; }
+				else if (e.key === "Escape") { acList.style.display = "none"; return; }
+				else return;
+				items.forEach(function (el, i) { el.classList.toggle("active", i === acIdx); });
+			});
+
+			acList.addEventListener("click", function (e) {
+				var item = e.target.closest(".ac-item");
+				if (!item) return;
+				var wid = item.getAttribute("data-wid");
+				searchInput.value = "";
+				acList.style.display = "none";
+				if (!visited.has(wid)) toggleVisit(wid);
+				if (featureIndex[wid]) map.flyToBounds(featureIndex[wid].getBounds(), { maxZoom: 11, duration: 1 });
+			});
+
+			document.addEventListener("click", function (e) {
+				if (!e.target.closest(".search-wrap")) acList.style.display = "none";
+			});
+
+			// Export
+			document.getElementById("btn-export").addEventListener("click", function (e) {
+				e.preventDefault();
+				if (visited.size === 0) { alert("No areas to export."); return; }
+				var lines = ["name,state,agency,acres,designated,wid"];
+				visited.forEach(function (wid) {
+					var d = featureData[wid];
+					if (d) lines.push(['"' + d.name.replace(/"/g, '""') + '"', '"' + (d.state||"") + '"', '"' + (d.agency||"") + '"', d.acres||"", '"' + (d.designated||"") + '"', d.wid].join(","));
+				});
+				var blob = new Blob([lines.join("\n")], { type: "text/csv" });
+				var a = document.createElement("a");
+				a.href = URL.createObjectURL(blob);
+				a.download = "wilderness_visits_" + new Date().toISOString().slice(0, 10) + ".csv";
+				a.click();
+				URL.revokeObjectURL(a.href);
+			});
+
+			// Import
+			var importInput = document.getElementById("import-input");
+			document.getElementById("btn-import").addEventListener("click", function (e) { e.preventDefault(); importInput.click(); });
+			importInput.addEventListener("change", function () {
+				var file = this.files[0];
+				if (!file) return;
+				var reader = new FileReader();
+				reader.onload = function (ev) {
+					var lines = ev.target.result.split(/\r?\n/).filter(function (l) { return l.trim(); });
+					if (lines.length < 2) { alert("CSV appears empty."); return; }
+					var cols = lines[0].toLowerCase().split(",");
+					var widIdx = -1, nameIdx = -1;
+					cols.forEach(function (c, i) { c = c.replace(/"/g,"").trim(); if (c==="wid") widIdx=i; if (c==="name") nameIdx=i; });
+					var imported = 0;
+					for (var i = 1; i < lines.length; i++) {
+						var vals = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+						if (!vals) continue;
+						vals = vals.map(function (v) { return v.replace(/^"|"$/g,"").trim(); });
+						var wid = null;
+						if (widIdx >= 0 && vals[widIdx]) wid = String(vals[widIdx]);
+						else if (nameIdx >= 0 && vals[nameIdx]) {
+							var nm = vals[nameIdx].toLowerCase();
+							for (var w in featureData) { if (featureData[w].name.toLowerCase() === nm) { wid = w; break; } }
+						}
+						if (wid && featureData[wid] && !visited.has(wid)) {
+							visited.add(wid);
+							if (featureIndex[wid]) styleFeature(featureIndex[wid], true);
+							imported++;
+						}
+					}
+					saveVisited(); updateStats(); renderTable();
+					alert("Imported " + imported + " wilderness area(s).");
+				};
+				reader.readAsText(file);
+				this.value = "";
+			});
+
+			// Clear
+			document.getElementById("btn-clear").addEventListener("click", function (e) {
+				e.preventDefault();
+				if (visited.size === 0) return;
+				if (!confirm("Clear all " + visited.size + " visited areas?")) return;
+				visited.forEach(function (wid) { if (featureIndex[wid]) styleFeature(featureIndex[wid], false); });
+				visited.clear();
+				saveVisited(); updateStats(); renderTable();
+			});
+
+		})();
+		</script>
+
+	</body>
+</html>
