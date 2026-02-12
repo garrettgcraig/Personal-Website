@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Wilderness Tracker - Garrett G. Craig</title>
+		<title>Public Lands Tracker - Garrett G. Craig</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -14,6 +14,22 @@
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 		<style>
+			/* ── National Park Typeface ── */
+			@font-face {
+				font-family: 'National Park';
+				src: url('assets/fonts/NationalPark-Regular.woff') format('woff');
+				font-weight: 400;
+				font-style: normal;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: 'National Park';
+				src: url('assets/fonts/NationalPark-Bold.woff') format('woff');
+				font-weight: 700;
+				font-style: normal;
+				font-display: swap;
+			}
+
 			/* ── Override template wrapper for app section ── */
 			.app-section {
 				padding: 0 !important;
@@ -25,23 +41,7 @@
 				margin: 0 !important;
 			}
 
-			/* Slim header overrides */
-			.slim-header > .inner {
-				padding: 2rem 2rem 1rem !important;
-			}
-			.slim-header h2 {
-				margin-bottom: 0.25rem;
-			}
-			.slim-header p {
-				margin-bottom: 0.5rem;
-				font-size: 0.95rem;
-				color: #666;
-			}
-			.slim-header .home-link {
-				font-size: 0.85rem;
-			}
-
-			/* ── App layout: sidebar left, map right ───────── */
+			/* ── App layout: sidebar left, map right ── */
 			.tracker-app {
 				display: flex !important;
 				flex-direction: row !important;
@@ -50,9 +50,9 @@
 				min-height: 500px;
 			}
 
-			/* ── Sidebar panel (left) ─────────────────────── */
+			/* ── Sidebar panel (left) ── */
 			.sidebar-panel {
-				flex: 0 0 340px;
+				flex: 0 0 360px;
 				display: flex;
 				flex-direction: column;
 				background: #f8f9fa;
@@ -67,7 +67,7 @@
 				overflow: hidden;
 			}
 
-			/* ── Map panel (right) ─────────────────────────── */
+			/* ── Map panel (right) ── */
 			.map-panel {
 				flex: 1 1 auto;
 				position: relative;
@@ -80,7 +80,7 @@
 			}
 			.leaflet-container { font-family: "Source Sans Pro", Helvetica, sans-serif; }
 
-			/* Legend overlay on map */
+			/* ── Legend overlay on map ── */
 			.map-legend {
 				position: absolute;
 				bottom: 24px;
@@ -88,35 +88,113 @@
 				transform: translateX(-50%);
 				z-index: 500;
 				display: flex;
-				gap: 1.25rem;
-				background: rgba(255,255,255,0.92);
-				padding: 0.4rem 1rem;
+				gap: 1rem;
+				flex-wrap: wrap;
+				justify-content: center;
+				background: rgba(255,255,255,0.93);
+				padding: 0.5rem 1rem;
 				border-radius: 6px;
-				font-size: 0.8rem;
+				font-size: 0.75rem;
 				color: #555;
 				box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 				pointer-events: none;
+			}
+			.legend-group {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.15rem;
+			}
+			.legend-group-label {
+				font-weight: 600;
+				font-size: 0.68rem;
+				text-transform: uppercase;
+				letter-spacing: 0.03em;
+			}
+			.legend-row {
+				display: flex;
+				gap: 0.6rem;
 			}
 			.legend-dot {
 				display: inline-block;
 				width: 12px;
 				height: 12px;
 				border-radius: 3px;
-				margin-right: 0.3rem;
+				margin-right: 0.2rem;
 				vertical-align: middle;
 			}
 
-			/* ── Sidebar title ────────────────────────────── */
+			/* ── Sidebar title ── */
 			.sidebar-title {
-				font-size: 1.1rem;
+				font-family: 'National Park', "Source Sans Pro", sans-serif;
+				font-size: 1.3rem;
 				font-weight: 700;
 				color: #2c6e49;
-				margin-bottom: 0.75rem;
+				margin-bottom: 0.6rem;
 				flex-shrink: 0;
 				text-align: center;
+				letter-spacing: 0.02em;
 			}
 
-			/* ── Stats bar ─────────────────────────────────── */
+			/* ── Layer toggles ── */
+			.layer-toggles {
+				display: flex;
+				flex-direction: column;
+				gap: 0.3rem;
+				margin-bottom: 0.6rem;
+				flex-shrink: 0;
+			}
+			.layer-toggle {
+				display: flex;
+				align-items: center;
+				gap: 0.45rem;
+				font-size: 0.78rem;
+				cursor: pointer;
+				user-select: none;
+				padding: 0.25rem 0.4rem;
+				border-radius: 4px;
+				transition: background 0.15s;
+			}
+			.layer-toggle:hover {
+				background: rgba(0,0,0,0.04);
+			}
+			.layer-toggle input[type="checkbox"] {
+				appearance: none;
+				-webkit-appearance: none;
+				width: 16px;
+				height: 16px;
+				border: 2px solid #999;
+				border-radius: 3px;
+				cursor: pointer;
+				position: relative;
+				flex-shrink: 0;
+				transition: background 0.15s, border-color 0.15s;
+			}
+			.layer-toggle input[type="checkbox"]:checked {
+				border-color: var(--layer-color);
+				background: var(--layer-color);
+			}
+			.layer-toggle input[type="checkbox"]:checked::after {
+				content: '\2713';
+				color: #fff;
+				font-size: 11px;
+				font-weight: 700;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+			.layer-toggle .layer-name {
+				font-weight: 600;
+				flex: 1;
+			}
+			.layer-toggle .layer-count {
+				font-size: 0.7rem;
+				color: #888;
+				white-space: nowrap;
+			}
+
+			/* ── Stats bar ── */
 			.stats-bar {
 				display: flex;
 				justify-content: space-around;
@@ -149,12 +227,12 @@
 			}
 			.progress-inner {
 				height: 100%;
-				background: #d4a017;
 				border-radius: 3px;
 				transition: width 0.4s ease;
+				background: linear-gradient(90deg, #5a8a5e, #d4a017, #45B08C);
 			}
 
-			/* ── Search autocomplete ──────────────────────── */
+			/* ── Search autocomplete ── */
 			.search-wrap {
 				position: relative;
 				margin-bottom: 0.6rem;
@@ -194,18 +272,29 @@
 				border-bottom: 1px solid #f0f0f0;
 				font-size: 0.85rem;
 				text-align: left;
+				display: flex;
+				align-items: center;
+				gap: 0.4rem;
 			}
 			.autocomplete-list .ac-item:hover,
 			.autocomplete-list .ac-item.active {
 				background: #f0f7f2;
 			}
+			.autocomplete-list .ac-item .ac-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				flex-shrink: 0;
+			}
+			.autocomplete-list .ac-item .ac-name {
+				flex: 1;
+			}
 			.autocomplete-list .ac-item .ac-state {
 				color: #999;
 				font-size: 0.72rem;
-				margin-left: 0.4rem;
 			}
 
-			/* ── Control buttons row ─────────────────────── */
+			/* ── Control buttons row ── */
 			.controls-row {
 				display: flex;
 				gap: 0.4rem;
@@ -228,7 +317,7 @@
 				background-color: #a93226 !important;
 			}
 
-			/* ── Section label ────────────────────────────── */
+			/* ── Section label ── */
 			.sidebar-label {
 				font-size: 0.7rem;
 				font-weight: 600;
@@ -239,7 +328,7 @@
 				flex-shrink: 0;
 			}
 
-			/* ── Visited table ────────────────────────────── */
+			/* ── Visited table ── */
 			.visited-table-wrap {
 				flex: 1 1 auto;
 				overflow-y: auto;
@@ -282,8 +371,15 @@
 				font-style: italic;
 				font-size: 0.82rem;
 			}
+			.type-dot {
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				vertical-align: middle;
+			}
 
-			/* ── Sidebar footer ──────────────────────────── */
+			/* ── Sidebar footer ── */
 			.sidebar-footer {
 				flex-shrink: 0;
 				padding-top: 0.6rem;
@@ -295,29 +391,30 @@
 				font-size: 0.8rem;
 			}
 			.sidebar-footer .credit {
-				font-size: 0.7rem;
+				font-size: 0.65rem;
 				color: #aaa;
 				margin-top: 0.35rem;
+				line-height: 1.4;
 			}
 			.sidebar-footer .credit a { color: #888; }
 
-			/* ── Tooltip ──────────────────────────────────── */
-			.wild-tooltip {
+			/* ── Tooltip ── */
+			.lands-tooltip {
 				font-family: "Source Sans Pro", sans-serif;
 				font-size: 0.85rem;
 				line-height: 1.4;
 			}
-			.wild-tooltip strong { font-size: 0.95rem; }
+			.lands-tooltip strong { font-size: 0.95rem; }
 
-			/* ── Hidden file input ────────────────────────── */
+			/* ── Hidden file input ── */
 			#import-input { display: none; }
 
-			/* ── Footer override — compact ────────────────── */
+			/* ── Footer override -- compact ── */
 			.compact-footer > .inner {
 				padding: 1.5rem 2rem !important;
 			}
 
-			/* ── Responsive: stack on mobile ──────────────── */
+			/* ── Responsive: stack on mobile ── */
 			@media (max-width: 900px) {
 				.tracker-app {
 					flex-direction: column !important;
@@ -338,6 +435,11 @@
 				.visited-table-wrap {
 					max-height: 200px;
 				}
+				.map-legend {
+					font-size: 0.65rem;
+					padding: 0.35rem 0.6rem;
+					gap: 0.6rem;
+				}
 			}
 		</style>
 	</head>
@@ -355,7 +457,26 @@
 								<div class="sidebar-panel">
 									<div class="sidebar-inner">
 
-										<div class="sidebar-title">Wilderness Tracker</div>
+										<div class="sidebar-title">Public Lands Tracker</div>
+
+										<!-- Layer Toggles -->
+										<div class="layer-toggles">
+											<label class="layer-toggle" style="--layer-color: #5a8a5e;">
+												<input type="checkbox" checked data-layer="wilderness" />
+												<span class="layer-name">Wilderness</span>
+												<span class="layer-count" id="count-wilderness">0 / 0</span>
+											</label>
+											<label class="layer-toggle" style="--layer-color: #8B6914;">
+												<input type="checkbox" checked data-layer="nps" />
+												<span class="layer-name">National Parks</span>
+												<span class="layer-count" id="count-nps">0 / 0</span>
+											</label>
+											<label class="layer-toggle" style="--layer-color: #2E7D5B;">
+												<input type="checkbox" checked data-layer="national_forest" />
+												<span class="layer-name">National Forests</span>
+												<span class="layer-count" id="count-national_forest">0 / 0</span>
+											</label>
+										</div>
 
 										<!-- Stats -->
 										<div class="stats-bar">
@@ -365,7 +486,7 @@
 											</div>
 											<div class="stat-item">
 												<div class="stat-value" id="stat-pct">0%</div>
-												<div class="stat-label">of 843</div>
+												<div class="stat-label" id="stat-total-label">of 0</div>
 											</div>
 											<div class="stat-item">
 												<div class="stat-value" id="stat-acres">0</div>
@@ -378,7 +499,7 @@
 
 										<!-- Search -->
 										<div class="search-wrap">
-											<input type="text" id="search-input" placeholder="Search wilderness areas..." autocomplete="off" />
+											<input type="text" id="search-input" placeholder="Search all public lands..." autocomplete="off" />
 											<div class="autocomplete-list" id="ac-list"></div>
 										</div>
 
@@ -391,26 +512,31 @@
 										</div>
 
 										<!-- Visited list -->
-										<div class="sidebar-label">Visited Areas</div>
+										<div class="sidebar-label">Visited Lands</div>
 										<div class="visited-table-wrap">
 											<table class="visited-table" id="visited-table">
 												<thead>
 													<tr>
+														<th data-sort="type" style="width:28px;">&nbsp;<span class="sort-arrow"></span></th>
 														<th data-sort="name">Name <span class="sort-arrow"></span></th>
 														<th data-sort="state">State <span class="sort-arrow"></span></th>
 														<th data-sort="acres">Acres <span class="sort-arrow"></span></th>
 													</tr>
 												</thead>
 												<tbody id="visited-tbody">
-													<tr><td colspan="3" class="empty-msg">Click areas on the map to start tracking.</td></tr>
+													<tr><td colspan="4" class="empty-msg">Click areas on the map to start tracking.</td></tr>
 												</tbody>
 											</table>
 										</div>
 
 										<!-- Sidebar bottom -->
 										<div class="sidebar-footer">
-											<a href="index.html" class="button small">← Back to Home</a>
-											<div class="credit">Data from <a href="https://wilderness.net/visit-wilderness/gis-gps.php" target="_blank" rel="noopener">Wilderness Connect</a></div>
+											<a href="index.html" class="button small">&larr; Back to Home</a>
+											<div class="credit">
+												Data: <a href="https://wilderness.net" target="_blank" rel="noopener">Wilderness Connect</a>,
+												<a href="https://www.nps.gov" target="_blank" rel="noopener">NPS</a>,
+												<a href="https://www.fs.usda.gov" target="_blank" rel="noopener">USDA Forest Service</a>
+											</div>
 										</div>
 
 									</div>
@@ -420,14 +546,46 @@
 								<div class="map-panel">
 									<div id="map"></div>
 									<div class="map-legend">
-										<span><span class="legend-dot" style="background:#5a8a5e;"></span> Not visited</span>
-										<span><span class="legend-dot" style="background:#d4a017;"></span> Visited</span>
+										<div class="legend-group">
+											<span class="legend-group-label">Wilderness</span>
+											<div class="legend-row">
+												<span><span class="legend-dot" style="background:#5a8a5e;"></span>Unvisited</span>
+												<span><span class="legend-dot" style="background:#d4a017;"></span>Visited</span>
+											</div>
+										</div>
+										<div class="legend-group">
+											<span class="legend-group-label">NPS</span>
+											<div class="legend-row">
+												<span><span class="legend-dot" style="background:#8B6914;"></span>Unvisited</span>
+												<span><span class="legend-dot" style="background:#C8963E;"></span>Visited</span>
+											</div>
+										</div>
+										<div class="legend-group">
+											<span class="legend-group-label">Nat'l Forest</span>
+											<div class="legend-row">
+												<span><span class="legend-dot" style="background:#2E7D5B;"></span>Unvisited</span>
+												<span><span class="legend-dot" style="background:#45B08C;"></span>Visited</span>
+											</div>
+										</div>
 									</div>
 								</div>
 
 							</div>
 						</div>
 					</section>
+
+				<!-- Footer -->
+					<footer class="wrapper style1 align-center compact-footer">
+						<div class="inner">
+							<ul class="icons">
+								<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+								<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
+							</ul>
+							<p>&copy; Garrett Craig. All rights reserved.</p>
+						</div>
+					</footer>
 
 			</div>
 
@@ -440,129 +598,265 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 
-		<!-- Wilderness Tracker App -->
+		<!-- Public Lands Tracker App -->
 		<script>
 		(function () {
 			"use strict";
 
-			var PAL_UNVISITED = "#5a8a5e";
-			var PAL_VISITED   = "#d4a017";
+			// ── Layer configuration ──
+			var LAYERS = {
+				wilderness: {
+					file: "data/wilderness.geojson",
+					keyProp: "name",
+					storageKey: "lands_visited_wilderness",
+					colorUnvisited: "#5a8a5e",
+					colorVisited: "#d4a017",
+					dotColor: "#5a8a5e",
+					label: "Wilderness"
+				},
+				nps: {
+					file: "data/nps.geojson",
+					keyProp: "code",
+					storageKey: "lands_visited_nps",
+					colorUnvisited: "#8B6914",
+					colorVisited: "#C8963E",
+					dotColor: "#8B6914",
+					label: "NPS"
+				},
+				national_forest: {
+					file: "data/national_forests.geojson",
+					keyProp: "name",
+					storageKey: "lands_visited_national_forest",
+					colorUnvisited: "#2E7D5B",
+					colorVisited: "#45B08C",
+					dotColor: "#2E7D5B",
+					label: "Nat'l Forest"
+				}
+			};
 
-			var geojsonData = null;
-			var geojsonLayer = null;
-			var featureIndex = {};
-			var featureData  = {};
-			var allNames     = [];
-			var visited      = new Set();
-			var sortCol      = "name";
-			var sortAsc      = true;
+			// ── State ──
+			var visited = {};          // { layerType: Set of keys }
+			var featureIndex = {};     // { layerType: { key: leafletLayer } }
+			var featureData = {};      // { layerType: { key: { name, state, acres, ... } } }
+			var geojsonLayers = {};    // { layerType: L.geoJSON layer group }
+			var allSearchItems = [];   // unified search index
+			var layerVisible = { wilderness: true, nps: true, national_forest: true };
+			var sortCol = "name";
+			var sortAsc = true;
 
-			var STORAGE_KEY = "wilderness_visited_wids";
+			// ── Backwards compatibility note ──
+			// The old localStorage key "wilderness_visited_wids" stored WID numbers.
+			// Since the new wilderness data uses name (string) as the key, old WID-based
+			// data cannot be automatically migrated. Users with old data will need to
+			// re-enter their visited wilderness areas.
 
-			function saveVisited() {
-				try { localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(visited))); } catch (_) {}
-			}
-			function loadVisited() {
+			// ── Persistence ──
+			function saveVisited(layerType) {
+				var cfg = LAYERS[layerType];
 				try {
-					var raw = localStorage.getItem(STORAGE_KEY);
+					localStorage.setItem(cfg.storageKey, JSON.stringify(Array.from(visited[layerType])));
+				} catch (_) {}
+			}
+
+			function loadVisited(layerType) {
+				var cfg = LAYERS[layerType];
+				visited[layerType] = new Set();
+				try {
+					var raw = localStorage.getItem(cfg.storageKey);
 					if (raw) {
 						var arr = JSON.parse(raw);
-						if (Array.isArray(arr)) visited = new Set(arr.map(String));
+						if (Array.isArray(arr)) visited[layerType] = new Set(arr.map(String));
 					}
 				} catch (_) {}
 			}
 
+			function saveAllVisited() {
+				Object.keys(LAYERS).forEach(function (lt) { saveVisited(lt); });
+			}
+
+			// ── Formatting ──
 			function fmtNum(n) {
-				if (n == null || isNaN(n)) return "—";
+				if (n == null || isNaN(n)) return "\u2014";
 				return Number(n).toLocaleString("en-US");
 			}
 
-			function updateStats() {
-				var total = Object.keys(featureData).length || 843;
-				var count = visited.size;
-				var pct = total > 0 ? (100 * count / total).toFixed(1) : 0;
-				var acres = 0;
-				visited.forEach(function (wid) {
-					if (featureData[wid]) acres += (featureData[wid].acres || 0);
-				});
-				document.getElementById("stat-count").textContent = count;
-				document.getElementById("stat-pct").textContent = pct + "%";
-				document.getElementById("stat-acres").textContent = fmtNum(acres);
-				document.getElementById("progress-bar").style.width = pct + "%";
+			// ── Enabled layer types (based on checkbox state) ──
+			function enabledTypes() {
+				return Object.keys(LAYERS).filter(function (lt) { return layerVisible[lt]; });
 			}
 
+			// ── Stats ──
+			function updateStats() {
+				var types = enabledTypes();
+				var totalCount = 0;
+				var visitedCount = 0;
+				var totalAcres = 0;
+
+				types.forEach(function (lt) {
+					var data = featureData[lt] || {};
+					var keys = Object.keys(data);
+					totalCount += keys.length;
+					var vis = visited[lt] || new Set();
+					vis.forEach(function (key) {
+						if (data[key]) {
+							visitedCount++;
+							totalAcres += (data[key].acres || 0);
+						}
+					});
+				});
+
+				var pct = totalCount > 0 ? (100 * visitedCount / totalCount).toFixed(1) : "0.0";
+				document.getElementById("stat-count").textContent = visitedCount;
+				document.getElementById("stat-pct").textContent = pct + "%";
+				document.getElementById("stat-total-label").textContent = "of " + fmtNum(totalCount);
+				document.getElementById("stat-acres").textContent = fmtNum(totalAcres);
+				document.getElementById("progress-bar").style.width = pct + "%";
+
+				// Update per-layer counts
+				Object.keys(LAYERS).forEach(function (lt) {
+					var data = featureData[lt] || {};
+					var total = Object.keys(data).length;
+					var vis = visited[lt] || new Set();
+					var count = 0;
+					vis.forEach(function (key) { if (data[key]) count++; });
+					var el = document.getElementById("count-" + lt);
+					if (el) el.textContent = count + " / " + total;
+				});
+			}
+
+			// ── Visited table ──
 			function renderTable() {
 				var tbody = document.getElementById("visited-tbody");
-				if (visited.size === 0) {
-					tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">Click areas on the map to start tracking.</td></tr>';
+				var types = enabledTypes();
+				var rows = [];
+
+				types.forEach(function (lt) {
+					var vis = visited[lt] || new Set();
+					var data = featureData[lt] || {};
+					vis.forEach(function (key) {
+						var d = data[key];
+						if (d) {
+							rows.push({
+								layerType: lt,
+								key: key,
+								name: d.name || "Unknown",
+								state: d.state || d.region || "",
+								acres: d.acres || 0,
+								type: lt
+							});
+						}
+					});
+				});
+
+				if (rows.length === 0) {
+					tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Click areas on the map to start tracking.</td></tr>';
 					return;
 				}
-				var rows = [];
-				visited.forEach(function (wid) {
-					var d = featureData[wid];
-					if (d) rows.push(d);
-				});
+
 				rows.sort(function (a, b) {
 					var va = a[sortCol], vb = b[sortCol];
 					if (sortCol === "acres") {
 						va = va || 0; vb = vb || 0;
 						return sortAsc ? va - vb : vb - va;
 					}
-					va = (va || "").toLowerCase();
-					vb = (vb || "").toLowerCase();
+					if (sortCol === "type") {
+						va = (va || "").toLowerCase();
+						vb = (vb || "").toLowerCase();
+					} else {
+						va = (va || "").toString().toLowerCase();
+						vb = (vb || "").toString().toLowerCase();
+					}
 					if (va < vb) return sortAsc ? -1 : 1;
 					if (va > vb) return sortAsc ? 1 : -1;
 					return 0;
 				});
+
 				var html = "";
 				rows.forEach(function (d) {
-					html += '<tr data-wid="' + d.wid + '">'
-						+ "<td>" + d.name + "</td>"
-						+ "<td>" + (d.state || "") + "</td>"
+					var cfg = LAYERS[d.layerType];
+					html += '<tr data-layer="' + d.layerType + '" data-key="' + escAttr(d.key) + '">'
+						+ '<td><span class="type-dot" style="background:' + cfg.dotColor + ';" title="' + cfg.label + '"></span></td>'
+						+ "<td>" + escHtml(d.name) + "</td>"
+						+ "<td>" + escHtml(d.state) + "</td>"
 						+ "<td>" + fmtNum(d.acres) + "</td>"
 						+ "</tr>";
 				});
 				tbody.innerHTML = html;
 			}
 
+			function escHtml(s) {
+				var div = document.createElement("div");
+				div.appendChild(document.createTextNode(s));
+				return div.innerHTML;
+			}
+			function escAttr(s) {
+				return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			}
+
+			// ── Table sort headers ──
 			document.querySelectorAll(".visited-table th[data-sort]").forEach(function (th) {
 				th.addEventListener("click", function () {
 					var col = th.getAttribute("data-sort");
 					if (sortCol === col) { sortAsc = !sortAsc; } else { sortCol = col; sortAsc = true; }
 					document.querySelectorAll(".visited-table th .sort-arrow").forEach(function (s) { s.textContent = ""; });
-					th.querySelector(".sort-arrow").textContent = sortAsc ? " ▲" : " ▼";
+					th.querySelector(".sort-arrow").textContent = sortAsc ? " \u25B2" : " \u25BC";
 					renderTable();
 				});
 			});
 
+			// ── Table row click -> fly to feature ──
 			document.getElementById("visited-tbody").addEventListener("click", function (e) {
-				var row = e.target.closest("tr[data-wid]");
+				var row = e.target.closest("tr[data-key]");
 				if (!row) return;
-				var wid = row.getAttribute("data-wid");
-				if (featureIndex[wid]) {
-					map.flyToBounds(featureIndex[wid].getBounds(), { maxZoom: 11, duration: 1 });
+				var lt = row.getAttribute("data-layer");
+				var key = row.getAttribute("data-key");
+				var idx = featureIndex[lt];
+				if (idx && idx[key]) {
+					var layer = idx[key];
+					if (layer.getBounds) {
+						map.flyToBounds(layer.getBounds(), { maxZoom: 11, duration: 1 });
+					} else if (layer.getLatLng) {
+						map.flyTo(layer.getLatLng(), 11, { duration: 1 });
+					}
 				}
 			});
 
-			function styleFeature(layer, isVisited) {
+			// ── Feature styling ──
+			function styleFeature(layer, layerType, isVisited) {
+				var cfg = LAYERS[layerType];
 				layer.setStyle({
-					fillColor:   isVisited ? PAL_VISITED : PAL_UNVISITED,
+					fillColor:   isVisited ? cfg.colorVisited : cfg.colorUnvisited,
 					fillOpacity: isVisited ? 0.6 : 0.3,
-					color:       isVisited ? PAL_VISITED : PAL_UNVISITED,
+					color:       isVisited ? cfg.colorVisited : cfg.colorUnvisited,
 					weight:      isVisited ? 1.8 : 1,
 					opacity:     isVisited ? 0.9 : 0.6
 				});
 			}
 
-			function toggleVisit(wid) {
-				wid = String(wid);
-				if (visited.has(wid)) { visited.delete(wid); } else { visited.add(wid); }
-				if (featureIndex[wid]) styleFeature(featureIndex[wid], visited.has(wid));
-				saveVisited();
+			function getInitialStyle(layerType, isVisited) {
+				var cfg = LAYERS[layerType];
+				return {
+					fillColor:   isVisited ? cfg.colorVisited : cfg.colorUnvisited,
+					fillOpacity: isVisited ? 0.6 : 0.3,
+					color:       isVisited ? cfg.colorVisited : cfg.colorUnvisited,
+					weight:      isVisited ? 1.8 : 1,
+					opacity:     isVisited ? 0.9 : 0.6
+				};
+			}
+
+			// ── Toggle visit ──
+			function toggleVisit(layerType, key) {
+				key = String(key);
+				var vis = visited[layerType];
+				if (vis.has(key)) { vis.delete(key); } else { vis.add(key); }
+				var idx = featureIndex[layerType];
+				if (idx && idx[key]) styleFeature(idx[key], layerType, vis.has(key));
+				saveVisited(layerType);
 				updateStats();
 				renderTable();
 			}
 
+			// ── Map setup ──
 			var map = L.map("map", { zoomSnap: 0.5 }).setView([39.8, -98.5], 4);
 
 			var baseLayers = {
@@ -573,75 +867,155 @@
 			baseLayers["Light"].addTo(map);
 			L.control.layers(baseLayers, null, { collapsed: true }).addTo(map);
 
-			loadVisited();
+			// ── Load visited data from localStorage ──
+			Object.keys(LAYERS).forEach(function (lt) {
+				loadVisited(lt);
+				featureIndex[lt] = {};
+				featureData[lt] = {};
+			});
 
-			fetch("data/wilderness_areas.geojson")
-				.then(function (r) { return r.json(); })
-				.then(function (data) {
-					geojsonData = data;
-					geojsonLayer = L.geoJSON(data, {
-						style: function (feature) {
-							var wid = String(feature.properties.wid);
-							var isV = visited.has(wid);
-							return {
-								fillColor:   isV ? PAL_VISITED : PAL_UNVISITED,
-								fillOpacity: isV ? 0.6 : 0.3,
-								color:       isV ? PAL_VISITED : PAL_UNVISITED,
-								weight:      isV ? 1.8 : 1,
-								opacity:     isV ? 0.9 : 0.6
-							};
-						},
-						onEachFeature: function (feature, layer) {
-							var p = feature.properties;
-							var wid = String(p.wid);
-							featureIndex[wid] = layer;
-							featureData[wid] = {
-								wid: wid, name: p.name || "Unknown", state: p.state || "",
-								agency: p.agency || "", acres: Number(p.acres) || 0, designated: p.designated || ""
-							};
-							var tip = '<div class="wild-tooltip"><strong>' + p.name + '</strong><br>'
-								+ (p.state || '') + ' · ' + (p.agency || '') + '<br>'
-								+ fmtNum(p.acres) + ' acres'
-								+ (p.designated ? '<br>Designated ' + p.designated : '') + '</div>';
-							layer.bindTooltip(tip, { sticky: true, direction: "top", offset: [0, -8] });
-							layer.on("mouseover", function () {
-								layer.setStyle({ weight: 3, color: "#fff", fillOpacity: 0.65 });
-								layer.bringToFront();
-							});
-							layer.on("mouseout", function () { styleFeature(layer, visited.has(wid)); });
-							layer.on("click", function () { toggleVisit(wid); });
-						}
-					}).addTo(map);
+			// ── Build tooltip ──
+			function buildTooltip(props, layerType) {
+				var html = '<div class="lands-tooltip">';
+				html += '<strong>' + escHtml(props.name || "Unknown") + '</strong><br>';
 
-					allNames = Object.values(featureData)
-						.map(function (d) { return { name: d.name, state: d.state, wid: d.wid }; })
-						.sort(function (a, b) { return a.name.localeCompare(b.name); });
+				if (layerType === "wilderness") {
+					html += escHtml(props.state || "") + ' \u00B7 ' + escHtml(props.agency || "") + '<br>';
+					html += fmtNum(props.acres) + ' acres';
+					if (props.designated) html += '<br>Designated ' + props.designated;
+				} else if (layerType === "nps") {
+					html += escHtml(props.state || "");
+					if (props.designation) html += ' \u00B7 ' + escHtml(props.designation);
+					html += '<br>' + fmtNum(props.acres) + ' acres';
+				} else if (layerType === "national_forest") {
+					if (props.region) html += 'Region ' + escHtml(props.region) + '<br>';
+					html += fmtNum(props.acres) + ' acres';
+				}
 
+				html += '</div>';
+				return html;
+			}
+
+			// ── Load all GeoJSON in parallel ──
+			function loadLayer(layerType) {
+				var cfg = LAYERS[layerType];
+				return fetch(cfg.file)
+					.then(function (r) { return r.json(); })
+					.then(function (data) {
+						var geoLayer = L.geoJSON(data, {
+							style: function (feature) {
+								var key = String(feature.properties[cfg.keyProp]);
+								var isV = visited[layerType].has(key);
+								return getInitialStyle(layerType, isV);
+							},
+							onEachFeature: function (feature, layer) {
+								var p = feature.properties;
+								var key = String(p[cfg.keyProp]);
+
+								featureIndex[layerType][key] = layer;
+								featureData[layerType][key] = {
+									name: p.name || "Unknown",
+									state: p.state || "",
+									region: p.region || "",
+									agency: p.agency || "",
+									acres: Number(p.acres) || 0,
+									designated: p.designated || "",
+									code: p.code || "",
+									designation: p.designation || "",
+									type: layerType
+								};
+
+								var tip = buildTooltip(p, layerType);
+								layer.bindTooltip(tip, { sticky: true, direction: "top", offset: [0, -8] });
+
+								layer.on("mouseover", function () {
+									layer.setStyle({ weight: 3, color: "#fff", fillOpacity: 0.65 });
+									layer.bringToFront();
+								});
+								layer.on("mouseout", function () {
+									styleFeature(layer, layerType, visited[layerType].has(key));
+								});
+								layer.on("click", function () {
+									toggleVisit(layerType, key);
+								});
+							}
+						});
+
+						geojsonLayers[layerType] = geoLayer;
+						if (layerVisible[layerType]) geoLayer.addTo(map);
+
+						return layerType;
+					});
+			}
+
+			Promise.all([
+				loadLayer("wilderness"),
+				loadLayer("nps"),
+				loadLayer("national_forest")
+			]).then(function () {
+				// Build unified search index
+				allSearchItems = [];
+				Object.keys(LAYERS).forEach(function (lt) {
+					var cfg = LAYERS[lt];
+					var data = featureData[lt];
+					Object.keys(data).forEach(function (key) {
+						var d = data[key];
+						allSearchItems.push({
+							name: d.name,
+							state: d.state || d.region || "",
+							key: key,
+							layerType: lt,
+							dotColor: cfg.dotColor
+						});
+					});
+				});
+				allSearchItems.sort(function (a, b) { return a.name.localeCompare(b.name); });
+
+				updateStats();
+				renderTable();
+
+				setTimeout(function () { map.invalidateSize(); }, 200);
+			}).catch(function (err) {
+				console.error("Failed to load public lands data:", err);
+				document.getElementById("map").innerHTML = '<p style="padding:2rem;color:#c0392b;">Failed to load boundary data. Check console for details.</p>';
+			});
+
+			// ── Layer toggle checkboxes ──
+			document.querySelectorAll('.layer-toggle input[type="checkbox"]').forEach(function (cb) {
+				cb.addEventListener("change", function () {
+					var lt = this.getAttribute("data-layer");
+					layerVisible[lt] = this.checked;
+					var geoLayer = geojsonLayers[lt];
+					if (!geoLayer) return;
+					if (this.checked) {
+						geoLayer.addTo(map);
+					} else {
+						map.removeLayer(geoLayer);
+					}
 					updateStats();
 					renderTable();
-
-					// Invalidate map size after layout settles
-					setTimeout(function () { map.invalidateSize(); }, 200);
-				})
-				.catch(function (err) {
-					console.error("Failed to load wilderness data:", err);
-					document.getElementById("map").innerHTML = '<p style="padding:2rem;color:#c0392b;">Failed to load wilderness boundary data.</p>';
 				});
+			});
 
-			// Autocomplete
+			// ── Autocomplete ──
 			var searchInput = document.getElementById("search-input");
-			var acList      = document.getElementById("ac-list");
-			var acIdx       = -1;
+			var acList = document.getElementById("ac-list");
+			var acIdx = -1;
 
 			searchInput.addEventListener("input", function () {
 				var q = this.value.trim().toLowerCase();
 				acIdx = -1;
 				if (q.length < 2) { acList.style.display = "none"; return; }
-				var matches = allNames.filter(function (d) { return d.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 30);
+				var matches = allSearchItems.filter(function (d) {
+					return layerVisible[d.layerType] && d.name.toLowerCase().indexOf(q) !== -1;
+				}).slice(0, 30);
 				if (matches.length === 0) { acList.style.display = "none"; return; }
 				acList.innerHTML = matches.map(function (d, i) {
-					return '<div class="ac-item" data-wid="' + d.wid + '" data-idx="' + i + '">'
-						+ d.name + '<span class="ac-state">' + d.state + '</span></div>';
+					return '<div class="ac-item" data-layer="' + d.layerType + '" data-key="' + escAttr(d.key) + '" data-idx="' + i + '">'
+						+ '<span class="ac-dot" style="background:' + d.dotColor + ';"></span>'
+						+ '<span class="ac-name">' + escHtml(d.name) + '</span>'
+						+ '<span class="ac-state">' + escHtml(d.state) + '</span>'
+						+ '</div>';
 				}).join("");
 				acList.style.display = "block";
 			});
@@ -660,37 +1034,67 @@
 			acList.addEventListener("click", function (e) {
 				var item = e.target.closest(".ac-item");
 				if (!item) return;
-				var wid = item.getAttribute("data-wid");
+				var lt = item.getAttribute("data-layer");
+				var key = item.getAttribute("data-key");
 				searchInput.value = "";
 				acList.style.display = "none";
-				if (!visited.has(wid)) toggleVisit(wid);
-				if (featureIndex[wid]) map.flyToBounds(featureIndex[wid].getBounds(), { maxZoom: 11, duration: 1 });
+				if (!visited[lt].has(key)) toggleVisit(lt, key);
+				var idx = featureIndex[lt];
+				if (idx && idx[key]) {
+					var layer = idx[key];
+					if (layer.getBounds) {
+						map.flyToBounds(layer.getBounds(), { maxZoom: 11, duration: 1 });
+					}
+				}
 			});
 
 			document.addEventListener("click", function (e) {
 				if (!e.target.closest(".search-wrap")) acList.style.display = "none";
 			});
 
-			// Export
+			// ── Export CSV ──
 			document.getElementById("btn-export").addEventListener("click", function (e) {
 				e.preventDefault();
-				if (visited.size === 0) { alert("No areas to export."); return; }
-				var lines = ["name,state,agency,acres,designated,wid"];
-				visited.forEach(function (wid) {
-					var d = featureData[wid];
-					if (d) lines.push(['"' + d.name.replace(/"/g, '""') + '"', '"' + (d.state||"") + '"', '"' + (d.agency||"") + '"', d.acres||"", '"' + (d.designated||"") + '"', d.wid].join(","));
+				var totalVisited = 0;
+				Object.keys(LAYERS).forEach(function (lt) { totalVisited += visited[lt].size; });
+				if (totalVisited === 0) { alert("No areas to export."); return; }
+
+				var lines = ["type,name,state,acres,code,designation,agency,designated,region"];
+				Object.keys(LAYERS).forEach(function (lt) {
+					var vis = visited[lt];
+					var data = featureData[lt];
+					vis.forEach(function (key) {
+						var d = data[key];
+						if (!d) return;
+						lines.push([
+							'"' + lt + '"',
+							'"' + (d.name || "").replace(/"/g, '""') + '"',
+							'"' + (d.state || "").replace(/"/g, '""') + '"',
+							d.acres || "",
+							'"' + (d.code || "") + '"',
+							'"' + (d.designation || "").replace(/"/g, '""') + '"',
+							'"' + (d.agency || "").replace(/"/g, '""') + '"',
+							'"' + (d.designated || "") + '"',
+							'"' + (d.region || "") + '"'
+						].join(","));
+					});
 				});
+
 				var blob = new Blob([lines.join("\n")], { type: "text/csv" });
 				var a = document.createElement("a");
 				a.href = URL.createObjectURL(blob);
-				a.download = "wilderness_visits_" + new Date().toISOString().slice(0, 10) + ".csv";
+				a.download = "public_lands_visits_" + new Date().toISOString().slice(0, 10) + ".csv";
 				a.click();
 				URL.revokeObjectURL(a.href);
 			});
 
-			// Import
+			// ── Import CSV ──
 			var importInput = document.getElementById("import-input");
-			document.getElementById("btn-import").addEventListener("click", function (e) { e.preventDefault(); importInput.click(); });
+			document.getElementById("btn-import").addEventListener("click", function (e) {
+				e.preventDefault();
+				importInput.click();
+			});
+
 			importInput.addEventListener("change", function () {
 				var file = this.files[0];
 				if (!file) return;
@@ -698,41 +1102,126 @@
 				reader.onload = function (ev) {
 					var lines = ev.target.result.split(/\r?\n/).filter(function (l) { return l.trim(); });
 					if (lines.length < 2) { alert("CSV appears empty."); return; }
-					var cols = lines[0].toLowerCase().split(",");
-					var widIdx = -1, nameIdx = -1;
-					cols.forEach(function (c, i) { c = c.replace(/"/g,"").trim(); if (c==="wid") widIdx=i; if (c==="name") nameIdx=i; });
+
+					// Parse header
+					var header = parseCSVLine(lines[0]);
+					var colMap = {};
+					header.forEach(function (c, i) { colMap[c.toLowerCase().trim()] = i; });
+
+					var typeIdx = colMap["type"] !== undefined ? colMap["type"] : -1;
+					var nameIdx = colMap["name"] !== undefined ? colMap["name"] : -1;
+					var codeIdx = colMap["code"] !== undefined ? colMap["code"] : -1;
+
 					var imported = 0;
+
 					for (var i = 1; i < lines.length; i++) {
-						var vals = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-						if (!vals) continue;
-						vals = vals.map(function (v) { return v.replace(/^"|"$/g,"").trim(); });
-						var wid = null;
-						if (widIdx >= 0 && vals[widIdx]) wid = String(vals[widIdx]);
-						else if (nameIdx >= 0 && vals[nameIdx]) {
-							var nm = vals[nameIdx].toLowerCase();
-							for (var w in featureData) { if (featureData[w].name.toLowerCase() === nm) { wid = w; break; } }
+						var vals = parseCSVLine(lines[i]);
+						if (!vals || vals.length === 0) continue;
+
+						var rowType = typeIdx >= 0 ? (vals[typeIdx] || "").trim() : "";
+						var rowName = nameIdx >= 0 ? (vals[nameIdx] || "").trim() : "";
+						var rowCode = codeIdx >= 0 ? (vals[codeIdx] || "").trim() : "";
+
+						// Determine layer type
+						var lt = null;
+						if (rowType && LAYERS[rowType]) {
+							lt = rowType;
+						} else {
+							// Try to guess from data
+							if (rowCode) lt = "nps";
+							else if (rowName) {
+								// Try wilderness first, then national_forest
+								if (findKeyInLayer("wilderness", rowName)) lt = "wilderness";
+								else if (findKeyInLayer("national_forest", rowName)) lt = "national_forest";
+							}
 						}
-						if (wid && featureData[wid] && !visited.has(wid)) {
-							visited.add(wid);
-							if (featureIndex[wid]) styleFeature(featureIndex[wid], true);
+						if (!lt) continue;
+
+						// Determine key
+						var key = null;
+						if (lt === "nps" && rowCode) {
+							key = rowCode;
+						} else if (rowName) {
+							key = findKeyInLayer(lt, rowName);
+						}
+
+						if (key && featureData[lt][key] && !visited[lt].has(key)) {
+							visited[lt].add(key);
+							if (featureIndex[lt][key]) styleFeature(featureIndex[lt][key], lt, true);
 							imported++;
 						}
 					}
-					saveVisited(); updateStats(); renderTable();
-					alert("Imported " + imported + " wilderness area(s).");
+
+					saveAllVisited();
+					updateStats();
+					renderTable();
+					alert("Imported " + imported + " area(s).");
 				};
 				reader.readAsText(file);
 				this.value = "";
 			});
 
-			// Clear
+			function findKeyInLayer(lt, name) {
+				var data = featureData[lt];
+				var nameLower = name.toLowerCase();
+				for (var k in data) {
+					if (data[k].name.toLowerCase() === nameLower) return k;
+				}
+				// Also check if the name itself is a key
+				if (data[name]) return name;
+				return null;
+			}
+
+			function parseCSVLine(line) {
+				var result = [];
+				var current = "";
+				var inQuotes = false;
+				for (var i = 0; i < line.length; i++) {
+					var ch = line[i];
+					if (inQuotes) {
+						if (ch === '"') {
+							if (i + 1 < line.length && line[i + 1] === '"') {
+								current += '"';
+								i++;
+							} else {
+								inQuotes = false;
+							}
+						} else {
+							current += ch;
+						}
+					} else {
+						if (ch === '"') {
+							inQuotes = true;
+						} else if (ch === ',') {
+							result.push(current);
+							current = "";
+						} else {
+							current += ch;
+						}
+					}
+				}
+				result.push(current);
+				return result;
+			}
+
+			// ── Clear all ──
 			document.getElementById("btn-clear").addEventListener("click", function (e) {
 				e.preventDefault();
-				if (visited.size === 0) return;
-				if (!confirm("Clear all " + visited.size + " visited areas?")) return;
-				visited.forEach(function (wid) { if (featureIndex[wid]) styleFeature(featureIndex[wid], false); });
-				visited.clear();
-				saveVisited(); updateStats(); renderTable();
+				var totalVisited = 0;
+				Object.keys(LAYERS).forEach(function (lt) { totalVisited += visited[lt].size; });
+				if (totalVisited === 0) return;
+				if (!confirm("Clear all " + totalVisited + " visited areas across all layers?")) return;
+
+				Object.keys(LAYERS).forEach(function (lt) {
+					visited[lt].forEach(function (key) {
+						if (featureIndex[lt][key]) styleFeature(featureIndex[lt][key], lt, false);
+					});
+					visited[lt].clear();
+				});
+
+				saveAllVisited();
+				updateStats();
+				renderTable();
 			});
 
 		})();
