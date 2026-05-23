@@ -45,6 +45,7 @@ ALBUMS = {
     "wildlife":   "72177720333803341",
     "macro":      "72177720333800335",
     "landscapes": "72177720333827079",
+    "flora":      "72177720333815438",
 }
 
 # Number of photos to pull per album (max 500)
