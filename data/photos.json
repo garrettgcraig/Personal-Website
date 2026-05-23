@@ -520,5 +520,59 @@
         "height": 1067
       }
     ]
+  },
+  "wildlife": {
+    "album_title": "Wildlife",
+    "album_description": "",
+    "photos": [
+      {
+        "id": "54671945286",
+        "title": "",
+        "description": "",
+        "date_taken": "2024-07-26 10:10:42",
+        "tags": "",
+        "display_url": "https://live.staticflickr.com/65535/54671945286_0bfab834c8_h.jpg",
+        "thumb_url": "https://live.staticflickr.com/65535/54671945286_dfa082ba05_z.jpg",
+        "flickr_url": "https://www.flickr.com/photos/38099003@N00/54671945286",
+        "width": 1600,
+        "height": 1067
+      }
+    ]
+  },
+  "macro": {
+    "album_title": "Macro",
+    "album_description": "",
+    "photos": [
+      {
+        "id": "54675737237",
+        "title": "",
+        "description": "",
+        "date_taken": "2024-09-02 17:17:12",
+        "tags": "",
+        "display_url": "https://live.staticflickr.com/65535/54675737237_193bc96eb1_h.jpg",
+        "thumb_url": "https://live.staticflickr.com/65535/54675737237_7fb4f0f43b_z.jpg",
+        "flickr_url": "https://www.flickr.com/photos/38099003@N00/54675737237",
+        "width": 1600,
+        "height": 1067
+      }
+    ]
+  },
+  "landscapes": {
+    "album_title": "Landscapes",
+    "album_description": "",
+    "photos": [
+      {
+        "id": "54670822814",
+        "title": "",
+        "description": "",
+        "date_taken": "2024-08-30 22:35:44",
+        "tags": "",
+        "display_url": "https://live.staticflickr.com/65535/54670822814_b270784b7b_h.jpg",
+        "thumb_url": "https://live.staticflickr.com/65535/54670822814_756c4f5995_z.jpg",
+        "flickr_url": "https://www.flickr.com/photos/38099003@N00/54670822814",
+        "width": 1067,
+        "height": 1600
+      }
+    ]
   }
 }
