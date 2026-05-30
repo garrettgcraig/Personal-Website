@@ -1,0 +1,282 @@
+/* ════════════════════════════════════════════════════════════════
+   Trail Log — styling for the index page (cards) and entry pages
+   (prose, maps, photos, galleries). Dark mode mirrors darkmode.css
+   by overriding via `body.dark-mode .class { … }`.
+   Accent: #47D3E5 · Tag pills: #e8f5e9 / #2c6e49 (light)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Entry page: readable prose ────────────────────────────────── */
+.trail-entry-header {
+	max-width: 50rem;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.trail-entry-header h1 {
+	margin-bottom: 0.5rem;
+}
+
+.trail-meta {
+	color: #777;
+	font-size: 0.9rem;
+	margin: 0;
+}
+
+.trail-entry {
+	max-width: 50rem;
+	margin: 2rem auto 0;
+	text-align: left;
+	line-height: 1.75;
+}
+
+.trail-entry h2 {
+	margin-top: 2.5rem;
+	margin-bottom: 1rem;
+	padding-top: 1rem;
+	border-top: 2px solid #47D3E5;
+	color: #2a2a2a;
+}
+
+.trail-entry p {
+	margin: 0 0 1.25rem;
+}
+
+.trail-entry a {
+	color: #2c8fa0;
+	border-bottom: 1px dotted #47D3E5;
+	text-decoration: none;
+}
+
+.trail-entry a:hover {
+	color: #47D3E5;
+}
+
+/* ── Maps ──────────────────────────────────────────────────────── */
+.trail-map {
+	height: 400px;
+	width: 100%;
+	margin: 2rem 0 0 0;
+	border-radius: 8px 8px 0 0;
+}
+
+.leaflet-container {
+	font-family: "Source Sans Pro", Helvetica, sans-serif;
+}
+
+/* ── Elevation profile (rendered beneath each map) ─────────────── */
+.trail-elevation {
+	margin: 0 0 2rem 0;
+	padding: 0.75rem 1rem 1rem;
+	background: rgba(0, 0, 0, 0.03);
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	border-top: none;
+	border-radius: 0 0 8px 8px;
+}
+
+.trail-elev-stats {
+	display: flex;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	font-size: 0.8rem;
+	letter-spacing: 0.05rem;
+	text-transform: uppercase;
+	color: #6f7785;
+	margin-bottom: 0.4rem;
+}
+
+.trail-elev-svg {
+	display: block;
+	width: 100%;
+	height: 110px;
+}
+
+body.dark-mode .trail-elevation {
+	background: rgba(255, 255, 255, 0.04);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .trail-elev-stats {
+	color: #aab2c0;
+}
+
+/* iNaturalist marker dots */
+.inat-dot span {
+	display: block;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 1px solid #ffffff;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+/* iNaturalist marker popups */
+.trail-inat-popup {
+	text-align: center;
+	font-size: 0.85rem;
+	line-height: 1.4;
+}
+.trail-inat-popup em {
+	color: #6f7785;
+}
+
+/* ── Photos & galleries ────────────────────────────────────────── */
+figure.trail-photo {
+	margin: 2rem 0;
+	text-align: center;
+}
+
+figure.trail-photo img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+	display: block;
+	margin: 0 auto;
+}
+
+figure.trail-photo figcaption {
+	color: #777;
+	font-size: 0.85rem;
+	text-align: center;
+	margin-top: 0.6rem;
+}
+
+.trail-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin: 2rem 0;
+}
+
+.trail-gallery img {
+	flex: 1 1 200px;
+	max-width: 100%;
+	height: 220px;
+	object-fit: cover;
+	border-radius: 8px;
+	display: block;
+}
+
+/* ── Index page: card grid ─────────────────────────────────────── */
+.trail-grid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 2rem;
+	margin-top: 2rem;
+}
+
+.trail-card {
+	display: block;
+	background: #fff;
+	border-radius: 10px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	width: 340px;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+	text-align: left;
+	color: inherit;
+	text-decoration: none;
+}
+
+.trail-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.trail-card .card-image {
+	width: 100%;
+	height: 200px;
+	object-fit: cover;
+	display: block;
+}
+
+.trail-card .card-body {
+	padding: 1.5rem;
+}
+
+.trail-card .card-body h3 {
+	margin: 0 0 0.4rem;
+	font-size: 1.15rem;
+}
+
+.trail-card-meta {
+	font-size: 0.8rem;
+	color: #888;
+	margin: 0 0 0.75rem;
+}
+
+.trail-card .card-body p {
+	font-size: 0.9rem;
+	color: #666;
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
+
+.trail-card-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+
+.trail-card-tags span {
+	font-size: 0.7rem;
+	background: #e8f5e9;
+	color: #2c6e49;
+	padding: 0.2rem 0.6rem;
+	border-radius: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.trail-empty {
+	margin-top: 2rem;
+	color: #777;
+	font-style: italic;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Dark mode overrides
+   ════════════════════════════════════════════════════════════════ */
+body.dark-mode .trail-meta,
+body.dark-mode figure.trail-photo figcaption,
+body.dark-mode .trail-card-meta,
+body.dark-mode .trail-empty {
+	color: #aaa !important;
+}
+
+body.dark-mode .trail-entry h2 {
+	color: #ffffff !important;
+	border-top-color: #47D3E5 !important;
+}
+
+body.dark-mode .trail-entry a {
+	color: #47D3E5 !important;
+	border-bottom-color: rgba(71, 211, 229, 0.5);
+}
+
+body.dark-mode .trail-entry a:hover {
+	color: #7fe3f0 !important;
+}
+
+body.dark-mode .trail-map {
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .trail-card {
+	background: #252540 !important;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .trail-card:hover {
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode .trail-card .card-body p {
+	color: #bbb !important;
+}
+
+body.dark-mode .trail-card-tags span {
+	background: rgba(71, 211, 229, 0.15) !important;
+	color: #47D3E5 !important;
+}
