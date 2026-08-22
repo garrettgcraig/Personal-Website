@@ -1,0 +1,4 @@
+# SeedScout was renamed to SeedFinder (the old name collides with a fertility
+# service). Keep shared links working.
+/seedscout/*   /seedfinder/:splat   301
+/seedscout     /seedfinder/         301
