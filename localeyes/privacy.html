@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>LocalEyes Privacy Policy - Garrett G. Craig</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="description" content="How the LocalEyes iPhone app handles your data." />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<link rel="stylesheet" href="../assets/css/darkmode.css" />
+		<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+		<script src="../assets/js/darkmode.js"></script>
+		<style>
+			.doc { max-width: 46rem; margin: 0 auto; text-align: left; }
+			.doc h2 { margin-top: 2.5rem; }
+			.doc ul { margin-bottom: 1.5rem; }
+			.doc .updated { font-size: 0.9rem; opacity: 0.75; }
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Dark mode toggle -->
+		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
+			<span class="dm-toggle-moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg></span>
+			<span class="dm-toggle-sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg></span>
+		</button>
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="divided">
+
+					<section class="wrapper style1">
+						<div class="inner doc">
+							<h1><strong>LocalEyes Privacy Policy</strong></h1>
+							<p class="updated">Effective September 25, 2026</p>
+							<p>LocalEyes is an iPhone app made by Garrett Craig. It has no accounts, no advertising or analytics SDKs, and no tracking. This policy explains exactly what the app and its lesson service handle.</p>
+
+							<h2>On your phone</h2>
+							<p>Your progress stays on your device: which species you've practiced, your answers and review schedule, your Fieldbook, your settings, and your chosen place. You can delete it any time in Settings &rarr; <strong>Delete local progress</strong>, or by deleting the app. iOS device backups may include it, following your iOS settings.</p>
+
+							<h2>Sent to the LocalEyes lesson service</h2>
+							<p>To build a lesson, the app sends the following to the LocalEyes lesson service at api.garrettgcraig.com:</p>
+							<ul>
+								<li>the center of your chosen place, rounded to about 1&nbsp;km for searched places or about 11&nbsp;km for approximate location, and your search radius;</li>
+								<li>the species group and whether you chose native or introduced species;</li>
+								<li>which species are due for review and which of their photos you saw recently, so lessons can repeat the right species with new photos;</li>
+								<li>your answers, requests for a different photo, and photo reports.</li>
+							</ul>
+							<p>None of this includes your name, an account, a device or advertising identifier, or your precise location. The service does not log IP addresses, answers or locations. To limit abuse it keeps short-lived request counts in memory under a one-way hashed form of your network address; these are never written to disk. Lesson questions and area snapshots are deleted after 24 hours. Photo reports are kept so reported photos stay hidden.</p>
+							<p>To answer a lesson request, the service asks iNaturalist for species recorded in the rounded area. Those requests come from the service, not your phone, and contain no information about you.</p>
+							<p>The service runs on <a href="https://fly.io/legal/privacy-policy">Fly.io</a>, which carries its network traffic under its own privacy policy.</p>
+
+							<h2>Location</h2>
+							<p>Location is optional. The app asks for it only when you tap <strong>Use approximate location</strong>. It rounds the result to a coarse center and discards the precise fix, and it never tracks you in the background. You can always choose a place by name instead.</p>
+
+							<h2>Apple services</h2>
+							<p>Searching for a place sends your search text to Apple Maps. The app asks Apple for the nearest town name for the coarse center of your place, and for the state of places saved by earlier versions. Apple handles these under its own privacy policy.</p>
+
+							<h2>Photos</h2>
+							<p>Quiz photos load through the lesson service. Opening a photo full screen requests a larger copy the same way. Credit and source links open iNaturalist or Creative Commons in your browser.</p>
+
+							<h2>Field guide links</h2>
+							<p>For places in the United States, the Fieldbook, species pages and some lesson summaries show a link to a Bookshop.org list of field guides for your state. The app uses your chosen place's state to pick the list. Nothing is sent to Bookshop.org unless you tap a link. The lists belong to LocalEyes's Nature Books shop, so Bookshop.org credits purchases to that shop, and LocalEyes earns a commission. Bookshop.org handles your visit under its own privacy policy.</p>
+
+							<h2>Notifications</h2>
+							<p>After your first lesson you can turn on a daily reminder. It is scheduled on your phone; LocalEyes has no push notification server.</p>
+
+							<h2>Children</h2>
+							<p>LocalEyes is not directed to children under 13 and does not knowingly collect personal information from them. It has no accounts and collects no names or contact details from anyone.</p>
+
+							<h2>Changes</h2>
+							<p>If this policy changes, the effective date above will change, and significant changes will be noted in the app's release notes.</p>
+
+							<h2>Contact</h2>
+							<p>Garrett Craig &middot; <a href="mailto:garrettgcraig@gmail.com?subject=LocalEyes%20privacy">garrettgcraig@gmail.com</a> &middot; <a href="index.html">LocalEyes support</a></p>
+						</div>
+					</section>
+
+				<!-- Footer -->
+					<footer class="wrapper style1 align-center">
+						<div class="inner">
+							<ul class="icons">
+								<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+								<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
+							</ul>
+							<p>&copy; Garrett Craig. All rights reserved.</p>
+						</div>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../assets/js/jquery.min.js"></script>
+			<script src="../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../assets/js/browser.min.js"></script>
+			<script src="../assets/js/breakpoints.min.js"></script>
+			<script src="../assets/js/util.js"></script>
+			<script src="../assets/js/main.js"></script>
+
+	</body>
+</html>
