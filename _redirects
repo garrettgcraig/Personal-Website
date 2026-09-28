@@ -2,3 +2,8 @@
 # service). Keep shared links working.
 /seedscout/*   /seedfinder/:splat   301
 /seedscout     /seedfinder/         301
+
+# LocalEyes was renamed to KnowKi (LocalEyes is a production company). Keep old links, and
+# links from earlier app builds, working.
+/localeyes/*   /knowki/:splat   301
+/localeyes     /knowki/         301
