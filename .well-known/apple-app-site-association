@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["3B6325BT3R.com.garrettgcraig.knowki", "3B6325BT3R.com.garrettgcraig.naturequiz.dev"],
+        "components": [
+          { "/": "/knowki/daily", "comment": "Shared KnowKi Daily results open the Daily in the app" },
+          { "/": "/knowki/daily/*" }
+        ]
+      }
+    ]
+  }
+}
