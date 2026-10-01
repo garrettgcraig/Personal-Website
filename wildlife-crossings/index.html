@@ -156,6 +156,29 @@ section.block { padding-block: 56px; border-top: 1px solid var(--rule); }
 .map-pin { cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
 .map-pin.active .pin { background: #fff; }
 .ex-card h3 { font-size: 20px; margin: 10px 0 6px; }
+:root { --c-roadkill: #e8492e; --c-connectivity: #2f7fbf; --c-habitat: #3f9b4f; --c-protected: #8a6bbf; --c-traffic: #c98a12; --c-collision: #4d5a73; }
+.comp-head { font-size: 22px; margin: 40px 0 6px; }
+.comp-lede { max-width: 760px; color: var(--ink-2); margin: 0 0 18px; }
+.comps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.comp { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; }
+.comp header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.comp h4 { margin: 0; flex: 1; font: 700 16px var(--font-display); }
+.comp-swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.comp-w { font: 600 14px var(--font-data); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 6px; }
+.comp-mult { border-style: dashed; }
+.comp dl { margin: 0; font-size: 14.5px; line-height: 1.45; }
+.comp dt { font: 600 12px var(--font-display); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
+.comp dd { margin: 2px 0 0; color: var(--ink-2); }
+.bd { margin: 4px 0 12px; font: 13px var(--font-display); }
+.bd-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) 30px 38px; gap: 6px; align-items: center; margin: 3px 0; }
+.bd-row span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bd-track { height: 8px; background: var(--rule); border-radius: 4px; overflow: hidden; }
+.bd-track i { display: block; height: 100%; border-radius: 4px; }
+.bd-row b { text-align: right; font-variant-numeric: tabular-nums; }
+.bd-row em { text-align: right; font-style: normal; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.bd-head { color: var(--ink-3); font-size: 12px; }
+.bd-foot { margin-top: 6px; color: var(--ink-2); }
+.pop .bd { --rule: #e3e6e0; --ink-3: #75807a; --ink-2: #4a5550; }
 .ex-card .what { font-size: 15px; color: var(--ink-2); margin: 0 0 12px; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; margin: 10px 0 12px; }
 .facts div { background: var(--surface); padding: 7px 9px; }
@@ -242,11 +265,11 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       <aside>
         <div class="callout">
           <h3>Room to Roam roadkill survey</h3>
-          <p>Volunteers with ForestWatch recorded dead and live animals along county roads through a Survey123 form from July 2025 through September 2026. After cleaning, 254 records fall within 10 m of a road in the county.</p>
+          <p>Volunteers with ForestWatch recorded dead and live animals along county roads through a Survey123 form starting in July 2025. This analysis uses the records collected in 2025; after cleaning, 187 of them fall within 10 m of a road in the county.</p>
         </div>
         <div class="callout">
           <h3>iNaturalist</h3>
-          <p>421 more road-killed animals come from three iNaturalist projects, each a photo record with a location accurate to 100 m or better. Many of their photos appear on the map below.</p>
+          <p>421 more road-killed animals, from all years through 2026, come from three iNaturalist projects, each a photo record with a location accurate to 100 m or better. Many of their photos appear on the map below.</p>
         </div>
         <div class="callout">
           <h3>Already underway at Gaviota Pass</h3>
@@ -262,9 +285,9 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       <h2>State Route 154 tops the list, and Gaviota Pass checks out</h2>
       <div class="grid-2">
         <div class="prose">
-          <p>The highest-need stretches cluster on <strong>SR 154 between San Marcos Pass and Lake Cachuma</strong> (postmiles 12 to 21), where continuous oak woodland and chaparral meet the road on both sides, CDFW already lists the route as a movement barrier (W165), and the survey recorded more roadkill than anywhere else in the county. Its existing culverts are tall enough for bobcats, foxes and raccoons, so fencing that funnels animals to them is the quickest gain.</p>
-          <p><strong>US 101 at Gaviota Pass</strong> ranks in the top tier too: 11 of its 21 segments land in the top decile, carried mostly by habitat and connectivity because only six roadkill records fall there. That matches the site Caltrans and CDFW chose independently.</p>
-          <p>Other strong candidates are <strong>SR 1 between Las Cruces and Lompoc</strong> (postmiles 4.7 to 6.7, ten records including five deer) and <strong>US 101 around Los Alamos</strong> (postmiles 70 to 76), where fast traffic and continuous rangeland combine. Click a row to see it on the map.</p>
+          <p>The highest-need stretches cluster on <strong>SR 154 between San Marcos Pass and Lake Cachuma</strong> (postmiles 12 to 21), which holds three of the five highest-ranked zones. Continuous oak woodland and chaparral meet the road on both sides, CDFW already lists the route as a movement barrier (W165), and more roadkill records fall there than in any other zone. Its existing culverts are tall enough for bobcats, foxes and raccoons, so fencing that funnels animals to them is the quickest gain.</p>
+          <p><strong>US 101 at Gaviota Pass</strong> ranks in the top tier too: 10 of its 21 segments land in the top decile (median: 89th percentile), carried mostly by habitat and connectivity because only four roadkill records fall there. That matches the site Caltrans and CDFW chose independently.</p>
+          <p>Other strong candidates are <strong>US 101 between Los Olivos and Orcutt</strong> (postmiles 62 to 79, five zones), where more than 30,000 vehicles a day pass through oak woodland and rangeland, and <strong>SR 1 north of Lompoc</strong> (postmiles 23 to 33), where the highway runs through cuts suited to overpasses on two CDFW-listed barriers (W048, W049). Click a row to see it on the map.</p>
         </div>
         <div>
           <p class="chart-title">Top candidate zones</p>
@@ -299,7 +322,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
           </div>
           <div class="callout">
             <h3>How stable is the ranking?</h3>
-            <p>The top zones hold under five alternative weightings of the score, under a version that adds roadside barriers for the surveyed routes, and when steep terrain is allowed to discount sites animals can't easily reach. SR 154, Gaviota Pass and US 101 near Los Alamos stay near the top in every version.</p>
+            <p>Under six alternative weightings of the score, 69% to 89% of the top-decile segments stay in the top decile. A separate ranking that adds roadside barriers for the surveyed routes agrees closely with the main one (rank correlation 0.85), and SR 154 and Gaviota Pass lead both.</p>
           </div>
         </div>
       </div>
@@ -318,7 +341,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
         <li><h3>Inventory the structures</h3><p>Join Caltrans' 19,691 culvert records to their end treatments, keep the 633 county culverts open at both ends under the highway, and size them for wildlife by height and openness (area ÷ length).</p></li>
         <li><h3>Describe each segment</h3><p>Traffic and lanes from FHWA's 2024 HPMS, speed limits from HPMS and OpenStreetMap, curvature and grade from the centerline, embankment and side slopes from 10 m USGS elevation, and habitat and protected land on each side.</p></li>
         <li><h3>Find roadkill hotspots</h3><p>Count records within 1 km of each segment and compare with 999 random scatterings of the same records along the network.</p></li>
-        <li><h3>Score need</h3><p>Weighted percentile ranks of six components, discounted where steep terrain keeps animals off the road (except where a creek channel funnels them to a structure).</p></li>
+        <li><h3>Score need</h3><p>Weighted percentile ranks of six components, discounted where steep terrain keeps animals off the road (except where a creek channel funnels them to a structure). Each component is described below.</p></li>
         <li><h3>Match a solution</h3><p>Choose retrofit, upsize, underpass or overpass from what already crosses the road and whether it sits on fill or in a cut, then merge adjacent top segments into zones.</p></li>
       </ol>
       <div class="grid-2">
@@ -330,12 +353,30 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
         <div>
           <p class="chart-title">Caveats</p>
           <ul class="caveats">
-            <li>Survey effort is treated as equal across roads, though volunteers drive some routes far more than others.</li>
+            <li>Survey effort is treated as equal across roads, though volunteers drive some routes far more than others. Only the survey's 2025 records are used; iNaturalist records from every year are included.</li>
             <li>Roadside barriers were mapped from Street View on parts of US 101, SR 154, SR 246 and SR 1 only; they shape recommendations and a separate ranking, not the main score.</li>
-            <li>The collision component targets nighttime conditions because that is when most wildlife-vehicle collisions occur (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022</a>). The night stopping-sight measure uses standard assumptions (70 m low-beam reach, 6 m roadside clearance) rather than measured sight lines.</li>
+            <li>The collision component targets nighttime conditions because wildlife-vehicle collisions are concentrated after dark (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022</a>). The night stopping-sight measure uses standard assumptions (70 m low-beam reach, 6 m roadside clearance) rather than measured sight lines.</li>
             <li>Each candidate zone needs a site visit before design: what the data shows as a culvert or bridge may differ on the ground.</li>
           </ul>
         </div>
+      </div>
+      <h3 class="comp-head" id="components">What goes into the need score</h3>
+      <p class="comp-lede">Each component is converted to a percentile rank across the county's 953 highway segments, so 80 means a segment scores higher than 80% of segments on that measure. The weighted percentiles add up to a score from 0 to 100, which terrain access can reduce. Select any highway segment on the map, or open an example, to see its breakdown.</p>
+      <div class="comps">
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-roadkill)"></span><h4>Roadkill hotspots</h4><span class="comp-w">25%</span></header>
+            <dl><dt>Measures</dt><dd>Dead animals within 1 km of the segment, counting groups that use crossings (mammals, reptiles and amphibians; birds and unidentified animals left out).</dd><dt>How it's scored</dt><dd>Monte Carlo hotspot test: the same records are scattered at random along the network 999 times. A segment whose count beats the 95th percentile of those scatterings is a hotspot, and its score is how far it exceeds that line. Other segments score by raw count, below every hotspot.</dd><dt>Source</dt><dd>Room to Roam survey (2025 records) and iNaturalist (all years).</dd><dt>Why it matters</dt><dd>The most direct evidence of where animals try to cross and fail. Its weakness is effort: places people drive and report more look worse.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-connectivity)"></span><h4>Connectivity priority</h4><span class="comp-w">25%</span></header>
+            <dl><dt>Measures</dt><dd>How important the landscape around the road is for wildlife movement statewide.</dd><dt>How it's scored</dt><dd>The larger of the CDFW connectivity rank (1–5, divided by 5) and a CDFW priority-barrier score (Top Priority 1.0, Priority 0.75, Barrier 0.5), plus 0.1 inside a big-game priority area, capped at 1.</dd><dt>Source</dt><dd>CDFW Areas of Conservation Emphasis terrestrial connectivity (ds2734), priority wildlife movement barriers (ds2867) and big-game priority areas (ds2889).</dd><dt>Why it matters</dt><dd>Independent of anyone's survey effort, so it catches important corridors where few people report roadkill, like Gaviota Pass.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-habitat)"></span><h4>Habitat on both sides</h4><span class="comp-w">20%</span></header>
+            <dl><dt>Measures</dt><dd>Share of natural land cover in a 300 m strip on each side of the road, taking the weaker side.</dd><dt>How it's scored</dt><dd>Tree, shrub, grassland, bare ground and wetland count as natural; cropland, buildings and open water do not. The lower of the two sides is ranked.</dd><dt>Source</dt><dd>ESA WorldCover 2021 (10 m).</dd><dt>Why it matters</dt><dd>A crossing only helps where there is habitat at both ends. Using the weaker side keeps a road beside a subdivision from scoring well because of the hills opposite.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-protected)"></span><h4>Protected land</h4><span class="comp-w">10%</span></header>
+            <dl><dt>Measures</dt><dd>Share of protected land in the same 300 m strips, weaker side.</dd><dt>How it's scored</dt><dd>Ranked like habitat. Most segments have no protected land on at least one side, and tied segments share a rank, so a value of zero still scores about the 45th percentile.</dd><dt>Source</dt><dd>California Protected Areas Database (CPAD 2024a).</dd><dt>Why it matters</dt><dd>A crossing is a decades-long investment. Protected land at both ends means the habitat it connects is likely to stay.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-traffic)"></span><h4>Traffic volume</h4><span class="comp-w">10%</span></header>
+            <dl><dt>Measures</dt><dd>Average annual daily traffic (AADT).</dd><dt>How it's scored</dt><dd>Ranked on the logarithm of AADT, so going from 2,000 to 20,000 vehicles a day counts as much as 20,000 to 200,000.</dd><dt>Source</dt><dd>FHWA Highway Performance Monitoring System 2024.</dd><dt>Why it matters</dt><dd>More traffic makes a road a stronger barrier and raises collision risk, though the effect levels off: a road busy enough to turn most animals back can't get much worse.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-collision)"></span><h4>Night stopping risk</h4><span class="comp-w">10%</span></header>
+            <dl><dt>Measures</dt><dd>How much farther a driver needs to stop at the speed limit than they can see at night.</dd><dt>How it's scored</dt><dd>AASHTO stopping distance at the segment's speed (2.5 s reaction, 3.4 m/s² braking) minus the visible distance, which is the shorter of low-beam reach (about 70 m for a dark, animal-sized object) and the sight line around curves. Averaged along the segment.</dd><dt>Source</dt><dd>Speed limits from HPMS and OpenStreetMap (via Overture Maps); curvature from the Caltrans centerline.</dd><dt>Why it matters</dt><dd>Wildlife-vehicle collisions are concentrated after dark, when headlights limit warning. Roadkill per km rises from 0.34 to 0.51 between the lowest and highest thirds of this measure.</dd></dl></article>
+          <article class="comp comp-mult"><header><span class="comp-swatch" style="background:var(--ink-3)"></span><h4>Terrain access</h4><span class="comp-w">× 0.5–1</span></header>
+            <dl><dt>Measures</dt><dd>Share of the steeper roadside strip (30–150 m from the road) with slopes over 35°.</dd><dt>How it's scored</dt><dd>The weighted sum is multiplied by 0.5 + 0.5 × (1 − steep share), so a segment walled in by cliffs keeps at most half its score. The discount is waived where a waterway bridge or a culvert at least 0.9 m tall carries a drainage under the road.</dd><dt>Source</dt><dd>USGS 3DEP 1/3 arc-second elevation (about 10 m).</dd><dt>Why it matters</dt><dd>Animals rarely climb cliffs to reach a road, but canyon walls funnel them along creeks to the structures beneath it, as at Gaviota Pass.</dd></dl></article>
       </div>
       <div class="table-scroll" style="margin-top:28px">
         <table class="sources">
@@ -410,7 +451,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     el.innerHTML = rows.map((r, i) => `
       <div class="row" data-i="${i}">
         <div class="label">${r.label}</div>
-        <div class="track"><div class="fill${r.muted ? " muted" : ""}" style="width:${(r.value / m * 100).toFixed(1)}%"></div></div>
+        <div class="track"><div class="fill${r.muted ? " muted" : ""}" style="width:${(r.value / m * 100).toFixed(1)}%${r.color ? `;background:${r.color}` : ""}"></div></div>
         <div class="val">${fmt(r.value, digits)}${unit}</div>
       </div>`).join("");
     el.querySelectorAll(".row").forEach(row => {
@@ -467,9 +508,9 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       tb.appendChild(tr);
     });
 
-    const W = S.weights;
+    const W = S.weights; if (W) WTS = W;
     const wNames = { roadkill: "Roadkill hotspots", connectivity: "Connectivity priority", habitat: "Habitat both sides", protected: "Protected land", traffic: "Traffic volume", collision: "Night stopping risk" };
-    barChart($("#chart-weights"), Object.entries(W).map(([k, v]) => ({ label: wNames[k], value: v * 100, tip: `${wNames[k]}: ${Math.round(v * 100)}% of the score` })), { unit: "%" });
+    barChart($("#chart-weights"), Object.entries(W).map(([k, v]) => ({ label: wNames[k], value: v * 100, color: `var(--c-${k})`, tip: `${wNames[k]}: ${Math.round(v * 100)}% of the score` })), { unit: "%" });
   }).catch(err => console.error(err));
 
   // ---------- Map ----------
@@ -636,6 +677,21 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     bindPopups();
   });
 
+  // ---------- Score breakdown ----------
+  let WTS = { roadkill: 0.25, connectivity: 0.25, habitat: 0.2, protected: 0.1, traffic: 0.1, collision: 0.1 };
+  const COMP_NAMES = { roadkill: "Roadkill", connectivity: "Connectivity", habitat: "Habitat", protected: "Protected land", traffic: "Traffic", collision: "Night stopping" };
+  function breakdown(p) {
+    if (p.c_roadkill == null) return "";
+    let sum = 0;
+    const rows = Object.keys(WTS).map(k => {
+      const c = +p[`c_${k}`] || 0, pts = WTS[k] * c * 100; sum += pts;
+      return `<div class="bd-row" title="${COMP_NAMES[k]}: ${Math.round(c * 100)}th percentile × ${Math.round(WTS[k] * 100)}% weight = ${pts.toFixed(1)} points"><span>${COMP_NAMES[k]}</span><span class="bd-track"><i style="width:${(c * 100).toFixed(0)}%;background:var(--c-${k})"></i></span><b>${Math.round(c * 100)}</b><em>+${pts.toFixed(1)}</em></div>`;
+    }).join("");
+    const ta = p.terrain_access == null ? 1 : +p.terrain_access, mult = 0.5 + 0.5 * ta;
+    return `<div class="bd"><div class="bd-row bd-head"><span>Component</span><span>percentile</span><span></span><em>points</em></div>${rows}
+      <div class="bd-foot">${sum.toFixed(1)} points${mult < 0.995 ? ` × ${mult.toFixed(2)} for steep approaches = ${(sum * mult).toFixed(1)}` : ""}, the <b>${Math.round((+p.need_pct || 0) * 100)}th</b> percentile county-wide.</div></div>`;
+  }
+
   // ---------- Popups ----------
   const popup = new maplibregl.Popup({ closeButton: true, maxWidth: "290px", offset: 8 });
   const row = (k, v) => v == null || v === "" ? "" : `<div class="pop-row">${k}: <b>${v}</b></div>`;
@@ -655,7 +711,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       segs: (p) => `<div class="pop"><div class="pop-title">${ROUTE(p.RouteS)} PM ${fmt(p.pm_start, 1)}–${fmt(p.pm_end, 1)}</div>
         ${row("Need percentile", pct(p.need_pct))}${row("Suggested", p.action)}${row("Roadkill on segment", p.rk_total)}${row("Traffic (AADT)", fmt(p.aadt))}
         ${row("Speed", p.speed_mph != null ? `${fmt(p.speed_mph)} mph` : null)}${row("Natural cover, weaker side", p.natural_min != null ? `${pct(p.natural_min)}%` : null)}
-        ${row("CDFW barrier", p.cdfw_barrier_id)}</div>`,
+        ${row("CDFW barrier", p.cdfw_barrier_id)}${breakdown(p)}</div>`,
     };
     // Points take precedence over the road line under them
     map.on("click", (e) => {
@@ -718,11 +774,11 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     },
     retrofit_meso: {
       what: "Culverts at least 0.9 m tall can carry bobcats, foxes, raccoons and skunks if animals can find and reach them. Fencing that leads to the entrances, dry ledges for wet seasons and cover near the openings make them usable.",
-      why: (s) => `This stretch of SR 154 near Lake Cachuma is the county's top-ranked zone: oak woodland and chaparral on both sides (${pct(s.natural_min)}% natural cover on the weaker side), ${s.n_culverts} culvert of mesocarnivore size, and the most roadkill records of any zone in the county. CDFW lists SR 154 as a movement barrier (W165).`,
+      why: (s, c) => `This stretch of SR 154 near Lake Cachuma is the county's top-ranked zone: oak woodland and chaparral on both sides (${pct(s.natural_min)}% natural cover on the weaker side), and the most roadkill records of any zone in the county. CDFW lists SR 154 as a movement barrier (W165). ${c ? `A tall culvert is already here: a ${String(c.material || "").toLowerCase()} ${String(c.shape || "").toLowerCase()} at postmile ${fmt(c.postmile, 1)}, ${fmt(c.rise_m, 1)} m high and ${fmt(c.span_m, 1)} m wide. That's close to the 3 m this analysis requires for deer, but at ${fmt(c.length_m)} m long it's a dark tunnel (openness ${fmt(c.openness, 2)}, where deer generally need about 0.6), so it's rated for mesocarnivores, which use long culverts more readily.` : ""}`,
     },
     upsize: {
       what: "Small drainage pipes eventually wear out. Replacing one with a large box culvert (3 m or taller, short enough to see daylight through) costs far less as part of a scheduled replacement than as a stand-alone project.",
-      why: (s) => `SR 1 crosses a drainage here on about ${fmt(s.embankment_m, 1)} m of fill, with only a small culvert beneath. Habitat is continuous on both sides (${pct(s.natural_min)}% natural on the weaker side), traffic moves at ${fmt(s.speed_mph)} mph, and the surrounding zone holds ten roadkill records, five of them deer.`,
+      why: (s, c) => `SR 154 passes Lake Cachuma here through ${pct(s.natural_min)}% natural cover on the weaker side, inside the CDFW-listed barrier W165. ${c ? `The largest structure beneath it is a ${fmt(c.rise_m, 2)} m ${String(c.shape || "").toLowerCase()} pipe, ${fmt(c.length_m)} m long, big enough only for small mammals, reptiles and amphibians.` : ""} Replacing it with a large box culvert when it wears out would serve bobcats, coyotes and deer.`,
     },
     underpass: {
       what: "Where the road is raised on an embankment, an underpass can be built through the fill without lowering the road, the usual design for deer and larger carnivores.",
@@ -771,7 +827,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
   function showList() {
     markers.forEach(m => m.getElement().classList.remove("active"));
     map.setFilter("seg-hl", ["==", ["get", "seg_id"], ""]);
-    $("#pane-ex").innerHTML = `<p style="margin:0 0 12px;font:14px/1.45 var(--font-display);color:var(--ink-2)">Each example is the highest-need segment in the county for that type of solution, except where noted.</p>
+    $("#pane-ex").innerHTML = `<p style="margin:0 0 12px;font:14px/1.45 var(--font-display);color:var(--ink-2)">Each example is one of the highest-need segments in the county for its type of solution, except where noted.</p>
       <ul class="ex-list">${EX.map((ex, i) => `<li><button type="button" data-i="${i}"><div class="pin"><span>${i + 1}</span></div>
         <div>${esc(ex.title)}<small>${ROUTE(ex.route)} · postmile ${fmt(ex.pm[0], 1)}–${fmt(ex.pm[1], 1)}</small></div></button></li>`).join("")}</ul>`;
     $("#pane-ex").querySelectorAll("button[data-i]").forEach(b => b.addEventListener("click", () => selectExample(+b.dataset.i)));
@@ -801,8 +857,10 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       <h3>${i + 1}. ${esc(ex.title)}</h3>
       ${pmLabel(ex.route, ex.pm[0], ex.pm[1])}${s.cdfw_barrier_id ? ` <span class="chip">CDFW ${s.cdfw_barrier_id}</span>` : ""}
       <div class="facts">${facts.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join("")}</div>
+      <p class="chart-title" style="font-size:14px;margin:0">Score breakdown <a href="#components" style="font-weight:400;font-size:13px">(components)</a></p>
+      ${breakdown(s)}
       <p class="what">${T.what}</p>
-      <p class="why">${T.why({ ...s, roadkill_2_5km: ex.rk_near })}</p>
+      <p class="why">${T.why({ ...s, roadkill_2_5km: ex.rk_near }, ex.top_culvert)}</p>
       ${photos.length ? `<p class="chart-title" style="font-size:14px">Roadkill photographed nearby</p><div class="photos">${photos.map(f => {
         const p = f.properties;
         return `<figure><img src="photos/${p.photo}.webp" alt="${esc(p.common || p.animal)}" data-credit="${esc(p.credit || "")}" data-name="${esc(cap(p.common || p.animal))}, ${esc(p.date)}" loading="lazy"><figcaption>${cap(p.common || p.animal)}</figcaption></figure>`;
