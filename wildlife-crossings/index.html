@@ -178,6 +178,7 @@ section.block { padding-block: 56px; border-top: 1px solid var(--rule); }
 .bd-row em { text-align: right; font-style: normal; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .bd-head { color: var(--ink-3); font-size: 12px; }
 .bd-foot { margin-top: 6px; color: var(--ink-2); }
+#lc-legend[hidden] { display: none !important; }
 .pop .bd { --rule: #e3e6e0; --ink-3: #75807a; --ink-2: #4a5550; }
 .ex-card .what { font-size: 15px; color: var(--ink-2); margin: 0 0 12px; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; margin: 10px 0 12px; }
@@ -378,6 +379,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
           <article class="comp comp-mult"><header><span class="comp-swatch" style="background:var(--ink-3)"></span><h4>Terrain access</h4><span class="comp-w">× 0.5–1</span></header>
             <dl><dt>Measures</dt><dd>Share of the steeper roadside strip (30–150 m from the road) with slopes over 35°.</dd><dt>How it's scored</dt><dd>The weighted sum is multiplied by 0.5 + 0.5 × (1 − steep share), so a segment walled in by cliffs keeps at most half its score. The discount is waived where a waterway bridge or a culvert at least 0.9 m tall carries a drainage under the road.</dd><dt>Source</dt><dd>USGS 3DEP 1/3 arc-second elevation (about 10 m).</dd><dt>Why it matters</dt><dd>Animals rarely climb cliffs to reach a road, but canyon walls funnel them along creeks to the structures beneath it, as at Gaviota Pass.</dd></dl></article>
       </div>
+      <p class="comp-lede" style="margin-top:18px"><strong>Do the components overlap?</strong> Only modestly. Across all segments, the strongest rank correlation is between connectivity and habitat (0.43), since CDFW's connectivity ranks draw partly on natural land cover, so natural, well-connected land counts for a bit more than its nominal weight. Protected land looks independent overall (0.18 with connectivity), but 90% of segments have none on at least one side; among the 98 segments with protected land on both sides, it tracks connectivity at 0.49. No pair comes near the 0.7 or so where two measures would duplicate each other.</p>
       <div class="table-scroll" style="margin-top:28px">
         <table class="sources">
           <thead><tr><th>Layer</th><th>Source</th><th>Used for</th></tr></thead>
@@ -528,7 +530,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
 
   maplibregl.addProtocol("pack", async (params) => {
     const [, kind, z, x, y] = params.url.match(/pack:\/\/(\w+)\/(\d+)\/(\d+)\/(\d+)/);
-    const name = kind === "dem" ? (+z <= 11 ? "dem_low" : "dem_z12") : (+z <= 12 ? "img_low" : (+z === 13 ? "img_z13" : "img_z14"));
+    const name = kind === "lc" ? "lc" : kind === "dem" ? (+z <= 11 ? "dem_low" : "dem_z12") : (+z <= 12 ? "img_low" : (+z === 13 ? "img_z13" : "img_z14"));
     if (kind === "usgs") {
       const idx = await (usgsIndex ||= getJSON("tiles/usgs_index.json"));
       const hit = idx[`${z}/${x}/${y}`];
@@ -606,7 +608,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     onRemove() {}
   }
   map.addControl(new CameraControl(), "top-right");
-  map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: "Imagery: USDA NAIP via USGS The National Map; Copernicus Sentinel-2 (2021), ESA WorldCover · Terrain: AWS Terrain Tiles · OSM contributors" }));
+  map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: "Imagery: USDA NAIP via USGS The National Map; Copernicus Sentinel-2 (2021), ESA WorldCover · Terrain: AWS Terrain Tiles · Protected land: CPAD 2024a · OSM contributors" }));
   window.__map = map;
 
   // isStyleLoaded() stays false while tiles load, so track readiness ourselves
@@ -639,15 +641,21 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     if (started) return;
     started = true;
     $("#map-loading")?.remove();
-    const [county, segs, zones, culv, br, bars, ends, cdfw, rk, ex] = await Promise.all([
-      "county", "segments", "zones", "culverts", "bridges", "barriers", "fence_ends", "cdfw_barriers", "roadkill", "examples",
+    const [county, segs, zones, culv, br, bars, ends, cdfw, rk, ex, prot] = await Promise.all([
+      "county", "segments", "zones", "culverts", "bridges", "barriers", "fence_ends", "cdfw_barriers", "roadkill", "examples", "protected",
     ].map(n => getJSON(`data/${n}.json`)));
     rk.features.forEach(f => { f.properties.group = GROUP(f.properties.guild); });
     RK = rk; EX = ex;
 
     const add = (id, data) => map.addSource(id, { type: "geojson", data });
     add("county", county); add("segs", segs); add("zones", zones); add("culv", culv); add("br", br);
-    add("bars", bars); add("ends", ends); add("cdfw", cdfw); add("rk", rk);
+    add("bars", bars); add("ends", ends); add("cdfw", cdfw); add("rk", rk); add("prot", prot);
+
+    // Land cover (off by default) and protected land sit under everything else
+    map.addSource("lc", { type: "raster", tiles: ["pack://lc/{z}/{x}/{y}"], tileSize: 256, minzoom: 8, maxzoom: 14, bounds: BOUNDS });
+    map.addLayer({ id: "lc", type: "raster", source: "lc", layout: { visibility: "none" }, paint: { "raster-opacity": 0.6, "raster-resampling": "nearest" } });
+    map.addLayer({ id: "prot-fill", type: "fill", source: "prot", paint: { "fill-color": "#b79cff", "fill-opacity": 0.22 } });
+    map.addLayer({ id: "prot-line", type: "line", source: "prot", paint: { "line-color": "#d9cbff", "line-width": ["interpolate", ["linear"], ["zoom"], 9, 0.6, 14, 1.6], "line-opacity": 0.8 } });
 
     map.addLayer({ id: "county", type: "line", source: "county", paint: { "line-color": "#ffffff", "line-opacity": 0.55, "line-width": 1.2, "line-dasharray": [3, 2] } });
     map.addLayer({ id: "cdfw", type: "line", source: "cdfw", paint: { "line-color": "#f2b705", "line-width": ["interpolate", ["linear"], ["zoom"], 9, 7, 14, 22], "line-opacity": 0.28, "line-blur": 2 } });
@@ -678,6 +686,9 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     buildExamplesPane();
     bindPopups();
   });
+
+  const LC_LEGEND = [["#1f7a2e", "Tree cover"], ["#e0a526", "Shrubland"], ["#e8e35a", "Grassland"], ["#2aa198", "Wetland"], ["#b4b4b4", "Bare or sparse"],
+    ["#e58fe0", "Cropland", 0], ["#e0322c", "Built-up", 0], ["#2f78c8", "Open water", 0]];
 
   // ---------- Score breakdown ----------
   let WTS = { roadkill: 0.25, connectivity: 0.25, habitat: 0.2, protected: 0.1, traffic: 0.1, collision: 0.1 };
@@ -710,6 +721,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       br: (p) => `<div class="pop"><div class="pop-title">${esc(p.NAME || "Bridge")}</div>${row("Crosses", p.INTERSEC)}${row("Length", p.length_m != null ? `${fmt(p.length_m)} m` : null)}${row("Built", p.YRBLT)}${row("Bridge no.", p.BRIDGE)}</div>`,
       ends: (p) => `<div class="pop"><div class="pop-title">End of a ${fmt(p.max_height_ft)} ft barrier</div>${row("Type", p.types.replace(/_/g, " "))}${row("Run length", `${fmt(p.run_len_m)} m`)}${row("Roadkill within 300 m", p.rk_near)}</div>`,
       bars: (p) => `<div class="pop"><div class="pop-title">${cap(p.barrier_type.replace(/_/g, " "))}, ${fmt(p.height_ft, 1)} ft</div>${row("Effect on wildlife", p.blocks)}${row("Side", p.road_name)}</div>`,
+      "prot-fill": (p) => `<div class="pop"><div class="pop-title">${esc(p.UNIT_NAME || "Protected land")}</div>${row("Managed by", esc(p.AGNCY_NAME))}${row("Public access", esc(p.ACCESS_TYP))}<small>California Protected Areas Database 2024a</small></div>`,
       segs: (p) => `<div class="pop"><div class="pop-title">${ROUTE(p.RouteS)} PM ${fmt(p.pm_start, 1)}–${fmt(p.pm_end, 1)}</div>
         ${row("Need percentile", pct(p.need_pct))}${row("Suggested", p.action)}${row("Roadkill on segment", p.rk_total)}${row("Traffic (AADT)", fmt(p.aadt))}
         ${row("Speed", p.speed_mph != null ? `${fmt(p.speed_mph)} mph` : null)}${row("Natural cover, weaker side", p.natural_min != null ? `${pct(p.natural_min)}%` : null)}
@@ -717,14 +729,14 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     };
     // Points take precedence over the road line under them
     map.on("click", (e) => {
-      const order = ["rk", "ends", "br", "culv", "bars", "segs"];
+      const order = ["rk", "ends", "br", "culv", "bars", "segs", "prot-fill"];
       const feats = map.queryRenderedFeatures(e.point, { layers: order.filter(l => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none") });
       if (!feats.length) return;
       feats.sort((a, b) => order.indexOf(a.layer.id) - order.indexOf(b.layer.id));
       const f = feats[0];
       popup.setLngLat(e.lngLat).setHTML(handlers[f.layer.id](f.properties)).addTo(map);
     });
-    ["rk", "ends", "br", "culv", "bars", "segs"].forEach(l => {
+    ["rk", "ends", "br", "culv", "bars", "segs", "prot-fill"].forEach(l => {
       map.on("mouseenter", l, () => { map.getCanvas().style.cursor = "pointer"; });
       map.on("mouseleave", l, () => { map.getCanvas().style.cursor = ""; });
     });
@@ -739,6 +751,11 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
         ["segs", "Crossing need by segment", `<span class="sw line" style="background:linear-gradient(90deg,#4d5a73,#f0d264,#f39a2b,#e8492e,#b3005e);width:30px"></span>`, true],
         ["zones", "Candidate zones (white halo)", `<span class="sw line" style="background:#fff;opacity:.6"></span>`, true],
         ["cdfw", "CDFW priority movement barriers", `<span class="sw line" style="background:#f2b705;opacity:.6"></span>`, true],
+        ["examples", "Example sites (numbered pins)", `<span class="sw" style="background:#fff;border-color:#111;border-radius:2px;transform:rotate(45deg)"></span>`, true],
+      ]],
+      ["Land", [
+        ["prot", "Protected land (CPAD)", `<span class="sw" style="background:rgba(183,156,255,.45);border-color:#d9cbff;border-radius:3px"></span>`, true],
+        ["lc", "Land cover (ESA WorldCover)", `<span class="sw" style="background:linear-gradient(90deg,#1f7a2e 0 33%,#e0a526 33% 66%,#e8e35a 66%);border-radius:3px"></span>`, false],
       ]],
       ["Roadkill", [
         ["rk", "Roadkill records (ringed dots have photos)", "", true],
@@ -754,6 +771,8 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     pane.innerHTML = `<div class="layer-group"><h4>Need percentile</h4><div class="ramp"></div><div class="ramp-labels"><span>0</span><span>50</span><span>75</span><span>90</span><span>100</span></div></div>` +
       groups.map(([title, items]) => `<div class="layer-group"><h4>${title}</h4>${items.map(([id, label, sw, on]) =>
         `<label class="toggle"><input type="checkbox" id="lyr-${id}" data-layer="${id}" ${on ? "checked" : ""}>${sw}${label}</label>`).join("")}
+        ${title === "Land" ? `<div id="lc-legend" hidden style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin:4px 0 0 25px;font:12.5px var(--font-display);color:var(--ink-2)">${LC_LEGEND.map(([c, l, nat]) =>
+          `<span><span class="sw" style="display:inline-block;vertical-align:-3px;width:11px;height:11px;border-radius:2px;background:${c}"></span> ${l}${nat === 0 ? "" : " ✓"}</span>`).join("")}<span style="grid-column:1/-1;color:var(--ink-3)">✓ counts as natural in the habitat score. Shown within 1 km of state highways.</span></div>` : ""}
         ${title === "Roadkill" ? `<div style="display:grid;gap:4px;margin:4px 0 0 25px;font:13px var(--font-display);color:var(--ink-2)">
           <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.large}"></span> Deer, pigs and carnivores</span>
           <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.medium}"></span> Medium mammals</span>
@@ -762,8 +781,15 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       `<div class="layer-group"><h4>Terrain</h4><label class="toggle" for="exag">Vertical exaggeration <input type="range" id="exag" min="1" max="3" step="0.1" value="1.4" style="flex:1"></label></div>
        <p style="font:13px var(--font-display);color:var(--ink-3);margin:0">Culverts, walls and fences appear from zoom 11; zoom in to see them.</p>`;
     pane.querySelectorAll("input[data-layer]").forEach(cb => cb.addEventListener("change", () => {
-      const ids = cb.dataset.layer === "segs" ? ["segs", "seg-hl"] : [cb.dataset.layer];
-      ids.forEach(id => map.setLayoutProperty(id, "visibility", cb.checked ? "visible" : "none"));
+      const k = cb.dataset.layer, vis = cb.checked ? "visible" : "none";
+      if (k === "examples") {
+        markers.forEach(m => { m.getElement().style.display = cb.checked ? "" : "none"; });
+        map.setLayoutProperty("seg-hl", "visibility", vis);
+        return;
+      }
+      if (k === "lc") $("#lc-legend").hidden = !cb.checked;
+      const ids = { segs: ["segs", "seg-hl"], prot: ["prot-fill", "prot-line"], lc: ["lc"] }[k] || [k];
+      ids.forEach(id => map.setLayoutProperty(id, "visibility", vis));
     }));
     $("#exag").addEventListener("input", (e) => map.setTerrain({ source: "dem", exaggeration: +e.target.value }));
   }
@@ -792,7 +818,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     },
     at_grade: {
       what: "Some high-need stretches have no drainage to use and no embankment or cut to exploit. They need a site study: an underpass with excavation, raising the road, or crossing-zone measures such as animal-detection signs.",
-      why: (s) => `US 101 runs level here at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, through rangeland that is ${pct(s.natural_min)}% natural on the weaker side, with no culvert or bridge beneath. Drivers at that speed need about ${fmt(s.sd_night_deficit_m)} m more than low beams show to stop at night.`,
+      why: (s) => `US 101 runs nearly level here just east of Los Alamos, at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, with no culvert or bridge beneath. It sits in the middle of a roadkill hotspot (${fmt(s.hs_all_obs)} records within 1 km), with ${pct(s.natural_min)}% natural cover on the weaker side of the road. Drivers at that speed need about ${fmt(s.sd_night_deficit_m)} m more than low beams show to stop at night.`,
     },
     fenced: {
       what: "Continuous tall walls or fencing with no passage makes a highway a complete barrier. Animals stop dying on the road but also stop crossing. The fix is to add a passage where the fence is, or to end the fence at one.",
