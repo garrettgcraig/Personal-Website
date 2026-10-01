@@ -33,7 +33,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #111613; --surface: #18201c; --ink: #e9eee9; --ink-2: #b7c1bb; --ink-3: #8d9892;
-    --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613;
+    --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613; --punch: #f2c230;
     --bar: #3fb586; --bar-muted: #45514b; --s1: #3987e5; --s2: #d95926; --s3: #199e70;
     --map-panel: rgba(24,32,28,.94); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     color-scheme: dark;
@@ -41,7 +41,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #111613; --surface: #18201c; --ink: #e9eee9; --ink-2: #b7c1bb; --ink-3: #8d9892;
-  --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613;
+  --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613; --punch: #f2c230;
   --bar: #3fb586; --bar-muted: #45514b; --s1: #3987e5; --s2: #d95926; --s3: #199e70;
   --map-panel: rgba(24,32,28,.94); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   color-scheme: dark;
@@ -76,6 +76,7 @@ h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 
 h1 { font-weight: 900; font-size: clamp(36px, 6vw, 68px); letter-spacing: -.01em; max-width: 18ch; }
 h2 { font-weight: 800; font-size: clamp(28px, 3.6vw, 42px); margin-bottom: 18px; }
 h3 { font-weight: 800; font-size: 21px; margin-bottom: 8px; }
+.punchline { font: 700 clamp(22px, 3vw, 32px)/1.2 var(--font-display); color: var(--punch, var(--sign-green)); margin: 14px 0 0; }
 .lede { font-size: clamp(19px, 2vw, 22px); color: var(--ink-2); max-width: 60ch; margin: 20px 0 0; }
 .byline { font-family: var(--font-display); font-size: 15px; color: var(--ink-3); margin-top: 18px; }
 
@@ -135,6 +136,8 @@ section.block { padding-block: 56px; border-top: 1px solid var(--rule); }
 .sources th { text-align: left; font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 2px solid var(--ink); padding: 8px; }
 .sources td { border-bottom: 1px solid var(--rule); padding: 8px; vertical-align: top; }
 .sources td:first-child { font-family: var(--font-display); font-weight: 600; white-space: nowrap; }
+.rules td:first-child { white-space: normal; width: 42%; }
+.rules { font-size: 14px; }
 .caveats { font-size: 16px; color: var(--ink-2); padding-left: 1.1em; }
 .caveats li { margin-bottom: 6px; }
 
@@ -157,7 +160,7 @@ section.block { padding-block: 56px; border-top: 1px solid var(--rule); }
 .map-pin { cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
 .map-pin.active .pin { background: #fff; }
 .ex-card h3 { font-size: 20px; margin: 10px 0 6px; }
-:root { --c-roadkill: #e8492e; --c-connectivity: #2f7fbf; --c-habitat: #3f9b4f; --c-protected: #8a6bbf; --c-traffic: #c98a12; --c-collision: #4d5a73; }
+:root { --c-roadkill: #e8492e; --c-connectivity: #2f7fbf; --c-habitat: #3f9b4f; --c-protected: #8a6bbf; --c-traffic: #c98a12; --c-speed: #5b6b8c; --c-terrain: #9a7b4f; }
 .comp-head { font-size: 22px; margin: 40px 0 6px; }
 .refs { margin: 8px 0 0; padding-left: 22px; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); max-width: 900px; }
 .refs li { margin-bottom: 6px; overflow-wrap: anywhere; }
@@ -250,7 +253,8 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
 
 <main>
   <div class="wrap hero">
-    <h1>Where should wildlife cross Santa Barbara County's highways?</h1>
+    <h1>Why did the mule deer cross the road?</h1>
+    <p class="punchline">Because the culvert was 69 meters long.</p>
     <p class="lede">Community scientists have logged hundreds of animals killed on the county's roads. Combined with Caltrans drainage inventories, traffic, terrain and statewide connectivity maps, those records point to a short list of highway stretches where crossings would do the most good, and to the kind of crossing each one needs.</p>
     <p class="byline">Garrett Craig<span class="sep" aria-hidden="true">·</span>Analysis code and data: <a href="https://github.com/garrettgcraig/CA_crossings" target="_blank" rel="noopener">github.com/garrettgcraig/CA_crossings</a></p>
     <div class="stats" id="stats" aria-label="Key numbers"></div>
@@ -285,12 +289,12 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
   <section class="block" id="results">
     <div class="wrap">
       <p class="eyebrow">Results</p>
-      <h2>State Route 154 tops the list, and Gaviota Pass checks out</h2>
+      <h2>US 101 and SR 154 lead, and Gaviota Pass checks out</h2>
       <div class="grid-2">
         <div class="prose">
-          <p>The highest-need stretches cluster on <strong>SR 154 between San Marcos Pass and Lake Cachuma</strong> (postmiles 12 to 21), which holds three of the five highest-ranked zones. Continuous oak woodland and chaparral meet the road on both sides, CDFW already lists the route as a movement barrier (W165), and more roadkill records fall there than in any other zone. Its existing culverts are tall enough for bobcats, foxes and raccoons, so fencing that funnels animals to them is the quickest gain.</p>
-          <p><strong>US 101 at Gaviota Pass</strong> ranks in the top tier too: 10 of its 21 segments land in the top decile (median: 89th percentile), carried mostly by habitat and connectivity because only four roadkill records fall there. That matches the site Caltrans and CDFW chose independently.</p>
-          <p>Other strong candidates are <strong>US 101 between Los Olivos and Orcutt</strong> (postmiles 62 to 79, five zones), where more than 30,000 vehicles a day pass through oak woodland and rangeland, and <strong>SR 1 north of Lompoc</strong> (postmiles 23 to 33), where the highway runs through cuts suited to overpasses on two CDFW-listed barriers (W048, W049). Click a row to see it on the map.</p>
+          <p>Half of the county's 96 highest-need segments are on <strong>US 101</strong>, mostly in two runs: the Gaviota Coast and Gaviota Pass (postmiles 29 to 52), and the stretch from north of Buellton past Los Alamos (postmiles 62 to 79), where 23,000 to 31,500 vehicles a day pass through oak woodland and rangeland. Two-thirds of all top segments already have a culvert or bridge that could be retrofitted or upsized.</p>
+          <p><strong>SR 154 between San Marcos Pass and Lake Cachuma</strong> (postmiles 10 to 23) holds another 23 top segments. Oak woodland and chaparral meet the road on both sides, and CDFW lists the route as a movement barrier (W165). <strong>US 101 at Gaviota Pass</strong> checks out as well: 8 of its 21 segments land in the top decile (median: 88th percentile), carried by habitat and connectivity because only four roadkill records fall there. That matches the site Caltrans and CDFW chose independently.</p>
+          <p><strong>SR 1</strong> adds 20 top segments, most of them north of Lompoc (postmiles 24 to 34), including the county's top overpass site, a deep cut on a CDFW-listed barrier (W048). Click a row to see it on the map.</p>
         </div>
         <div>
           <p class="chart-title">Top candidate zones</p>
@@ -314,10 +318,10 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
         </div>
         <div>
           <figure class="figure">
-            <p class="chart-title">Roadkill rises where drivers can't stop in time</p>
-            <p class="chart-sub">Roadkill per km by night stopping-sight shortfall (stopping distance at the speed limit minus what low beams and curves let a driver see)</p>
-            <div class="chart" id="chart-collision" role="img" aria-label="Roadkill per kilometer by night stopping-sight shortfall"></div>
-            <p class="chart-sub" style="margin-top:12px">Wildlife-vehicle collisions are concentrated after dark. Across more than a million deer-vehicle collisions in the United States, collisions were 14 times more frequent in the two hours after sunset than in the two hours before, and the autumn switch to standard time, which pushes evening commutes into darkness, raised collisions by 16% (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022, <i>Current Biology</i></a>). That is why this analysis measures sight distance under low beams rather than in daylight.</p>
+            <p class="chart-title">Roadkill rises with the speed limit</p>
+            <p class="chart-sub">Roadkill per km of state highway, by posted speed limit</p>
+            <div class="chart" id="chart-collision" role="img" aria-label="Roadkill per kilometer by speed limit"></div>
+            <p class="chart-sub" style="margin-top:12px">Wildlife-vehicle collisions are concentrated after dark. Across more than a million deer-vehicle collisions in the United States, collisions were 14 times more frequent in the two hours after sunset than in the two hours before, and the autumn switch to standard time, which pushes evening commutes into darkness, raised collisions by 16% (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022, <i>Current Biology</i></a>). Faster traffic leaves less time to stop for what headlights reveal, since stopping distance grows with the square of speed (<a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">Fambro et al. 2000</a>), and speed is among the strongest predictors of collisions with large animals (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>).</p>
           </figure>
           <div class="callout" style="margin-top:24px">
             <h3>Fence ends</h3>
@@ -325,7 +329,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
           </div>
           <div class="callout">
             <h3>How stable is the ranking?</h3>
-            <p>Under six alternative weightings of the score, 69% to 89% of the top-decile segments stay in the top decile. A separate ranking that adds roadside barriers for the surveyed routes agrees closely with the main one (rank correlation 0.85), and SR 154 and Gaviota Pass lead both.</p>
+            <p>The choices no study can fix barely move the ranking: habitat strips of 100 m or 500 m instead of 300 m keep 85–88% of top-decile segments, and swapping speed for a night sight-distance measure keeps 99%. Weights matter more: unequal weightings keep 50–79%. A separate ranking that adds roadside barriers for the surveyed routes agrees closely with the main one (rank correlation 0.91).</p>
           </div>
         </div>
       </div>
@@ -341,47 +345,69 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       </div>
       <ol class="steps">
         <li><h3>Clean the roadkill</h3><p>Merge the survey's two form versions with iNaturalist, assign species to groups by the size of crossing they'd use, and keep dead animals within 10 m of a road.</p></li>
-        <li><h3>Inventory the structures</h3><p>Join Caltrans' 19,691 culvert records to their end treatments, keep the 633 county culverts open at both ends under the highway, and size them for wildlife by height and openness (area ÷ length).</p></li>
-        <li><h3>Describe each segment</h3><p>Traffic and lanes from FHWA's 2024 HPMS, speed limits from HPMS and OpenStreetMap, curvature and grade from the centerline, embankment and side slopes from 10 m USGS elevation, and habitat and protected land on each side.</p></li>
-        <li><h3>Find roadkill hotspots</h3><p>Count records within 1 km of each segment and compare with 999 random scatterings of the same records along the network.</p></li>
-        <li><h3>Score need</h3><p>Weighted percentile ranks of six components, discounted where steep terrain keeps animals off the road (except where a creek channel funnels them to a structure). Each component is described below.</p></li>
+        <li><h3>Inventory the structures</h3><p>Join Caltrans' 19,691 culvert records to their end treatments, keep the 632 county culverts open and ungrated at both ends under the highway, and size them for wildlife by height and openness (area ÷ length).</p></li>
+        <li><h3>Describe each segment</h3><p>Traffic and lanes from FHWA's 2024 HPMS, speed limits from HPMS and OpenStreetMap, embankment and side slopes from 10 m USGS elevation, and habitat and protected land on each side.</p></li>
+        <li><h3>Find roadkill hotspots</h3><p>Count records within 500 m of each segment and compare with 999 random scatterings of the same records along the network.</p></li>
+        <li><h3>Score need</h3><p>Average the percentile ranks of seven components, each described below.</p></li>
         <li><h3>Match a solution</h3><p>Choose retrofit, upsize, underpass or overpass from what already crosses the road and whether it sits on fill or in a cut, then merge adjacent top segments into zones.</p></li>
       </ol>
       <div class="grid-2">
-        <figure class="figure">
-          <p class="chart-title">Need-score weights</p>
-          <p class="chart-sub">Share of the score; each component is a percentile rank across county segments</p>
-          <div class="chart" id="chart-weights" role="img" aria-label="Need score component weights"></div>
-        </figure>
+        <div>
+          <p class="chart-title">What each rule rests on</p>
+          <p class="chart-sub">Every threshold and weight, with the peer-reviewed study behind it</p>
+          <div class="table-scroll"><table class="sources rules">
+            <thead><tr><th>Rule</th><th>Basis</th></tr></thead>
+            <tbody>
+              <tr><td>Roadkill kept within 10 m of a road</td><td>Phone GPS error had a median of 5–8.5 m outdoors (<a href="https://doi.org/10.1017/S0373463311000051" target="_blank" rel="noopener">Zandbergen &amp; Barbeau 2011</a>)</td></tr>
+              <tr><td>Birds left out of crossing analyses</td><td>Evidence that fencing with crossings cuts roadkill comes from mammals (<a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">Rytwinski et al. 2016</a>)</td></tr>
+              <tr><td>Hotspots: 999 random placements, 95% bound</td><td>2D HotSpot method (<a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">Coelho et al. 2008</a>)</td></tr>
+              <tr><td>Hotspot radius 500 m</td><td>Scale where hotspots of different groups coincide most (<a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">Teixeira et al. 2013</a>)</td></tr>
+              <tr><td>Equal component weights</td><td>Unit weights are robust when weights can't be estimated (<a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">Dawes 1979</a>)</td></tr>
+              <tr><td>Habitat on the weaker side</td><td>Crossing use depends on habitat at the entrances (<a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">Clevenger et al. 2001a</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">Cain et al. 2003</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">Ng et al. 2004</a>)</td></tr>
+              <tr><td>Protected land</td><td>Crossings pay off most where they join conservation areas (<a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">Sijtsma et al. 2020</a>)</td></tr>
+              <tr><td>Traffic and speed</td><td><a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">Jaeger et al. 2005</a>; <a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>; <a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">Fambro et al. 2000</a></td></tr>
+              <tr><td>Flat approaches, drainages favored</td><td>Fewer collisions where roads cross steep slopes, more in drainages (<a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">Gunson et al. 2011</a>)</td></tr>
+              <tr><td>Mesocarnivore culvert ≥ 1.0 m tall</td><td>Carnivores crossed through 1 m and 1.5 m culverts (<a href="https://doi.org/10.1007/s10661-010-1816-6" target="_blank" rel="noopener">Mateus et al. 2011</a>)</td></tr>
+              <tr><td>Deer culvert ≥ 3 m tall, openness ≥ 0.6</td><td><a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">Reed et al. 1975</a>; <a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">Sawyer et al. 2012</a></td></tr>
+              <tr><td>Underpass where the road is ≥ 3 m above its surroundings</td><td>Room for a 3 m-high deer underpass (<a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">Sawyer et al. 2012</a>)</td></tr>
+              <tr><td>Fencing with every structure</td><td>Fences plus crossings cut large-mammal roadkill 83% (<a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">Rytwinski et al. 2016</a>)</td></tr>
+              <tr><td>Barriers ≥ 8 ft block deer</td><td>2.4 m fences stopped every deer jump in trials (<a href="https://doi.org/10.2193/2008-463" target="_blank" rel="noopener">VerCauteren et al. 2010</a>)</td></tr>
+              <tr><td>Fence-end zone 1 km</td><td>Collisions were greatest within 1 km of fence ends (<a href="https://www.conservationevidence.com/individual-study/7510" target="_blank" rel="noopener">Clevenger et al. 2001b</a>); checked at 300 m and 500 m</td></tr>
+            </tbody>
+          </table></div>
+          <p class="chart-sub" style="margin-top:10px"><strong>Conventions with no study behind the exact value:</strong> 500 m segments; 300 m habitat strips (checked at 100 m and 500 m); the 30–150 m slope strip; the top-decile cutoff and 0.5 mi zone merge (reporting choices); the 3 m cut test for overpasses; the 50% fenced-length test; and the rules for joining mapped barrier pieces.</p>
+          <p class="chart-sub">Road curvature and a fixed 35° slope cutoff were dropped: studies disagree on curves (deer collisions were more frequent on straighter roads in <a href="https://doi.org/10.2307/3801709" target="_blank" rel="noopener">Bashore et al. 1985</a>), and no study sets a slope cutoff.</p>
+        </div>
         <div>
           <p class="chart-title">Caveats</p>
           <ul class="caveats">
             <li>Survey effort is treated as equal across roads, though volunteers drive some routes far more than others. Only the survey's 2025 records are used; iNaturalist records from every year are included.</li>
             <li>Roadside barriers were mapped from Street View on parts of US 101, SR 154, SR 246 and SR 1 only; they shape recommendations and a separate ranking, not the main score.</li>
-            <li>The collision component targets nighttime conditions because wildlife-vehicle collisions are concentrated after dark (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022</a>). The night stopping-sight measure uses standard assumptions (70 m low-beam reach, 6 m roadside clearance) rather than measured sight lines.</li>
+            <li>Speed limits come from sampled HPMS sections and OpenStreetMap; where neither has a value, a class-based estimate fills in.</li>
+            <li>The Caltrans culvert tables say nothing about culvert floors (substrate, sediment or standing water), which affect use; each candidate needs a field check.</li>
             <li>Each candidate zone needs a site visit before design: what the data shows as a culvert or bridge may differ on the ground.</li>
           </ul>
         </div>
       </div>
       <h3 class="comp-head" id="components">What goes into the need score</h3>
-      <p class="comp-lede">Each component is converted to a percentile rank across the county's 953 highway segments, so 80 means a segment scores higher than 80% of segments on that measure. The weighted percentiles add up to a score from 0 to 100, which terrain access can reduce. Select any highway segment on the map, or open an example, to see its breakdown.</p>
+      <p class="comp-lede">Each component is converted to a percentile rank across the county's 953 highway segments, so 80 means a segment scores higher than 80% of segments on that measure. The seven percentiles are averaged with equal weights: no study supplies weights for these criteria, and equal weights are a robust default when weights can't be estimated from data (<a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">Dawes 1979</a>). Select any highway segment on the map, or open an example, to see its breakdown.</p>
       <div class="comps">
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-roadkill)"></span><h4>Roadkill hotspots</h4><span class="comp-w">25%</span></header>
-            <dl><dt>Measures</dt><dd>Dead animals within 1 km of the segment, counting groups that use crossings (mammals, reptiles and amphibians; birds and unidentified animals left out).</dd><dt>How it's scored</dt><dd>Monte Carlo hotspot test: the same records are scattered at random along the network 999 times. A segment whose count beats the 95th percentile of those scatterings is a hotspot, and its score is how far it exceeds that line. Other segments score by raw count, below every hotspot.</dd><dt>Source</dt><dd>Room to Roam survey (2025 records) and iNaturalist (all years).</dd><dt>Why it matters</dt><dd>The most direct evidence of where animals try to cross and fail. Its weakness is effort: places people drive and report more look worse.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-connectivity)"></span><h4>Connectivity priority</h4><span class="comp-w">25%</span></header>
-            <dl><dt>Measures</dt><dd>How important the landscape around the road is for wildlife movement statewide.</dd><dt>How it's scored</dt><dd>The larger of the CDFW connectivity rank (1–5, divided by 5) and a CDFW priority-barrier score (Top Priority 1.0, Priority 0.75, Barrier 0.5), plus 0.1 inside a big-game priority area, capped at 1.</dd><dt>Source</dt><dd>CDFW Areas of Conservation Emphasis terrestrial connectivity (ds2734), priority wildlife movement barriers (ds2867) and big-game priority areas (ds2889).</dd><dt>Why it matters</dt><dd>Independent of anyone's survey effort, so it catches important corridors where few people report roadkill, like Gaviota Pass.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-habitat)"></span><h4>Habitat on both sides</h4><span class="comp-w">20%</span></header>
-            <dl><dt>Measures</dt><dd>Share of natural land cover in a 300 m strip on each side of the road, taking the weaker side.</dd><dt>How it's scored</dt><dd>Tree, shrub, grassland, bare ground and wetland count as natural; cropland, buildings and open water do not. The lower of the two sides is ranked.</dd><dt>Source</dt><dd>ESA WorldCover 2021 (10 m).</dd><dt>Why it matters</dt><dd>Field studies of existing culverts and underpasses tie their use by wildlife to habitat and cover near the entrances (<a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">Clevenger et al. 2001</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">Ng et al. 2004</a>). Scoring the weaker side is this analysis's own rule: a crossing that opens into a subdivision connects little, however good the hills opposite are.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-protected)"></span><h4>Protected land</h4><span class="comp-w">10%</span></header>
-            <dl><dt>Measures</dt><dd>Share of protected land in the same 300 m strips, weaker side.</dd><dt>How it's scored</dt><dd>Ranked like habitat. Most segments have no protected land on at least one side, and tied segments share a rank, so a value of zero still scores about the 45th percentile.</dd><dt>Source</dt><dd>California Protected Areas Database (CPAD 2024a).</dd><dt>Why it matters</dt><dd>A crossing is a decades-long investment. Protected land at both ends means the habitat it connects is likely to stay.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-traffic)"></span><h4>Traffic volume</h4><span class="comp-w">10%</span></header>
-            <dl><dt>Measures</dt><dd>Average annual daily traffic (AADT).</dd><dt>How it's scored</dt><dd>Percentile rank of AADT, so only the order of segments matters, not the size of the gaps between them.</dd><dt>Source</dt><dd>FHWA Highway Performance Monitoring System 2024.</dd><dt>Why it matters</dt><dd>Models of road avoidance suggest traffic volume matters more than road size for how roads affect animal populations (<a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">Jaeger et al. 2005</a>). Collisions rise with traffic at low and moderate volumes, but on the busiest roads they can level off or fall as animals stop trying to cross (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>; <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">Grilo et al. 2015</a>). Either way, a busier road is a bigger obstacle, as a barrier or as a source of deaths.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-collision)"></span><h4>Night stopping risk</h4><span class="comp-w">10%</span></header>
-            <dl><dt>Measures</dt><dd>How much farther a driver needs to stop at the speed limit than they can see at night.</dd><dt>How it's scored</dt><dd>AASHTO stopping distance at the segment's speed (2.5 s reaction, 3.4 m/s² braking) minus the visible distance, which is the shorter of low-beam reach (about 70 m for a dark, animal-sized object) and the sight line around curves. Averaged along the segment.</dd><dt>Source</dt><dd>Speed limits from HPMS and OpenStreetMap (via Overture Maps); curvature from the Caltrans centerline.</dd><dt>Why it matters</dt><dd>Wildlife-vehicle collisions are concentrated after dark, when headlights limit warning: deer collisions are 14 times more frequent in the two hours after sunset than in the two hours before (<a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">Cunningham et al. 2022</a>). In this county's data, roadkill per km rises from 0.34 to 0.51 between the lowest and highest thirds of this measure.</dd></dl></article>
-          <article class="comp comp-mult"><header><span class="comp-swatch" style="background:var(--ink-3)"></span><h4>Terrain access</h4><span class="comp-w">× 0.5–1</span></header>
-            <dl><dt>Measures</dt><dd>Share of the steeper roadside strip (30–150 m from the road) with slopes over 35°.</dd><dt>How it's scored</dt><dd>The weighted sum is multiplied by 0.5 + 0.5 × (1 − steep share), so a segment walled in by cliffs keeps at most half its score. The discount is waived where a waterway bridge or a culvert at least 0.9 m tall carries a drainage under the road.</dd><dt>Source</dt><dd>USGS 3DEP 1/3 arc-second elevation (about 10 m).</dd><dt>Why it matters</dt><dd>Terrain shapes where animals travel: tracked cougars in southern California chose canyon bottoms as travel routes (<a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">Dickson &amp; Beier 2007</a>). So steep slopes beside a road make it a less likely crossing point, while canyon walls channel movement along creeks to the structures beneath it, as at Gaviota Pass. The 35° cutoff and the size of the discount are this analysis's own choices.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-roadkill)"></span><h4>Roadkill hotspots</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Dead animals within 500 m of the segment, counting groups that use crossings (mammals, reptiles and amphibians; birds and unidentified animals left out).</dd><dt>How it's scored</dt><dd>The same records are scattered at random along the network 999 times. A segment whose count beats the 95th percentile of those scatterings is a hotspot, and its score is how far it exceeds that line (<a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">Coelho et al. 2008</a>). The 500 m radius is where hotspots of different animal groups overlap most (<a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">Teixeira et al. 2013</a>).</dd><dt>Source</dt><dd>Room to Roam survey (2025 records) and iNaturalist (all years).</dd><dt>Why it matters</dt><dd>The most direct evidence of where animals try to cross and fail. Its weakness is effort: places people drive and report more look worse.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-connectivity)"></span><h4>Connectivity</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>CDFW's connectivity rank (1–5) for the landscape around the road.</dd><dt>How it's scored</dt><dd>Percentile of the rank. CDFW's list of priority movement barriers is used to check the results (Gaviota Pass) rather than scored.</dd><dt>Source</dt><dd>CDFW Areas of Conservation Emphasis, terrestrial connectivity (ds2734).</dd><dt>Why it matters</dt><dd>A statewide view that doesn't depend on anyone's survey effort, so it catches important corridors where few people report roadkill.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-habitat)"></span><h4>Habitat on both sides</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Share of natural land cover in a 300 m strip on each side of the road, taking the weaker side.</dd><dt>How it's scored</dt><dd>Tree, shrub, grassland, bare ground and wetland count as natural; cropland, buildings and open water do not. The strip width is a convention; 100 m and 500 m strips keep 85–88% of the top decile.</dd><dt>Source</dt><dd>ESA WorldCover 2021 (10 m).</dd><dt>Why it matters</dt><dd>Studies tie crossing use to habitat and cover at the entrances (<a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">Clevenger et al. 2001a</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">Cain et al. 2003</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">Ng et al. 2004</a>). A crossing has an entrance on each side, so the weaker side sets the score.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-protected)"></span><h4>Protected land</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Share of protected land in the same 300 m strips, weaker side.</dd><dt>How it's scored</dt><dd>Percentile, like habitat. About 90% of segments have no protected land on at least one side, and tied segments share a rank, so a value of zero still scores about the 45th percentile.</dd><dt>Source</dt><dd>California Protected Areas Database (CPAD 2024a).</dd><dt>Why it matters</dt><dd>Crossings are most cost-effective where they join conservation areas (<a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">Sijtsma et al. 2020</a>), and protected land keeps the habitat at both ends from being developed.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-traffic)"></span><h4>Traffic volume</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Average annual daily traffic (AADT).</dd><dt>How it's scored</dt><dd>Percentile of AADT, so only the order of segments matters.</dd><dt>Source</dt><dd>FHWA Highway Performance Monitoring System 2024.</dd><dt>Why it matters</dt><dd>Traffic volume drives how strongly roads repel and divide animal populations (<a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">Jaeger et al. 2005</a>). Collisions rise with traffic at low and moderate volumes but can level off on the busiest roads as animals stop trying to cross (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>; <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">Grilo et al. 2015</a>); either way, a busier road is a bigger obstacle.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-speed)"></span><h4>Speed</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Posted speed limit.</dd><dt>How it's scored</dt><dd>Percentile of the speed limit.</dd><dt>Source</dt><dd>HPMS sample sections and OpenStreetMap (via Overture Maps), with a class-based estimate where both are missing.</dd><dt>Why it matters</dt><dd>Speed is among the strongest predictors of collisions with large animals, and lower speeds are a recommended fix (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>). Stopping distance grows with the square of speed (<a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">Fambro et al. 2000</a>), which matters most after dark, when deer collisions are 14 times more frequent than just before sunset (<a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">Cunningham et al. 2022</a>). Locally, roadkill per km rises from 0.27 at 45 mph or less to 0.51 at 65 mph or more.</dd></dl></article>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-terrain)"></span><h4>Flat approach</h4><span class="comp-w">1/7</span></header>
+            <dl><dt>Measures</dt><dd>Mean slope of the steeper roadside strip (30–150 m from the road).</dd><dt>How it's scored</dt><dd>Percentile of flatness (the negative of mean slope). Segments where a waterway bridge or a culvert at least 1 m tall carries a drainage under the road get the flattest value.</dd><dt>Source</dt><dd>USGS 3DEP 1/3 arc-second elevation (about 10 m).</dd><dt>Why it matters</dt><dd>Collisions are less likely where a road crosses steep slopes and more likely in level terrain and where it crosses drainages (<a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">Gunson et al. 2011</a>); cougars in southern California travel along canyon bottoms (<a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">Dickson &amp; Beier 2007</a>).</dd></dl></article>
       </div>
-      <p class="comp-lede" style="margin-top:18px"><strong>Do the components overlap?</strong> Only modestly. Across all segments, the strongest rank correlation is between connectivity and habitat (0.43), since CDFW's connectivity ranks draw partly on natural land cover, so natural, well-connected land counts for a bit more than its nominal weight. Protected land looks independent overall (0.18 with connectivity), but 90% of segments have none on at least one side; among the 98 segments with protected land on both sides, it tracks connectivity at 0.49. No pair comes near the 0.7 or so where two measures would duplicate each other.</p>
+      <p class="comp-lede" style="margin-top:18px"><strong>Do the components overlap?</strong> Only modestly. Across all segments, the strongest rank correlations are between connectivity and habitat (0.41), since CDFW's connectivity ranks draw partly on natural land cover, and between traffic and speed (0.34). Protected land looks independent overall (0.16 with connectivity), but 90% of segments have none on at least one side; among the 98 segments with protected land on both sides, it tracks connectivity at 0.42. No pair comes near the 0.7 or so where two measures would duplicate each other.</p>
       <div class="table-scroll" style="margin-top:28px">
         <table class="sources">
           <thead><tr><th>Layer</th><th>Source</th><th>Used for</th></tr></thead>
@@ -403,13 +429,29 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       </div>
       <h3 class="comp-head" id="references" style="font-size:19px">References</h3>
       <ol class="refs">
-        <li>Clevenger, A. P., B. Chruszcz and K. Gunson. 2001. Drainage culverts as habitat linkages and factors affecting passage by mammals. <i>Journal of Applied Ecology</i> 38:1340–1349. <a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">doi.org/10.1046/j.0021-8901.2001.00678.x</a></li>
+        <li>Bashore, T. L., W. M. Tzilkowski and E. D. Bellis. 1985. Analysis of deer-vehicle collision sites in Pennsylvania. <i>Journal of Wildlife Management</i> 49:769–774. <a href="https://doi.org/10.2307/3801709" target="_blank" rel="noopener">doi.org/10.2307/3801709</a></li>
+        <li>Cain, A. T., V. R. Tuovila, D. G. Hewitt and M. E. Tewes. 2003. Effects of a highway and mitigation projects on bobcats in southern Texas. <i>Biological Conservation</i> 114:189–197. <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00023-5</a></li>
+        <li>Clevenger, A. P., B. Chruszcz and K. Gunson. 2001a. Drainage culverts as habitat linkages and factors affecting passage by mammals. <i>Journal of Applied Ecology</i> 38:1340–1349. <a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">doi.org/10.1046/j.0021-8901.2001.00678.x</a></li>
+        <li>Clevenger, A. P., B. Chruszcz and K. E. Gunson. 2001b. Highway mitigation fencing reduces wildlife-vehicle collisions. <i>Wildlife Society Bulletin</i> 29:646–653. <a href="https://www.conservationevidence.com/individual-study/7510" target="_blank" rel="noopener">www.conservationevidence.com/individual-study/7510</a></li>
+        <li>Coelho, I. P., A. Kindel and A. V. P. Coelho. 2008. Roadkills of vertebrate species on two highways through the Atlantic Forest Biosphere Reserve, southern Brazil. <i>European Journal of Wildlife Research</i> 54:689–699. <a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">doi.org/10.1007/s10344-008-0197-4</a></li>
         <li>Cunningham, C. X., T. A. Nuñez, Y. Hentati, B. Sullender, C. Breen, T. R. Ganz, S. E. S. Kreling, K. A. Shively, E. Reese, J. Miles and L. R. Prugh. 2022. Permanent daylight saving time would reduce deer-vehicle collisions. <i>Current Biology</i> 32:4982–4988. <a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">doi.org/10.1016/j.cub.2022.10.007</a></li>
+        <li>Dawes, R. M. 1979. The robust beauty of improper linear models in decision making. <i>American Psychologist</i> 34:571–582. <a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">doi.org/10.1037/0003-066X.34.7.571</a></li>
         <li>Dickson, B. G. and P. Beier. 2007. Quantifying the influence of topographic position on cougar (<i>Puma concolor</i>) movement in southern California, USA. <i>Journal of Zoology</i> 271:270–277. <a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">doi.org/10.1111/j.1469-7998.2006.00215.x</a></li>
+        <li>Fambro, D. B., R. J. Koppa, D. L. Picha and K. Fitzpatrick. 2000. Driver braking performance in stopping sight distance situations. <i>Transportation Research Record</i> 1701. <a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">doi.org/10.3141/1701-02</a></li>
         <li>Grilo, C., F. Z. Ferreira and E. Revilla. 2015. No evidence of a threshold in traffic volume affecting road-kill mortality at a large spatio-temporal scale. <i>Environmental Impact Assessment Review</i> 55:54–58. <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">doi.org/10.1016/j.eiar.2015.07.003</a></li>
+        <li>Gunson, K. E., G. Mountrakis and L. J. Quackenbush. 2011. Spatial wildlife-vehicle collision models: a review of current work and its application to transportation mitigation projects. <i>Journal of Environmental Management</i> 92:1074–1082. <a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">doi.org/10.1016/j.jenvman.2010.11.027</a></li>
+        <li>Huijser, M. P., E. R. Fairbank, W. Camel-Means, J. Graham, V. Watson, P. Basting and D. Becker. 2016. Effectiveness of short sections of wildlife fencing and crossing structures along highways in reducing wildlife–vehicle collisions and providing safe crossing opportunities for large mammals. <i>Biological Conservation</i> 197:61–68. <a href="https://www.sciencedirect.com/science/article/pii/S0006320716300350" target="_blank" rel="noopener">www.sciencedirect.com/science/article/pii/S0006320716300350</a></li>
         <li>Jaeger, J. A. G., J. Bowman, J. Brennan, L. Fahrig, D. Bert, J. Bouchard, N. Charbonneau, K. Frank, B. Gruber and K. Tluk von Toschanowitz. 2005. Predicting when animal populations are at risk from roads: an interactive model of road avoidance behavior. <i>Ecological Modelling</i> 185:329–348. <a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">doi.org/10.1016/j.ecolmodel.2004.12.015</a></li>
+        <li>Mateus, A. R. A., C. Grilo and M. Santos-Reis. 2011. Surveying drainage culvert use by carnivores: sampling design and cost–benefit analyzes of track-pads vs. video-surveillance methods. <i>Environmental Monitoring and Assessment</i> 181:101–109. <a href="https://doi.org/10.1007/s10661-010-1816-6" target="_blank" rel="noopener">doi.org/10.1007/s10661-010-1816-6</a></li>
         <li>Ng, S. J., J. W. Dole, R. M. Sauvajot, S. P. D. Riley and T. J. Valone. 2004. Use of highway undercrossings by wildlife in southern California. <i>Biological Conservation</i> 115:499–507. <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00166-6</a></li>
+        <li>Reed, D. F., T. N. Woodard and T. M. Pojar. 1975. Behavioral response of mule deer to a highway underpass. <i>Journal of Wildlife Management</i> 39:361–367. <a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">doi.org/10.2307/3799915</a></li>
+        <li>Rytwinski, T., K. Soanes, J. A. G. Jaeger, L. Fahrig, C. S. Findlay, J. Houlahan, R. van der Ree and E. A. van der Grift. 2016. How effective is road mitigation at reducing road-kill? A meta-analysis. <i>PLoS ONE</i> 11:e0166941. <a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">doi.org/10.1371/journal.pone.0166941</a></li>
+        <li>Sawyer, H., C. Lebeau and T. Hart. 2012. Mitigating roadway impacts to migratory mule deer: a case study with underpasses and continuous fencing. <i>Wildlife Society Bulletin</i> 36. <a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">doi.org/10.1002/wsb.166</a></li>
         <li>Seiler, A. 2005. Predicting locations of moose–vehicle collisions in Sweden. <i>Journal of Applied Ecology</i> 42:371–382. <a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">doi.org/10.1111/j.1365-2664.2005.01013.x</a></li>
+        <li>Sijtsma, F. J., E. van der Veen, A. van Hinsberg, R. Pouwels, R. Bekker, R. E. van Dijk, M. Grutters, R. Klaassen, M. Krijn, M. Mouissie and E. Wymenga. 2020. Ecological impact and cost-effectiveness of wildlife crossings in a highly fragmented landscape: a multi-method approach. <i>Landscape Ecology</i> 35:1701–1720. <a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">doi.org/10.1007/s10980-020-01047-z</a></li>
+        <li>Teixeira, F. Z., A. V. P. Coelho, I. B. Esperandio and A. Kindel. 2013. Are road-kill hotspots coincident among different vertebrate groups? <i>Oecologia Australis</i> 17:36–47. <a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">doi.org/10.4257/oeco.2013.1701.04</a></li>
+        <li>VerCauteren, K. C., T. R. VanDeelen, M. J. Lavelle and W. H. Hall. 2010. Assessment of abilities of white-tailed deer to jump fences. <i>Journal of Wildlife Management</i> 74:1378–1381. <a href="https://doi.org/10.2193/2008-463" target="_blank" rel="noopener">doi.org/10.2193/2008-463</a></li>
+        <li>Zandbergen, P. A. and S. J. Barbeau. 2011. Positional accuracy of assisted GPS data from high-sensitivity GPS-enabled mobile phones. <i>Journal of Navigation</i> 64:381–399. <a href="https://doi.org/10.1017/S0373463311000051" target="_blank" rel="noopener">doi.org/10.1017/S0373463311000051</a></li>
       </ol>
     </div>
   </section>
@@ -503,13 +545,14 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     };
     barChart($("#chart-actions"), Object.entries(A).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: actionNames[k] || k, value: v, tip: `${k}: ${v} segments` })));
 
-    const cc = S.collision_check.slice(1);
-    barChart($("#chart-collision"), cc.map(r => ({ label: `${r[0][0].toUpperCase() + r[0].slice(1)} (≈${r[2]} m)`, value: +r[3], digits: 2,
-      tip: `${r[1]} segments, mean shortfall ${r[2]} m: ${r[3]} roadkill per km` })), { digits: 2 });
+    const sc = (S.speed_check || []).slice(1);
+    barChart($("#chart-collision"), sc.map(r => ({ label: r[0], value: +r[2], digits: 2,
+      tip: `${r[1]} segments at ${r[0]}: ${r[2]} roadkill per km` })), { digits: 2 });
 
     const fe = (S.fence_end_test || []).find(r => r[0].includes("8") && r[1].startsWith("medium") && r[2] === "habitat-matched");
+    const fr = (S.fence_end_radius || []).find(r => r[0] === "300");
     $("#fence-text").textContent = fe
-      ? `Within 300 m of the ends of walls and fences at least 8 ft tall, medium and large mammal roadkill runs ${fe[6]}× the rate on comparable highway with similar roadside habitat (p = ${fe[7]}, ${fe[3]} fence ends). The effect is in the expected direction but not yet conclusive; most tall barriers are sound walls in developed stretches of US 101.`
+      ? `Collisions concentrate within 1 km of fence ends elsewhere, so that is the zone tested here. Within 1 km of the ends of walls and fences at least 8 ft tall, medium and large mammal roadkill runs ${fe[6]}× the rate on comparable highway with similar roadside habitat (p = ${fe[7]}, ${fe[3]} fence ends).${fr ? ` The effect is sharper close to the ends: ${fr[4]}× within 300 m (p = ${fr[5]}).` : ""} Most tall barriers are sound walls in developed stretches of US 101.`
       : "Fence-end results are in the full report.";
 
     const tb = $("#zones-table tbody");
@@ -525,8 +568,6 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     });
 
     const W = S.weights; if (W) WTS = W;
-    const wNames = { roadkill: "Roadkill hotspots", connectivity: "Connectivity priority", habitat: "Habitat both sides", protected: "Protected land", traffic: "Traffic volume", collision: "Night stopping risk" };
-    barChart($("#chart-weights"), Object.entries(W).map(([k, v]) => ({ label: wNames[k], value: v * 100, color: `var(--c-${k})`, tip: `${wNames[k]}: ${Math.round(v * 100)}% of the score` })), { unit: "%" });
   }).catch(err => console.error(err));
 
   // ---------- Map ----------
@@ -703,8 +744,8 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     ["#e58fe0", "Cropland", 0], ["#e0322c", "Built-up", 0], ["#2f78c8", "Open water", 0]];
 
   // ---------- Score breakdown ----------
-  let WTS = { roadkill: 0.25, connectivity: 0.25, habitat: 0.2, protected: 0.1, traffic: 0.1, collision: 0.1 };
-  const COMP_NAMES = { roadkill: "Roadkill", connectivity: "Connectivity", habitat: "Habitat", protected: "Protected land", traffic: "Traffic", collision: "Night stopping" };
+  let WTS = { roadkill: 1 / 7, connectivity: 1 / 7, habitat: 1 / 7, protected: 1 / 7, traffic: 1 / 7, speed: 1 / 7, terrain: 1 / 7 };
+  const COMP_NAMES = { roadkill: "Roadkill", connectivity: "Connectivity", habitat: "Habitat", protected: "Protected land", traffic: "Traffic", speed: "Speed", terrain: "Flat approach" };
   function breakdown(p) {
     if (p.c_roadkill == null) return "";
     let sum = 0;
@@ -712,9 +753,8 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       const c = +p[`c_${k}`] || 0, pts = WTS[k] * c * 100; sum += pts;
       return `<div class="bd-row" title="${COMP_NAMES[k]}: ${Math.round(c * 100)}th percentile × ${Math.round(WTS[k] * 100)}% weight = ${pts.toFixed(1)} points"><span>${COMP_NAMES[k]}</span><span class="bd-track"><i style="width:${(c * 100).toFixed(0)}%;background:var(--c-${k})"></i></span><b>${Math.round(c * 100)}</b><em>+${pts.toFixed(1)}</em></div>`;
     }).join("");
-    const ta = p.terrain_access == null ? 1 : +p.terrain_access, mult = 0.5 + 0.5 * ta;
     return `<div class="bd"><div class="bd-row bd-head"><span>Component</span><span>percentile</span><span></span><em>points</em></div>${rows}
-      <div class="bd-foot">${sum.toFixed(1)} points${mult < 0.995 ? ` × ${mult.toFixed(2)} for steep approaches = ${(sum * mult).toFixed(1)}` : ""}, the <b>${Math.round((+p.need_pct || 0) * 100)}th</b> percentile county-wide.</div></div>`;
+      <div class="bd-foot">${sum.toFixed(1)} points, the <b>${Math.round((+p.need_pct || 0) * 100)}th</b> percentile county-wide.</div></div>`;
   }
 
   // ---------- Popups ----------
@@ -809,36 +849,36 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
   // ---------- Examples pane ----------
   const EX_TEXT = {
     retrofit_large: {
-      what: "Where a bridge or a big culvert already crosses under the road, the cheapest crossing is the one that's already there. Retrofits add fencing that steers animals to the opening, escape ramps for animals caught inside the fence, a dry path beside the stream, and native cover at both entrances.",
-      why: (s) => `Gaviota Creek runs under US 101 here through a bridge and four culverts, two tall enough for mesocarnivores. Steep canyon walls funnel animals to the creek, and CDFW lists the pass as a priority movement barrier (W163). This is the site of Caltrans' funded Gaviota Pass project, which retrofits a culvert and adds about 2.5 miles of fencing.`,
+      what: `Where a bridge or a big culvert already crosses under the road, the cheapest crossing is the one that's already there. Retrofits add fencing that steers animals to the opening (fencing plus crossings cut large-mammal roadkill by 83% in a meta-analysis; <a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">Rytwinski et al. 2016</a>), escape ramps for animals caught inside the fence, a dry path beside the stream, and native cover at both entrances.`,
+      why: (s) => `Gaviota Creek runs under US 101 here through a bridge and ${s.n_culverts} culverts, ${s.n_culv_medium_plus} of them tall enough for mesocarnivores. Roads that cross drainages see more collisions than those on steep slopes (<a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">Gunson et al. 2011</a>), and CDFW lists the pass as a priority movement barrier (W163). This is the site of Caltrans' funded Gaviota Pass project, which retrofits a culvert and adds about 2.5 miles of fencing.`,
     },
     retrofit_meso: {
-      what: "Culverts at least 0.9 m tall can carry bobcats, foxes, raccoons and skunks if animals can find and reach them. Fencing that leads to the entrances, dry ledges for wet seasons and cover near the openings make them usable.",
-      why: (s, c) => `This stretch of SR 154 near Lake Cachuma is the county's top-ranked zone: oak woodland and chaparral on both sides (${pct(s.natural_min)}% natural cover on the weaker side), and the most roadkill records of any zone in the county. CDFW lists SR 154 as a movement barrier (W165). ${c ? `A tall culvert is already here: a ${String(c.material || "").toLowerCase()} ${String(c.shape || "").toLowerCase()} at postmile ${fmt(c.postmile, 1)}, ${fmt(c.rise_m, 1)} m high and ${fmt(c.span_m, 1)} m wide. That's close to the 3 m this analysis requires for deer, but at ${fmt(c.length_m)} m long it's a dark tunnel (openness ${fmt(c.openness, 2)}, where deer generally need about 0.6), so it's rated for mesocarnivores, which use long culverts more readily.` : ""}`,
+      what: `Culverts at least 1 m tall can carry medium-sized carnivores: carnivores in southern Portugal crossed highways through 1 m and 1.5 m culverts (<a href="https://doi.org/10.1007/s10661-010-1816-6" target="_blank" rel="noopener">Mateus et al. 2011</a>), and bobcats in Texas used 1.85 m box culverts, more often once they were modified (<a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">Cain et al. 2003</a>). Fencing that leads to the entrances, dry ledges for wet seasons and cover near the openings make them usable.`,
+      why: (s, c) => `This stretch of SR 154 near Lake Cachuma is among the county's highest-need segments (${pct(s.need_pct)}th percentile), with oak woodland and chaparral on both sides (${pct(s.natural_min)}% natural cover on the weaker side) and ${fmt(s.hs_all_obs)} roadkill records within 500 m. CDFW lists SR 154 as a movement barrier (W165). ${c ? `A tall culvert is already here: a ${String(c.material || "").toLowerCase()} ${String(c.shape || "").toLowerCase()} at postmile ${fmt(c.postmile, 1)}, ${fmt(c.rise_m, 1)} m high and ${fmt(c.span_m, 1)} m wide. That's close to the 3 m deer-underpass height used here, but at ${fmt(c.length_m)} m long it's a dark tunnel, with an openness of ${fmt(c.openness, 2)} where mule deer avoided underpasses below about 0.6 (<a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">Reed et al. 1975</a>). So it's rated for mesocarnivores.` : ""}`,
     },
     upsize: {
-      what: "Small drainage pipes eventually wear out. Replacing one with a large box culvert (3 m or taller, short enough to see daylight through) costs far less as part of a scheduled replacement than as a stand-alone project.",
-      why: (s, c) => `SR 154 passes Lake Cachuma here through ${pct(s.natural_min)}% natural cover on the weaker side, inside the CDFW-listed barrier W165. ${c ? `The largest structure beneath it is a ${fmt(c.rise_m, 2)} m ${String(c.shape || "").toLowerCase()} pipe, ${fmt(c.length_m)} m long, big enough only for small mammals, reptiles and amphibians.` : ""} Replacing it with a large box culvert when it wears out would serve bobcats, coyotes and deer.`,
+      what: `Small drainage pipes eventually wear out. Replacing one with a large box culvert, 3 m or taller with an openness of at least 0.6 like the underpasses deer use (<a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">Reed et al. 1975</a>; <a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">Sawyer et al. 2012</a>), turns a scheduled repair into a crossing.`,
+      why: (s, c) => `US 101 crosses a drainage here north of Los Alamos on about ${fmt(s.embankment_m, 1)} m of fill, at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, through ${pct(s.natural_min)}% natural cover on the weaker side. ${c ? `The largest structure beneath it is a ${fmt(c.rise_m, 2)} m ${String(c.shape || "").toLowerCase()} pipe, ${fmt(c.length_m)} m long, big enough only for small mammals, reptiles and amphibians.` : ""}`,
     },
     underpass: {
-      what: "Where the road is raised on an embankment, an underpass can be built through the fill without lowering the road, the usual design for deer and larger carnivores.",
-      why: (s) => `US 101 sits about ${fmt(s.embankment_m, 1)} m above the land on both sides here, with no structure beneath. It ranks lower overall (${pct(s.need_pct)}th percentile) because habitat is patchy, but it's the county's clearest case of terrain that suits an underpass, and ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km.`,
+      what: `Where the road is raised on an embankment, an underpass can be built through the fill without lowering the road. In Wyoming, tens of thousands of mule deer used fenced underpasses 3 m high and 6 m wide (<a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">Sawyer et al. 2012</a>).`,
+      why: (s) => `SR 1 sits about ${fmt(s.embankment_m, 1)} m above the land on both sides here, with no structure beneath: room for an underpass of that height. It's the highest-ranked stretch where the road sits on fill (${pct(s.need_pct)}th percentile), with ${pct(s.natural_min)}% natural cover on the weaker side and ${fmt(s.speed_mph)} mph traffic.`,
     },
     overpass: {
       what: "Where the highway runs through a cut, the land on both sides is higher than the road, and a vegetated overpass can join the two slopes with little climbing for animals.",
       why: (s) => `SR 1 runs about ${fmt(Math.abs(s.embankment_m), 1)} m below its surroundings through this cut, with natural cover on both sides (${pct(s.natural_min)}% on the weaker side) and no structure under the road. CDFW lists this stretch as a movement barrier (W048).`,
     },
     at_grade: {
-      what: "Some high-need stretches have no drainage to use and no embankment or cut to exploit. They need a site study: an underpass with excavation, raising the road, or crossing-zone measures such as animal-detection signs.",
-      why: (s) => `US 101 runs nearly level here just east of Los Alamos, at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, with no culvert or bridge beneath. It sits in the middle of a roadkill hotspot (${fmt(s.hs_all_obs)} records within 1 km), with ${pct(s.natural_min)}% natural cover on the weaker side of the road. Drivers at that speed need about ${fmt(s.sd_night_deficit_m)} m more than low beams show to stop at night.`,
+      what: `Some high-need stretches have no drainage to use and no embankment or cut to exploit. They need a site study: an underpass with excavation, raising the road, or animal-detection systems, which cut large-mammal roadkill by 57% in a meta-analysis (<a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">Rytwinski et al. 2016</a>).`,
+      why: (s) => `US 101 runs nearly level here at the east edge of Los Alamos, at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, with no culvert or bridge beneath. ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km, most of them in the cluster just west of here, and natural cover on the weaker side of the road is ${pct(s.natural_min)}%.`,
     },
     fenced: {
-      what: "Continuous tall walls or fencing with no passage makes a highway a complete barrier. Animals stop dying on the road but also stop crossing. The fix is to add a passage where the fence is, or to end the fence at one.",
-      why: (s) => `Walls and fences 5 ft or taller line ${pct(s.fw_blocking_max)}% of this stretch of US 101 near Carpinteria, and there is no culvert or bridge beneath it. ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km.`,
+      what: "Tall walls or fencing with no passage keep animals off the road but also stop them crossing. The fix is to add a passage where the fence is, or to end the fence at one.",
+      why: (s) => `Walls and fences at least 8 ft tall, high enough to stop deer, line ${pct(s.fw_tall_fence_max)}% of one side of this stretch of US 101 near Carpinteria, and there is no culvert or bridge beneath it. ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km.`,
     },
     fence_end: {
-      what: "Animals that meet a fence walk along it and cross where it ends, so roadkill often clusters at fence ends. Extending the fence to the next structure, or tying its end into steep terrain, closes the gap.",
-      why: (s) => `An 8 ft fence along SR 246 ends here; two roadkill records lie within 300 m of its end, and the segment is a roadkill hotspot. Two culverts nearby, one tall enough for mesocarnivores, could anchor a fence that guides animals underneath instead of onto the road.`,
+      what: `Animals that meet a fence walk along it and cross where it ends: after fencing in Banff, collisions were greatest within 1 km of fence ends (<a href="https://www.conservationevidence.com/individual-study/7510" target="_blank" rel="noopener">Clevenger et al. 2001b</a>), and at short fenced sections elsewhere 18% of large-mammal crossings were around the fence ends (<a href="https://www.sciencedirect.com/science/article/pii/S0006320716300350" target="_blank" rel="noopener">Huijser et al. 2016</a>). Extending the fence to the next structure closes the gap.`,
+      why: (s) => `An 8 ft fence along SR 246 ends here; four roadkill records lie within 1 km of its end, and the segment is a roadkill hotspot. Two culverts nearby, one tall enough for mesocarnivores, could anchor a fence that guides animals underneath instead of onto the road.`,
     },
   };
 
