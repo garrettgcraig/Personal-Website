@@ -1,0 +1,846 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Santa Barbara Wildlife Crossings</title>
+<meta name="description" content="Where Santa Barbara County's state highways most need wildlife crossings, from community-science roadkill, Caltrans drainage inventories, terrain and connectivity data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800;900&family=Overpass+Mono:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: long-form scroll (context → results → methods) ending in a full-bleed 3D map with a side panel. */
+:root {
+  --bg: #f4f5f1;          /* field-notebook paper, faint green bias */
+  --surface: #ffffff;
+  --ink: #16201b;
+  --ink-2: #4a5550;
+  --ink-3: #75807a;
+  --rule: #d9ddd5;
+  --sign-green: #0b6e4f;   /* US guide-sign green */
+  --sign-green-ink: #ffffff;
+  --amber: #f2b705;        /* wildlife-crossing sign yellow */
+  --amber-ink: #16201b;
+  --bar: #0b6e4f;
+  --bar-muted: #b9c2bc;
+  --s1: #2a78d6;           /* medium mammals */
+  --s2: #eb6834;           /* large mammals */
+  --s3: #1baf7a;           /* small animals */
+  --map-panel: rgba(255,255,255,.94);
+  --shadow: 0 1px 2px rgba(22,32,27,.06), 0 8px 24px rgba(22,32,27,.08);
+  --font-display: "Overpass", "Highway Gothic", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-data: "Overpass Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --measure: 66ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111613; --surface: #18201c; --ink: #e9eee9; --ink-2: #b7c1bb; --ink-3: #8d9892;
+    --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613;
+    --bar: #3fb586; --bar-muted: #45514b; --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+    --map-panel: rgba(24,32,28,.94); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #18201c; --ink: #e9eee9; --ink-2: #b7c1bb; --ink-3: #8d9892;
+  --rule: #2b3530; --sign-green: #2f9e75; --sign-green-ink: #08110d; --amber: #f2c230; --amber-ink: #111613;
+  --bar: #3fb586; --bar-muted: #45514b; --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  --map-panel: rgba(24,32,28,.94); --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 18px; line-height: 1.6; }
+a { color: var(--sign-green); text-underline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+.wrap { max-width: 1120px; margin-inline: auto; padding-inline: 20px; }
+.prose { max-width: var(--measure); }
+.prose p { margin: 0 0 1em; }
+
+/* Header */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--sign-green); color: var(--sign-green-ink); }
+.topbar .wrap { display: flex; align-items: center; gap: 24px; padding-block: 10px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; letter-spacing: .02em; display: flex; align-items: center; gap: 10px; font-size: 15px; text-transform: uppercase; }
+.topbar nav { display: flex; gap: 18px; margin-left: auto; flex-wrap: wrap; }
+.topbar nav a { color: inherit; text-decoration: none; font-family: var(--font-display); font-weight: 600; font-size: 15px; opacity: .9; }
+.topbar nav a:hover { opacity: 1; text-decoration: underline; }
+.diamond { width: 22px; height: 22px; background: var(--amber); transform: rotate(45deg); border-radius: 3px; display: inline-grid; place-items: center; box-shadow: inset 0 0 0 2px var(--amber-ink); flex: none; }
+.diamond svg { transform: rotate(-45deg); width: 14px; height: 14px; }
+
+/* Hero */
+.hero { padding-block: 56px 32px; }
+.eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--sign-green); margin: 0 0 12px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.08; margin: 0; }
+h1 { font-weight: 900; font-size: clamp(36px, 6vw, 68px); letter-spacing: -.01em; max-width: 18ch; }
+h2 { font-weight: 800; font-size: clamp(28px, 3.6vw, 42px); margin-bottom: 18px; }
+h3 { font-weight: 800; font-size: 21px; margin-bottom: 8px; }
+.lede { font-size: clamp(19px, 2vw, 22px); color: var(--ink-2); max-width: 60ch; margin: 20px 0 0; }
+.byline { font-family: var(--font-display); font-size: 15px; color: var(--ink-3); margin-top: 18px; }
+
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 36px; }
+.stat { background: var(--bg); padding: 16px 18px; }
+.stat b { display: block; font-family: var(--font-display); font-weight: 900; font-size: 36px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-family: var(--font-display); font-size: 14px; color: var(--ink-2); }
+@media (max-width: 720px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+section.block { padding-block: 56px; border-top: 1px solid var(--rule); }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: start; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+.callout { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; box-shadow: var(--shadow); }
+.callout h3 { font-size: 17px; }
+.callout p { margin: 0; font-size: 16px; color: var(--ink-2); }
+.callout + .callout { margin-top: 14px; }
+
+/* Postmile paddle: Caltrans-style location label */
+.pm { display: inline-flex; align-items: stretch; font-family: var(--font-display); font-weight: 800; font-size: 13px; line-height: 1; border-radius: 4px; overflow: hidden; border: 1.5px solid var(--ink); white-space: nowrap; vertical-align: middle; }
+.pm .rt { background: var(--ink); color: var(--bg); padding: 5px 7px; }
+.pm .mi { background: var(--surface); color: var(--ink); padding: 5px 7px; font-variant-numeric: tabular-nums; }
+
+/* Zones table */
+.zones { width: 100%; border-collapse: collapse; font-family: var(--font-display); font-size: 15px; font-variant-numeric: tabular-nums; }
+.zones th { text-align: left; font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 2px solid var(--ink); padding: 8px 8px; }
+.zones td { border-bottom: 1px solid var(--rule); padding: 9px 8px; vertical-align: middle; }
+.zones tr { cursor: pointer; }
+.zones tbody tr:hover td, .zones tbody tr:focus-visible td { background: color-mix(in srgb, var(--amber) 16%, transparent); }
+.zones .num { text-align: right; }
+.chip { display: inline-block; font-size: 13px; line-height: 1.25; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink-2); }
+.table-scroll { overflow-x: auto; }
+
+/* Charts */
+.chart { font-family: var(--font-display); font-size: 14px; }
+.chart .row { display: grid; grid-template-columns: 13ch minmax(0, 1fr) 6ch; align-items: center; gap: 10px; padding-block: 3px; }
+.chart .label { color: var(--ink-2); text-align: right; }
+.chart .track { position: relative; height: 18px; }
+.chart .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar); border-radius: 0 4px 4px 0; transition: filter .15s; }
+.chart .fill.muted { background: var(--bar-muted); }
+.chart .row:hover .fill { filter: brightness(1.12); }
+.chart .val { font-variant-numeric: tabular-nums; color: var(--ink); }
+.chart-title { font-family: var(--font-display); font-weight: 800; font-size: 16px; margin: 0 0 4px; }
+.chart-sub { font-family: var(--font-display); font-size: 14px; color: var(--ink-3); margin: 0 0 12px; }
+.figure { margin: 0; }
+.figure + .figure { margin-top: 28px; }
+.tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg); font-family: var(--font-display); font-size: 13px; padding: 6px 9px; border-radius: 5px; max-width: 260px; }
+
+/* Methods */
+.steps { counter-reset: step; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 28px 0; padding: 0; list-style: none; }
+@media (max-width: 900px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+.steps li { counter-increment: step; border-top: 3px solid var(--sign-green); padding-top: 12px; }
+.steps li::before { content: counter(step); font-family: var(--font-data); font-weight: 600; font-size: 13px; color: var(--sign-green); display: block; margin-bottom: 4px; }
+.steps h3 { font-size: 18px; }
+.steps p { margin: 0; font-size: 16px; color: var(--ink-2); }
+.sources { width: 100%; border-collapse: collapse; font-size: 15px; }
+.sources th { text-align: left; font-family: var(--font-display); font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); border-bottom: 2px solid var(--ink); padding: 8px; }
+.sources td { border-bottom: 1px solid var(--rule); padding: 8px; vertical-align: top; }
+.sources td:first-child { font-family: var(--font-display); font-weight: 600; white-space: nowrap; }
+.caveats { font-size: 16px; color: var(--ink-2); padding-left: 1.1em; }
+.caveats li { margin-bottom: 6px; }
+
+/* Map */
+#map-section { border-top: 1px solid var(--rule); }
+.map-head { padding-block: 48px 20px; }
+.map-shell { position: relative; height: min(88vh, 860px); min-height: 560px; background: #0d1512; }
+#map { position: absolute; inset: 0; }
+.panel { position: absolute; top: 14px; left: 14px; bottom: 14px; width: 380px; max-width: calc(100% - 28px); background: var(--map-panel); color: var(--ink); border-radius: 10px; box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(6px); z-index: 2; }
+.tabs { display: flex; border-bottom: 1px solid var(--rule); }
+.tabs button { flex: 1; font: 600 15px var(--font-display); background: none; border: 0; padding: 12px 8px; color: var(--ink-3); cursor: pointer; border-bottom: 3px solid transparent; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--amber); }
+.panel-body { overflow-y: auto; padding: 16px; flex: 1; font-size: 15px; }
+.ex-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ex-list button { width: 100%; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; font: 600 15px/1.25 var(--font-display); color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 10px; cursor: pointer; }
+.ex-list button:hover, .ex-list button[aria-current="true"] { border-color: var(--ink); }
+.ex-list small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.pin { width: 26px; height: 26px; background: var(--amber); color: var(--amber-ink); transform: rotate(45deg); border-radius: 4px; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--amber-ink); font: 800 13px var(--font-display); }
+.pin > span { transform: rotate(-45deg); }
+.map-pin { cursor: pointer; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.map-pin.active .pin { background: #fff; }
+.ex-card h3 { font-size: 20px; margin: 10px 0 6px; }
+.ex-card .what { font-size: 15px; color: var(--ink-2); margin: 0 0 12px; }
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; margin: 10px 0 12px; }
+.facts div { background: var(--surface); padding: 7px 9px; }
+.facts b { display: block; font: 800 17px var(--font-display); font-variant-numeric: tabular-nums; }
+.facts span { font: 13px var(--font-display); color: var(--ink-3); }
+.ex-card .why { font-size: 15px; margin: 0 0 12px; }
+.photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.photos figure { margin: 0; }
+.photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 5px; display: block; cursor: zoom-in; }
+.photos figcaption { font: 12px/1.2 var(--font-display); color: var(--ink-3); margin-top: 3px; }
+.back { font: 600 14px var(--font-display); background: none; border: 0; color: var(--sign-green); cursor: pointer; padding: 0; }
+.layer-group { margin-bottom: 16px; }
+.layer-group h4 { font: 800 13px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 6px; }
+.toggle { display: flex; align-items: center; gap: 9px; font: 15px var(--font-display); padding: 4px 0; cursor: pointer; }
+.toggle input { width: 16px; height: 16px; accent-color: var(--sign-green); }
+.sw { width: 18px; height: 18px; border-radius: 50%; flex: none; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+.sw.line { border-radius: 2px; height: 5px; border: 0; box-shadow: none; }
+.ramp { height: 10px; border-radius: 3px; background: linear-gradient(90deg, #4d5a73, #f0d264 50%, #f39a2b 75%, #e8492e 90%, #b3005e); margin: 6px 0 2px; }
+.ramp-labels { display: flex; justify-content: space-between; font: 12px var(--font-display); color: var(--ink-3); }
+.map-hint { position: absolute; right: 14px; bottom: 34px; z-index: 2; background: var(--map-panel); color: var(--ink-2); font: 13px var(--font-display); padding: 6px 10px; border-radius: 6px; box-shadow: var(--shadow); }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: #dfe6e1; font: 600 16px var(--font-display); z-index: 1; pointer-events: none; }
+@media (max-width: 760px) {
+  .map-shell { height: auto; min-height: 0; display: flex; flex-direction: column; }
+  #map { position: relative; height: 62vh; min-height: 420px; }
+  .panel { position: relative; inset: auto; width: auto; max-width: none; margin: 0; border-radius: 0; max-height: none; }
+  .map-hint { display: none; }
+}
+
+/* Camera control */
+.cam-ctrl button { font: 700 16px/1 var(--font-display); color: #16201b; }
+.cam-ctrl button:last-child { font-size: 12px; letter-spacing: .02em; }
+
+/* Popups */
+.maplibregl-popup-content { font-family: var(--font-display); font-size: 14px; line-height: 1.35; color: #16201b; border-radius: 8px; padding: 10px 12px; max-width: 280px; }
+.pop-title { font-weight: 800; font-size: 15px; margin-bottom: 3px; }
+.pop-row { color: #4a5550; }
+.pop img { width: 100%; border-radius: 5px; margin: 6px 0 3px; display: block; }
+.pop small { color: #75807a; font-size: 11.5px; display: block; }
+
+/* Lightbox */
+dialog.lightbox { border: 0; padding: 0; background: transparent; max-width: min(92vw, 720px); }
+dialog.lightbox::backdrop { background: rgba(0,0,0,.75); }
+dialog.lightbox img { width: 100%; border-radius: 8px; display: block; }
+dialog.lightbox p { color: #f1f4f1; font: 14px var(--font-display); margin: 8px 0 0; }
+dialog.lightbox button { position: absolute; top: 8px; right: 8px; font: 800 14px var(--font-display); background: #fff; border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+
+footer { border-top: 1px solid var(--rule); padding-block: 32px 48px; font-size: 14px; color: var(--ink-3); }
+footer p { margin: 0 0 8px; max-width: 90ch; }
+
+/* MapLibre GL JS 4.7.1 stylesheet (BSD-3-Clause), inlined */
+.maplibregl-map{font:12px/20px Helvetica Neue,Arial,Helvetica,sans-serif;overflow:hidden;position:relative;-webkit-tap-highlight-color:rgb(0 0 0/0)}.maplibregl-canvas{left:0;position:absolute;top:0}.maplibregl-map:fullscreen{height:100%;width:100%}.maplibregl-ctrl-group button.maplibregl-ctrl-compass{touch-action:none}.maplibregl-canvas-container.maplibregl-interactive,.maplibregl-ctrl-group button.maplibregl-ctrl-compass{cursor:grab;-webkit-user-select:none;-moz-user-select:none;user-select:none}.maplibregl-canvas-container.maplibregl-interactive.maplibregl-track-pointer{cursor:pointer}.maplibregl-canvas-container.maplibregl-interactive:active,.maplibregl-ctrl-group button.maplibregl-ctrl-compass:active{cursor:grabbing}.maplibregl-canvas-container.maplibregl-touch-zoom-rotate,.maplibregl-canvas-container.maplibregl-touch-zoom-rotate .maplibregl-canvas{touch-action:pan-x pan-y}.maplibregl-canvas-container.maplibregl-touch-drag-pan,.maplibregl-canvas-container.maplibregl-touch-drag-pan .maplibregl-canvas{touch-action:pinch-zoom}.maplibregl-canvas-container.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan,.maplibregl-canvas-container.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan .maplibregl-canvas{touch-action:none}.maplibregl-canvas-container.maplibregl-touch-drag-pan.maplibregl-cooperative-gestures,.maplibregl-canvas-container.maplibregl-touch-drag-pan.maplibregl-cooperative-gestures .maplibregl-canvas{touch-action:pan-x pan-y}.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right,.maplibregl-ctrl-top-left,.maplibregl-ctrl-top-right{pointer-events:none;position:absolute;z-index:2}.maplibregl-ctrl-top-left{left:0;top:0}.maplibregl-ctrl-top-right{right:0;top:0}.maplibregl-ctrl-bottom-left{bottom:0;left:0}.maplibregl-ctrl-bottom-right{bottom:0;right:0}.maplibregl-ctrl{clear:both;pointer-events:auto;transform:translate(0)}.maplibregl-ctrl-top-left .maplibregl-ctrl{float:left;margin:10px 0 0 10px}.maplibregl-ctrl-top-right .maplibregl-ctrl{float:right;margin:10px 10px 0 0}.maplibregl-ctrl-bottom-left .maplibregl-ctrl{float:left;margin:0 0 10px 10px}.maplibregl-ctrl-bottom-right .maplibregl-ctrl{float:right;margin:0 10px 10px 0}.maplibregl-ctrl-group{background:#fff;border-radius:4px}.maplibregl-ctrl-group:not(:empty){box-shadow:0 0 0 2px rgba(0,0,0,.1)}@media (forced-colors:active){.maplibregl-ctrl-group:not(:empty){box-shadow:0 0 0 2px ButtonText}}.maplibregl-ctrl-group button{background-color:transparent;border:0;box-sizing:border-box;cursor:pointer;display:block;height:29px;outline:none;padding:0;width:29px}.maplibregl-ctrl-group button+button{border-top:1px solid #ddd}.maplibregl-ctrl button .maplibregl-ctrl-icon{background-position:50%;background-repeat:no-repeat;display:block;height:100%;width:100%}@media (forced-colors:active){.maplibregl-ctrl-icon{background-color:transparent}.maplibregl-ctrl-group button+button{border-top:1px solid ButtonText}}.maplibregl-ctrl button::-moz-focus-inner{border:0;padding:0}.maplibregl-ctrl-attrib-button:focus,.maplibregl-ctrl-group button:focus{box-shadow:0 0 2px 2px #0096ff}.maplibregl-ctrl button:disabled{cursor:not-allowed}.maplibregl-ctrl button:disabled .maplibregl-ctrl-icon{opacity:.25}.maplibregl-ctrl button:not(:disabled):hover{background-color:rgb(0 0 0/5%)}.maplibregl-ctrl-group button:focus:focus-visible{box-shadow:0 0 2px 2px #0096ff}.maplibregl-ctrl-group button:focus:not(:focus-visible){box-shadow:none}.maplibregl-ctrl-group button:focus:first-child{border-radius:4px 4px 0 0}.maplibregl-ctrl-group button:focus:last-child{border-radius:0 0 4px 4px}.maplibregl-ctrl-group button:focus:only-child{border-radius:inherit}.maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='M10 13c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h9c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5'/%3E%3C/svg%3E")}@media (forced-colors:active){.maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 29 29'%3E%3Cpath d='M10 13c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h9c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 29 29'%3E%3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5'/%3E%3C/svg%3E")}}@media (forced-colors:active) and (prefers-color-scheme:light){.maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='M10 13c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h9c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5'/%3E%3C/svg%3E")}}.maplibregl-ctrl button.maplibregl-ctrl-fullscreen .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='M24 16v5.5c0 1.75-.75 2.5-2.5 2.5H16v-1l3-1.5-4-5.5 1-1 5.5 4 1.5-3zM6 16l1.5 3 5.5-4 1 1-4 5.5 3 1.5v1H7.5C5.75 24 5 23.25 5 21.5V16zm7-11v1l-3 1.5 4 5.5-1 1-5.5-4L6 13H5V7.5C5 5.75 5.75 5 7.5 5zm11 2.5c0-1.75-.75-2.5-2.5-2.5H16v1l3 1.5-4 5.5 1 1 5.5-4 1.5 3h1z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-shrink .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='M18.5 16c-1.75 0-2.5.75-2.5 2.5V24h1l1.5-3 5.5 4 1-1-4-5.5 3-1.5v-1zM13 18.5c0-1.75-.75-2.5-2.5-2.5H5v1l3 1.5L4 24l1 1 5.5-4 1.5 3h1zm3-8c0 1.75.75 2.5 2.5 2.5H24v-1l-3-1.5L25 5l-1-1-5.5 4L17 5h-1zM10.5 13c1.75 0 2.5-.75 2.5-2.5V5h-1l-1.5 3L5 4 4 5l4 5.5L5 12v1z'/%3E%3C/svg%3E")}@media (forced-colors:active){.maplibregl-ctrl button.maplibregl-ctrl-fullscreen .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 29 29'%3E%3Cpath d='M24 16v5.5c0 1.75-.75 2.5-2.5 2.5H16v-1l3-1.5-4-5.5 1-1 5.5 4 1.5-3zM6 16l1.5 3 5.5-4 1 1-4 5.5 3 1.5v1H7.5C5.75 24 5 23.25 5 21.5V16zm7-11v1l-3 1.5 4 5.5-1 1-5.5-4L6 13H5V7.5C5 5.75 5.75 5 7.5 5zm11 2.5c0-1.75-.75-2.5-2.5-2.5H16v1l3 1.5-4 5.5 1 1 5.5-4 1.5 3h1z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-shrink .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 29 29'%3E%3Cpath d='M18.5 16c-1.75 0-2.5.75-2.5 2.5V24h1l1.5-3 5.5 4 1-1-4-5.5 3-1.5v-1zM13 18.5c0-1.75-.75-2.5-2.5-2.5H5v1l3 1.5L4 24l1 1 5.5-4 1.5 3h1zm3-8c0 1.75.75 2.5 2.5 2.5H24v-1l-3-1.5L25 5l-1-1-5.5 4L17 5h-1zM10.5 13c1.75 0 2.5-.75 2.5-2.5V5h-1l-1.5 3L5 4 4 5l4 5.5L5 12v1z'/%3E%3C/svg%3E")}}@media (forced-colors:active) and (prefers-color-scheme:light){.maplibregl-ctrl button.maplibregl-ctrl-fullscreen .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='M24 16v5.5c0 1.75-.75 2.5-2.5 2.5H16v-1l3-1.5-4-5.5 1-1 5.5 4 1.5-3zM6 16l1.5 3 5.5-4 1 1-4 5.5 3 1.5v1H7.5C5.75 24 5 23.25 5 21.5V16zm7-11v1l-3 1.5 4 5.5-1 1-5.5-4L6 13H5V7.5C5 5.75 5.75 5 7.5 5zm11 2.5c0-1.75-.75-2.5-2.5-2.5H16v1l3 1.5-4 5.5 1 1 5.5-4 1.5 3h1z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-shrink .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='M18.5 16c-1.75 0-2.5.75-2.5 2.5V24h1l1.5-3 5.5 4 1-1-4-5.5 3-1.5v-1zM13 18.5c0-1.75-.75-2.5-2.5-2.5H5v1l3 1.5L4 24l1 1 5.5-4 1.5 3h1zm3-8c0 1.75.75 2.5 2.5 2.5H24v-1l-3-1.5L25 5l-1-1-5.5 4L17 5h-1zM10.5 13c1.75 0 2.5-.75 2.5-2.5V5h-1l-1.5 3L5 4 4 5l4 5.5L5 12v1z'/%3E%3C/svg%3E")}}.maplibregl-ctrl button.maplibregl-ctrl-compass .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='m10.5 14 4-8 4 8z'/%3E%3Cpath fill='%23ccc' d='m10.5 16 4 8 4-8z'/%3E%3C/svg%3E")}@media (forced-colors:active){.maplibregl-ctrl button.maplibregl-ctrl-compass .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 29 29'%3E%3Cpath d='m10.5 14 4-8 4 8z'/%3E%3Cpath fill='%23ccc' d='m10.5 16 4 8 4-8z'/%3E%3C/svg%3E")}}@media (forced-colors:active) and (prefers-color-scheme:light){.maplibregl-ctrl button.maplibregl-ctrl-compass .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 29 29'%3E%3Cpath d='m10.5 14 4-8 4 8z'/%3E%3Cpath fill='%23ccc' d='m10.5 16 4 8 4-8z'/%3E%3C/svg%3E")}}.maplibregl-ctrl button.maplibregl-ctrl-terrain .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='%23333' viewBox='0 0 22 22'%3E%3Cpath d='m1.754 13.406 4.453-4.851 3.09 3.09 3.281 3.277.969-.969-3.309-3.312 3.844-4.121 6.148 6.886h1.082v-.855l-7.207-8.07-4.84 5.187L6.169 6.57l-5.48 5.965v.871ZM.688 16.844h20.625v1.375H.688Zm0 0'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-terrain-enabled .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='%2333b5e5' viewBox='0 0 22 22'%3E%3Cpath d='m1.754 13.406 4.453-4.851 3.09 3.09 3.281 3.277.969-.969-3.309-3.312 3.844-4.121 6.148 6.886h1.082v-.855l-7.207-8.07-4.84 5.187L6.169 6.57l-5.48 5.965v.871ZM.688 16.844h20.625v1.375H.688Zm0 0'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23333' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate:disabled .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23aaa' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Cpath fill='red' d='m14 5 1 1-9 9-1-1z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%2333b5e5' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active-error .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23e58978' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-background .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%2333b5e5' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-background-error .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23e54e33' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-waiting .maplibregl-ctrl-icon{animation:maplibregl-spin 2s linear infinite}@media (forced-colors:active){.maplibregl-ctrl button.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23fff' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate:disabled .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23999' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Cpath fill='red' d='m14 5 1 1-9 9-1-1z'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%2333b5e5' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-active-error .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23e58978' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-background .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%2333b5e5' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate.maplibregl-ctrl-geolocate-background-error .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23e54e33' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3C/svg%3E")}}@media (forced-colors:active) and (prefers-color-scheme:light){.maplibregl-ctrl button.maplibregl-ctrl-geolocate .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/svg%3E")}.maplibregl-ctrl button.maplibregl-ctrl-geolocate:disabled .maplibregl-ctrl-icon{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='29' fill='%23666' viewBox='0 0 20 20'%3E%3Cpath d='M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1m0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Cpath fill='red' d='m14 5 1 1-9 9-1-1z'/%3E%3C/svg%3E")}}@keyframes maplibregl-spin{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}a.maplibregl-ctrl-logo{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='23' fill='none'%3E%3Cpath fill='%23000' fill-opacity='.4' fill-rule='evenodd' d='M17.408 16.796h-1.827l2.501-12.095h.198l3.324 6.533.988 2.19.988-2.19 3.258-6.533h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.929 5.644h-.098l-2.914-5.644-.757-1.71-.345 1.71zm1.958-3.42-.726 3.663a1.255 1.255 0 0 1-1.232 1.011h-1.827a1.255 1.255 0 0 1-1.229-1.509l2.501-12.095a1.255 1.255 0 0 1 1.23-1.001h.197a1.25 1.25 0 0 1 1.12.685l3.19 6.273 3.125-6.263a1.25 1.25 0 0 1 1.123-.695h.181a1.255 1.255 0 0 1 1.227.991l1.443 6.71a5 5 0 0 1 .314-.787l.009-.016a4.6 4.6 0 0 1 1.777-1.887c.782-.46 1.668-.667 2.611-.667a4.6 4.6 0 0 1 1.7.32l.306.134c.21-.16.474-.256.759-.256h1.694a1.255 1.255 0 0 1 1.212.925 1.255 1.255 0 0 1 1.212-.925h1.711c.284 0 .545.094.755.252.613-.3 1.312-.45 2.075-.45 1.356 0 2.557.445 3.482 1.4q.47.48.763 1.064V4.701a1.255 1.255 0 0 1 1.255-1.255h1.86A1.255 1.255 0 0 1 54.44 4.7v9.194h2.217c.19 0 .37.043.532.118v-4.77c0-.356.147-.678.385-.906a2.42 2.42 0 0 1-.682-1.71c0-.665.267-1.253.735-1.7a2.45 2.45 0 0 1 1.722-.674 2.43 2.43 0 0 1 1.705.675q.318.302.504.683V4.7a1.255 1.255 0 0 1 1.255-1.255h1.744A1.255 1.255 0 0 1 65.812 4.7v3.335a4.8 4.8 0 0 1 1.526-.246c.938 0 1.817.214 2.59.69a4.47 4.47 0 0 1 1.67 1.743v-.98a1.255 1.255 0 0 1 1.256-1.256h1.777c.233 0 .451.064.639.174a3.4 3.4 0 0 1 1.567-.372c.346 0 .861.02 1.285.232a1.25 1.25 0 0 1 .689 1.004 4.7 4.7 0 0 1 .853-.588c.795-.44 1.675-.647 2.61-.647 1.385 0 2.65.39 3.525 1.396.836.938 1.168 2.173 1.168 3.528q-.001.515-.056 1.051a1.255 1.255 0 0 1-.947 1.09l.408.952a1.255 1.255 0 0 1-.477 1.552c-.418.268-.92.463-1.458.612-.613.171-1.304.244-2.049.244-1.06 0-2.043-.207-2.886-.698l-.015-.008c-.798-.48-1.419-1.135-1.818-1.963l-.004-.008a5.8 5.8 0 0 1-.548-2.512q0-.429.053-.843a1.3 1.3 0 0 1-.333-.086l-.166-.004c-.223 0-.426.062-.643.228-.03.024-.142.139-.142.59v3.883a1.255 1.255 0 0 1-1.256 1.256h-1.777a1.255 1.255 0 0 1-1.256-1.256V15.69l-.032.057a4.8 4.8 0 0 1-1.86 1.833 5.04 5.04 0 0 1-2.484.634 4.5 4.5 0 0 1-1.935-.424 1.25 1.25 0 0 1-.764.258h-1.71a1.255 1.255 0 0 1-1.256-1.255V7.687a2.4 2.4 0 0 1-.428.625c.253.23.412.561.412.93v7.553a1.255 1.255 0 0 1-1.256 1.255h-1.843a1.25 1.25 0 0 1-.894-.373c-.228.23-.544.373-.894.373H51.32a1.255 1.255 0 0 1-1.256-1.255v-1.251l-.061.117a4.7 4.7 0 0 1-1.782 1.884 4.77 4.77 0 0 1-2.485.67 5.6 5.6 0 0 1-1.485-.188l.009 2.764a1.255 1.255 0 0 1-1.255 1.259h-1.729a1.255 1.255 0 0 1-1.255-1.255v-3.537a1.255 1.255 0 0 1-1.167.793h-1.679a1.25 1.25 0 0 1-.77-.263 4.5 4.5 0 0 1-1.945.429c-.885 0-1.724-.21-2.495-.632l-.017-.01a5 5 0 0 1-1.081-.836 1.255 1.255 0 0 1-1.254 1.312h-1.81a1.255 1.255 0 0 1-1.228-.99l-.782-3.625-2.044 3.939a1.25 1.25 0 0 1-1.115.676h-.098a1.25 1.25 0 0 1-1.116-.68l-2.061-3.994zM35.92 16.63l.207-.114.223-.15q.493-.356.735-.785l.061-.118.033 1.332h1.678V9.242h-1.694l-.033 1.267q-.133-.329-.526-.658l-.032-.028a3.2 3.2 0 0 0-.668-.428l-.27-.12a3.3 3.3 0 0 0-1.235-.23q-1.136-.001-1.974.493a3.36 3.36 0 0 0-1.3 1.382q-.445.89-.444 2.074 0 1.2.51 2.107a3.8 3.8 0 0 0 1.382 1.381 3.9 3.9 0 0 0 1.893.477q.795 0 1.455-.33zm-2.789-5.38q-.576.675-.575 1.762 0 1.102.559 1.794.576.675 1.645.675a2.25 2.25 0 0 0 .934-.19 2.2 2.2 0 0 0 .468-.29l.178-.161a2.2 2.2 0 0 0 .397-.561q.244-.5.244-1.15v-.115q0-.708-.296-1.267l-.043-.077a2.2 2.2 0 0 0-.633-.709l-.13-.086-.047-.028a2.1 2.1 0 0 0-1.073-.285q-1.052 0-1.629.692zm2.316 2.706c.163-.17.28-.407.28-.83v-.114c0-.292-.06-.508-.15-.68a.96.96 0 0 0-.353-.389.85.85 0 0 0-.464-.127c-.4 0-.56.114-.664.239l-.01.012c-.148.174-.275.45-.275.945 0 .506.122.801.27.99.097.11.266.224.68.224.303 0 .504-.09.687-.269zm7.545 1.705a2.6 2.6 0 0 0 .331.423q.319.33.755.548l.173.074q.65.255 1.49.255 1.02 0 1.844-.493a3.45 3.45 0 0 0 1.316-1.4q.493-.904.493-2.089 0-1.909-.988-2.913-.988-1.02-2.584-1.02-.898 0-1.575.347a3 3 0 0 0-.415.262l-.199.166a3.4 3.4 0 0 0-.64.82V9.242h-1.712v11.553h1.729l-.017-5.134zm.53-1.138q.206.29.48.5l.155.11.053.034q.51.296 1.119.297 1.07 0 1.645-.675.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.435 0-.835.16a2 2 0 0 0-.284.136 2 2 0 0 0-.363.254 2.2 2.2 0 0 0-.46.569l-.082.162a2.6 2.6 0 0 0-.213 1.072v.115q0 .707.296 1.267l.135.211zm.964-.818a1.1 1.1 0 0 0 .367.385.94.94 0 0 0 .476.118c.423 0 .59-.117.687-.23.159-.194.28-.478.28-.95 0-.53-.133-.8-.266-.952l-.021-.025c-.078-.094-.231-.221-.68-.221a1 1 0 0 0-.503.135l-.012.007a.86.86 0 0 0-.335.343c-.073.133-.132.324-.132.614v.115a1.4 1.4 0 0 0 .14.66zm15.7-6.222q.347-.346.346-.856a1.05 1.05 0 0 0-.345-.79 1.18 1.18 0 0 0-.84-.329q-.51 0-.855.33a1.05 1.05 0 0 0-.346.79q0 .51.346.855.345.346.856.346.51 0 .839-.346zm4.337 9.314.033-1.332q.191.403.59.747l.098.081a4 4 0 0 0 .316.224l.223.122a3.2 3.2 0 0 0 1.44.322 3.8 3.8 0 0 0 1.875-.477 3.5 3.5 0 0 0 1.382-1.366q.527-.89.526-2.09 0-1.184-.444-2.073a3.24 3.24 0 0 0-1.283-1.399q-.823-.51-1.942-.51a3.5 3.5 0 0 0-1.527.344l-.086.043-.165.09a3 3 0 0 0-.33.214q-.432.315-.656.707a2 2 0 0 0-.099.198l.082-1.283V4.701h-1.744v12.095zm.473-2.509a2.5 2.5 0 0 0 .566.7q.117.098.245.18l.144.08a2.1 2.1 0 0 0 .975.232q1.07 0 1.645-.675.576-.69.576-1.778 0-1.102-.576-1.777-.56-.691-1.645-.692a2.2 2.2 0 0 0-1.015.235q-.22.113-.415.282l-.15.142a2.1 2.1 0 0 0-.42.594q-.223.479-.223 1.1v.115q0 .705.293 1.26zm2.616-.293c.157-.191.28-.479.28-.967 0-.51-.13-.79-.276-.961l-.021-.026c-.082-.1-.232-.225-.67-.225a.87.87 0 0 0-.681.279l-.012.011c-.154.155-.274.38-.274.807v.115c0 .285.057.499.144.669a1.1 1.1 0 0 0 .367.405c.137.082.28.123.455.123.423 0 .59-.118.686-.23zm8.266-3.013q.345-.13.724-.14l.069-.002q.493 0 .642.099l.247-1.794q-.196-.099-.717-.099a2.3 2.3 0 0 0-.545.063 2 2 0 0 0-.411.148 2.2 2.2 0 0 0-.4.249 2.5 2.5 0 0 0-.485.499 2.7 2.7 0 0 0-.32.581l-.05.137v-1.48h-1.778v7.553h1.777v-3.884q0-.546.159-.943a1.5 1.5 0 0 1 .466-.636 2.5 2.5 0 0 1 .399-.253 2 2 0 0 1 .224-.099zm9.784 2.656.05-.922q0-1.743-.856-2.698-.838-.97-2.584-.97-1.119-.001-2.007.493a3.46 3.46 0 0 0-1.4 1.382q-.493.906-.493 2.106 0 1.07.428 1.975.428.89 1.332 1.432.906.526 2.255.526.973 0 1.668-.185l.044-.012.135-.04q.613-.184.984-.421l-.542-1.267q-.3.162-.642.274l-.297.087q-.51.131-1.3.131-.954 0-1.497-.444a1.6 1.6 0 0 1-.192-.193q-.366-.44-.512-1.234l-.004-.021zm-5.427-1.256-.003.022h3.752v-.138q-.011-.727-.288-1.118a1 1 0 0 0-.156-.176q-.46-.428-1.316-.428-.986 0-1.494.604-.379.45-.494 1.234zm-27.053 2.77V4.7h-1.86v12.095h5.333V15.15zm7.103-5.908v7.553h-1.843V9.242h1.843z'/%3E%3Cpath fill='%23fff' d='m19.63 11.151-.757-1.71-.345 1.71-1.12 5.644h-1.827L18.083 4.7h.197l3.325 6.533.988 2.19.988-2.19L26.839 4.7h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.93 5.644h-.098l-2.913-5.644zm14.836 5.81q-1.02 0-1.893-.478a3.8 3.8 0 0 1-1.381-1.382q-.51-.906-.51-2.106 0-1.185.444-2.074a3.36 3.36 0 0 1 1.3-1.382q.839-.494 1.974-.494a3.3 3.3 0 0 1 1.234.231 3.3 3.3 0 0 1 .97.575q.396.33.527.659l.033-1.267h1.694v7.553H37.18l-.033-1.332q-.279.593-1.02 1.053a3.17 3.17 0 0 1-1.662.444zm.296-1.482q.938 0 1.58-.642.642-.66.642-1.711v-.115q0-.708-.296-1.267a2.2 2.2 0 0 0-.807-.872 2.1 2.1 0 0 0-1.119-.313q-1.053 0-1.629.692-.575.675-.575 1.76 0 1.103.559 1.795.577.675 1.645.675zm6.521-6.237h1.711v1.4q.906-1.597 2.83-1.597 1.596 0 2.584 1.02.988 1.005.988 2.914 0 1.185-.493 2.09a3.46 3.46 0 0 1-1.316 1.399 3.5 3.5 0 0 1-1.844.493q-.954 0-1.662-.329a2.67 2.67 0 0 1-1.086-.97l.017 5.134h-1.728zm4.048 6.22q1.07 0 1.645-.674.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.592 0-1.12.296-.51.28-.822.823-.296.527-.296 1.234v.115q0 .708.296 1.267.313.543.823.855.51.296 1.119.297z'/%3E%3Cpath fill='%23e1e3e9' d='M51.325 4.7h1.86v10.45h3.473v1.646h-5.333zm7.12 4.542h1.843v7.553h-1.843zm.905-1.415a1.16 1.16 0 0 1-.856-.346 1.17 1.17 0 0 1-.346-.856 1.05 1.05 0 0 1 .346-.79q.346-.329.856-.329.494 0 .839.33a1.05 1.05 0 0 1 .345.79 1.16 1.16 0 0 1-.345.855q-.33.346-.84.346zm7.875 9.133a3.17 3.17 0 0 1-1.662-.444q-.723-.46-1.004-1.053l-.033 1.332h-1.71V4.701h1.743v4.657l-.082 1.283q.279-.658 1.086-1.119a3.5 3.5 0 0 1 1.778-.477q1.119 0 1.942.51a3.24 3.24 0 0 1 1.283 1.4q.445.888.444 2.072 0 1.201-.526 2.09a3.5 3.5 0 0 1-1.382 1.366 3.8 3.8 0 0 1-1.876.477zm-.296-1.481q1.069 0 1.645-.675.577-.69.577-1.778 0-1.102-.577-1.776-.56-.691-1.645-.692a2.12 2.12 0 0 0-1.58.659q-.642.641-.642 1.694v.115q0 .71.296 1.267a2.4 2.4 0 0 0 .807.872 2.1 2.1 0 0 0 1.119.313zm5.927-6.237h1.777v1.481q.263-.757.856-1.217a2.14 2.14 0 0 1 1.349-.46q.527 0 .724.098l-.247 1.794q-.149-.099-.642-.099-.774 0-1.416.494-.626.493-.626 1.58v3.883h-1.777V9.242zm9.534 7.718q-1.35 0-2.255-.526-.904-.543-1.332-1.432a4.6 4.6 0 0 1-.428-1.975q0-1.2.493-2.106a3.46 3.46 0 0 1 1.4-1.382q.889-.495 2.007-.494 1.744 0 2.584.97.855.956.856 2.7 0 .444-.05.92h-5.43q.18 1.005.708 1.45.542.443 1.497.443.79 0 1.3-.131a4 4 0 0 0 .938-.362l.542 1.267q-.411.263-1.119.46-.708.198-1.711.197zm1.596-4.558q.016-1.02-.444-1.432-.46-.428-1.316-.428-1.728 0-1.991 1.86z'/%3E%3Cpath d='M5.074 15.948a.484.657 0 0 0-.486.659v1.84a.484.657 0 0 0 .486.659h4.101a.484.657 0 0 0 .486-.659v-1.84a.484.657 0 0 0-.486-.659zm3.56 1.16H5.617v.838h3.017z' style='fill:%23fff;fill-rule:evenodd;stroke-width:1.03600001'/%3E%3Cg style='stroke-width:1.12603545'%3E%3Cpath d='M-9.408-1.416c-3.833-.025-7.056 2.912-7.08 6.615-.02 3.08 1.653 4.832 3.107 6.268.903.892 1.721 1.74 2.32 2.902l-.525-.004c-.543-.003-.992.304-1.24.639a1.87 1.87 0 0 0-.362 1.121l-.011 1.877c-.003.402.104.787.347 1.125.244.338.688.653 1.23.656l4.142.028c.542.003.99-.306 1.238-.641a1.87 1.87 0 0 0 .363-1.121l.012-1.875a1.87 1.87 0 0 0-.348-1.127c-.243-.338-.688-.653-1.23-.656l-.518-.004c.597-1.145 1.425-1.983 2.348-2.87 1.473-1.414 3.18-3.149 3.2-6.226-.016-3.59-2.923-6.684-6.993-6.707m-.006 1.1v.002c3.274.02 5.92 2.532 5.9 5.6-.017 2.706-1.39 4.026-2.863 5.44-1.034.994-2.118 2.033-2.814 3.633-.018.041-.052.055-.075.065q-.013.004-.02.01a.34.34 0 0 1-.226.084.34.34 0 0 1-.224-.086l-.092-.077c-.699-1.615-1.768-2.669-2.781-3.67-1.454-1.435-2.797-2.762-2.78-5.478.02-3.067 2.7-5.545 5.975-5.523m-.02 2.826c-1.62-.01-2.944 1.315-2.955 2.96-.01 1.646 1.295 2.988 2.916 2.999h.002c1.621.01 2.943-1.316 2.953-2.961.011-1.646-1.294-2.988-2.916-2.998m-.005 1.1c1.017.006 1.829.83 1.822 1.89s-.83 1.874-1.848 1.867c-1.018-.006-1.829-.83-1.822-1.89s.83-1.874 1.848-1.868m-2.155 11.857 4.14.025c.271.002.49.305.487.676l-.013 1.875c-.003.37-.224.67-.495.668l-4.14-.025c-.27-.002-.487-.306-.485-.676l.012-1.875c.003-.37.224-.67.494-.668' style='color:%23000;font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:evenodd;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:%23000;solid-opacity:1;vector-effect:none;fill:%23000;fill-opacity:.4;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-9.415-.316C-12.69-.338-15.37 2.14-15.39 5.207c-.017 2.716 1.326 4.041 2.78 5.477 1.013 1 2.081 2.055 2.78 3.67l.092.076a.34.34 0 0 0 .225.086.34.34 0 0 0 .227-.083l.019-.01c.022-.009.057-.024.074-.064.697-1.6 1.78-2.64 2.814-3.634 1.473-1.414 2.847-2.733 2.864-5.44.02-3.067-2.627-5.58-5.901-5.601m-.057 8.784c1.621.011 2.944-1.315 2.955-2.96.01-1.646-1.295-2.988-2.916-2.999-1.622-.01-2.945 1.315-2.955 2.96s1.295 2.989 2.916 3' style='clip-rule:evenodd;fill:%23e1e3e9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-11.594 15.465c-.27-.002-.492.297-.494.668l-.012 1.876c-.003.371.214.673.485.675l4.14.027c.271.002.492-.298.495-.668l.012-1.877c.003-.37-.215-.672-.485-.674z' style='clip-rule:evenodd;fill:%23fff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;cursor:pointer;display:block;height:23px;margin:0 0 -4px -4px;overflow:hidden;width:88px}a.maplibregl-ctrl-logo.maplibregl-compact{width:14px}@media (forced-colors:active){a.maplibregl-ctrl-logo{background-color:transparent;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='23' fill='none'%3E%3Cpath fill='%23000' fill-opacity='.4' fill-rule='evenodd' d='M17.408 16.796h-1.827l2.501-12.095h.198l3.324 6.533.988 2.19.988-2.19 3.258-6.533h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.929 5.644h-.098l-2.914-5.644-.757-1.71-.345 1.71zm1.958-3.42-.726 3.663a1.255 1.255 0 0 1-1.232 1.011h-1.827a1.255 1.255 0 0 1-1.229-1.509l2.501-12.095a1.255 1.255 0 0 1 1.23-1.001h.197a1.25 1.25 0 0 1 1.12.685l3.19 6.273 3.125-6.263a1.25 1.25 0 0 1 1.123-.695h.181a1.255 1.255 0 0 1 1.227.991l1.443 6.71a5 5 0 0 1 .314-.787l.009-.016a4.6 4.6 0 0 1 1.777-1.887c.782-.46 1.668-.667 2.611-.667a4.6 4.6 0 0 1 1.7.32l.306.134c.21-.16.474-.256.759-.256h1.694a1.255 1.255 0 0 1 1.212.925 1.255 1.255 0 0 1 1.212-.925h1.711c.284 0 .545.094.755.252.613-.3 1.312-.45 2.075-.45 1.356 0 2.557.445 3.482 1.4q.47.48.763 1.064V4.701a1.255 1.255 0 0 1 1.255-1.255h1.86A1.255 1.255 0 0 1 54.44 4.7v9.194h2.217c.19 0 .37.043.532.118v-4.77c0-.356.147-.678.385-.906a2.42 2.42 0 0 1-.682-1.71c0-.665.267-1.253.735-1.7a2.45 2.45 0 0 1 1.722-.674 2.43 2.43 0 0 1 1.705.675q.318.302.504.683V4.7a1.255 1.255 0 0 1 1.255-1.255h1.744A1.255 1.255 0 0 1 65.812 4.7v3.335a4.8 4.8 0 0 1 1.526-.246c.938 0 1.817.214 2.59.69a4.47 4.47 0 0 1 1.67 1.743v-.98a1.255 1.255 0 0 1 1.256-1.256h1.777c.233 0 .451.064.639.174a3.4 3.4 0 0 1 1.567-.372c.346 0 .861.02 1.285.232a1.25 1.25 0 0 1 .689 1.004 4.7 4.7 0 0 1 .853-.588c.795-.44 1.675-.647 2.61-.647 1.385 0 2.65.39 3.525 1.396.836.938 1.168 2.173 1.168 3.528q-.001.515-.056 1.051a1.255 1.255 0 0 1-.947 1.09l.408.952a1.255 1.255 0 0 1-.477 1.552c-.418.268-.92.463-1.458.612-.613.171-1.304.244-2.049.244-1.06 0-2.043-.207-2.886-.698l-.015-.008c-.798-.48-1.419-1.135-1.818-1.963l-.004-.008a5.8 5.8 0 0 1-.548-2.512q0-.429.053-.843a1.3 1.3 0 0 1-.333-.086l-.166-.004c-.223 0-.426.062-.643.228-.03.024-.142.139-.142.59v3.883a1.255 1.255 0 0 1-1.256 1.256h-1.777a1.255 1.255 0 0 1-1.256-1.256V15.69l-.032.057a4.8 4.8 0 0 1-1.86 1.833 5.04 5.04 0 0 1-2.484.634 4.5 4.5 0 0 1-1.935-.424 1.25 1.25 0 0 1-.764.258h-1.71a1.255 1.255 0 0 1-1.256-1.255V7.687a2.4 2.4 0 0 1-.428.625c.253.23.412.561.412.93v7.553a1.255 1.255 0 0 1-1.256 1.255h-1.843a1.25 1.25 0 0 1-.894-.373c-.228.23-.544.373-.894.373H51.32a1.255 1.255 0 0 1-1.256-1.255v-1.251l-.061.117a4.7 4.7 0 0 1-1.782 1.884 4.77 4.77 0 0 1-2.485.67 5.6 5.6 0 0 1-1.485-.188l.009 2.764a1.255 1.255 0 0 1-1.255 1.259h-1.729a1.255 1.255 0 0 1-1.255-1.255v-3.537a1.255 1.255 0 0 1-1.167.793h-1.679a1.25 1.25 0 0 1-.77-.263 4.5 4.5 0 0 1-1.945.429c-.885 0-1.724-.21-2.495-.632l-.017-.01a5 5 0 0 1-1.081-.836 1.255 1.255 0 0 1-1.254 1.312h-1.81a1.255 1.255 0 0 1-1.228-.99l-.782-3.625-2.044 3.939a1.25 1.25 0 0 1-1.115.676h-.098a1.25 1.25 0 0 1-1.116-.68l-2.061-3.994zM35.92 16.63l.207-.114.223-.15q.493-.356.735-.785l.061-.118.033 1.332h1.678V9.242h-1.694l-.033 1.267q-.133-.329-.526-.658l-.032-.028a3.2 3.2 0 0 0-.668-.428l-.27-.12a3.3 3.3 0 0 0-1.235-.23q-1.136-.001-1.974.493a3.36 3.36 0 0 0-1.3 1.382q-.445.89-.444 2.074 0 1.2.51 2.107a3.8 3.8 0 0 0 1.382 1.381 3.9 3.9 0 0 0 1.893.477q.795 0 1.455-.33zm-2.789-5.38q-.576.675-.575 1.762 0 1.102.559 1.794.576.675 1.645.675a2.25 2.25 0 0 0 .934-.19 2.2 2.2 0 0 0 .468-.29l.178-.161a2.2 2.2 0 0 0 .397-.561q.244-.5.244-1.15v-.115q0-.708-.296-1.267l-.043-.077a2.2 2.2 0 0 0-.633-.709l-.13-.086-.047-.028a2.1 2.1 0 0 0-1.073-.285q-1.052 0-1.629.692zm2.316 2.706c.163-.17.28-.407.28-.83v-.114c0-.292-.06-.508-.15-.68a.96.96 0 0 0-.353-.389.85.85 0 0 0-.464-.127c-.4 0-.56.114-.664.239l-.01.012c-.148.174-.275.45-.275.945 0 .506.122.801.27.99.097.11.266.224.68.224.303 0 .504-.09.687-.269zm7.545 1.705a2.6 2.6 0 0 0 .331.423q.319.33.755.548l.173.074q.65.255 1.49.255 1.02 0 1.844-.493a3.45 3.45 0 0 0 1.316-1.4q.493-.904.493-2.089 0-1.909-.988-2.913-.988-1.02-2.584-1.02-.898 0-1.575.347a3 3 0 0 0-.415.262l-.199.166a3.4 3.4 0 0 0-.64.82V9.242h-1.712v11.553h1.729l-.017-5.134zm.53-1.138q.206.29.48.5l.155.11.053.034q.51.296 1.119.297 1.07 0 1.645-.675.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.435 0-.835.16a2 2 0 0 0-.284.136 2 2 0 0 0-.363.254 2.2 2.2 0 0 0-.46.569l-.082.162a2.6 2.6 0 0 0-.213 1.072v.115q0 .707.296 1.267l.135.211zm.964-.818a1.1 1.1 0 0 0 .367.385.94.94 0 0 0 .476.118c.423 0 .59-.117.687-.23.159-.194.28-.478.28-.95 0-.53-.133-.8-.266-.952l-.021-.025c-.078-.094-.231-.221-.68-.221a1 1 0 0 0-.503.135l-.012.007a.86.86 0 0 0-.335.343c-.073.133-.132.324-.132.614v.115a1.4 1.4 0 0 0 .14.66zm15.7-6.222q.347-.346.346-.856a1.05 1.05 0 0 0-.345-.79 1.18 1.18 0 0 0-.84-.329q-.51 0-.855.33a1.05 1.05 0 0 0-.346.79q0 .51.346.855.345.346.856.346.51 0 .839-.346zm4.337 9.314.033-1.332q.191.403.59.747l.098.081a4 4 0 0 0 .316.224l.223.122a3.2 3.2 0 0 0 1.44.322 3.8 3.8 0 0 0 1.875-.477 3.5 3.5 0 0 0 1.382-1.366q.527-.89.526-2.09 0-1.184-.444-2.073a3.24 3.24 0 0 0-1.283-1.399q-.823-.51-1.942-.51a3.5 3.5 0 0 0-1.527.344l-.086.043-.165.09a3 3 0 0 0-.33.214q-.432.315-.656.707a2 2 0 0 0-.099.198l.082-1.283V4.701h-1.744v12.095zm.473-2.509a2.5 2.5 0 0 0 .566.7q.117.098.245.18l.144.08a2.1 2.1 0 0 0 .975.232q1.07 0 1.645-.675.576-.69.576-1.778 0-1.102-.576-1.777-.56-.691-1.645-.692a2.2 2.2 0 0 0-1.015.235q-.22.113-.415.282l-.15.142a2.1 2.1 0 0 0-.42.594q-.223.479-.223 1.1v.115q0 .705.293 1.26zm2.616-.293c.157-.191.28-.479.28-.967 0-.51-.13-.79-.276-.961l-.021-.026c-.082-.1-.232-.225-.67-.225a.87.87 0 0 0-.681.279l-.012.011c-.154.155-.274.38-.274.807v.115c0 .285.057.499.144.669a1.1 1.1 0 0 0 .367.405c.137.082.28.123.455.123.423 0 .59-.118.686-.23zm8.266-3.013q.345-.13.724-.14l.069-.002q.493 0 .642.099l.247-1.794q-.196-.099-.717-.099a2.3 2.3 0 0 0-.545.063 2 2 0 0 0-.411.148 2.2 2.2 0 0 0-.4.249 2.5 2.5 0 0 0-.485.499 2.7 2.7 0 0 0-.32.581l-.05.137v-1.48h-1.778v7.553h1.777v-3.884q0-.546.159-.943a1.5 1.5 0 0 1 .466-.636 2.5 2.5 0 0 1 .399-.253 2 2 0 0 1 .224-.099zm9.784 2.656.05-.922q0-1.743-.856-2.698-.838-.97-2.584-.97-1.119-.001-2.007.493a3.46 3.46 0 0 0-1.4 1.382q-.493.906-.493 2.106 0 1.07.428 1.975.428.89 1.332 1.432.906.526 2.255.526.973 0 1.668-.185l.044-.012.135-.04q.613-.184.984-.421l-.542-1.267q-.3.162-.642.274l-.297.087q-.51.131-1.3.131-.954 0-1.497-.444a1.6 1.6 0 0 1-.192-.193q-.366-.44-.512-1.234l-.004-.021zm-5.427-1.256-.003.022h3.752v-.138q-.011-.727-.288-1.118a1 1 0 0 0-.156-.176q-.46-.428-1.316-.428-.986 0-1.494.604-.379.45-.494 1.234zm-27.053 2.77V4.7h-1.86v12.095h5.333V15.15zm7.103-5.908v7.553h-1.843V9.242h1.843z'/%3E%3Cpath fill='%23fff' d='m19.63 11.151-.757-1.71-.345 1.71-1.12 5.644h-1.827L18.083 4.7h.197l3.325 6.533.988 2.19.988-2.19L26.839 4.7h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.93 5.644h-.098l-2.913-5.644zm14.836 5.81q-1.02 0-1.893-.478a3.8 3.8 0 0 1-1.381-1.382q-.51-.906-.51-2.106 0-1.185.444-2.074a3.36 3.36 0 0 1 1.3-1.382q.839-.494 1.974-.494a3.3 3.3 0 0 1 1.234.231 3.3 3.3 0 0 1 .97.575q.396.33.527.659l.033-1.267h1.694v7.553H37.18l-.033-1.332q-.279.593-1.02 1.053a3.17 3.17 0 0 1-1.662.444zm.296-1.482q.938 0 1.58-.642.642-.66.642-1.711v-.115q0-.708-.296-1.267a2.2 2.2 0 0 0-.807-.872 2.1 2.1 0 0 0-1.119-.313q-1.053 0-1.629.692-.575.675-.575 1.76 0 1.103.559 1.795.577.675 1.645.675zm6.521-6.237h1.711v1.4q.906-1.597 2.83-1.597 1.596 0 2.584 1.02.988 1.005.988 2.914 0 1.185-.493 2.09a3.46 3.46 0 0 1-1.316 1.399 3.5 3.5 0 0 1-1.844.493q-.954 0-1.662-.329a2.67 2.67 0 0 1-1.086-.97l.017 5.134h-1.728zm4.048 6.22q1.07 0 1.645-.674.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.592 0-1.12.296-.51.28-.822.823-.296.527-.296 1.234v.115q0 .708.296 1.267.313.543.823.855.51.296 1.119.297z'/%3E%3Cpath fill='%23e1e3e9' d='M51.325 4.7h1.86v10.45h3.473v1.646h-5.333zm7.12 4.542h1.843v7.553h-1.843zm.905-1.415a1.16 1.16 0 0 1-.856-.346 1.17 1.17 0 0 1-.346-.856 1.05 1.05 0 0 1 .346-.79q.346-.329.856-.329.494 0 .839.33a1.05 1.05 0 0 1 .345.79 1.16 1.16 0 0 1-.345.855q-.33.346-.84.346zm7.875 9.133a3.17 3.17 0 0 1-1.662-.444q-.723-.46-1.004-1.053l-.033 1.332h-1.71V4.701h1.743v4.657l-.082 1.283q.279-.658 1.086-1.119a3.5 3.5 0 0 1 1.778-.477q1.119 0 1.942.51a3.24 3.24 0 0 1 1.283 1.4q.445.888.444 2.072 0 1.201-.526 2.09a3.5 3.5 0 0 1-1.382 1.366 3.8 3.8 0 0 1-1.876.477zm-.296-1.481q1.069 0 1.645-.675.577-.69.577-1.778 0-1.102-.577-1.776-.56-.691-1.645-.692a2.12 2.12 0 0 0-1.58.659q-.642.641-.642 1.694v.115q0 .71.296 1.267a2.4 2.4 0 0 0 .807.872 2.1 2.1 0 0 0 1.119.313zm5.927-6.237h1.777v1.481q.263-.757.856-1.217a2.14 2.14 0 0 1 1.349-.46q.527 0 .724.098l-.247 1.794q-.149-.099-.642-.099-.774 0-1.416.494-.626.493-.626 1.58v3.883h-1.777V9.242zm9.534 7.718q-1.35 0-2.255-.526-.904-.543-1.332-1.432a4.6 4.6 0 0 1-.428-1.975q0-1.2.493-2.106a3.46 3.46 0 0 1 1.4-1.382q.889-.495 2.007-.494 1.744 0 2.584.97.855.956.856 2.7 0 .444-.05.92h-5.43q.18 1.005.708 1.45.542.443 1.497.443.79 0 1.3-.131a4 4 0 0 0 .938-.362l.542 1.267q-.411.263-1.119.46-.708.198-1.711.197zm1.596-4.558q.016-1.02-.444-1.432-.46-.428-1.316-.428-1.728 0-1.991 1.86z'/%3E%3Cpath d='M5.074 15.948a.484.657 0 0 0-.486.659v1.84a.484.657 0 0 0 .486.659h4.101a.484.657 0 0 0 .486-.659v-1.84a.484.657 0 0 0-.486-.659zm3.56 1.16H5.617v.838h3.017z' style='fill:%23fff;fill-rule:evenodd;stroke-width:1.03600001'/%3E%3Cg style='stroke-width:1.12603545'%3E%3Cpath d='M-9.408-1.416c-3.833-.025-7.056 2.912-7.08 6.615-.02 3.08 1.653 4.832 3.107 6.268.903.892 1.721 1.74 2.32 2.902l-.525-.004c-.543-.003-.992.304-1.24.639a1.87 1.87 0 0 0-.362 1.121l-.011 1.877c-.003.402.104.787.347 1.125.244.338.688.653 1.23.656l4.142.028c.542.003.99-.306 1.238-.641a1.87 1.87 0 0 0 .363-1.121l.012-1.875a1.87 1.87 0 0 0-.348-1.127c-.243-.338-.688-.653-1.23-.656l-.518-.004c.597-1.145 1.425-1.983 2.348-2.87 1.473-1.414 3.18-3.149 3.2-6.226-.016-3.59-2.923-6.684-6.993-6.707m-.006 1.1v.002c3.274.02 5.92 2.532 5.9 5.6-.017 2.706-1.39 4.026-2.863 5.44-1.034.994-2.118 2.033-2.814 3.633-.018.041-.052.055-.075.065q-.013.004-.02.01a.34.34 0 0 1-.226.084.34.34 0 0 1-.224-.086l-.092-.077c-.699-1.615-1.768-2.669-2.781-3.67-1.454-1.435-2.797-2.762-2.78-5.478.02-3.067 2.7-5.545 5.975-5.523m-.02 2.826c-1.62-.01-2.944 1.315-2.955 2.96-.01 1.646 1.295 2.988 2.916 2.999h.002c1.621.01 2.943-1.316 2.953-2.961.011-1.646-1.294-2.988-2.916-2.998m-.005 1.1c1.017.006 1.829.83 1.822 1.89s-.83 1.874-1.848 1.867c-1.018-.006-1.829-.83-1.822-1.89s.83-1.874 1.848-1.868m-2.155 11.857 4.14.025c.271.002.49.305.487.676l-.013 1.875c-.003.37-.224.67-.495.668l-4.14-.025c-.27-.002-.487-.306-.485-.676l.012-1.875c.003-.37.224-.67.494-.668' style='color:%23000;font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:evenodd;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:%23000;solid-opacity:1;vector-effect:none;fill:%23000;fill-opacity:.4;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-9.415-.316C-12.69-.338-15.37 2.14-15.39 5.207c-.017 2.716 1.326 4.041 2.78 5.477 1.013 1 2.081 2.055 2.78 3.67l.092.076a.34.34 0 0 0 .225.086.34.34 0 0 0 .227-.083l.019-.01c.022-.009.057-.024.074-.064.697-1.6 1.78-2.64 2.814-3.634 1.473-1.414 2.847-2.733 2.864-5.44.02-3.067-2.627-5.58-5.901-5.601m-.057 8.784c1.621.011 2.944-1.315 2.955-2.96.01-1.646-1.295-2.988-2.916-2.999-1.622-.01-2.945 1.315-2.955 2.96s1.295 2.989 2.916 3' style='clip-rule:evenodd;fill:%23e1e3e9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-11.594 15.465c-.27-.002-.492.297-.494.668l-.012 1.876c-.003.371.214.673.485.675l4.14.027c.271.002.492-.298.495-.668l.012-1.877c.003-.37-.215-.672-.485-.674z' style='clip-rule:evenodd;fill:%23fff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3C/g%3E%3C/svg%3E")}}@media (forced-colors:active) and (prefers-color-scheme:light){a.maplibregl-ctrl-logo{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='23' fill='none'%3E%3Cpath fill='%23000' fill-opacity='.4' fill-rule='evenodd' d='M17.408 16.796h-1.827l2.501-12.095h.198l3.324 6.533.988 2.19.988-2.19 3.258-6.533h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.929 5.644h-.098l-2.914-5.644-.757-1.71-.345 1.71zm1.958-3.42-.726 3.663a1.255 1.255 0 0 1-1.232 1.011h-1.827a1.255 1.255 0 0 1-1.229-1.509l2.501-12.095a1.255 1.255 0 0 1 1.23-1.001h.197a1.25 1.25 0 0 1 1.12.685l3.19 6.273 3.125-6.263a1.25 1.25 0 0 1 1.123-.695h.181a1.255 1.255 0 0 1 1.227.991l1.443 6.71a5 5 0 0 1 .314-.787l.009-.016a4.6 4.6 0 0 1 1.777-1.887c.782-.46 1.668-.667 2.611-.667a4.6 4.6 0 0 1 1.7.32l.306.134c.21-.16.474-.256.759-.256h1.694a1.255 1.255 0 0 1 1.212.925 1.255 1.255 0 0 1 1.212-.925h1.711c.284 0 .545.094.755.252.613-.3 1.312-.45 2.075-.45 1.356 0 2.557.445 3.482 1.4q.47.48.763 1.064V4.701a1.255 1.255 0 0 1 1.255-1.255h1.86A1.255 1.255 0 0 1 54.44 4.7v9.194h2.217c.19 0 .37.043.532.118v-4.77c0-.356.147-.678.385-.906a2.42 2.42 0 0 1-.682-1.71c0-.665.267-1.253.735-1.7a2.45 2.45 0 0 1 1.722-.674 2.43 2.43 0 0 1 1.705.675q.318.302.504.683V4.7a1.255 1.255 0 0 1 1.255-1.255h1.744A1.255 1.255 0 0 1 65.812 4.7v3.335a4.8 4.8 0 0 1 1.526-.246c.938 0 1.817.214 2.59.69a4.47 4.47 0 0 1 1.67 1.743v-.98a1.255 1.255 0 0 1 1.256-1.256h1.777c.233 0 .451.064.639.174a3.4 3.4 0 0 1 1.567-.372c.346 0 .861.02 1.285.232a1.25 1.25 0 0 1 .689 1.004 4.7 4.7 0 0 1 .853-.588c.795-.44 1.675-.647 2.61-.647 1.385 0 2.65.39 3.525 1.396.836.938 1.168 2.173 1.168 3.528q-.001.515-.056 1.051a1.255 1.255 0 0 1-.947 1.09l.408.952a1.255 1.255 0 0 1-.477 1.552c-.418.268-.92.463-1.458.612-.613.171-1.304.244-2.049.244-1.06 0-2.043-.207-2.886-.698l-.015-.008c-.798-.48-1.419-1.135-1.818-1.963l-.004-.008a5.8 5.8 0 0 1-.548-2.512q0-.429.053-.843a1.3 1.3 0 0 1-.333-.086l-.166-.004c-.223 0-.426.062-.643.228-.03.024-.142.139-.142.59v3.883a1.255 1.255 0 0 1-1.256 1.256h-1.777a1.255 1.255 0 0 1-1.256-1.256V15.69l-.032.057a4.8 4.8 0 0 1-1.86 1.833 5.04 5.04 0 0 1-2.484.634 4.5 4.5 0 0 1-1.935-.424 1.25 1.25 0 0 1-.764.258h-1.71a1.255 1.255 0 0 1-1.256-1.255V7.687a2.4 2.4 0 0 1-.428.625c.253.23.412.561.412.93v7.553a1.255 1.255 0 0 1-1.256 1.255h-1.843a1.25 1.25 0 0 1-.894-.373c-.228.23-.544.373-.894.373H51.32a1.255 1.255 0 0 1-1.256-1.255v-1.251l-.061.117a4.7 4.7 0 0 1-1.782 1.884 4.77 4.77 0 0 1-2.485.67 5.6 5.6 0 0 1-1.485-.188l.009 2.764a1.255 1.255 0 0 1-1.255 1.259h-1.729a1.255 1.255 0 0 1-1.255-1.255v-3.537a1.255 1.255 0 0 1-1.167.793h-1.679a1.25 1.25 0 0 1-.77-.263 4.5 4.5 0 0 1-1.945.429c-.885 0-1.724-.21-2.495-.632l-.017-.01a5 5 0 0 1-1.081-.836 1.255 1.255 0 0 1-1.254 1.312h-1.81a1.255 1.255 0 0 1-1.228-.99l-.782-3.625-2.044 3.939a1.25 1.25 0 0 1-1.115.676h-.098a1.25 1.25 0 0 1-1.116-.68l-2.061-3.994zM35.92 16.63l.207-.114.223-.15q.493-.356.735-.785l.061-.118.033 1.332h1.678V9.242h-1.694l-.033 1.267q-.133-.329-.526-.658l-.032-.028a3.2 3.2 0 0 0-.668-.428l-.27-.12a3.3 3.3 0 0 0-1.235-.23q-1.136-.001-1.974.493a3.36 3.36 0 0 0-1.3 1.382q-.445.89-.444 2.074 0 1.2.51 2.107a3.8 3.8 0 0 0 1.382 1.381 3.9 3.9 0 0 0 1.893.477q.795 0 1.455-.33zm-2.789-5.38q-.576.675-.575 1.762 0 1.102.559 1.794.576.675 1.645.675a2.25 2.25 0 0 0 .934-.19 2.2 2.2 0 0 0 .468-.29l.178-.161a2.2 2.2 0 0 0 .397-.561q.244-.5.244-1.15v-.115q0-.708-.296-1.267l-.043-.077a2.2 2.2 0 0 0-.633-.709l-.13-.086-.047-.028a2.1 2.1 0 0 0-1.073-.285q-1.052 0-1.629.692zm2.316 2.706c.163-.17.28-.407.28-.83v-.114c0-.292-.06-.508-.15-.68a.96.96 0 0 0-.353-.389.85.85 0 0 0-.464-.127c-.4 0-.56.114-.664.239l-.01.012c-.148.174-.275.45-.275.945 0 .506.122.801.27.99.097.11.266.224.68.224.303 0 .504-.09.687-.269zm7.545 1.705a2.6 2.6 0 0 0 .331.423q.319.33.755.548l.173.074q.65.255 1.49.255 1.02 0 1.844-.493a3.45 3.45 0 0 0 1.316-1.4q.493-.904.493-2.089 0-1.909-.988-2.913-.988-1.02-2.584-1.02-.898 0-1.575.347a3 3 0 0 0-.415.262l-.199.166a3.4 3.4 0 0 0-.64.82V9.242h-1.712v11.553h1.729l-.017-5.134zm.53-1.138q.206.29.48.5l.155.11.053.034q.51.296 1.119.297 1.07 0 1.645-.675.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.435 0-.835.16a2 2 0 0 0-.284.136 2 2 0 0 0-.363.254 2.2 2.2 0 0 0-.46.569l-.082.162a2.6 2.6 0 0 0-.213 1.072v.115q0 .707.296 1.267l.135.211zm.964-.818a1.1 1.1 0 0 0 .367.385.94.94 0 0 0 .476.118c.423 0 .59-.117.687-.23.159-.194.28-.478.28-.95 0-.53-.133-.8-.266-.952l-.021-.025c-.078-.094-.231-.221-.68-.221a1 1 0 0 0-.503.135l-.012.007a.86.86 0 0 0-.335.343c-.073.133-.132.324-.132.614v.115a1.4 1.4 0 0 0 .14.66zm15.7-6.222q.347-.346.346-.856a1.05 1.05 0 0 0-.345-.79 1.18 1.18 0 0 0-.84-.329q-.51 0-.855.33a1.05 1.05 0 0 0-.346.79q0 .51.346.855.345.346.856.346.51 0 .839-.346zm4.337 9.314.033-1.332q.191.403.59.747l.098.081a4 4 0 0 0 .316.224l.223.122a3.2 3.2 0 0 0 1.44.322 3.8 3.8 0 0 0 1.875-.477 3.5 3.5 0 0 0 1.382-1.366q.527-.89.526-2.09 0-1.184-.444-2.073a3.24 3.24 0 0 0-1.283-1.399q-.823-.51-1.942-.51a3.5 3.5 0 0 0-1.527.344l-.086.043-.165.09a3 3 0 0 0-.33.214q-.432.315-.656.707a2 2 0 0 0-.099.198l.082-1.283V4.701h-1.744v12.095zm.473-2.509a2.5 2.5 0 0 0 .566.7q.117.098.245.18l.144.08a2.1 2.1 0 0 0 .975.232q1.07 0 1.645-.675.576-.69.576-1.778 0-1.102-.576-1.777-.56-.691-1.645-.692a2.2 2.2 0 0 0-1.015.235q-.22.113-.415.282l-.15.142a2.1 2.1 0 0 0-.42.594q-.223.479-.223 1.1v.115q0 .705.293 1.26zm2.616-.293c.157-.191.28-.479.28-.967 0-.51-.13-.79-.276-.961l-.021-.026c-.082-.1-.232-.225-.67-.225a.87.87 0 0 0-.681.279l-.012.011c-.154.155-.274.38-.274.807v.115c0 .285.057.499.144.669a1.1 1.1 0 0 0 .367.405c.137.082.28.123.455.123.423 0 .59-.118.686-.23zm8.266-3.013q.345-.13.724-.14l.069-.002q.493 0 .642.099l.247-1.794q-.196-.099-.717-.099a2.3 2.3 0 0 0-.545.063 2 2 0 0 0-.411.148 2.2 2.2 0 0 0-.4.249 2.5 2.5 0 0 0-.485.499 2.7 2.7 0 0 0-.32.581l-.05.137v-1.48h-1.778v7.553h1.777v-3.884q0-.546.159-.943a1.5 1.5 0 0 1 .466-.636 2.5 2.5 0 0 1 .399-.253 2 2 0 0 1 .224-.099zm9.784 2.656.05-.922q0-1.743-.856-2.698-.838-.97-2.584-.97-1.119-.001-2.007.493a3.46 3.46 0 0 0-1.4 1.382q-.493.906-.493 2.106 0 1.07.428 1.975.428.89 1.332 1.432.906.526 2.255.526.973 0 1.668-.185l.044-.012.135-.04q.613-.184.984-.421l-.542-1.267q-.3.162-.642.274l-.297.087q-.51.131-1.3.131-.954 0-1.497-.444a1.6 1.6 0 0 1-.192-.193q-.366-.44-.512-1.234l-.004-.021zm-5.427-1.256-.003.022h3.752v-.138q-.011-.727-.288-1.118a1 1 0 0 0-.156-.176q-.46-.428-1.316-.428-.986 0-1.494.604-.379.45-.494 1.234zm-27.053 2.77V4.7h-1.86v12.095h5.333V15.15zm7.103-5.908v7.553h-1.843V9.242h1.843z'/%3E%3Cpath fill='%23fff' d='m19.63 11.151-.757-1.71-.345 1.71-1.12 5.644h-1.827L18.083 4.7h.197l3.325 6.533.988 2.19.988-2.19L26.839 4.7h.181l2.6 12.095h-1.81l-1.218-5.644-.362-1.71-.658 1.71-2.93 5.644h-.098l-2.913-5.644zm14.836 5.81q-1.02 0-1.893-.478a3.8 3.8 0 0 1-1.381-1.382q-.51-.906-.51-2.106 0-1.185.444-2.074a3.36 3.36 0 0 1 1.3-1.382q.839-.494 1.974-.494a3.3 3.3 0 0 1 1.234.231 3.3 3.3 0 0 1 .97.575q.396.33.527.659l.033-1.267h1.694v7.553H37.18l-.033-1.332q-.279.593-1.02 1.053a3.17 3.17 0 0 1-1.662.444zm.296-1.482q.938 0 1.58-.642.642-.66.642-1.711v-.115q0-.708-.296-1.267a2.2 2.2 0 0 0-.807-.872 2.1 2.1 0 0 0-1.119-.313q-1.053 0-1.629.692-.575.675-.575 1.76 0 1.103.559 1.795.577.675 1.645.675zm6.521-6.237h1.711v1.4q.906-1.597 2.83-1.597 1.596 0 2.584 1.02.988 1.005.988 2.914 0 1.185-.493 2.09a3.46 3.46 0 0 1-1.316 1.399 3.5 3.5 0 0 1-1.844.493q-.954 0-1.662-.329a2.67 2.67 0 0 1-1.086-.97l.017 5.134h-1.728zm4.048 6.22q1.07 0 1.645-.674.577-.69.576-1.762 0-1.119-.576-1.777-.558-.675-1.645-.675-.592 0-1.12.296-.51.28-.822.823-.296.527-.296 1.234v.115q0 .708.296 1.267.313.543.823.855.51.296 1.119.297z'/%3E%3Cpath fill='%23e1e3e9' d='M51.325 4.7h1.86v10.45h3.473v1.646h-5.333zm7.12 4.542h1.843v7.553h-1.843zm.905-1.415a1.16 1.16 0 0 1-.856-.346 1.17 1.17 0 0 1-.346-.856 1.05 1.05 0 0 1 .346-.79q.346-.329.856-.329.494 0 .839.33a1.05 1.05 0 0 1 .345.79 1.16 1.16 0 0 1-.345.855q-.33.346-.84.346zm7.875 9.133a3.17 3.17 0 0 1-1.662-.444q-.723-.46-1.004-1.053l-.033 1.332h-1.71V4.701h1.743v4.657l-.082 1.283q.279-.658 1.086-1.119a3.5 3.5 0 0 1 1.778-.477q1.119 0 1.942.51a3.24 3.24 0 0 1 1.283 1.4q.445.888.444 2.072 0 1.201-.526 2.09a3.5 3.5 0 0 1-1.382 1.366 3.8 3.8 0 0 1-1.876.477zm-.296-1.481q1.069 0 1.645-.675.577-.69.577-1.778 0-1.102-.577-1.776-.56-.691-1.645-.692a2.12 2.12 0 0 0-1.58.659q-.642.641-.642 1.694v.115q0 .71.296 1.267a2.4 2.4 0 0 0 .807.872 2.1 2.1 0 0 0 1.119.313zm5.927-6.237h1.777v1.481q.263-.757.856-1.217a2.14 2.14 0 0 1 1.349-.46q.527 0 .724.098l-.247 1.794q-.149-.099-.642-.099-.774 0-1.416.494-.626.493-.626 1.58v3.883h-1.777V9.242zm9.534 7.718q-1.35 0-2.255-.526-.904-.543-1.332-1.432a4.6 4.6 0 0 1-.428-1.975q0-1.2.493-2.106a3.46 3.46 0 0 1 1.4-1.382q.889-.495 2.007-.494 1.744 0 2.584.97.855.956.856 2.7 0 .444-.05.92h-5.43q.18 1.005.708 1.45.542.443 1.497.443.79 0 1.3-.131a4 4 0 0 0 .938-.362l.542 1.267q-.411.263-1.119.46-.708.198-1.711.197zm1.596-4.558q.016-1.02-.444-1.432-.46-.428-1.316-.428-1.728 0-1.991 1.86z'/%3E%3Cpath d='M5.074 15.948a.484.657 0 0 0-.486.659v1.84a.484.657 0 0 0 .486.659h4.101a.484.657 0 0 0 .486-.659v-1.84a.484.657 0 0 0-.486-.659zm3.56 1.16H5.617v.838h3.017z' style='fill:%23fff;fill-rule:evenodd;stroke-width:1.03600001'/%3E%3Cg style='stroke-width:1.12603545'%3E%3Cpath d='M-9.408-1.416c-3.833-.025-7.056 2.912-7.08 6.615-.02 3.08 1.653 4.832 3.107 6.268.903.892 1.721 1.74 2.32 2.902l-.525-.004c-.543-.003-.992.304-1.24.639a1.87 1.87 0 0 0-.362 1.121l-.011 1.877c-.003.402.104.787.347 1.125.244.338.688.653 1.23.656l4.142.028c.542.003.99-.306 1.238-.641a1.87 1.87 0 0 0 .363-1.121l.012-1.875a1.87 1.87 0 0 0-.348-1.127c-.243-.338-.688-.653-1.23-.656l-.518-.004c.597-1.145 1.425-1.983 2.348-2.87 1.473-1.414 3.18-3.149 3.2-6.226-.016-3.59-2.923-6.684-6.993-6.707m-.006 1.1v.002c3.274.02 5.92 2.532 5.9 5.6-.017 2.706-1.39 4.026-2.863 5.44-1.034.994-2.118 2.033-2.814 3.633-.018.041-.052.055-.075.065q-.013.004-.02.01a.34.34 0 0 1-.226.084.34.34 0 0 1-.224-.086l-.092-.077c-.699-1.615-1.768-2.669-2.781-3.67-1.454-1.435-2.797-2.762-2.78-5.478.02-3.067 2.7-5.545 5.975-5.523m-.02 2.826c-1.62-.01-2.944 1.315-2.955 2.96-.01 1.646 1.295 2.988 2.916 2.999h.002c1.621.01 2.943-1.316 2.953-2.961.011-1.646-1.294-2.988-2.916-2.998m-.005 1.1c1.017.006 1.829.83 1.822 1.89s-.83 1.874-1.848 1.867c-1.018-.006-1.829-.83-1.822-1.89s.83-1.874 1.848-1.868m-2.155 11.857 4.14.025c.271.002.49.305.487.676l-.013 1.875c-.003.37-.224.67-.495.668l-4.14-.025c-.27-.002-.487-.306-.485-.676l.012-1.875c.003-.37.224-.67.494-.668' style='color:%23000;font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:evenodd;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:%23000;solid-opacity:1;vector-effect:none;fill:%23000;fill-opacity:.4;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-9.415-.316C-12.69-.338-15.37 2.14-15.39 5.207c-.017 2.716 1.326 4.041 2.78 5.477 1.013 1 2.081 2.055 2.78 3.67l.092.076a.34.34 0 0 0 .225.086.34.34 0 0 0 .227-.083l.019-.01c.022-.009.057-.024.074-.064.697-1.6 1.78-2.64 2.814-3.634 1.473-1.414 2.847-2.733 2.864-5.44.02-3.067-2.627-5.58-5.901-5.601m-.057 8.784c1.621.011 2.944-1.315 2.955-2.96.01-1.646-1.295-2.988-2.916-2.999-1.622-.01-2.945 1.315-2.955 2.96s1.295 2.989 2.916 3' style='clip-rule:evenodd;fill:%23e1e3e9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3Cpath d='M-11.594 15.465c-.27-.002-.492.297-.494.668l-.012 1.876c-.003.371.214.673.485.675l4.14.027c.271.002.492-.298.495-.668l.012-1.877c.003-.37-.215-.672-.485-.674z' style='clip-rule:evenodd;fill:%23fff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.47727823;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:.4' transform='translate(15.553 2.85)scale(.88807)'/%3E%3C/g%3E%3C/svg%3E")}}.maplibregl-ctrl.maplibregl-ctrl-attrib{background-color:hsla(0,0%,100%,.5);margin:0;padding:0 5px}@media screen{.maplibregl-ctrl-attrib.maplibregl-compact{background-color:#fff;border-radius:12px;box-sizing:content-box;color:#000;margin:10px;min-height:20px;padding:2px 24px 2px 0;position:relative}.maplibregl-ctrl-attrib.maplibregl-compact-show{padding:2px 28px 2px 8px;visibility:visible}.maplibregl-ctrl-bottom-left>.maplibregl-ctrl-attrib.maplibregl-compact-show,.maplibregl-ctrl-top-left>.maplibregl-ctrl-attrib.maplibregl-compact-show{border-radius:12px;padding:2px 8px 2px 28px}.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-inner{display:none}.maplibregl-ctrl-attrib-button{background-color:hsla(0,0%,100%,.5);background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill-rule='evenodd' viewBox='0 0 20 20'%3E%3Cpath d='M4 10a6 6 0 1 0 12 0 6 6 0 1 0-12 0m5-3a1 1 0 1 0 2 0 1 1 0 1 0-2 0m0 3a1 1 0 1 1 2 0v3a1 1 0 1 1-2 0'/%3E%3C/svg%3E");border:0;border-radius:12px;box-sizing:border-box;cursor:pointer;display:none;height:24px;outline:none;position:absolute;right:0;top:0;width:24px}.maplibregl-ctrl-attrib summary.maplibregl-ctrl-attrib-button{-webkit-appearance:none;-moz-appearance:none;appearance:none;list-style:none}.maplibregl-ctrl-attrib summary.maplibregl-ctrl-attrib-button::-webkit-details-marker{display:none}.maplibregl-ctrl-bottom-left .maplibregl-ctrl-attrib-button,.maplibregl-ctrl-top-left .maplibregl-ctrl-attrib-button{left:0}.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-button,.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-inner{display:block}.maplibregl-ctrl-attrib.maplibregl-compact-show .maplibregl-ctrl-attrib-button{background-color:rgb(0 0 0/5%)}.maplibregl-ctrl-bottom-right>.maplibregl-ctrl-attrib.maplibregl-compact:after{bottom:0;right:0}.maplibregl-ctrl-top-right>.maplibregl-ctrl-attrib.maplibregl-compact:after{right:0;top:0}.maplibregl-ctrl-top-left>.maplibregl-ctrl-attrib.maplibregl-compact:after{left:0;top:0}.maplibregl-ctrl-bottom-left>.maplibregl-ctrl-attrib.maplibregl-compact:after{bottom:0;left:0}}@media screen and (forced-colors:active){.maplibregl-ctrl-attrib.maplibregl-compact:after{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23fff' fill-rule='evenodd' viewBox='0 0 20 20'%3E%3Cpath d='M4 10a6 6 0 1 0 12 0 6 6 0 1 0-12 0m5-3a1 1 0 1 0 2 0 1 1 0 1 0-2 0m0 3a1 1 0 1 1 2 0v3a1 1 0 1 1-2 0'/%3E%3C/svg%3E")}}@media screen and (forced-colors:active) and (prefers-color-scheme:light){.maplibregl-ctrl-attrib.maplibregl-compact:after{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill-rule='evenodd' viewBox='0 0 20 20'%3E%3Cpath d='M4 10a6 6 0 1 0 12 0 6 6 0 1 0-12 0m5-3a1 1 0 1 0 2 0 1 1 0 1 0-2 0m0 3a1 1 0 1 1 2 0v3a1 1 0 1 1-2 0'/%3E%3C/svg%3E")}}.maplibregl-ctrl-attrib a{color:rgba(0,0,0,.75);text-decoration:none}.maplibregl-ctrl-attrib a:hover{color:inherit;text-decoration:underline}.maplibregl-attrib-empty{display:none}.maplibregl-ctrl-scale{background-color:hsla(0,0%,100%,.75);border:2px solid #333;border-top:#333;box-sizing:border-box;color:#333;font-size:10px;padding:0 5px}.maplibregl-popup{display:flex;left:0;pointer-events:none;position:absolute;top:0;will-change:transform}.maplibregl-popup-anchor-top,.maplibregl-popup-anchor-top-left,.maplibregl-popup-anchor-top-right{flex-direction:column}.maplibregl-popup-anchor-bottom,.maplibregl-popup-anchor-bottom-left,.maplibregl-popup-anchor-bottom-right{flex-direction:column-reverse}.maplibregl-popup-anchor-left{flex-direction:row}.maplibregl-popup-anchor-right{flex-direction:row-reverse}.maplibregl-popup-tip{border:10px solid transparent;height:0;width:0;z-index:1}.maplibregl-popup-anchor-top .maplibregl-popup-tip{align-self:center;border-bottom-color:#fff;border-top:none}.maplibregl-popup-anchor-top-left .maplibregl-popup-tip{align-self:flex-start;border-bottom-color:#fff;border-left:none;border-top:none}.maplibregl-popup-anchor-top-right .maplibregl-popup-tip{align-self:flex-end;border-bottom-color:#fff;border-right:none;border-top:none}.maplibregl-popup-anchor-bottom .maplibregl-popup-tip{align-self:center;border-bottom:none;border-top-color:#fff}.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip{align-self:flex-start;border-bottom:none;border-left:none;border-top-color:#fff}.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip{align-self:flex-end;border-bottom:none;border-right:none;border-top-color:#fff}.maplibregl-popup-anchor-left .maplibregl-popup-tip{align-self:center;border-left:none;border-right-color:#fff}.maplibregl-popup-anchor-right .maplibregl-popup-tip{align-self:center;border-left-color:#fff;border-right:none}.maplibregl-popup-close-button{background-color:transparent;border:0;border-radius:0 3px 0 0;cursor:pointer;position:absolute;right:0;top:0}.maplibregl-popup-close-button:hover{background-color:rgb(0 0 0/5%)}.maplibregl-popup-content{background:#fff;border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.1);padding:15px 10px;pointer-events:auto;position:relative}.maplibregl-popup-anchor-top-left .maplibregl-popup-content{border-top-left-radius:0}.maplibregl-popup-anchor-top-right .maplibregl-popup-content{border-top-right-radius:0}.maplibregl-popup-anchor-bottom-left .maplibregl-popup-content{border-bottom-left-radius:0}.maplibregl-popup-anchor-bottom-right .maplibregl-popup-content{border-bottom-right-radius:0}.maplibregl-popup-track-pointer{display:none}.maplibregl-popup-track-pointer *{pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.maplibregl-map:hover .maplibregl-popup-track-pointer{display:flex}.maplibregl-map:active .maplibregl-popup-track-pointer{display:none}.maplibregl-marker{left:0;position:absolute;top:0;transition:opacity .2s;will-change:transform}.maplibregl-user-location-dot,.maplibregl-user-location-dot:before{background-color:#1da1f2;border-radius:50%;height:15px;width:15px}.maplibregl-user-location-dot:before{animation:maplibregl-user-location-dot-pulse 2s infinite;content:"";position:absolute}.maplibregl-user-location-dot:after{border:2px solid #fff;border-radius:50%;box-shadow:0 0 3px rgba(0,0,0,.35);box-sizing:border-box;content:"";height:19px;left:-2px;position:absolute;top:-2px;width:19px}@keyframes maplibregl-user-location-dot-pulse{0%{opacity:1;transform:scale(1)}70%{opacity:0;transform:scale(3)}to{opacity:0;transform:scale(1)}}.maplibregl-user-location-dot-stale{background-color:#aaa}.maplibregl-user-location-dot-stale:after{display:none}.maplibregl-user-location-accuracy-circle{background-color:#1da1f233;border-radius:100%;height:1px;width:1px}.maplibregl-crosshair,.maplibregl-crosshair .maplibregl-interactive,.maplibregl-crosshair .maplibregl-interactive:active{cursor:crosshair}.maplibregl-boxzoom{background:#fff;border:2px dotted #202020;height:0;left:0;opacity:.5;position:absolute;top:0;width:0}.maplibregl-cooperative-gesture-screen{align-items:center;background:rgba(0,0,0,.4);color:#fff;display:flex;font-size:1.4em;inset:0;justify-content:center;line-height:1.2;opacity:0;padding:1rem;pointer-events:none;position:absolute;transition:opacity 1s ease 1s;z-index:99999}.maplibregl-cooperative-gesture-screen.maplibregl-show{opacity:1;transition:opacity .05s}.maplibregl-cooperative-gesture-screen .maplibregl-mobile-message{display:none}@media (hover:none),(width <= 480px){.maplibregl-cooperative-gesture-screen .maplibregl-desktop-message{display:none}.maplibregl-cooperative-gesture-screen .maplibregl-mobile-message{display:block}}.maplibregl-pseudo-fullscreen{height:100%!important;left:0!important;position:fixed!important;top:0!important;width:100%!important;z-index:99999}
+</style>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="diamond" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M15 3c-.6 0-1 .5-1 1v2l-2 1-3-1-2 2 1 2-2 3v6h2v-4l2-2h4l1 3v3h2v-4l1-2 2-1V7l-2-1V4c0-.5-.4-1-1-1z"/></svg></span>Santa Barbara Wildlife Crossings</div>
+    <nav aria-label="Sections">
+      <a href="#context">Context</a>
+      <a href="#results">Results</a>
+      <a href="#methods">Methods</a>
+      <a href="#explore">3D map</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <p class="eyebrow">Santa Barbara County · Caltrans District 5</p>
+    <h1>Where should wildlife cross Santa Barbara County's highways?</h1>
+    <p class="lede">Community scientists have logged hundreds of animals killed on the county's roads. Combined with Caltrans drainage inventories, traffic, terrain and statewide connectivity maps, those records point to a short list of highway stretches where crossings would do the most good, and to the kind of crossing each one needs.</p>
+    <p class="byline">Garrett Craig · Analysis code and data: <a href="https://github.com/garrettgcraig/CA_crossings" target="_blank" rel="noopener">github.com/garrettgcraig/CA_crossings</a></p>
+    <div class="stats" id="stats" aria-label="Key numbers"></div>
+  </div>
+
+  <section class="block" id="context">
+    <div class="wrap grid-2">
+      <div class="prose">
+        <p class="eyebrow">Context</p>
+        <h2>A new law asks Caltrans to plan for wildlife</h2>
+        <p>On September 30, 2026, Governor Newsom signed <a href="https://calmatters.digitaldemocracy.org/bills/ca_202520260sb1250" target="_blank" rel="noopener">SB 1250</a> (Cortese). It directs Caltrans to fold wildlife connectivity into routine highway planning: wildlife crossings, culverts, habitat corridors and fencing now belong in the department's asset management plan, and Caltrans must keep an inventory of connectivity needs jointly with the California Department of Fish and Wildlife.</p>
+        <p>That inventory needs evidence about where animals actually try to cross. Most of the existing structures under Santa Barbara County's highways are drainage culverts built to move water, and most are far too small or too enclosed for anything larger than a skunk. Replacing them on the usual maintenance cycle is the cheapest moment to make them work for wildlife, if the right ones are identified in time.</p>
+        <p>This analysis scores every half-kilometer of state highway in the county, ranks the stretches where a crossing would help most, and matches each to a practical solution: retrofitting a bridge or culvert that is already there, upsizing a culvert at replacement, or building a new underpass or overpass where the terrain allows.</p>
+      </div>
+      <aside>
+        <div class="callout">
+          <h3>Room to Roam roadkill survey</h3>
+          <p>Volunteers with ForestWatch recorded dead and live animals along county roads through a Survey123 form from July 2025 through September 2026. After cleaning, 254 records fall within 10 m of a road in the county.</p>
+        </div>
+        <div class="callout">
+          <h3>iNaturalist</h3>
+          <p>421 more road-killed animals come from three iNaturalist projects, each a photo record with a location accurate to 100 m or better. Many of their photos appear on the map below.</p>
+        </div>
+        <div class="callout">
+          <h3>Already underway at Gaviota Pass</h3>
+          <p>Caltrans received $8 million to retrofit a culvert and add about 2.5 miles of wildlife fencing on US 101 at Gaviota Pass, a CDFW priority barrier. It serves here as a check: a sound ranking should flag it even where roadkill records are sparse.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="results">
+    <div class="wrap">
+      <p class="eyebrow">Results</p>
+      <h2>State Route 154 tops the list, and Gaviota Pass checks out</h2>
+      <div class="grid-2">
+        <div class="prose">
+          <p>The highest-need stretches cluster on <strong>SR 154 between San Marcos Pass and Lake Cachuma</strong> (postmiles 12 to 21), where continuous oak woodland and chaparral meet the road on both sides, CDFW already lists the route as a movement barrier (W165), and the survey recorded more roadkill than anywhere else in the county. Its existing culverts are tall enough for bobcats, foxes and raccoons, so fencing that funnels animals to them is the quickest gain.</p>
+          <p><strong>US 101 at Gaviota Pass</strong> ranks in the top tier too: 11 of its 21 segments land in the top decile, carried mostly by habitat and connectivity because only six roadkill records fall there. That matches the site Caltrans and CDFW chose independently.</p>
+          <p>Other strong candidates are <strong>SR 1 between Las Cruces and Lompoc</strong> (postmiles 4.7 to 6.7, ten records including five deer) and <strong>US 101 around Los Alamos</strong> (postmiles 70 to 76), where fast traffic and continuous rangeland combine. Click a row to see it on the map.</p>
+        </div>
+        <div>
+          <p class="chart-title">Top candidate zones</p>
+          <p class="chart-sub">Adjacent top-decile segments merged; ranked by need</p>
+          <div class="table-scroll"><table class="zones" id="zones-table"><thead><tr><th>#</th><th>Location</th><th class="num">km</th><th class="num">Roadkill</th><th>Strongest option</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:48px">
+        <div>
+          <figure class="figure">
+            <p class="chart-title">What is being killed</p>
+            <p class="chart-sub">Cleaned roadkill records by group, both sources (gray groups are left out of crossing analyses)</p>
+            <div class="chart" id="chart-guild" role="img" aria-label="Roadkill records by animal group"></div>
+          </figure>
+          <figure class="figure">
+            <p class="chart-title">Recommended solution, top-decile segments</p>
+            <p class="chart-sub">Based on existing structures, embankment height and fencing</p>
+            <div class="chart" id="chart-actions" role="img" aria-label="Recommended action for the highest-need segments"></div>
+          </figure>
+        </div>
+        <div>
+          <figure class="figure">
+            <p class="chart-title">Roadkill rises where drivers can't stop in time</p>
+            <p class="chart-sub">Roadkill per km by night stopping-sight shortfall (stopping distance at the speed limit minus what low beams and curves let a driver see)</p>
+            <div class="chart" id="chart-collision" role="img" aria-label="Roadkill per kilometer by night stopping-sight shortfall"></div>
+            <p class="chart-sub" style="margin-top:12px">Wildlife-vehicle collisions are concentrated after dark. Across more than a million deer-vehicle collisions in the United States, collisions were 14 times more frequent in the two hours after sunset than in the two hours before, and the autumn switch to standard time, which pushes evening commutes into darkness, raised collisions by 16% (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022, <i>Current Biology</i></a>). That is why this analysis measures sight distance under low beams rather than in daylight.</p>
+          </figure>
+          <div class="callout" style="margin-top:24px">
+            <h3>Fence ends</h3>
+            <p id="fence-text"></p>
+          </div>
+          <div class="callout">
+            <h3>How stable is the ranking?</h3>
+            <p>The top zones hold under five alternative weightings of the score, under a version that adds roadside barriers for the surveyed routes, and when steep terrain is allowed to discount sites animals can't easily reach. SR 154, Gaviota Pass and US 101 near Los Alamos stay near the top in every version.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="methods">
+    <div class="wrap">
+      <p class="eyebrow">Methods</p>
+      <h2>What went into the ranking</h2>
+      <div class="prose">
+        <p>Every state highway in the county was cut into 953 segments of about 500 m. Each segment carries everything known about that stretch of road and its surroundings, and the ranking combines those measures into a single need score. The full analysis is a set of reproducible R and Quarto notebooks in the project repository.</p>
+      </div>
+      <ol class="steps">
+        <li><h3>Clean the roadkill</h3><p>Merge the survey's two form versions with iNaturalist, assign species to groups by the size of crossing they'd use, and keep dead animals within 10 m of a road.</p></li>
+        <li><h3>Inventory the structures</h3><p>Join Caltrans' 19,691 culvert records to their end treatments, keep the 633 county culverts open at both ends under the highway, and size them for wildlife by height and openness (area ÷ length).</p></li>
+        <li><h3>Describe each segment</h3><p>Traffic and lanes from FHWA's 2024 HPMS, speed limits from HPMS and OpenStreetMap, curvature and grade from the centerline, embankment and side slopes from 10 m USGS elevation, and habitat and protected land on each side.</p></li>
+        <li><h3>Find roadkill hotspots</h3><p>Count records within 1 km of each segment and compare with 999 random scatterings of the same records along the network.</p></li>
+        <li><h3>Score need</h3><p>Weighted percentile ranks of six components, discounted where steep terrain keeps animals off the road (except where a creek channel funnels them to a structure).</p></li>
+        <li><h3>Match a solution</h3><p>Choose retrofit, upsize, underpass or overpass from what already crosses the road and whether it sits on fill or in a cut, then merge adjacent top segments into zones.</p></li>
+      </ol>
+      <div class="grid-2">
+        <figure class="figure">
+          <p class="chart-title">Need-score weights</p>
+          <p class="chart-sub">Share of the score; each component is a percentile rank across county segments</p>
+          <div class="chart" id="chart-weights" role="img" aria-label="Need score component weights"></div>
+        </figure>
+        <div>
+          <p class="chart-title">Caveats</p>
+          <ul class="caveats">
+            <li>Survey effort is treated as equal across roads, though volunteers drive some routes far more than others.</li>
+            <li>Roadside barriers were mapped from Street View on parts of US 101, SR 154, SR 246 and SR 1 only; they shape recommendations and a separate ranking, not the main score.</li>
+            <li>The collision component targets nighttime conditions because that is when most wildlife-vehicle collisions occur (<a href="https://doi.org/10.1016/j.cub.2022.10.007">Cunningham et al. 2022</a>). The night stopping-sight measure uses standard assumptions (70 m low-beam reach, 6 m roadside clearance) rather than measured sight lines.</li>
+            <li>Each candidate zone needs a site visit before design: what the data shows as a culvert or bridge may differ on the ground.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="table-scroll" style="margin-top:28px">
+        <table class="sources">
+          <thead><tr><th>Layer</th><th>Source</th><th>Used for</th></tr></thead>
+          <tbody>
+            <tr><td>Roadkill</td><td>ForestWatch Room to Roam survey; iNaturalist (Dead Animals of Santa Barbara County, California State Roadkill, GLOBAL Roadkill)</td><td>Hotspots, roadkill component</td></tr>
+            <tr><td>Culverts &amp; end treatments</td><td>Caltrans District 5 drainage inventory</td><td>Existing passages, size classes</td></tr>
+            <tr><td>Bridges, highways, postmiles, traffic</td><td>Caltrans GIS Data Library</td><td>Segments, structures, locations</td></tr>
+            <tr><td>Lanes, AADT, speed (sampled)</td><td>FHWA HPMS 2024</td><td>Traffic and collision components</td></tr>
+            <tr><td>Speed limits</td><td>OpenStreetMap contributors, via Overture Maps</td><td>Collision component</td></tr>
+            <tr><td>Elevation</td><td>USGS 3DEP 1/3 arc-second</td><td>Grade, embankment, steep approaches</td></tr>
+            <tr><td>Land cover</td><td>ESA WorldCover 2021</td><td>Habitat on each side</td></tr>
+            <tr><td>Connectivity &amp; barriers</td><td>CDFW Areas of Conservation Emphasis; CDFW Wildlife Movement Barriers</td><td>Connectivity component</td></tr>
+            <tr><td>Protected land</td><td>California Protected Areas Database 2024a</td><td>Protected component</td></tr>
+            <tr><td>Roadside barriers</td><td>ForestWatch barrier survey</td><td>Fence ends, recommendations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="map-section">
+    <div class="wrap map-head" id="explore">
+      <p class="eyebrow">3D map</p>
+      <h2>Eight kinds of solutions, eight places</h2>
+      <p class="lede" style="margin-top:0">Each pin is a real stretch of highway that illustrates one type of fix. Select one to fly there, then use the buttons at the top right to rotate and tilt the view (or right-drag with a mouse, Shift + arrow keys, or two fingers on a touch screen). Click any road, culvert, bridge or animal for details.</p>
+    </div>
+    <div class="map-shell">
+      <div id="map" aria-label="3D satellite map of Santa Barbara County highways"></div>
+      <div class="loading" id="map-loading">Loading imagery and terrain…</div>
+      <aside class="panel" aria-label="Map panel">
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tab-ex" aria-selected="true" aria-controls="pane-ex">Examples</button>
+          <button role="tab" id="tab-layers" aria-selected="false" aria-controls="pane-layers">Layers</button>
+        </div>
+        <div class="panel-body" id="pane-ex" role="tabpanel" aria-labelledby="tab-ex"></div>
+        <div class="panel-body" id="pane-layers" role="tabpanel" aria-labelledby="tab-layers" hidden></div>
+      </aside>
+      <div class="map-hint" id="map-hint">Imagery: USDA NAIP · Terrain ×1.4</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Credits.</strong> Analysis by Garrett Craig. Roadkill survey data from ForestWatch's Room to Roam project and its volunteers. Roadkill photos by iNaturalist observers, each credited on the map under its own Creative Commons license.</p>
+    <p><strong>Map.</strong> High-resolution imagery: USDA National Agriculture Imagery Program, via USGS The National Map (public domain). Regional imagery contains modified Copernicus Sentinel data (2021) processed by the ESA WorldCover consortium, CC BY 4.0. Terrain from the AWS Terrain Tiles open dataset (Mapzen; includes USGS 3DEP and SRTM). Speed limits © OpenStreetMap contributors (ODbL), via Overture Maps. Highway, bridge, culvert and traffic data from Caltrans and FHWA; connectivity data from CDFW; protected areas from CPAD (GreenInfo Network).</p>
+    <p>This is an independent analysis to inform planning and conversation. It is not a Caltrans or CDFW product, and every location needs field verification before design.</p>
+  </div>
+</footer>
+
+<dialog class="lightbox" id="lightbox"><button type="button" id="lightbox-close">Close</button><img alt=""><p></p></dialog>
+<div class="tip" id="tip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const fmt = (n, d = 0) => n == null ? "–" : Number(n).toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const getJSON = (p) => fetch(p).then(r => { if (!r.ok) throw new Error(p); return r.json(); });
+  const ROUTE = (r) => (String(r) === "101" ? "US " : "SR ") + r;
+  const pmLabel = (route, a, b) => `<span class="pm"><span class="rt">${ROUTE(route)}</span><span class="mi">PM ${fmt(a, 1)}–${fmt(b, 1)}</span></span>`;
+
+  // Tooltip shared by the charts
+  const tip = $("#tip");
+  const showTip = (e, html) => { tip.innerHTML = html; tip.hidden = false; tip.style.left = Math.min(e.clientX + 12, innerWidth - 270) + "px"; tip.style.top = (e.clientY + 14) + "px"; };
+  const hideTip = () => { tip.hidden = true; };
+
+  function barChart(el, rows, { unit = "", digits = 0, max } = {}) {
+    const m = max ?? Math.max(...rows.map(r => r.value));
+    el.innerHTML = rows.map((r, i) => `
+      <div class="row" data-i="${i}">
+        <div class="label">${r.label}</div>
+        <div class="track"><div class="fill${r.muted ? " muted" : ""}" style="width:${(r.value / m * 100).toFixed(1)}%"></div></div>
+        <div class="val">${fmt(r.value, digits)}${unit}</div>
+      </div>`).join("");
+    el.querySelectorAll(".row").forEach(row => {
+      const r = rows[+row.dataset.i];
+      row.addEventListener("mousemove", e => showTip(e, r.tip || `${r.label}: ${fmt(r.value, digits)}${unit}`));
+      row.addEventListener("mouseleave", hideTip);
+    });
+  }
+
+  // ---------- Results ----------
+  Promise.all([getJSON("data/summary.json"), getJSON("data/zones.json")]).then(([S, Z]) => {
+    const stats = [
+      [S.roadkill_records, "roadkill records analyzed"],
+      [S.highway_km, "km of state highway scored"],
+      [S.culvert_candidates, "culverts open at both ends under a highway"],
+      [S.zones, "candidate crossing zones"],
+    ];
+    $("#stats").innerHTML = stats.map(([v, l]) => `<div class="stat"><b>${fmt(v)}</b><span>${l}</span></div>`).join("");
+
+    const G = S.roadkill_by_guild, total = Object.values(G).reduce((a, b) => a + b, 0);
+    const guildRows = [
+      ["mesomammal", "Medium mammals"], ["small mammal", "Small mammals"], ["herp", "Reptiles & amphibians"],
+      ["ungulate", "Deer & pigs"], ["medium/large carnivore", "Coyote, bobcat, lion"], ["bird", "Birds"], ["unidentified", "Unidentified"],
+    ].map(([k, l]) => ({ label: l, value: G[k] || 0, muted: k === "bird" || k === "unidentified",
+      tip: `${l}: ${fmt(G[k] || 0)} records (${fmt(100 * (G[k] || 0) / total)}%)` }));
+    barChart($("#chart-guild"), guildRows);
+
+    const A = S.actions_top;
+    const actionNames = {
+      "New structure, at grade": "New, level ground", "Retrofit for mesocarnivores": "Retrofit (medium)",
+      "Upsize culvert": "Upsize culvert", "Retrofit existing (large structure)": "Retrofit (large)",
+      "New overpass (road in cut)": "New overpass", "New underpass (road on fill)": "New underpass",
+    };
+    barChart($("#chart-actions"), Object.entries(A).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: actionNames[k] || k, value: v, tip: `${k}: ${v} segments` })));
+
+    const cc = S.collision_check.slice(1);
+    barChart($("#chart-collision"), cc.map(r => ({ label: `${r[0][0].toUpperCase() + r[0].slice(1)} (≈${r[2]} m)`, value: +r[3], digits: 2,
+      tip: `${r[1]} segments, mean shortfall ${r[2]} m: ${r[3]} roadkill per km` })), { digits: 2 });
+
+    const fe = (S.fence_end_test || []).find(r => r[0].includes("8") && r[1].startsWith("medium") && r[2] === "habitat-matched");
+    $("#fence-text").textContent = fe
+      ? `Within 300 m of the ends of walls and fences at least 8 ft tall, medium and large mammal roadkill runs ${fe[6]}× the rate on comparable highway with similar roadside habitat (p = ${fe[7]}, ${fe[3]} fence ends). The effect is in the expected direction but not yet conclusive; most tall barriers are sound walls in developed stretches of US 101.`
+      : "Fence-end results are in the full report.";
+
+    const tb = $("#zones-table tbody");
+    Z.features.slice(0, 10).forEach(f => {
+      const p = f.properties;
+      const tr = document.createElement("tr");
+      tr.tabIndex = 0;
+      tr.innerHTML = `<td>${p.rank}</td><td>${pmLabel(p.RouteS, p.pm_from, p.pm_to)}${p.cdfw_barrier ? ` <span class="chip" title="CDFW priority movement barrier">CDFW ${p.cdfw_barrier}</span>` : ""}</td><td class="num">${fmt(p.km, 1)}</td><td class="num">${p.roadkill}</td><td><span class="chip">${(actionNames[p.action] || p.action)}</span></td>`;
+      const go = () => { document.getElementById("explore").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }); window.__flyToFeature && window.__flyToFeature(f); };
+      tr.addEventListener("click", go);
+      tr.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+      tb.appendChild(tr);
+    });
+
+    const W = S.weights;
+    const wNames = { roadkill: "Roadkill hotspots", connectivity: "Connectivity priority", habitat: "Habitat both sides", protected: "Protected land", traffic: "Traffic volume", collision: "Night stopping risk" };
+    barChart($("#chart-weights"), Object.entries(W).map(([k, v]) => ({ label: wNames[k], value: v * 100, tip: `${wNames[k]}: ${Math.round(v * 100)}% of the score` })), { unit: "%" });
+  }).catch(err => console.error(err));
+
+  // ---------- Map ----------
+  const BOUNDS = [-120.80, 34.25, -119.40, 35.15];
+  const packs = {};
+  const loadPack = (name) => packs[name] ||= Promise.all([
+    getJSON(`tiles/${name}.json`), fetch(`tiles/${name}.tiles.webp`).then(r => r.arrayBuffer()),
+  ]).then(([idx, buf]) => ({ idx, buf }));
+  let usgsIndex = null; const usgsSites = {};
+  const b64 = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer;
+  const CLEAR = b64("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNgYGBgAAAABQABeqhXUAAAAABJRU5ErkJggg==");
+  const FLAT = b64("iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAAB+0lEQVR42u3TQQ0AAAjEMED5SeeNBloJS9Yp+GskwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGAAOAAcAAYAAwABgADAAGwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAAMAAYAA4ABwABgADAAGAADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABgADgAHAAGAAMAAYAAwABoBrAcQ8AoDeAlclAAAAAElFTkSuQmCC"); // terrarium-encoded 0 m
+
+  maplibregl.addProtocol("pack", async (params) => {
+    const [, kind, z, x, y] = params.url.match(/pack:\/\/(\w+)\/(\d+)\/(\d+)\/(\d+)/);
+    const name = kind === "dem" ? (+z <= 11 ? "dem_low" : "dem_z12") : (+z <= 12 ? "img_low" : (+z === 13 ? "img_z13" : "img_z14"));
+    if (kind === "usgs") {
+      const idx = await (usgsIndex ||= getJSON("tiles/usgs_index.json"));
+      const hit = idx[`${z}/${x}/${y}`];
+      if (!hit) return { data: CLEAR.slice(0) };
+      const site = await (usgsSites[hit[0]] ||= fetch(`tiles/usgs_site${hit[0]}.tiles.webp`).then(r => r.arrayBuffer()));
+      return { data: site.slice(hit[1], hit[1] + hit[2]) };
+    }
+    const p = await loadPack(name);
+    const e = p.idx[`${z}/${x}/${y}`];
+    if (!e) return { data: (kind === "dem" ? FLAT : CLEAR).slice(0) };
+    return { data: p.buf.slice(e[0], e[0] + e[1]) };
+  });
+
+  const NEED_COLOR = ["interpolate", ["linear"], ["coalesce", ["get", "need_pct"], 0],
+    0, "#4d5a73", 0.5, "#f0d264", 0.75, "#f39a2b", 0.9, "#e8492e", 1, "#b3005e"];
+  const GROUP = (g) => ["ungulate", "medium/large carnivore"].includes(g) ? "large" : g === "mesomammal" ? "medium" : ["small mammal", "herp"].includes(g) ? "small" : "other";
+  const GROUP_COLOR = { large: "#eb6834", medium: "#2a78d6", small: "#1baf7a", other: "#9aa39e" };
+
+  const map = new maplibregl.Map({
+    container: "map",
+    style: {
+      version: 8,
+      sources: {
+        imgLow: { type: "raster", tiles: ["pack://img/{z}/{x}/{y}"], tileSize: 256, maxzoom: 12, bounds: BOUNDS },
+        imgHi: { type: "raster", tiles: ["pack://img/{z}/{x}/{y}"], tileSize: 256, minzoom: 13, maxzoom: 14, bounds: BOUNDS },
+        // NAIP orthoimagery (USGS National Map, public domain) bundled around the example sites
+        usgsSites: { type: "raster", tiles: ["pack://usgs/{z}/{x}/{y}"], tileSize: 256, minzoom: 14, maxzoom: 17, bounds: BOUNDS },
+        // The same imagery live for the whole county where the host allows it (not inside sandboxed previews)
+        usgsLive: { type: "raster", tiles: ["https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"], tileSize: 256, maxzoom: 18 },
+        dem: { type: "raster-dem", tiles: ["pack://dem/{z}/{x}/{y}"], tileSize: 256, maxzoom: 12, encoding: "terrarium", bounds: BOUNDS },
+      },
+      layers: [
+        { id: "bg", type: "background", paint: { "background-color": "#0d1512" } },
+        { id: "img-low", type: "raster", source: "imgLow", paint: { "raster-fade-duration": 0 } },
+        { id: "img-hi", type: "raster", source: "imgHi", minzoom: 13, paint: { "raster-fade-duration": 150 } },
+        { id: "usgs-sites", type: "raster", source: "usgsSites", minzoom: 14, paint: { "raster-fade-duration": 150 } },
+        { id: "usgs-live", type: "raster", source: "usgsLive", paint: { "raster-fade-duration": 200 } },
+      ],
+      terrain: { source: "dem", exaggeration: 1.4 },
+    },
+    center: [-120.08, 34.68], zoom: 9.0, pitch: 50, bearing: -12,
+    maxPitch: 78, minZoom: 8, maxZoom: 16.5,
+    maxBounds: [[-121.4, 33.9], [-118.8, 35.5]],
+    attributionControl: false,
+  });
+  // Keep the view centered in the part of the map the side panel doesn't cover
+  const panelPad = () => innerWidth > 760 ? { left: 400, top: 0, right: 0, bottom: 0 } : { left: 0, top: 0, right: 0, bottom: 0 };
+  map.setPadding(panelPad());
+  addEventListener("resize", () => map.setPadding(panelPad()));
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
+
+  // Camera buttons: rotate, tilt and a 2D/3D toggle, for mice, trackpads and touch alike
+  class CameraControl {
+    onAdd(m) {
+      this._m = m;
+      const el = document.createElement("div");
+      el.className = "maplibregl-ctrl maplibregl-ctrl-group cam-ctrl";
+      const btn = (label, title, fn) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.innerHTML = label;
+        b.addEventListener("click", fn); el.appendChild(b); return b;
+      };
+      const ease = (o) => m.easeTo({ ...o, duration: reduceMotion ? 0 : 500 });
+      btn("&#8634;", "Rotate left", () => ease({ bearing: m.getBearing() - 30 }));
+      btn("&#8635;", "Rotate right", () => ease({ bearing: m.getBearing() + 30 }));
+      btn("&#9650;", "Tilt up (more 3D)", () => ease({ pitch: Math.min(m.getMaxPitch(), m.getPitch() + 12) }));
+      btn("&#9660;", "Tilt down (flatter)", () => ease({ pitch: Math.max(0, m.getPitch() - 12) }));
+      const t = btn("2D", "Switch between flat and 3D view", () => {
+        const flat = m.getPitch() < 5;
+        ease(flat ? { pitch: 55 } : { pitch: 0, bearing: 0 });
+      });
+      m.on("pitchend", () => { t.textContent = m.getPitch() < 5 ? "3D" : "2D"; });
+      return el;
+    }
+    onRemove() {}
+  }
+  map.addControl(new CameraControl(), "top-right");
+  map.addControl(new maplibregl.AttributionControl({ compact: true, customAttribution: "Imagery: USDA NAIP via USGS The National Map; Copernicus Sentinel-2 (2021), ESA WorldCover · Terrain: AWS Terrain Tiles · OSM contributors" }));
+  window.__map = map;
+
+  // isStyleLoaded() stays false while tiles load, so track readiness ourselves
+  let styleReady = false, started = false;
+  const readyQueue = [];
+  map.once("style.load", () => { styleReady = true; readyQueue.splice(0).forEach(fn => fn()); });
+  const whenReady = (fn) => (styleReady ? fn() : readyQueue.push(fn));
+
+  // If the live imagery host is unreachable (e.g., a sandboxed preview), drop that layer
+  // and fall back to the bundled imagery: NAIP around the example sites, Sentinel-2 elsewhere.
+  // Probe the live imagery host once; sandboxed previews block it, so fall back to the
+  // bundled imagery (NAIP at the example sites, Sentinel-2 elsewhere)
+  const LIVE_PROBE = "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/10/408/174";
+  const liveOff = () => {
+    if (map.getLayer("usgs-live")) map.removeLayer("usgs-live");
+    const h = document.getElementById("map-hint");
+    if (h) h.textContent = "Imagery: NAIP at example sites, Sentinel-2 elsewhere · Terrain ×1.4";
+  };
+  Promise.race([
+    fetch(LIVE_PROBE, { mode: "no-cors", cache: "force-cache" }),
+    new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 6000)),
+  ]).catch(() => whenReady(liveOff));
+
+  let EX = [], RK = null;
+
+  // Initialize once the style is ready. (Waiting for "load" can stall when a tile host is
+  // blocked, because "load" also waits for every visible tile.)
+
+  whenReady(async () => {
+    if (started) return;
+    started = true;
+    $("#map-loading")?.remove();
+    const [county, segs, zones, culv, br, bars, ends, cdfw, rk, ex] = await Promise.all([
+      "county", "segments", "zones", "culverts", "bridges", "barriers", "fence_ends", "cdfw_barriers", "roadkill", "examples",
+    ].map(n => getJSON(`data/${n}.json`)));
+    rk.features.forEach(f => { f.properties.group = GROUP(f.properties.guild); });
+    RK = rk; EX = ex;
+
+    const add = (id, data) => map.addSource(id, { type: "geojson", data });
+    add("county", county); add("segs", segs); add("zones", zones); add("culv", culv); add("br", br);
+    add("bars", bars); add("ends", ends); add("cdfw", cdfw); add("rk", rk);
+
+    map.addLayer({ id: "county", type: "line", source: "county", paint: { "line-color": "#ffffff", "line-opacity": 0.55, "line-width": 1.2, "line-dasharray": [3, 2] } });
+    map.addLayer({ id: "cdfw", type: "line", source: "cdfw", paint: { "line-color": "#f2b705", "line-width": ["interpolate", ["linear"], ["zoom"], 9, 7, 14, 22], "line-opacity": 0.28, "line-blur": 2 } });
+    map.addLayer({ id: "zones", type: "line", source: "zones", paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 9, 6, 14, 16], "line-opacity": 0.35, "line-blur": 1 } });
+    map.addLayer({ id: "segs", type: "line", source: "segs", layout: { "line-cap": "round", "line-join": "round" },
+      paint: { "line-color": NEED_COLOR, "line-width": ["interpolate", ["linear"], ["zoom"], 9, 4.5, 12, 6, 16, 11] } });
+    map.addLayer({ id: "seg-hl", type: "line", source: "segs", filter: ["==", ["get", "seg_id"], ""], layout: { "line-cap": "round" },
+      paint: { "line-color": "#ffffff", "line-width": ["interpolate", ["linear"], ["zoom"], 9, 5, 16, 16], "line-opacity": 0.9 } });
+    map.addLayer({ id: "bars", type: "line", source: "bars", filter: ["!=", ["get", "blocks"], "guardrail"], minzoom: 11,
+      paint: { "line-color": ["match", ["get", "blocks"], "wall or tall fence", "#ff3b30", "solid barrier", "#ff9f0a", "#e8e8e8"],
+               "line-width": ["interpolate", ["linear"], ["zoom"], 11, 1.2, 16, 3.5], "line-dasharray": [2, 1] } });
+    map.addLayer({ id: "culv", type: "circle", source: "culv", minzoom: 11,
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 2.5, 16, 7],
+               "circle-color": ["match", ["get", "size_class"], "medium (mesocarnivore)", "#5ad1ff", "large (deer-capable)", "#ffffff", "#2f7fa3"],
+               "circle-stroke-color": "#06202c", "circle-stroke-width": 1 } });
+    map.addLayer({ id: "br", type: "circle", source: "br", minzoom: 10,
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 9], "circle-color": ["match", ["get", "over_type"], "waterway", "#ffffff", "#bfc6c2"],
+               "circle-stroke-color": "#0b6e4f", "circle-stroke-width": 2.5 } });
+    map.addLayer({ id: "ends", type: "circle", source: "ends", minzoom: 10,
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 8], "circle-color": "#ff3b30", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2 } });
+    map.addLayer({ id: "rk", type: "circle", source: "rk",
+      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, ["case", ["has", "photo"], 2.2, 1.6], 12, ["case", ["has", "photo"], 4.5, 3.5], 15, ["case", ["has", "photo"], 8, 6]],
+               "circle-opacity": ["interpolate", ["linear"], ["zoom"], 9, 0.75, 12, 1],
+               "circle-color": ["match", ["get", "group"], "large", GROUP_COLOR.large, "medium", GROUP_COLOR.medium, "small", GROUP_COLOR.small, GROUP_COLOR.other],
+               "circle-stroke-color": "#ffffff", "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 9, 0.4, 12, ["case", ["has", "photo"], 1.8, 0.8]] } });
+
+    buildLayersPane();
+    buildExamplesPane();
+    bindPopups();
+  });
+
+  // ---------- Popups ----------
+  const popup = new maplibregl.Popup({ closeButton: true, maxWidth: "290px", offset: 8 });
+  const row = (k, v) => v == null || v === "" ? "" : `<div class="pop-row">${k}: <b>${v}</b></div>`;
+  const pct = (v) => v == null ? null : `${Math.round(v * 100)}`;
+  function bindPopups() {
+    const handlers = {
+      rk: (p) => `<div class="pop"><div class="pop-title">${cap(p.common || p.animal)}</div>
+        ${row("Group", p.guild)}${row("Recorded", p.date)}${row("Source", p.source === "survey" ? "Room to Roam survey" : `<a href="https://www.inaturalist.org/observations/${p.record_id}" target="_blank" rel="noopener">iNaturalist</a>`)}
+        ${p.photo ? `<img src="photos/${p.photo}.webp" alt="${esc(p.common || p.animal)} photographed where it was found"><small>${esc(p.credit || "")}</small>` : ""}</div>`,
+      culv: (p) => `<div class="pop"><div class="pop-title">${cap(p.shape)} culvert, ${p.material || "unknown material"}</div>
+        ${row("Opening", p.rise_m != null ? `${fmt(p.span_m, 1)} × ${fmt(p.rise_m, 1)} m` : null)}${row("Length", p.length_m != null ? `${fmt(p.length_m)} m` : null)}
+        ${row("Openness ratio", p.openness != null ? fmt(p.openness, 3) : null)}${row("Wildlife size class", p.size_class)}${row("Ends", `${p.in_et_type || "?"} → ${p.out_et_type || "?"}`)}
+        ${row("Location", `${ROUTE(p.route)} PM ${fmt(p.postmile, 2)}`)}</div>`,
+      br: (p) => `<div class="pop"><div class="pop-title">${esc(p.NAME || "Bridge")}</div>${row("Crosses", p.INTERSEC)}${row("Length", p.length_m != null ? `${fmt(p.length_m)} m` : null)}${row("Built", p.YRBLT)}${row("Bridge no.", p.BRIDGE)}</div>`,
+      ends: (p) => `<div class="pop"><div class="pop-title">End of a ${fmt(p.max_height_ft)} ft barrier</div>${row("Type", p.types.replace(/_/g, " "))}${row("Run length", `${fmt(p.run_len_m)} m`)}${row("Roadkill within 300 m", p.rk_near)}</div>`,
+      bars: (p) => `<div class="pop"><div class="pop-title">${cap(p.barrier_type.replace(/_/g, " "))}, ${fmt(p.height_ft, 1)} ft</div>${row("Effect on wildlife", p.blocks)}${row("Side", p.road_name)}</div>`,
+      segs: (p) => `<div class="pop"><div class="pop-title">${ROUTE(p.RouteS)} PM ${fmt(p.pm_start, 1)}–${fmt(p.pm_end, 1)}</div>
+        ${row("Need percentile", pct(p.need_pct))}${row("Suggested", p.action)}${row("Roadkill on segment", p.rk_total)}${row("Traffic (AADT)", fmt(p.aadt))}
+        ${row("Speed", p.speed_mph != null ? `${fmt(p.speed_mph)} mph` : null)}${row("Natural cover, weaker side", p.natural_min != null ? `${pct(p.natural_min)}%` : null)}
+        ${row("CDFW barrier", p.cdfw_barrier_id)}</div>`,
+    };
+    // Points take precedence over the road line under them
+    map.on("click", (e) => {
+      const order = ["rk", "ends", "br", "culv", "bars", "segs"];
+      const feats = map.queryRenderedFeatures(e.point, { layers: order.filter(l => map.getLayer(l) && map.getLayoutProperty(l, "visibility") !== "none") });
+      if (!feats.length) return;
+      feats.sort((a, b) => order.indexOf(a.layer.id) - order.indexOf(b.layer.id));
+      const f = feats[0];
+      popup.setLngLat(e.lngLat).setHTML(handlers[f.layer.id](f.properties)).addTo(map);
+    });
+    ["rk", "ends", "br", "culv", "bars", "segs"].forEach(l => {
+      map.on("mouseenter", l, () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", l, () => { map.getCanvas().style.cursor = ""; });
+    });
+  }
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const cap = (s) => { s = esc(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); };
+
+  // ---------- Layers pane ----------
+  function buildLayersPane() {
+    const groups = [
+      ["Highway", [
+        ["segs", "Crossing need by segment", `<span class="sw line" style="background:linear-gradient(90deg,#4d5a73,#f0d264,#f39a2b,#e8492e,#b3005e);width:30px"></span>`, true],
+        ["zones", "Candidate zones (white halo)", `<span class="sw line" style="background:#fff;opacity:.6"></span>`, true],
+        ["cdfw", "CDFW priority movement barriers", `<span class="sw line" style="background:#f2b705;opacity:.6"></span>`, true],
+      ]],
+      ["Roadkill", [
+        ["rk", "Roadkill records (ringed dots have photos)", "", true],
+      ]],
+      ["Structures and barriers", [
+        ["culv", "Culverts open at both ends (bright = mesocarnivore size)", `<span class="sw" style="background:#5ad1ff"></span>`, true],
+        ["br", "State highway bridges (white = over water)", `<span class="sw" style="background:#fff;border-color:#0b6e4f"></span>`, true],
+        ["bars", "Roadside walls and fences (red ≥ 8 ft, orange 5–8 ft)", `<span class="sw line" style="background:#ff3b30"></span>`, true],
+        ["ends", "Ends of ≥ 8 ft barriers", `<span class="sw" style="background:#ff3b30"></span>`, true],
+      ]],
+    ];
+    const pane = $("#pane-layers");
+    pane.innerHTML = `<div class="layer-group"><h4>Need percentile</h4><div class="ramp"></div><div class="ramp-labels"><span>0</span><span>50</span><span>75</span><span>90</span><span>100</span></div></div>` +
+      groups.map(([title, items]) => `<div class="layer-group"><h4>${title}</h4>${items.map(([id, label, sw, on]) =>
+        `<label class="toggle"><input type="checkbox" id="lyr-${id}" data-layer="${id}" ${on ? "checked" : ""}>${sw}${label}</label>`).join("")}
+        ${title === "Roadkill" ? `<div style="display:grid;gap:4px;margin:4px 0 0 25px;font:13px var(--font-display);color:var(--ink-2)">
+          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.large}"></span> Deer, pigs and carnivores</span>
+          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.medium}"></span> Medium mammals</span>
+          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.small}"></span> Small mammals, reptiles, amphibians</span>
+          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.other}"></span> Birds and unidentified</span></div>` : ""}</div>`).join("") +
+      `<div class="layer-group"><h4>Terrain</h4><label class="toggle" for="exag">Vertical exaggeration <input type="range" id="exag" min="1" max="3" step="0.1" value="1.4" style="flex:1"></label></div>
+       <p style="font:13px var(--font-display);color:var(--ink-3);margin:0">Culverts, walls and fences appear from zoom 11; zoom in to see them.</p>`;
+    pane.querySelectorAll("input[data-layer]").forEach(cb => cb.addEventListener("change", () => {
+      const ids = cb.dataset.layer === "segs" ? ["segs", "seg-hl"] : [cb.dataset.layer];
+      ids.forEach(id => map.setLayoutProperty(id, "visibility", cb.checked ? "visible" : "none"));
+    }));
+    $("#exag").addEventListener("input", (e) => map.setTerrain({ source: "dem", exaggeration: +e.target.value }));
+  }
+
+  // ---------- Examples pane ----------
+  const EX_TEXT = {
+    retrofit_large: {
+      what: "Where a bridge or a big culvert already crosses under the road, the cheapest crossing is the one that's already there. Retrofits add fencing that steers animals to the opening, escape ramps for animals caught inside the fence, a dry path beside the stream, and native cover at both entrances.",
+      why: (s) => `Gaviota Creek runs under US 101 here through a bridge and four culverts, two tall enough for mesocarnivores. Steep canyon walls funnel animals to the creek, and CDFW lists the pass as a priority movement barrier (W163). This is the site of Caltrans' funded Gaviota Pass project, which retrofits a culvert and adds about 2.5 miles of fencing.`,
+    },
+    retrofit_meso: {
+      what: "Culverts at least 0.9 m tall can carry bobcats, foxes, raccoons and skunks if animals can find and reach them. Fencing that leads to the entrances, dry ledges for wet seasons and cover near the openings make them usable.",
+      why: (s) => `This stretch of SR 154 near Lake Cachuma is the county's top-ranked zone: oak woodland and chaparral on both sides (${pct(s.natural_min)}% natural cover on the weaker side), ${s.n_culverts} culvert of mesocarnivore size, and the most roadkill records of any zone in the county. CDFW lists SR 154 as a movement barrier (W165).`,
+    },
+    upsize: {
+      what: "Small drainage pipes eventually wear out. Replacing one with a large box culvert (3 m or taller, short enough to see daylight through) costs far less as part of a scheduled replacement than as a stand-alone project.",
+      why: (s) => `SR 1 crosses a drainage here on about ${fmt(s.embankment_m, 1)} m of fill, with only a small culvert beneath. Habitat is continuous on both sides (${pct(s.natural_min)}% natural on the weaker side), traffic moves at ${fmt(s.speed_mph)} mph, and the surrounding zone holds ten roadkill records, five of them deer.`,
+    },
+    underpass: {
+      what: "Where the road is raised on an embankment, an underpass can be built through the fill without lowering the road, the usual design for deer and larger carnivores.",
+      why: (s) => `US 101 sits about ${fmt(s.embankment_m, 1)} m above the land on both sides here, with no structure beneath. It ranks lower overall (${pct(s.need_pct)}th percentile) because habitat is patchy, but it's the county's clearest case of terrain that suits an underpass, and ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km.`,
+    },
+    overpass: {
+      what: "Where the highway runs through a cut, the land on both sides is higher than the road, and a vegetated overpass can join the two slopes with little climbing for animals.",
+      why: (s) => `SR 1 runs about ${fmt(Math.abs(s.embankment_m), 1)} m below its surroundings through this cut, with natural cover on both sides (${pct(s.natural_min)}% on the weaker side) and no structure under the road. CDFW lists this stretch as a movement barrier (W048).`,
+    },
+    at_grade: {
+      what: "Some high-need stretches have no drainage to use and no embankment or cut to exploit. They need a site study: an underpass with excavation, raising the road, or crossing-zone measures such as animal-detection signs.",
+      why: (s) => `US 101 runs level here at ${fmt(s.speed_mph)} mph with ${fmt(s.aadt)} vehicles a day, through rangeland that is ${pct(s.natural_min)}% natural on the weaker side, with no culvert or bridge beneath. Drivers at that speed need about ${fmt(s.sd_night_deficit_m)} m more than low beams show to stop at night.`,
+    },
+    fenced: {
+      what: "Continuous tall walls or fencing with no passage makes a highway a complete barrier. Animals stop dying on the road but also stop crossing. The fix is to add a passage where the fence is, or to end the fence at one.",
+      why: (s) => `Walls and fences 5 ft or taller line ${pct(s.fw_blocking_max)}% of this stretch of US 101 near Carpinteria, and there is no culvert or bridge beneath it. ${s.roadkill_2_5km ?? ""} roadkill records fall within 2.5 km.`,
+    },
+    fence_end: {
+      what: "Animals that meet a fence walk along it and cross where it ends, so roadkill often clusters at fence ends. Extending the fence to the next structure, or tying its end into steep terrain, closes the gap.",
+      why: (s) => `An 8 ft fence along SR 246 ends here; two roadkill records lie within 300 m of its end, and the segment is a roadkill hotspot. Two culverts nearby, one tall enough for mesocarnivores, could anchor a fence that guides animals underneath instead of onto the road.`,
+    },
+  };
+
+  function haversine(a, b) {
+    const R = 6371000, t = Math.PI / 180;
+    const dLat = (b[1] - a[1]) * t, dLon = (b[0] - a[0]) * t;
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * t) * Math.cos(b[1] * t) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  const markers = [];
+  function buildExamplesPane() {
+    EX.forEach((ex, i) => {
+      const el = document.createElement("button");
+      el.className = "map-pin"; el.type = "button"; el.style.background = "none"; el.style.border = "0"; el.style.padding = "0";
+      el.setAttribute("aria-label", `Example ${i + 1}: ${ex.title}`);
+      el.innerHTML = `<div class="pin"><span>${i + 1}</span></div>`;
+      el.addEventListener("click", (e) => { e.stopPropagation(); selectExample(i); });
+      markers.push(new maplibregl.Marker({ element: el }).setLngLat(ex.center).addTo(map));
+      ex.rk_near = RK.features.filter(f => haversine(f.geometry.coordinates, ex.center) <= 2500).length;
+      ex.stats.roadkill_2_5km = ex.rk_near;
+    });
+    showList();
+  }
+
+  function showList() {
+    markers.forEach(m => m.getElement().classList.remove("active"));
+    map.setFilter("seg-hl", ["==", ["get", "seg_id"], ""]);
+    $("#pane-ex").innerHTML = `<p style="margin:0 0 12px;font:14px/1.45 var(--font-display);color:var(--ink-2)">Each example is the highest-need segment in the county for that type of solution, except where noted.</p>
+      <ul class="ex-list">${EX.map((ex, i) => `<li><button type="button" data-i="${i}"><div class="pin"><span>${i + 1}</span></div>
+        <div>${esc(ex.title)}<small>${ROUTE(ex.route)} · postmile ${fmt(ex.pm[0], 1)}–${fmt(ex.pm[1], 1)}</small></div></button></li>`).join("")}</ul>`;
+    $("#pane-ex").querySelectorAll("button[data-i]").forEach(b => b.addEventListener("click", () => selectExample(+b.dataset.i)));
+  }
+
+  function selectExample(i) {
+    const ex = EX[i], s = ex.stats, T = EX_TEXT[ex.key];
+    selectTab("ex");
+    markers.forEach((m, j) => m.getElement().classList.toggle("active", j === i));
+    map.setFilter("seg-hl", ["==", ["get", "seg_id"], ex.seg_id]);
+    const cam = { center: ex.center, zoom: 15.4, pitch: 60, bearing: ex.bearing };
+    reduceMotion ? map.jumpTo(cam) : map.flyTo({ ...cam, duration: 3200, essential: true });
+    const photos = RK.features
+      .filter(f => f.properties.photo && haversine(f.geometry.coordinates, ex.center) <= 2500)
+      .sort((a, b) => haversine(a.geometry.coordinates, ex.center) - haversine(b.geometry.coordinates, ex.center))
+      .slice(0, 6);
+    const facts = [
+      [pct(s.need_pct), "need percentile"],
+      [fmt(s.rk_near ?? s.roadkill_2_5km), "roadkill within 2.5 km"],
+      [fmt(s.aadt), "vehicles per day"],
+      [s.speed_mph != null ? `${fmt(s.speed_mph)} mph` : "–", s.speed_source === "HPMS sample" || s.speed_source === "OpenStreetMap" ? "posted speed" : "estimated speed"],
+      [s.natural_min != null ? `${pct(s.natural_min)}%` : "–", "natural cover, weaker side"],
+      [s.embankment_m != null ? `${s.embankment_m > 0 ? "+" : ""}${fmt(s.embankment_m, 1)} m` : "–", "road vs. surroundings"],
+    ];
+    $("#pane-ex").innerHTML = `<div class="ex-card">
+      <button type="button" class="back" id="ex-back">← All examples</button>
+      <h3>${i + 1}. ${esc(ex.title)}</h3>
+      ${pmLabel(ex.route, ex.pm[0], ex.pm[1])}${s.cdfw_barrier_id ? ` <span class="chip">CDFW ${s.cdfw_barrier_id}</span>` : ""}
+      <div class="facts">${facts.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join("")}</div>
+      <p class="what">${T.what}</p>
+      <p class="why">${T.why({ ...s, roadkill_2_5km: ex.rk_near })}</p>
+      ${photos.length ? `<p class="chart-title" style="font-size:14px">Roadkill photographed nearby</p><div class="photos">${photos.map(f => {
+        const p = f.properties;
+        return `<figure><img src="photos/${p.photo}.webp" alt="${esc(p.common || p.animal)}" data-credit="${esc(p.credit || "")}" data-name="${esc(cap(p.common || p.animal))}, ${esc(p.date)}" loading="lazy"><figcaption>${cap(p.common || p.animal)}</figcaption></figure>`;
+      }).join("")}</div><p style="font:12px var(--font-display);color:var(--ink-3);margin:6px 0 0">Photos: iNaturalist observers, CC licenses; select a photo for credit.</p>` : ""}
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button type="button" class="back" id="ex-prev">← Previous</button><span style="flex:1"></span><button type="button" class="back" id="ex-next">Next →</button>
+      </div></div>`;
+    $("#ex-back").addEventListener("click", showList);
+    $("#ex-prev").addEventListener("click", () => selectExample((i + EX.length - 1) % EX.length));
+    $("#ex-next").addEventListener("click", () => selectExample((i + 1) % EX.length));
+    $("#pane-ex").querySelectorAll(".photos img").forEach(img => img.addEventListener("click", () => openLightbox(img)));
+    $("#pane-ex").scrollTop = 0;
+  }
+
+  window.__flyToFeature = (f) => {
+    const coords = f.geometry.type === "MultiLineString" ? f.geometry.coordinates.flat() : f.geometry.coordinates;
+    const lons = coords.map(c => c[0]), lats = coords.map(c => c[1]);
+    const b = [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]];
+    map.fitBounds(b, { padding: { top: 80, bottom: 80, left: 40, right: 60 }, pitch: 60, maxZoom: 14.5, duration: reduceMotion ? 0 : 2500 });
+  };
+
+  // Tabs
+  function selectTab(which) {
+    const ex = which === "ex";
+    $("#tab-ex").setAttribute("aria-selected", ex); $("#tab-layers").setAttribute("aria-selected", !ex);
+    $("#pane-ex").hidden = !ex; $("#pane-layers").hidden = ex;
+  }
+  $("#tab-ex").addEventListener("click", () => selectTab("ex"));
+  $("#tab-layers").addEventListener("click", () => selectTab("layers"));
+
+  // Lightbox
+  const lb = $("#lightbox");
+  function openLightbox(img) {
+    lb.querySelector("img").src = img.src; lb.querySelector("img").alt = img.alt;
+    lb.querySelector("p").textContent = `${img.dataset.name} · ${img.dataset.credit}`;
+    lb.showModal();
+  }
+  $("#lightbox-close").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", (e) => { if (e.target === lb) lb.close(); });
+})();
+</script>
