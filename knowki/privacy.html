@@ -7,7 +7,7 @@
 		<meta name="description" content="How the KnowKi iPhone app handles your data." />
 		<link rel="stylesheet" href="../assets/css/main.css" />
 		<link rel="stylesheet" href="../assets/css/darkmode.css" />
-		<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+		<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-kiwi-64.png" /><link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-kiwi-32.png" /><link rel="apple-touch-icon" href="assets/apple-touch-kiwi.png" />
 		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
 		<script src="../assets/js/darkmode.js"></script>
 		<style>
@@ -31,6 +31,7 @@
 					<section class="wrapper style1">
 						<div class="inner doc">
 							<h1><strong>KnowKi Privacy Policy</strong></h1>
+
 							<p class="updated">Effective September 25, 2026 &middot; Updated October 2, 2026 for KnowKi on the web</p>
 							<p>KnowKi is an iPhone app and a web app (knowki.garrettgcraig.com) made by Garrett Craig. It has no accounts, no advertising or analytics SDKs, and no tracking. This policy explains exactly what the app and its lesson service handle.</p>
 
@@ -63,7 +64,7 @@
 							<ul>
 								<li>Your progress, settings and any connected iNaturalist username are saved in your browser's local storage on that device. They never sync with the iPhone app or other browsers. Settings &rarr; Delete local progress, or clearing this site's data in your browser, removes them.</li>
 								<li>Your browser contacts the lesson service at api.garrettgcraig.com directly, so the service sees your network address the same way it does for the iPhone app, and handles it the same way.</li>
-								<li>Searching for a place sends what you type straight from your browser to iNaturalist's place search, which handles it under its own privacy policy.</li>
+								<li>Searching for a place sends what you type to the lesson service, which looks it up with Photon (an OpenStreetMap search run by komoot) and iNaturalist's place search. Those services see the search text from the lesson service, not from you. The service caches results by search text for up to 30 days, with nothing that identifies you.</li>
 								<li><em>Use approximate location</em> asks your browser for your location only when you tap it, and rounds it to about 11&nbsp;km before it is used or sent.</li>
 								<li>Maps show satellite imagery from Esri, loaded by your browser. Esri sees only the map area being shown, not your place or who you are.</li>
 								<li>The site is hosted on Netlify, which serves its pages under its own privacy policy. The web app uses no cookies, analytics or advertising.</li>
