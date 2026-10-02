@@ -392,19 +392,19 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       <h3 class="comp-head" id="components">What goes into the need score</h3>
       <p class="comp-lede">Each component is converted to a percentile rank across the county's 953 highway segments, so 80 means a segment scores higher than 80% of segments on that measure. The seven percentiles are averaged with equal weights: no study supplies weights for these criteria, and equal weights are a robust default when weights can't be estimated from data (<a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">Dawes 1979</a>). Select any highway segment on the map, or open an example, to see its breakdown.</p>
       <div class="comps">
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-roadkill)"></span><h4>Roadkill hotspots</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-roadkill)"></span><h4>Roadkill hotspots</h4><span class="comp-w" aria-label="Component 1 of 7">1/7</span></header>
             <dl><dt>Measures</dt><dd>Dead animals within 500 m of the segment, counting groups that use crossings (mammals, reptiles and amphibians; birds and unidentified animals left out).</dd><dt>How it's scored</dt><dd>The same records are scattered at random along the network 999 times. A segment whose count beats the 95th percentile of those scatterings is a hotspot, and its score is how far it exceeds that line (<a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">Coelho et al. 2008</a>). The 500 m radius is where hotspots of different animal groups overlap most (<a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">Teixeira et al. 2013</a>).</dd><dt>Source</dt><dd>Room to Roam survey (2025 records) and iNaturalist (all years).</dd><dt>Why it matters</dt><dd>The most direct evidence of where animals try to cross and fail. Its weakness is effort: places people drive and report more look worse.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-connectivity)"></span><h4>Connectivity</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-connectivity)"></span><h4>Connectivity</h4><span class="comp-w" aria-label="Component 2 of 7">2/7</span></header>
             <dl><dt>Measures</dt><dd>CDFW's connectivity rank (1–5) for the landscape around the road.</dd><dt>How it's scored</dt><dd>Percentile of the rank. CDFW's list of priority movement barriers is used to check the results (Gaviota Pass) rather than scored.</dd><dt>Source</dt><dd>CDFW Areas of Conservation Emphasis, terrestrial connectivity (ds2734).</dd><dt>Why it matters</dt><dd>A statewide view that doesn't depend on anyone's survey effort, so it catches important corridors where few people report roadkill.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-habitat)"></span><h4>Habitat on both sides</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-habitat)"></span><h4>Habitat on both sides</h4><span class="comp-w" aria-label="Component 3 of 7">3/7</span></header>
             <dl><dt>Measures</dt><dd>Share of natural land cover in a 300 m strip on each side of the road, taking the weaker side.</dd><dt>How it's scored</dt><dd>Tree, shrub, grassland, bare ground and wetland count as natural; cropland, buildings and open water do not. The strip width is a convention; 100 m and 500 m strips keep 85–88% of the top decile.</dd><dt>Source</dt><dd>ESA WorldCover 2021 (10 m).</dd><dt>Why it matters</dt><dd>Studies tie crossing use to habitat and cover at the entrances (<a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">Clevenger et al. 2001a</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">Cain et al. 2003</a>; <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">Ng et al. 2004</a>). A crossing has an entrance on each side, so the weaker side sets the score.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-protected)"></span><h4>Protected land</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-protected)"></span><h4>Protected land</h4><span class="comp-w" aria-label="Component 4 of 7">4/7</span></header>
             <dl><dt>Measures</dt><dd>Share of protected land in the same 300 m strips, weaker side.</dd><dt>How it's scored</dt><dd>Percentile, like habitat. About 90% of segments have no protected land on at least one side, and tied segments share a rank, so a value of zero still scores about the 45th percentile.</dd><dt>Source</dt><dd>California Protected Areas Database (CPAD 2024a).</dd><dt>Why it matters</dt><dd>Crossings are most cost-effective where they join conservation areas (<a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">Sijtsma et al. 2020</a>), and protected land keeps the habitat at both ends from being developed.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-traffic)"></span><h4>Traffic volume</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-traffic)"></span><h4>Traffic volume</h4><span class="comp-w" aria-label="Component 5 of 7">5/7</span></header>
             <dl><dt>Measures</dt><dd>Average annual daily traffic (AADT).</dd><dt>How it's scored</dt><dd>Percentile of AADT, so only the order of segments matters.</dd><dt>Source</dt><dd>FHWA Highway Performance Monitoring System 2024.</dd><dt>Why it matters</dt><dd>Traffic volume drives how strongly roads repel and divide animal populations (<a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">Jaeger et al. 2005</a>). Collisions rise with traffic at low and moderate volumes but can level off on the busiest roads as animals stop trying to cross (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>; <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">Grilo et al. 2015</a>); either way, a busier road is a bigger obstacle.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-speed)"></span><h4>Speed</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-speed)"></span><h4>Speed</h4><span class="comp-w" aria-label="Component 6 of 7">6/7</span></header>
             <dl><dt>Measures</dt><dd>Posted speed limit.</dd><dt>How it's scored</dt><dd>Percentile of the speed limit.</dd><dt>Source</dt><dd>HPMS sample sections and OpenStreetMap (via Overture Maps), with a class-based estimate where both are missing.</dd><dt>Why it matters</dt><dd>Speed is among the strongest predictors of collisions with large animals, and lower speeds are a recommended fix (<a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">Seiler 2005</a>). Stopping distance grows with the square of speed (<a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">Fambro et al. 2000</a>), which matters most after dark, when deer collisions are 14 times more frequent than just before sunset (<a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">Cunningham et al. 2022</a>). Locally, roadkill per km rises from 0.27 at 45 mph or less to 0.51 at 65 mph or more.</dd></dl></article>
-          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-terrain)"></span><h4>Flat approach</h4><span class="comp-w">1/7</span></header>
+          <article class="comp"><header><span class="comp-swatch" style="background:var(--c-terrain)"></span><h4>Flat approach</h4><span class="comp-w" aria-label="Component 7 of 7">7/7</span></header>
             <dl><dt>Measures</dt><dd>Mean slope of the steeper roadside strip (30–150 m from the road).</dd><dt>How it's scored</dt><dd>Percentile of flatness (the negative of mean slope). Segments where a waterway bridge or a culvert at least 1 m tall carries a drainage under the road get the flattest value.</dd><dt>Source</dt><dd>USGS 3DEP 1/3 arc-second elevation (about 10 m).</dd><dt>Why it matters</dt><dd>Collisions are less likely where a road crosses steep slopes and more likely in level terrain and where it crosses drainages (<a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">Gunson et al. 2011</a>); cougars in southern California travel along canyon bottoms (<a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">Dickson &amp; Beier 2007</a>).</dd></dl></article>
       </div>
       <p class="comp-lede" style="margin-top:18px"><strong>Do the components overlap?</strong> Only modestly. Across all segments, the strongest rank correlations are between connectivity and habitat (0.41), since CDFW's connectivity ranks draw partly on natural land cover, and between traffic and speed (0.34). Protected land looks independent overall (0.16 with connectivity), but 90% of segments have none on at least one side; among the 98 segments with protected land on both sides, it tracks connectivity at 0.42. No pair comes near the 0.7 or so where two measures would duplicate each other.</p>
@@ -427,32 +427,7 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
           </tbody>
         </table>
       </div>
-      <h3 class="comp-head" id="references" style="font-size:19px">References</h3>
-      <ol class="refs">
-        <li>Bashore, T. L., W. M. Tzilkowski and E. D. Bellis. 1985. Analysis of deer-vehicle collision sites in Pennsylvania. <i>Journal of Wildlife Management</i> 49:769–774. <a href="https://doi.org/10.2307/3801709" target="_blank" rel="noopener">doi.org/10.2307/3801709</a></li>
-        <li>Cain, A. T., V. R. Tuovila, D. G. Hewitt and M. E. Tewes. 2003. Effects of a highway and mitigation projects on bobcats in southern Texas. <i>Biological Conservation</i> 114:189–197. <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00023-5</a></li>
-        <li>Clevenger, A. P., B. Chruszcz and K. Gunson. 2001a. Drainage culverts as habitat linkages and factors affecting passage by mammals. <i>Journal of Applied Ecology</i> 38:1340–1349. <a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">doi.org/10.1046/j.0021-8901.2001.00678.x</a></li>
-        <li>Clevenger, A. P., B. Chruszcz and K. E. Gunson. 2001b. Highway mitigation fencing reduces wildlife-vehicle collisions. <i>Wildlife Society Bulletin</i> 29:646–653. <a href="https://www.conservationevidence.com/individual-study/7510" target="_blank" rel="noopener">www.conservationevidence.com/individual-study/7510</a></li>
-        <li>Coelho, I. P., A. Kindel and A. V. P. Coelho. 2008. Roadkills of vertebrate species on two highways through the Atlantic Forest Biosphere Reserve, southern Brazil. <i>European Journal of Wildlife Research</i> 54:689–699. <a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">doi.org/10.1007/s10344-008-0197-4</a></li>
-        <li>Cunningham, C. X., T. A. Nuñez, Y. Hentati, B. Sullender, C. Breen, T. R. Ganz, S. E. S. Kreling, K. A. Shively, E. Reese, J. Miles and L. R. Prugh. 2022. Permanent daylight saving time would reduce deer-vehicle collisions. <i>Current Biology</i> 32:4982–4988. <a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">doi.org/10.1016/j.cub.2022.10.007</a></li>
-        <li>Dawes, R. M. 1979. The robust beauty of improper linear models in decision making. <i>American Psychologist</i> 34:571–582. <a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">doi.org/10.1037/0003-066X.34.7.571</a></li>
-        <li>Dickson, B. G. and P. Beier. 2007. Quantifying the influence of topographic position on cougar (<i>Puma concolor</i>) movement in southern California, USA. <i>Journal of Zoology</i> 271:270–277. <a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">doi.org/10.1111/j.1469-7998.2006.00215.x</a></li>
-        <li>Fambro, D. B., R. J. Koppa, D. L. Picha and K. Fitzpatrick. 2000. Driver braking performance in stopping sight distance situations. <i>Transportation Research Record</i> 1701. <a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">doi.org/10.3141/1701-02</a></li>
-        <li>Grilo, C., F. Z. Ferreira and E. Revilla. 2015. No evidence of a threshold in traffic volume affecting road-kill mortality at a large spatio-temporal scale. <i>Environmental Impact Assessment Review</i> 55:54–58. <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">doi.org/10.1016/j.eiar.2015.07.003</a></li>
-        <li>Gunson, K. E., G. Mountrakis and L. J. Quackenbush. 2011. Spatial wildlife-vehicle collision models: a review of current work and its application to transportation mitigation projects. <i>Journal of Environmental Management</i> 92:1074–1082. <a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">doi.org/10.1016/j.jenvman.2010.11.027</a></li>
-        <li>Huijser, M. P., E. R. Fairbank, W. Camel-Means, J. Graham, V. Watson, P. Basting and D. Becker. 2016. Effectiveness of short sections of wildlife fencing and crossing structures along highways in reducing wildlife–vehicle collisions and providing safe crossing opportunities for large mammals. <i>Biological Conservation</i> 197:61–68. <a href="https://www.sciencedirect.com/science/article/pii/S0006320716300350" target="_blank" rel="noopener">www.sciencedirect.com/science/article/pii/S0006320716300350</a></li>
-        <li>Jaeger, J. A. G., J. Bowman, J. Brennan, L. Fahrig, D. Bert, J. Bouchard, N. Charbonneau, K. Frank, B. Gruber and K. Tluk von Toschanowitz. 2005. Predicting when animal populations are at risk from roads: an interactive model of road avoidance behavior. <i>Ecological Modelling</i> 185:329–348. <a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">doi.org/10.1016/j.ecolmodel.2004.12.015</a></li>
-        <li>Mateus, A. R. A., C. Grilo and M. Santos-Reis. 2011. Surveying drainage culvert use by carnivores: sampling design and cost–benefit analyzes of track-pads vs. video-surveillance methods. <i>Environmental Monitoring and Assessment</i> 181:101–109. <a href="https://doi.org/10.1007/s10661-010-1816-6" target="_blank" rel="noopener">doi.org/10.1007/s10661-010-1816-6</a></li>
-        <li>Ng, S. J., J. W. Dole, R. M. Sauvajot, S. P. D. Riley and T. J. Valone. 2004. Use of highway undercrossings by wildlife in southern California. <i>Biological Conservation</i> 115:499–507. <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00166-6</a></li>
-        <li>Reed, D. F., T. N. Woodard and T. M. Pojar. 1975. Behavioral response of mule deer to a highway underpass. <i>Journal of Wildlife Management</i> 39:361–367. <a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">doi.org/10.2307/3799915</a></li>
-        <li>Rytwinski, T., K. Soanes, J. A. G. Jaeger, L. Fahrig, C. S. Findlay, J. Houlahan, R. van der Ree and E. A. van der Grift. 2016. How effective is road mitigation at reducing road-kill? A meta-analysis. <i>PLoS ONE</i> 11:e0166941. <a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">doi.org/10.1371/journal.pone.0166941</a></li>
-        <li>Sawyer, H., C. Lebeau and T. Hart. 2012. Mitigating roadway impacts to migratory mule deer: a case study with underpasses and continuous fencing. <i>Wildlife Society Bulletin</i> 36. <a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">doi.org/10.1002/wsb.166</a></li>
-        <li>Seiler, A. 2005. Predicting locations of moose–vehicle collisions in Sweden. <i>Journal of Applied Ecology</i> 42:371–382. <a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">doi.org/10.1111/j.1365-2664.2005.01013.x</a></li>
-        <li>Sijtsma, F. J., E. van der Veen, A. van Hinsberg, R. Pouwels, R. Bekker, R. E. van Dijk, M. Grutters, R. Klaassen, M. Krijn, M. Mouissie and E. Wymenga. 2020. Ecological impact and cost-effectiveness of wildlife crossings in a highly fragmented landscape: a multi-method approach. <i>Landscape Ecology</i> 35:1701–1720. <a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">doi.org/10.1007/s10980-020-01047-z</a></li>
-        <li>Teixeira, F. Z., A. V. P. Coelho, I. B. Esperandio and A. Kindel. 2013. Are road-kill hotspots coincident among different vertebrate groups? <i>Oecologia Australis</i> 17:36–47. <a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">doi.org/10.4257/oeco.2013.1701.04</a></li>
-        <li>VerCauteren, K. C., T. R. VanDeelen, M. J. Lavelle and W. H. Hall. 2010. Assessment of abilities of white-tailed deer to jump fences. <i>Journal of Wildlife Management</i> 74:1378–1381. <a href="https://doi.org/10.2193/2008-463" target="_blank" rel="noopener">doi.org/10.2193/2008-463</a></li>
-        <li>Zandbergen, P. A. and S. J. Barbeau. 2011. Positional accuracy of assisted GPS data from high-sensitivity GPS-enabled mobile phones. <i>Journal of Navigation</i> 64:381–399. <a href="https://doi.org/10.1017/S0373463311000051" target="_blank" rel="noopener">doi.org/10.1017/S0373463311000051</a></li>
-      </ol>
+
     </div>
   </section>
 
@@ -483,6 +458,34 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     <p><strong>Credits.</strong> Analysis by Garrett Craig. Roadkill survey data from ForestWatch's Room to Roam project and its volunteers. Roadkill photos by iNaturalist observers, each credited on the map under its own Creative Commons license.</p>
     <p><strong>Map.</strong> High-resolution imagery: USDA National Agriculture Imagery Program, via USGS The National Map (public domain). Regional imagery contains modified Copernicus Sentinel data (2021) processed by the ESA WorldCover consortium, CC BY 4.0. Terrain from the AWS Terrain Tiles open dataset (Mapzen; includes USGS 3DEP and SRTM). Speed limits © OpenStreetMap contributors (ODbL), via Overture Maps. Highway, bridge, culvert and traffic data from Caltrans and FHWA; connectivity data from CDFW; protected areas from CPAD (GreenInfo Network).</p>
     <p>This is an independent analysis to inform planning and conversation. It is not a Caltrans or CDFW product, and every location needs field verification before design.</p>
+  </div>
+  <div class="wrap">
+      <h3 class="comp-head" id="references" style="font-size:19px">References</h3>
+      <ol class="refs">
+        <li>Bashore, T. L., W. M. Tzilkowski and E. D. Bellis. 1985. Analysis of deer-vehicle collision sites in Pennsylvania. <i>Journal of Wildlife Management</i> 49:769–774. <a href="https://doi.org/10.2307/3801709" target="_blank" rel="noopener">doi.org/10.2307/3801709</a></li>
+        <li>Cain, A. T., V. R. Tuovila, D. G. Hewitt and M. E. Tewes. 2003. Effects of a highway and mitigation projects on bobcats in southern Texas. <i>Biological Conservation</i> 114:189–197. <a href="https://doi.org/10.1016/S0006-3207(03)00023-5" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00023-5</a></li>
+        <li>Clevenger, A. P., B. Chruszcz and K. Gunson. 2001a. Drainage culverts as habitat linkages and factors affecting passage by mammals. <i>Journal of Applied Ecology</i> 38:1340–1349. <a href="https://doi.org/10.1046/j.0021-8901.2001.00678.x" target="_blank" rel="noopener">doi.org/10.1046/j.0021-8901.2001.00678.x</a></li>
+        <li>Clevenger, A. P., B. Chruszcz and K. E. Gunson. 2001b. Highway mitigation fencing reduces wildlife-vehicle collisions. <i>Wildlife Society Bulletin</i> 29:646–653. <a href="https://www.conservationevidence.com/individual-study/7510" target="_blank" rel="noopener">www.conservationevidence.com/individual-study/7510</a></li>
+        <li>Coelho, I. P., A. Kindel and A. V. P. Coelho. 2008. Roadkills of vertebrate species on two highways through the Atlantic Forest Biosphere Reserve, southern Brazil. <i>European Journal of Wildlife Research</i> 54:689–699. <a href="https://doi.org/10.1007/s10344-008-0197-4" target="_blank" rel="noopener">doi.org/10.1007/s10344-008-0197-4</a></li>
+        <li>Cunningham, C. X., T. A. Nuñez, Y. Hentati, B. Sullender, C. Breen, T. R. Ganz, S. E. S. Kreling, K. A. Shively, E. Reese, J. Miles and L. R. Prugh. 2022. Permanent daylight saving time would reduce deer-vehicle collisions. <i>Current Biology</i> 32:4982–4988. <a href="https://doi.org/10.1016/j.cub.2022.10.007" target="_blank" rel="noopener">doi.org/10.1016/j.cub.2022.10.007</a></li>
+        <li>Dawes, R. M. 1979. The robust beauty of improper linear models in decision making. <i>American Psychologist</i> 34:571–582. <a href="https://doi.org/10.1037/0003-066X.34.7.571" target="_blank" rel="noopener">doi.org/10.1037/0003-066X.34.7.571</a></li>
+        <li>Dickson, B. G. and P. Beier. 2007. Quantifying the influence of topographic position on cougar (<i>Puma concolor</i>) movement in southern California, USA. <i>Journal of Zoology</i> 271:270–277. <a href="https://doi.org/10.1111/j.1469-7998.2006.00215.x" target="_blank" rel="noopener">doi.org/10.1111/j.1469-7998.2006.00215.x</a></li>
+        <li>Fambro, D. B., R. J. Koppa, D. L. Picha and K. Fitzpatrick. 2000. Driver braking performance in stopping sight distance situations. <i>Transportation Research Record</i> 1701. <a href="https://doi.org/10.3141/1701-02" target="_blank" rel="noopener">doi.org/10.3141/1701-02</a></li>
+        <li>Grilo, C., F. Z. Ferreira and E. Revilla. 2015. No evidence of a threshold in traffic volume affecting road-kill mortality at a large spatio-temporal scale. <i>Environmental Impact Assessment Review</i> 55:54–58. <a href="https://doi.org/10.1016/j.eiar.2015.07.003" target="_blank" rel="noopener">doi.org/10.1016/j.eiar.2015.07.003</a></li>
+        <li>Gunson, K. E., G. Mountrakis and L. J. Quackenbush. 2011. Spatial wildlife-vehicle collision models: a review of current work and its application to transportation mitigation projects. <i>Journal of Environmental Management</i> 92:1074–1082. <a href="https://doi.org/10.1016/j.jenvman.2010.11.027" target="_blank" rel="noopener">doi.org/10.1016/j.jenvman.2010.11.027</a></li>
+        <li>Huijser, M. P., E. R. Fairbank, W. Camel-Means, J. Graham, V. Watson, P. Basting and D. Becker. 2016. Effectiveness of short sections of wildlife fencing and crossing structures along highways in reducing wildlife–vehicle collisions and providing safe crossing opportunities for large mammals. <i>Biological Conservation</i> 197:61–68. <a href="https://www.sciencedirect.com/science/article/pii/S0006320716300350" target="_blank" rel="noopener">www.sciencedirect.com/science/article/pii/S0006320716300350</a></li>
+        <li>Jaeger, J. A. G., J. Bowman, J. Brennan, L. Fahrig, D. Bert, J. Bouchard, N. Charbonneau, K. Frank, B. Gruber and K. Tluk von Toschanowitz. 2005. Predicting when animal populations are at risk from roads: an interactive model of road avoidance behavior. <i>Ecological Modelling</i> 185:329–348. <a href="https://doi.org/10.1016/j.ecolmodel.2004.12.015" target="_blank" rel="noopener">doi.org/10.1016/j.ecolmodel.2004.12.015</a></li>
+        <li>Mateus, A. R. A., C. Grilo and M. Santos-Reis. 2011. Surveying drainage culvert use by carnivores: sampling design and cost–benefit analyzes of track-pads vs. video-surveillance methods. <i>Environmental Monitoring and Assessment</i> 181:101–109. <a href="https://doi.org/10.1007/s10661-010-1816-6" target="_blank" rel="noopener">doi.org/10.1007/s10661-010-1816-6</a></li>
+        <li>Ng, S. J., J. W. Dole, R. M. Sauvajot, S. P. D. Riley and T. J. Valone. 2004. Use of highway undercrossings by wildlife in southern California. <i>Biological Conservation</i> 115:499–507. <a href="https://doi.org/10.1016/S0006-3207(03)00166-6" target="_blank" rel="noopener">doi.org/10.1016/S0006-3207(03)00166-6</a></li>
+        <li>Reed, D. F., T. N. Woodard and T. M. Pojar. 1975. Behavioral response of mule deer to a highway underpass. <i>Journal of Wildlife Management</i> 39:361–367. <a href="https://doi.org/10.2307/3799915" target="_blank" rel="noopener">doi.org/10.2307/3799915</a></li>
+        <li>Rytwinski, T., K. Soanes, J. A. G. Jaeger, L. Fahrig, C. S. Findlay, J. Houlahan, R. van der Ree and E. A. van der Grift. 2016. How effective is road mitigation at reducing road-kill? A meta-analysis. <i>PLoS ONE</i> 11:e0166941. <a href="https://doi.org/10.1371/journal.pone.0166941" target="_blank" rel="noopener">doi.org/10.1371/journal.pone.0166941</a></li>
+        <li>Sawyer, H., C. Lebeau and T. Hart. 2012. Mitigating roadway impacts to migratory mule deer: a case study with underpasses and continuous fencing. <i>Wildlife Society Bulletin</i> 36. <a href="https://doi.org/10.1002/wsb.166" target="_blank" rel="noopener">doi.org/10.1002/wsb.166</a></li>
+        <li>Seiler, A. 2005. Predicting locations of moose–vehicle collisions in Sweden. <i>Journal of Applied Ecology</i> 42:371–382. <a href="https://doi.org/10.1111/j.1365-2664.2005.01013.x" target="_blank" rel="noopener">doi.org/10.1111/j.1365-2664.2005.01013.x</a></li>
+        <li>Sijtsma, F. J., E. van der Veen, A. van Hinsberg, R. Pouwels, R. Bekker, R. E. van Dijk, M. Grutters, R. Klaassen, M. Krijn, M. Mouissie and E. Wymenga. 2020. Ecological impact and cost-effectiveness of wildlife crossings in a highly fragmented landscape: a multi-method approach. <i>Landscape Ecology</i> 35:1701–1720. <a href="https://doi.org/10.1007/s10980-020-01047-z" target="_blank" rel="noopener">doi.org/10.1007/s10980-020-01047-z</a></li>
+        <li>Teixeira, F. Z., A. V. P. Coelho, I. B. Esperandio and A. Kindel. 2013. Are road-kill hotspots coincident among different vertebrate groups? <i>Oecologia Australis</i> 17:36–47. <a href="https://doi.org/10.4257/oeco.2013.1701.04" target="_blank" rel="noopener">doi.org/10.4257/oeco.2013.1701.04</a></li>
+        <li>VerCauteren, K. C., T. R. VanDeelen, M. J. Lavelle and W. H. Hall. 2010. Assessment of abilities of white-tailed deer to jump fences. <i>Journal of Wildlife Management</i> 74:1378–1381. <a href="https://doi.org/10.2193/2008-463" target="_blank" rel="noopener">doi.org/10.2193/2008-463</a></li>
+        <li>Zandbergen, P. A. and S. J. Barbeau. 2011. Positional accuracy of assisted GPS data from high-sensitivity GPS-enabled mobile phones. <i>Journal of Navigation</i> 64:381–399. <a href="https://doi.org/10.1017/S0373463311000051" target="_blank" rel="noopener">doi.org/10.1017/S0373463311000051</a></li>
+      </ol>
   </div>
 </footer>
 
@@ -602,6 +605,41 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
   const GROUP = (g) => ["ungulate", "medium/large carnivore"].includes(g) ? "large" : g === "mesomammal" ? "medium" : ["small mammal", "herp"].includes(g) ? "small" : "other";
   const GROUP_COLOR = { large: "#eb6834", medium: "#2a78d6", small: "#1baf7a", other: "#9aa39e" };
 
+  const SYMBOL_PATHS = {
+    Circular: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4" fill="#06202c" stroke="none"/>',
+    Box: '<path d="M3 4h18v16H3z"/><path d="M8 9h8v11H8z" fill="#06202c" stroke="none"/>',
+    Arch: '<path d="M3 21V12a9 9 0 0 1 18 0v9z"/><path d="M8 21v-9a4 4 0 0 1 8 0v9" fill="#06202c" stroke="none"/>',
+    Elliptical: '<ellipse cx="12" cy="12" rx="10" ry="7"/><ellipse cx="12" cy="12" rx="6" ry="3" fill="#06202c" stroke="none"/>',
+    'Arch top box': '<path d="M3 21V8Q12 -2 21 8v13z"/><path d="M8 21V10q4 -4 8 0v11" fill="#06202c" stroke="none"/>',
+    Other: '<path d="m12 2 10 10-10 10L2 12z"/><path d="M9 9q0-5 6-2t-3 7m0 3v1" fill="none" stroke="#06202c"/>',
+    bridge: '<path d="M2 8h20v5H2zM5 13h3v8H5zM16 13h3v8h-3z"/><path d="M3 4v4m6-4v4m6-4v4m6-4v4" fill="none"/>',
+    roadkill: '<path d="m6 3 6 6 6-6 3 3-6 6 6 6-3 3-6-6-6 6-3-3 6-6-6-6z"/>'
+  };
+  const symbolSVG = (shape, color, photo = false) => `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 28 28"><g transform="translate(2 2)" fill="${color}" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round">${SYMBOL_PATHS[shape] || SYMBOL_PATHS.Other}${photo ? '<circle cx="20" cy="3" r="3" fill="#fff" stroke="#06202c"/>' : ''}</g></svg>`;
+  const symbolKey = (shape, color, photo = false) => `${shape}-${color}-${photo}`;
+  const legendSymbol = (shape, color, photo = false) => `<span style="display:inline-flex;width:24px;height:24px;vertical-align:middle;flex-shrink:0">${symbolSVG(shape, color, photo)}</span>`;
+  async function registerSymbols(collection, style) {
+    const pending = new Map();
+    collection.features.forEach(f => {
+      const [shape, color, photo = false] = style(f.properties);
+      const id = symbolKey(shape, color, photo);
+      f.properties.map_icon = id;
+      if (!pending.has(id)) pending.set(id, new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => { if (!map.hasImage(id)) map.addImage(id, img, { pixelRatio: 2 }); resolve(); };
+        img.onerror = reject;
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(symbolSVG(shape, color, photo));
+      }));
+    });
+    await Promise.all(pending.values());
+  }
+  const symbolLayout = (minZoom, small, large) => ({
+    "icon-image": ["get", "map_icon"],
+    "icon-size": ["interpolate", ["linear"], ["zoom"], minZoom, small, 16, large],
+    "icon-allow-overlap": true, "icon-ignore-placement": true,
+    "icon-pitch-alignment": "viewport", "icon-rotation-alignment": "viewport"
+  });
+
   const map = new maplibregl.Map({
     container: "map",
     style: {
@@ -698,6 +736,9 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
       "county", "segments", "zones", "culverts", "bridges", "barriers", "fence_ends", "cdfw_barriers", "roadkill", "examples", "protected",
     ].map(n => getJSON(`data/${n}.json`)));
     rk.features.forEach(f => { f.properties.group = GROUP(f.properties.guild); });
+    await registerSymbols(culv, p => [p.shape, p.size_class === "large (deer-capable)" ? "#ffffff" : p.size_class === "medium (mesocarnivore)" ? "#5ad1ff" : p.size_class === "unknown" ? "#a8a8a8" : "#2f7fa3"]);
+    await registerSymbols(br, p => ["bridge", p.over_type === "waterway" ? "#71efb4" : "#bfc6c2"]);
+    await registerSymbols(rk, p => ["roadkill", GROUP_COLOR[p.group], Boolean(p.photo)]);
     RK = rk; EX = ex;
 
     const add = (id, data) => map.addSource(id, { type: "geojson", data });
@@ -720,20 +761,11 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     map.addLayer({ id: "bars", type: "line", source: "bars", filter: ["!=", ["get", "blocks"], "guardrail"], minzoom: 11,
       paint: { "line-color": ["match", ["get", "blocks"], "wall or tall fence", "#ff3b30", "solid barrier", "#ff9f0a", "#e8e8e8"],
                "line-width": ["interpolate", ["linear"], ["zoom"], 11, 1.2, 16, 3.5], "line-dasharray": [2, 1] } });
-    map.addLayer({ id: "culv", type: "circle", source: "culv", minzoom: 11,
-      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 11, 2.5, 16, 7],
-               "circle-color": ["match", ["get", "size_class"], "medium (mesocarnivore)", "#5ad1ff", "large (deer-capable)", "#ffffff", "#2f7fa3"],
-               "circle-stroke-color": "#06202c", "circle-stroke-width": 1 } });
-    map.addLayer({ id: "br", type: "circle", source: "br", minzoom: 10,
-      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 9], "circle-color": ["match", ["get", "over_type"], "waterway", "#ffffff", "#bfc6c2"],
-               "circle-stroke-color": "#0b6e4f", "circle-stroke-width": 2.5 } });
+    map.addLayer({ id: "culv", type: "symbol", source: "culv", minzoom: 11, layout: symbolLayout(11, 0.5, 1) });
+    map.addLayer({ id: "br", type: "symbol", source: "br", minzoom: 10, layout: symbolLayout(10, 0.65, 1.2) });
     map.addLayer({ id: "ends", type: "circle", source: "ends", minzoom: 10,
       paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 16, 8], "circle-color": "#ff3b30", "circle-stroke-color": "#ffffff", "circle-stroke-width": 2 } });
-    map.addLayer({ id: "rk", type: "circle", source: "rk",
-      paint: { "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, ["case", ["has", "photo"], 2.2, 1.6], 12, ["case", ["has", "photo"], 4.5, 3.5], 15, ["case", ["has", "photo"], 8, 6]],
-               "circle-opacity": ["interpolate", ["linear"], ["zoom"], 9, 0.75, 12, 1],
-               "circle-color": ["match", ["get", "group"], "large", GROUP_COLOR.large, "medium", GROUP_COLOR.medium, "small", GROUP_COLOR.small, GROUP_COLOR.other],
-               "circle-stroke-color": "#ffffff", "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 9, 0.4, 12, ["case", ["has", "photo"], 1.8, 0.8]] } });
+    map.addLayer({ id: "rk", type: "symbol", source: "rk", layout: symbolLayout(9, 0.25, 0.85) });
 
     buildLayersPane();
     buildExamplesPane();
@@ -810,11 +842,11 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
         ["lc", "Land cover (ESA WorldCover)", `<span class="sw" style="background:linear-gradient(90deg,#1f7a2e 0 33%,#e0a526 33% 66%,#e8e35a 66%);border-radius:3px"></span>`, false],
       ]],
       ["Roadkill", [
-        ["rk", "Roadkill records (ringed dots have photos)", "", true],
+        ["rk", "Roadkill records (×; white badge = photo)", legendSymbol("roadkill", GROUP_COLOR.large, true), true],
       ]],
       ["Structures and barriers", [
-        ["culv", "Culverts open at both ends (bright = mesocarnivore size)", `<span class="sw" style="background:#5ad1ff"></span>`, true],
-        ["br", "State highway bridges (white = over water)", `<span class="sw" style="background:#fff;border-color:#0b6e4f"></span>`, true],
+        ["culv", "Culverts open at both ends", legendSymbol("Circular", "#5ad1ff"), true],
+        ["br", "State highway bridges (green = over water; gray = other)", legendSymbol("bridge", "#71efb4"), true],
         ["bars", "Roadside walls and fences (red ≥ 8 ft, orange 5–8 ft)", `<span class="sw line" style="background:#ff3b30"></span>`, true],
         ["ends", "Ends of ≥ 8 ft barriers", `<span class="sw" style="background:#ff3b30"></span>`, true],
       ]],
@@ -823,13 +855,14 @@ footer p { margin: 0 0 8px; max-width: 90ch; }
     pane.innerHTML = `<div class="layer-group"><h4>Need percentile</h4><div class="ramp"></div><div class="ramp-labels"><span>0</span><span>50</span><span>75</span><span>90</span><span>100</span></div></div>` +
       groups.map(([title, items]) => `<div class="layer-group"><h4>${title}</h4>${items.map(([id, label, sw, on]) =>
         `<label class="toggle"><input type="checkbox" id="lyr-${id}" data-layer="${id}" ${on ? "checked" : ""}>${sw}${label}</label>`).join("")}
+        ${title === "Structures and barriers" ? `<div style="margin:8px 0 12px 25px;font:13px var(--font-display);color:var(--ink-2)">${["Circular", "Box", "Arch", "Elliptical", "Arch top box", "Other"].map(shape => `<div>${legendSymbol(shape, "#5ad1ff")} ${shape === "Other" ? "Other / unknown" : shape} culvert</div>`).join("")}<p>Culvert color: dark blue = small; cyan = mesocarnivore; white = deer-capable; gray = unknown size.</p></div>` : ""}
         ${title === "Land" ? `<div id="lc-legend" hidden style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;margin:4px 0 0 25px;font:12.5px var(--font-display);color:var(--ink-2)">${LC_LEGEND.map(([c, l, nat]) =>
           `<span><span class="sw" style="display:inline-block;vertical-align:-3px;width:11px;height:11px;border-radius:2px;background:${c}"></span> ${l}${nat === 0 ? "" : " ✓"}</span>`).join("")}<span style="grid-column:1/-1;color:var(--ink-3)">✓ counts as natural in the habitat score. Shown within 1 km of state highways.</span></div>` : ""}
         ${title === "Roadkill" ? `<div style="display:grid;gap:4px;margin:4px 0 0 25px;font:13px var(--font-display);color:var(--ink-2)">
-          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.large}"></span> Deer, pigs and carnivores</span>
-          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.medium}"></span> Medium mammals</span>
-          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.small}"></span> Small mammals, reptiles, amphibians</span>
-          <span><span class="sw" style="display:inline-block;vertical-align:-4px;background:${GROUP_COLOR.other}"></span> Birds and unidentified</span></div>` : ""}</div>`).join("") +
+          <span>${legendSymbol("roadkill", GROUP_COLOR.large)} Deer, pigs and carnivores</span>
+          <span>${legendSymbol("roadkill", GROUP_COLOR.medium)} Medium mammals</span>
+          <span>${legendSymbol("roadkill", GROUP_COLOR.small)} Small mammals, reptiles, amphibians</span>
+          <span>${legendSymbol("roadkill", GROUP_COLOR.other)} Birds and unidentified</span></div>` : ""}</div>`).join("") +
       `<div class="layer-group"><h4>Terrain</h4><label class="toggle" for="exag">Vertical exaggeration <input type="range" id="exag" min="1" max="3" step="0.1" value="1.4" style="flex:1"></label></div>
        <p style="font:13px var(--font-display);color:var(--ink-3);margin:0">Culverts, walls and fences appear from zoom 11; zoom in to see them.</p>`;
     pane.querySelectorAll("input[data-layer]").forEach(cb => cb.addEventListener("change", () => {
