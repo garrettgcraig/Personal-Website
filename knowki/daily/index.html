@@ -8,7 +8,7 @@
 		<meta name="description" content="Play the KnowKi Daily: five species, easy to hard, the same for everyone." />
 		<link rel="stylesheet" href="../../assets/css/main.css" />
 		<link rel="stylesheet" href="../../assets/css/darkmode.css" />
-		<link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon-kiwi-64.png" /><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-kiwi-32.png" /><link rel="apple-touch-icon" href="../assets/apple-touch-kiwi.png" /><meta property="og:type" content="website" /><meta property="og:title" content="KnowKi Daily" /><meta property="og:description" content="Five species, easy to hard. Everyone gets the same ones, and faster answers score more." /><meta property="og:url" content="https://garrettgcraig.com/knowki/daily" /><meta property="og:image" content="https://garrettgcraig.com/knowki/assets/og-knowki.jpg" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta name="twitter:card" content="summary_large_image" />
+		<link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon-kiwi-64.png" /><link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-kiwi-32.png" /><link rel="apple-touch-icon" href="../assets/apple-touch-kiwi.png" /><meta property="og:type" content="website" /><meta property="og:title" content="KnowKi Daily" /><meta property="og:description" content="Five species, easy to hard. Everyone gets the same ones, and faster answers score more." /><meta property="og:url" content="https://garrettgcraig.com/knowki/daily" /><meta name="twitter:card" content="summary" /><!-- No og:image on purpose: shared Daily results get a compact link preview (title and the kiwi icon), so a group chat full of results stays small. -->
 		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
 		<script src="../../assets/js/darkmode.js"></script>
 		<style>
@@ -38,7 +38,8 @@
 						<div class="inner doc">
 							<h1><strong>KnowKi Daily</strong></h1>
 							<p class="major">Five species a day, easy to hard. Everyone gets the same ones, and faster answers score more.</p>
-							<p><a href="https://apps.apple.com/app/id6817068034" class="button primary">Play in KnowKi</a> <a href="../" class="button">About KnowKi</a></p>
+							<p><a href="https://apps.apple.com/app/id6817068034" class="button primary">Play in KnowKi</a> <a href="https://knowki.garrettgcraig.com/?daily=us" class="button" id="play-web">Play on the web</a> <a href="../" class="button">About KnowKi</a></p>
+							<script>(function(){var e=new URLSearchParams(location.search).get('e');if(e==='world')document.getElementById('play-web').href='https://knowki.garrettgcraig.com/?daily=world';})();</script>
 							<h2>How it works</h2>
 							<p>There's a U.S. and a World edition each day. You have 15 seconds per photo and four names to choose from; a right answer within a second scores 100, dropping to 10 at the buzzer. If a photo is hard to make out, you can swap it once for a small penalty.</p>
 							<p>The squares in a shared result show each round: <strong>green</strong> for 70 points or more, <strong>yellow</strong> for 40 or more, <strong>orange</strong> for any points, and <strong>red</strong> for a miss.</p>
