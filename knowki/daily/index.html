@@ -17,12 +17,7 @@
 			.doc ul { margin-bottom: 1.5rem; }
 			.doc .updated { font-size: 0.9rem; opacity: 0.75; }
 		</style>
-		<script>
-			// Without KnowKi installed, iPhones and iPads land here: send them to the App Store. With it, iOS opens the app instead.
-			if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-				location.replace('https://apps.apple.com/app/id6817068034');
-			}
-		</script>
+		<!-- No automatic App Store redirect: someone opening a friend's result can play right away on the web. With KnowKi installed, iOS opens the app instead of this page (Universal Link). -->
 	</head>
 	<body class="is-preload">
 
@@ -38,12 +33,12 @@
 						<div class="inner doc">
 							<h1><strong>KnowKi Daily</strong></h1>
 							<p class="major">Five species a day, easy to hard. Everyone gets the same ones, and faster answers score more.</p>
-							<p><a href="https://apps.apple.com/app/id6817068034" class="button primary">Play in KnowKi</a> <a href="https://knowki.garrettgcraig.com/?daily=us" class="button" id="play-web">Play on the web</a> <a href="../" class="button">About KnowKi</a></p>
+							<p><a href="https://knowki.garrettgcraig.com/?daily=us" class="button primary" id="play-web">Play now on the web</a> <!-- At App Store launch, add the app second: <a href="https://apps.apple.com/app/id6817068034" class="button">Get the iPhone app</a> --> <a href="../" class="button">About KnowKi</a></p>
 							<script>(function(){var e=new URLSearchParams(location.search).get('e');if(e==='world')document.getElementById('play-web').href='https://knowki.garrettgcraig.com/?daily=world';})();</script>
 							<h2>How it works</h2>
 							<p>There's a U.S. and a World edition each day. You have 15 seconds per photo and four names to choose from; a right answer within a second scores 100, dropping to 10 at the buzzer. If a photo is hard to make out, you can swap it once for a small penalty.</p>
 							<p>The squares in a shared result show each round: <strong>green</strong> for 70 points or more, <strong>yellow</strong> for 40 or more, <strong>orange</strong> for any points, and <strong>red</strong> for a miss.</p>
-							<p>KnowKi is free for iPhone, with no ads and no account. Photos come from iNaturalist contributors.</p>
+							<p>KnowKi is free, with no ads and no account. Photos come from iNaturalist contributors.</p>
 						</div>
 					</section>
 
