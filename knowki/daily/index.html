@@ -33,8 +33,8 @@
 						<div class="inner doc">
 							<h1><strong>KnowKi Daily</strong></h1>
 							<p class="major">Five species a day, easy to hard. Everyone gets the same ones, and faster answers score more.</p>
-							<p><a href="https://knowki.garrettgcraig.com/?daily=us" class="button primary" id="play-web">Play now on the web</a> <!-- At App Store launch, add the app second: <a href="https://apps.apple.com/app/id6817068034" class="button">Get the iPhone app</a> --> <a href="../" class="button">About KnowKi</a></p>
-							<script>(function(){var e=new URLSearchParams(location.search).get('e');if(e==='world')document.getElementById('play-web').href='https://knowki.garrettgcraig.com/?daily=world';})();</script>
+							<p><a href="https://knowki.app/daily?e=country" class="button primary" id="play-web">Play now on the web</a> <!-- At App Store launch, add the app second: <a href="https://apps.apple.com/app/id6817068034" class="button">Get the iPhone app</a> --> <a href="../" class="button">About KnowKi</a></p>
+							<script>(function(){if(location.search)document.getElementById('play-web').href='https://knowki.app/daily'+location.search;})();</script>
 							<h2>How it works</h2>
 							<p>There's a U.S. and a World edition each day. You have 15 seconds per photo and four names to choose from; a right answer within a second scores 100, dropping to 10 at the buzzer. If a photo is hard to make out, you can swap it once for a small penalty.</p>
 							<p>The squares in a shared result show each round: <strong>green</strong> for 70 points or more, <strong>yellow</strong> for 40 or more, <strong>orange</strong> for any points, and <strong>red</strong> for a miss.</p>
