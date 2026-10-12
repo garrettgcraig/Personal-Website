@@ -1,0 +1,18 @@
+name: Check public lands tracker
+on:
+  push:
+    paths: ['wilderness.html', 'assets/js/lands-*.js', 'assets/css/lands-tracker.css', 'data/*.geojson', 'tests/**', '.github/workflows/check-tracker.yml']
+  pull_request:
+    paths: ['wilderness.html', 'assets/js/lands-*.js', 'assets/css/lands-tracker.css', 'data/*.geojson', 'tests/**', '.github/workflows/check-tracker.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check assets/js/lands-tracker.js
+      - run: node --test tests/lands-data.test.cjs
