@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Big SEKI Loop — July 2026 - Trail Log - Garrett G. Craig</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="assets/css/darkmode.css" />
+		<link rel="stylesheet" href="assets/css/trail-log.css?v=7" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+		<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="assets/js/darkmode.js"></script>
+	</head>
+	<body class="is-preload">
+
+		<!-- Dark mode toggle -->
+		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
+			<span class="dm-toggle-moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg></span>
+			<span class="dm-toggle-sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg></span>
+		</button>
+
+		<div id="wrapper" class="divided">
+
+			<section class="wrapper style1">
+				<div class="inner">
+					<header class="trail-entry-header">
+						<h1>Big SEKI Loop — July 2026</h1>
+						<p class="trail-meta">July 4, 2026 &middot; Sequoia and Kings Canyon National Parks, CA</p>
+					</header>
+					<article class="trail-entry">
+<p>I hiked the Big SEKI in early July. My iNaturalist record spans July 4–18, 2026: fifteen days of observations tracing a clockwise journey from the Copper Creek side of Kings Canyon, south through the John Muir Trail country, down the Kern, and back through the High Sierra Trail and Elizabeth Pass country. The points also show a Kearsarge Lakes detour.</p>
+<p>This is a reconstruction from nature observations rather than a recorded GPS track. The day labels describe estimated travel corridors; the linked observations are the evidence. The timestamps below are observation windows, not hiking start and finish times, and the last photograph of a day does not establish a campsite.</p>
+<h2>The observation map</h2>
+<p>Choose a day to inspect the more precise observations. Pins show recorded locations; no line is drawn between them because it would imply a trail I did not record.</p>
+<div class="trail-map trail-observation-map" data-inat="data/inat-big-seki.json" aria-label="Daily iNaturalist observation map"></div>
+
+<h2>Daily progress</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Date</th>
+<th>Estimated progress</th>
+<th>Recorded window (Pacific)</th>
+<th>Mapped observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>July 4</td>
+<td>Roads End → Copper Creek basin</td>
+<td>08:49–20:11</td>
+<td>89</td>
+</tr>
+<tr>
+<td>2</td>
+<td>July 5</td>
+<td>Copper Creek basin → Granite Pass → Simpson Meadow</td>
+<td>08:06–21:45</td>
+<td>50</td>
+</tr>
+<tr>
+<td>3</td>
+<td>July 6</td>
+<td>Simpson Meadow → Middle Fork Kings River</td>
+<td>09:09–15:54</td>
+<td>30</td>
+</tr>
+<tr>
+<td>4</td>
+<td>July 7</td>
+<td>Middle Fork Kings → Palisade Creek → Deer Meadow vicinity</td>
+<td>10:01–15:37</td>
+<td>22</td>
+</tr>
+<tr>
+<td>5</td>
+<td>July 8</td>
+<td>Deer Meadow → Palisade Lakes → Mather Pass → Upper Basin</td>
+<td>07:59–19:48</td>
+<td>28</td>
+</tr>
+<tr>
+<td>6</td>
+<td>July 9</td>
+<td>Upper Basin → Pinchot Pass → Twin Lakes vicinity</td>
+<td>07:43–18:50</td>
+<td>24</td>
+</tr>
+<tr>
+<td>7</td>
+<td>July 10</td>
+<td>Twin Lakes vicinity → Woods Creek → Rae Lakes</td>
+<td>07:57–22:30</td>
+<td>64</td>
+</tr>
+<tr>
+<td>8</td>
+<td>July 11</td>
+<td>Rae Lakes → Glen Pass → Kearsarge Lakes</td>
+<td>07:15–19:58</td>
+<td>22</td>
+</tr>
+<tr>
+<td>9</td>
+<td>July 12</td>
+<td>Kearsarge Lakes → Kearsarge Pass → upper Bubbs Creek</td>
+<td>07:39–14:15</td>
+<td>36</td>
+</tr>
+<tr>
+<td>10</td>
+<td>July 13</td>
+<td>Upper Bubbs Creek → Forester Pass → upper Kern / Wallace Creek</td>
+<td>07:00–17:35</td>
+<td>37</td>
+</tr>
+<tr>
+<td>11</td>
+<td>July 14</td>
+<td>Upper Kern → Kern Canyon → Moraine Lake vicinity</td>
+<td>07:19–18:30</td>
+<td>78</td>
+</tr>
+<tr>
+<td>12</td>
+<td>July 15</td>
+<td>Moraine Lake vicinity → Big Arroyo → Kaweah Gap → Hamilton Lakes</td>
+<td>07:02–20:36</td>
+<td>57</td>
+</tr>
+<tr>
+<td>13</td>
+<td>July 16</td>
+<td>Hamilton Lakes → Elizabeth Pass approach</td>
+<td>06:22–10:32</td>
+<td>19</td>
+</tr>
+<tr>
+<td>14</td>
+<td>July 17</td>
+<td>Deadman Canyon → Roaring River → Avalanche Pass corridor</td>
+<td>07:28–16:20</td>
+<td>22</td>
+</tr>
+<tr>
+<td>15</td>
+<td>July 18</td>
+<td>Sphinx Creek → lower Bubbs Creek / Roads End approach</td>
+<td>06:33–10:34</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<h2>Day-by-day notes</h2>
+<h3>Day 1 · July 4: Roads End → Copper Creek basin</h3>
+<p>The points climb from Roads End into the Copper Creek drainage, ending in the upper basin. This is the first recorded hiking day.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/380448004" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382755080" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 2 · July 5: Copper Creek basin → Granite Pass → Simpson Meadow</h3>
+<p>The sequence moves north over the Granite Pass corridor, then descends toward the Middle Fork Kings River at Simpson Meadow.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382755231" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382758021" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 3 · July 6: Simpson Meadow → Middle Fork Kings River</h3>
+<p>The points follow the Middle Fork upstream. The final reliable record is farther up-canyon toward the Palisade Creek approach.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382758108" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382760070" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 4 · July 7: Middle Fork Kings → Palisade Creek → Deer Meadow vicinity</h3>
+<p>The sequence turns east along Palisade Creek toward the Golden Staircase approach. The afternoon endpoint is in the Deer Meadow vicinity.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382760108" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382763799" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 5 · July 8: Deer Meadow → Palisade Lakes → Mather Pass → Upper Basin</h3>
+<p>A long north-to-south progression links the Golden Staircase and Palisade Lakes corridor with Mather Pass and the Upper Basin.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382763822" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382767367" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 6 · July 9: Upper Basin → Pinchot Pass → Twin Lakes vicinity</h3>
+<p>The records work south from Upper Basin across the Pinchot Pass corridor and into the lakes basin below it.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/384350039" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382768240" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 7 · July 10: Twin Lakes vicinity → Woods Creek → Rae Lakes</h3>
+<p>The sequence descends to Woods Creek, then climbs toward Rae Lakes. A late-night observation anchors the day in the Rae Lakes area.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382768268" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/384350020" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 8 · July 11: Rae Lakes → Glen Pass → Kearsarge Lakes</h3>
+<p>The points head south across the Glen Pass corridor, then east into the Kearsarge Lakes basin. They support a side trip here; they do not establish a resupply or an Onion Valley visit.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/384349978" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382770167" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 9 · July 12: Kearsarge Lakes → Kearsarge Pass → upper Bubbs Creek</h3>
+<p>The sequence returns west over Kearsarge Pass and works toward the upper Bubbs Creek drainage, north of Forester Pass.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/384349951" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382772903" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 10 · July 13: Upper Bubbs Creek → Forester Pass → upper Kern / Wallace Creek</h3>
+<p>The points continue south through the Forester Pass corridor, then descend through the Tyndall Creek and Wallace Creek side of the upper Kern country.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382772926" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382784513" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 11 · July 14: Upper Kern → Kern Canyon → Moraine Lake vicinity</h3>
+<p>The sequence follows the Kern south and then turns west toward the High Sierra Trail and Moraine Lake vicinity.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/383709384" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382800910" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 12 · July 15: Moraine Lake vicinity → Big Arroyo → Kaweah Gap → Hamilton Lakes</h3>
+<p>The records move through Big Arroyo and the Kaweah Gap corridor to Hamilton Lakes. The final observation is a rainbow trout at Hamilton Lakes.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/383665969" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/384444217" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 13 · July 16: Hamilton Lakes → Elizabeth Pass approach</h3>
+<p>The reliable points only cover the morning, ending near the Elizabeth Pass trail approach. The next day begins north of the pass in Deadman Canyon, so the crossing belongs in the gap between these records—not at a confirmed time or campsite.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/383665906" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382835071" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 14 · July 17: Deadman Canyon → Roaring River → Avalanche Pass corridor</h3>
+<p>The first record is already north of Elizabeth Pass. The sequence then descends Deadman Canyon toward Roaring River and continues through the Avalanche Pass corridor toward Sphinx Creek.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382835104" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382836158" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h3>Day 15 · July 18: Sphinx Creek → lower Bubbs Creek / Roads End approach</h3>
+<p>The precise records descend toward the lower Bubbs Creek junction. Later, broadly located observations suggest the return toward Roads End, but they are excluded from the plotted reconstruction.</p>
+<p>Evidence: <a href="https://www.inaturalist.org/observations/382836214" target="_blank" rel="noopener">first reliable observation</a> · <a href="https://www.inaturalist.org/observations/382836581" target="_blank" rel="noopener">last reliable observation</a>.</p>
+<h2>Small things along the way</h2>
+<p>The observations give the route a second scale: whiteleaf manzanita and white bog orchids on the first climb, a mountain cicada near Granite Pass, alpine flowers around Palisade Creek, and fungi in the forests on the way out. A few entries from that record:</p>
+<ul>
+<li>July 4: <a href="https://www.inaturalist.org/observations/382746962" target="_blank" rel="noopener">white bog orchid</a> on the Copper Creek climb.</li>
+<li>July 5: <a href="https://www.inaturalist.org/observations/382756852" target="_blank" rel="noopener">mountain cicada</a> along the Granite Pass corridor.</li>
+<li>July 6: <a href="https://www.inaturalist.org/observations/382760070" target="_blank" rel="noopener">Leichtlin’s mariposa lily</a> above the Middle Fork Kings River.</li>
+<li>July 9: <a href="https://www.inaturalist.org/observations/384350039" target="_blank" rel="noopener">yellow-bellied marmot</a> in the Upper Basin area.</li>
+<li>July 15: <a href="https://www.inaturalist.org/observations/384444217" target="_blank" rel="noopener">rainbow trout</a> at Hamilton Lakes.</li>
+<li>July 18: <a href="https://www.inaturalist.org/observations/382836214" target="_blank" rel="noopener">conifer chicken of the woods</a> in the Sphinx Creek drainage.</li>
+</ul>
+<figure class="trail-photo"><img src="trail-log/photos/big-seki-loop/cover.jpg" alt="Leichtlin’s mariposa lily, July 6. Photograph by Garrett Craig; iNaturalist observation 382760070 (CC BY-NC)." loading="lazy" /><figcaption>Leichtlin’s mariposa lily, July 6. Photograph by Garrett Craig; iNaturalist observation 382760070 (CC BY-NC).</figcaption></figure>
+
+<h2>How this was reconstructed</h2>
+<p>The map uses 594 public observations from <a href="https://www.inaturalist.org/observations?user_id=hommedeterre&amp;d1=2026-07-04&amp;d2=2026-07-18">my iNaturalist account</a>, grouped by the date they were observed in Pacific time. Only unobscured points in the trip area with reported location uncertainty of 500 meters or less are plotted. Records with missing coordinates, unspecified accuracy, or larger uncertainty remain on iNaturalist but do not anchor the itinerary. The published coordinates have been rounded to six decimal places.</p>
+<p>The <a href="https://doingmiles.com/route-big-seki-loop/">Big SEKI route description by Amy and James at Doing Miles</a> provides context for the named trail corridors. Their standard loop is about 155 miles; that is a reference distance, not a measurement of my hike or its Kearsarge detour. These scattered observations do not establish daily trail mileage or elevation gain. In particular, travel after the July 16 morning records and the exact July 18 finish remain estimates.</p>
+<p>Taxon identifications are an iNaturalist snapshot and may change as observations are reviewed. Photo: © Garrett Craig, <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC</a>, <a href="https://www.inaturalist.org/observations/382760070">original observation</a>.</p>
+					</article>
+					<ul class="actions" style="margin-top:3rem;">
+						<li><a href="trail-log.html" class="button">&larr; Back to Trail Log</a></li>
+					</ul>
+				</div>
+			</section>
+
+			<footer class="wrapper style1 align-center">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+						<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+						<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<p>&copy; Garrett Craig. All rights reserved.</p>
+				</div>
+			</footer>
+
+		</div>
+
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/leaflet-gpx@1.7.0/gpx.min.js"></script>
+			<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+			<script src="assets/js/trail-map.js?v=7"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

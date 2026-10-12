@@ -6,10 +6,13 @@
 // No-ops gracefully if Leaflet / leaflet-gpx aren't present.
 (function () {
 	document.addEventListener('DOMContentLoaded', function () {
-		var maps = document.querySelectorAll('.trail-map[data-gpx]');
+		var maps = document.querySelectorAll('.trail-map[data-gpx], .trail-observation-map[data-inat]');
 		if (!maps.length) return;
-		if (typeof L === 'undefined' || typeof L.GPX === 'undefined') return;
-		maps.forEach(setupMap);
+		if (typeof L === 'undefined') return;
+		maps.forEach(function (el) {
+ if (el.dataset.gpx && typeof L.GPX !== 'undefined') setupMap(el);
+ else if (!el.dataset.gpx) setupObservationMap(el);
+ });
 	});
 
 	var TRACK_COLOR = '#47D3E5';
@@ -79,6 +82,48 @@
 			L.control.layers(baseLayers, overlays, { collapsed: true }).addTo(map);
 		}
 	}
+
+ // Observation-only maps never manufacture tracks, distances or elevations.
+ function setupObservationMap(el) {
+  var street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+   maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+  var topo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+   maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map'
+  });
+  var map = L.map(el, { layers: [street] }).setView([36.8, -118.5], 9);
+  L.control.layers({ 'Street': street, 'Topographic': topo }, null, { collapsed: true }).addTo(map);
+  var controls = document.createElement('div');
+  controls.className = 'trail-observation-controls';
+  var label = document.createElement('label'), select = document.createElement('select'), status = document.createElement('p');
+  label.textContent = 'Show observations';
+  label.appendChild(select); select.disabled = true;
+  select.setAttribute('aria-label', 'Choose observation day');
+  status.setAttribute('role', 'status'); status.textContent = 'Loading observations…';
+  controls.appendChild(label); controls.appendChild(status); el.before(controls);
+  var current;
+  fetchText(el.dataset.inat, function (txt) {
+   var data;
+   try { data = JSON.parse(txt); } catch (_) { fail(); return; }
+   var observations = data.observations || [];
+   var days = data.days || [];
+   function addOption(value, title) { var option = document.createElement('option'); option.value = value; option.textContent = title; select.appendChild(option); }
+   addOption('', 'All days');
+   days.forEach(function (day) { addOption(day.date, day.label); });
+   function showDay() {
+    var obs = observations.filter(function (o) { return !select.value || o.day === select.value; });
+    if (current) map.removeLayer(current);
+    current = observationsLayer(obs);
+    current.layer.addTo(map);
+    if (current.count) map.fitBounds(L.latLngBounds(obs.map(function (o) { return [o.lat, o.lng]; })), { padding: [24, 24], maxZoom: 14 });
+    status.textContent = current.count + ' observation locations. Travel between pins is estimated; this is not a GPS track.';
+    current = current.layer;
+   }
+   select.disabled = false;
+   select.addEventListener('change', showDay); showDay();
+  }, fail);
+  function fail() { status.textContent = 'Observations could not load. Reload to try again; the daily notes below remain available.'; }
+ }
 
 	// ----------------------------------------------------------------------
 	// Elevation profile
@@ -178,29 +223,25 @@
 			try { data = JSON.parse(txt); } catch (err) { onFail(); return; }
 			var obs = (data && data.observations) || [];
 
-			// Cluster + spiderfy overlapping pins when markercluster is present;
-			// fall back to a plain layer group otherwise.
-			var layer = (typeof L.markerClusterGroup === 'function')
-				? L.markerClusterGroup({
-					showCoverageOnHover: false,
-					spiderfyOnMaxZoom: true,
-					spiderfyDistanceMultiplier: 1.6,
-					maxClusterRadius: 40
-				})
-				: L.layerGroup();
 
-			var count = 0;
-			obs.forEach(function (o) {
-				if (typeof o.lat !== 'number' || typeof o.lng !== 'number') return;
-				var color = ICONIC_COLORS[o.iconic] || '#888888';
-				var m = L.marker([o.lat, o.lng], { icon: dotIcon(color) });
-				m.bindPopup(popupHtml(o), { maxWidth: 240 });
-				layer.addLayer(m);
-				count++;
-			});
-			onReady(layer, count);
-		}, onFail);
-	}
+   var ready = observationsLayer(obs);
+   onReady(ready.layer, ready.count);
+  }, onFail);
+ }
+
+ function observationsLayer(obs) {
+  var layer = (typeof L.markerClusterGroup === 'function')
+   ? L.markerClusterGroup({ showCoverageOnHover: false, spiderfyOnMaxZoom: true, spiderfyDistanceMultiplier: 1.6, maxClusterRadius: 40 })
+   : L.layerGroup();
+  var count = 0;
+  obs.forEach(function (o) {
+   if (typeof o.lat !== 'number' || typeof o.lng !== 'number') return;
+   var color = ICONIC_COLORS[o.iconic] || '#888888';
+   var marker = L.marker([o.lat, o.lng], { icon: dotIcon(color) });
+   marker.bindPopup(popupHtml(o), { maxWidth: 240 }); layer.addLayer(marker); count++;
+  });
+  return { layer: layer, count: count };
+ }
 
 	function dotIcon(color) {
 		return L.divIcon({
@@ -221,6 +262,9 @@
 			: '';
 		return '<div class="trail-inat-popup">' + img +
 			'<strong>' + title + '</strong><br>' +
+ (o.time ? '<span>' + esc(new Date(o.time).toLocaleString('en-US', {timeZone: 'America/Los_Angeles'})) + ' Pacific</span><br>' : '') +
+ (o.accuracy_m != null ? '<span>Location uncertainty: ' + esc(o.accuracy_m) + ' m</span><br>' : '') +
+ (o.attribution ? '<small>' + esc(o.attribution) + '</small><br>' : '') +
 			'<a href="' + esc(o.url) + '" target="_blank" rel="noopener">View on iNaturalist &rarr;</a></div>';
 	}
 

@@ -94,7 +94,7 @@ SCRIPT_BLOCK = '''\t\t\t<script src="assets/js/jquery.min.js"></script>
 \t\t\t<script src="assets/js/util.js"></script>'''
 
 # Bump to cache-bust the locally-served assets we edit (trail-map.js / trail-log.css).
-ASSET_VERSION = "6"
+ASSET_VERSION = "7"
 
 # Leaflet head <link>s — only emitted when the entry has a map.
 # Includes Leaflet core + markercluster (used to spiderfy overlapping iNat pins).
@@ -190,6 +190,7 @@ MAP_RE = re.compile(r"^[ \t]*\[\[map:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 PHOTO_RE = re.compile(r"^[ \t]*\[\[photo:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 GALLERY_RE = re.compile(r"^[ \t]*\[\[gallery:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 # Inline directive can appear anywhere.
+OBSERVATIONS_RE = re.compile(r"^[ \t]*\[\[observations:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 INAT_RE = re.compile(r"\[\[inat:(\d+)\|([^\]]+)\]\]")
 
 
@@ -248,7 +249,8 @@ def _inat_sub(match):
 
 def preprocess_directives(body):
     """Convert all custom directives to raw HTML. Returns (body, has_map)."""
-    has_map = bool(MAP_RE.search(body))
+    has_map = bool(MAP_RE.search(body) or OBSERVATIONS_RE.search(body))
+    body = OBSERVATIONS_RE.sub(lambda m: '\n<div class="trail-map trail-observation-map" data-inat="%s" aria-label="Daily iNaturalist observation map"></div>\n' % html_escape(m.group(1).strip()), body)
     body = MAP_RE.sub(_map_sub, body)
     body = PHOTO_RE.sub(_photo_sub, body)
     body = GALLERY_RE.sub(_gallery_sub, body)

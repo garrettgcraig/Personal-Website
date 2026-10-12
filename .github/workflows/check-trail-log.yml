@@ -1,0 +1,20 @@
+name: Check trail log
+on:
+  push:
+    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
+  pull_request:
+    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install Markdown==3.11 PyYAML==6.0.3
+      - run: python tests/trail-log.test.py
+      - run: python scripts/build_trail_log.py
+      - run: git diff --exit-code -- data/trail-log.json 'trail-*.html'
