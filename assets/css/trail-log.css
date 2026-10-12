@@ -280,3 +280,27 @@ body.dark-mode .trail-card-tags span {
 	background: rgba(71, 211, 229, 0.15) !important;
 	color: #47D3E5 !important;
 }
+
+/* Observation-only maps accompany a reconstructed itinerary, not a GPX. */
+.trail-observation-map { border-radius: 8px; margin: 0 0 2rem; }
+.trail-observation-controls { margin-top: 2rem; }
+.trail-observation-controls label { display: block; font-size: 1rem; }
+.trail-observation-controls select { width: 100%; font-size: 1rem; min-height: 44px; margin-top: 0.5rem; }
+.trail-observation-controls p { font-size: 0.875rem; line-height: 1.5; margin: 0.75rem 0; }
+.trail-observation-controls :focus-visible { outline: 3px solid #2c8fa0; outline-offset: 3px; }
+body.dark-mode .trail-observation-map .leaflet-control-layers label,
+body.dark-mode .trail-observation-map .leaflet-control-layers a,
+body.dark-mode .trail-observation-map .leaflet-control-attribution a,
+body.dark-mode .trail-observation-map .leaflet-popup-content,
+body.dark-mode .trail-observation-map .leaflet-popup-content strong { color: #263b32 !important; }
+body.dark-mode .trail-observation-map .leaflet-popup-content a { color: #216b77 !important; }
+.trail-entry table { font-variant-numeric: tabular-nums; }
+@media (max-width: 736px) {
+ .trail-entry table { display: block; overflow-x: auto; }
+ .trail-observation-map { height: 360px; }
+}
+.trail-entry-header h1, .trail-entry h2, .trail-entry h3 { letter-spacing: -0.025em; }
+.trail-meta, .trail-card-meta { color: #666; }
+body.dark-mode .trail-entry table th { color: #e0e0e0; border-bottom-color: #ffffff40; }
+.trail-entry table td:first-child, .trail-entry table td:nth-child(2), .trail-entry table td:nth-child(4) { white-space: nowrap; }
+@media (max-width: 736px) { .trail-entry table thead, .trail-entry table tbody { min-width: 640px; } .trail-entry table { white-space: normal; } .trail-entry table tr { min-width: 640px; } .trail-entry table th:nth-child(3) { min-width: 230px; } }

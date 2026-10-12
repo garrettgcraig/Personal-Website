@@ -34,6 +34,9 @@ tags: [backpacking, sierra]                    # list of short tags
     Map + iNat pins:   [[map:trail-log/gpx/day1.gpx|inat:data/inat-trip-day1.json]]
                        Optional: overlays iNaturalist observations (see
                        scripts/fetch_inat.py to generate the per-day JSON).
+    Observation map without GPS: [[observations:data/inat-trip.json]]
+                       JSON includes observations and optional day labels; no track or elevation is inferred.
+
     Photo:             [[photo:trail-log/photos/slug/lake.jpg|Optional caption]]
                        (caption is optional; omit the "|caption" for no caption)
     Gallery:           [[gallery:img1.jpg|img2.jpg|img3.jpg]]

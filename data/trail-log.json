@@ -1,6 +1,21 @@
 {
   "entries": [
     {
+      "slug": "big-seki-loop",
+      "title": "Big SEKI Loop — July 2026",
+      "date": "2026-07-04",
+      "location": "Sequoia and Kings Canyon National Parks, CA",
+      "summary": "A clockwise Big SEKI loop, reconstructed day by day from July 4–18 iNaturalist observations.",
+      "cover": "trail-log/photos/big-seki-loop/cover.jpg",
+      "tags": [
+        "backpacking",
+        "sierra-nevada",
+        "big-seki",
+        "natural-history"
+      ],
+      "url": "trail-big-seki-loop.html"
+    },
+    {
       "slug": "san-raf-nira-to-mission-pine-spring",
       "title": "San Raf — Nira to Mission Pine Spring",
       "date": "2026-05-24",
