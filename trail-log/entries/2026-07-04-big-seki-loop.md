@@ -7,9 +7,30 @@ cover: trail-log/photos/big-seki-loop/cover.jpg
 tags: [backpacking, sierra-nevada, big-seki, natural-history]
 ---
 
-I hiked the Big SEKI in early July. My iNaturalist record spans July 4–18, 2026: fifteen days of observations tracing a clockwise journey from the Copper Creek side of Kings Canyon, south through the John Muir Trail country, down the Kern, and back through the High Sierra Trail and Elizabeth Pass country. The points also show a Kearsarge Lakes detour.
+I hiked the Big SEKI in early July. My iNaturalist record spans July 4–18, 2026: fifteen days of observations tracing a clockwise journey from the Copper Creek side of Kings Canyon, south through the John Muir Trail country, down the Kern, and back through the High Sierra Trail and Elizabeth Pass country. The points also show a detour through the Kearsarge Pass area.
 
-This is a reconstruction from nature observations rather than a recorded GPS track. The day labels describe estimated travel corridors; the linked observations are the evidence. The timestamps below are observation windows, not hiking start and finish times, and the last photograph of a day does not establish a campsite.
+This is a reconstruction from nature observations rather than a recorded GPS track. The day labels describe travel corridors reconstructed from observations, supplemented by my overnight recollections below. The timestamps below are observation windows, not hiking start and finish times, and the last photograph of a day does not establish a campsite.
+
+## Overnight stops
+
+This overnight itinerary is confirmed from my recollection, except July 11: I remember Gilbert Lake, but am less certain of that name. The locations identify overnight areas rather than exact tent sites.
+
+| Night | Overnight area | Status |
+| --- | --- | --- |
+| July 4 | Granite Lake | Confirmed |
+| July 5 | Simpson Meadow | Confirmed |
+| July 6 | Middle Fork Kings, approaching Palisade Creek | Confirmed |
+| July 7 | Lower Palisade Lake | Confirmed |
+| July 8 | Lake Marjorie | Confirmed |
+| July 9 | Twin Lakes, south of Pinchot Pass | Confirmed |
+| July 10 | Rae Lakes | Confirmed |
+| July 11 | Gilbert Lake | Recalled; less certain |
+| July 12 | Around Wheelbarrow Camp, north of Forester Pass | Confirmed |
+| July 13 | Junction Meadow | Confirmed |
+| July 14 | Moraine Lake | Confirmed |
+| July 15 | Hamilton Lakes | Confirmed |
+| July 16 | Deadman Canyon, north of Elizabeth Pass | Confirmed |
+| July 17 | Sphinx Creek | Confirmed |
 
 ## The observation map
 
@@ -21,31 +42,31 @@ Choose a day to inspect the more precise observations. Pins show recorded locati
 
 | Day | Date | Estimated progress | Recorded window (Pacific) | Mapped observations |
 | --- | --- | --- | --- | --- |
-| 1 | July 4 | Roads End → Copper Creek basin | 08:49–20:11 | 89 |
-| 2 | July 5 | Copper Creek basin → Granite Pass → Simpson Meadow | 08:06–21:45 | 50 |
+| 1 | July 4 | Roads End → Granite Lake | 08:49–20:11 | 89 |
+| 2 | July 5 | Granite Lake → Granite Pass → Simpson Meadow | 08:06–21:45 | 50 |
 | 3 | July 6 | Simpson Meadow → Middle Fork Kings River | 09:09–15:54 | 30 |
-| 4 | July 7 | Middle Fork Kings → Palisade Creek → Deer Meadow vicinity | 10:01–15:37 | 22 |
-| 5 | July 8 | Deer Meadow → Palisade Lakes → Mather Pass → Upper Basin | 07:59–19:48 | 28 |
-| 6 | July 9 | Upper Basin → Pinchot Pass → Twin Lakes vicinity | 07:43–18:50 | 24 |
+| 4 | July 7 | Middle Fork Kings → Palisade Creek → Lower Palisade Lake | 10:01–15:37 | 22 |
+| 5 | July 8 | Lower Palisade Lake → Mather Pass → Lake Marjorie | 07:59–19:48 | 28 |
+| 6 | July 9 | Lake Marjorie → Pinchot Pass → Twin Lakes vicinity | 07:43–18:50 | 24 |
 | 7 | July 10 | Twin Lakes vicinity → Woods Creek → Rae Lakes | 07:57–22:30 | 64 |
-| 8 | July 11 | Rae Lakes → Glen Pass → Kearsarge Lakes | 07:15–19:58 | 22 |
-| 9 | July 12 | Kearsarge Lakes → Kearsarge Pass → upper Bubbs Creek | 07:39–14:15 | 36 |
-| 10 | July 13 | Upper Bubbs Creek → Forester Pass → upper Kern / Wallace Creek | 07:00–17:35 | 37 |
+| 8 | July 11 | Rae Lakes → Glen Pass → Kearsarge Pass → Gilbert Lake | 07:15–19:58 | 22 |
+| 9 | July 12 | Gilbert Lake → Kearsarge Pass → Wheelbarrow Camp vicinity | 07:39–14:15 | 36 |
+| 10 | July 13 | Wheelbarrow Camp vicinity → Forester Pass → Junction Meadow | 07:00–17:35 | 37 |
 | 11 | July 14 | Upper Kern → Kern Canyon → Moraine Lake vicinity | 07:19–18:30 | 78 |
 | 12 | July 15 | Moraine Lake vicinity → Big Arroyo → Kaweah Gap → Hamilton Lakes | 07:02–20:36 | 57 |
-| 13 | July 16 | Hamilton Lakes → Elizabeth Pass approach | 06:22–10:32 | 19 |
+| 13 | July 16 | Hamilton Lakes → Elizabeth Pass → Deadman Canyon | 06:22–10:32 | 19 |
 | 14 | July 17 | Deadman Canyon → Roaring River → Avalanche Pass corridor | 07:28–16:20 | 22 |
 | 15 | July 18 | Sphinx Creek → lower Bubbs Creek / Roads End approach | 06:33–10:34 | 16 |
 
 ## Day-by-day notes
 
-### Day 1 · July 4: Roads End → Copper Creek basin
+### Day 1 · July 4: Roads End → Granite Lake
 
-The points climb from Roads End into the Copper Creek drainage, ending in the upper basin. This is the first recorded hiking day.
+The points climb from Roads End through the Copper Creek drainage to Granite Lake. I slept at Granite Lake that night.
 
 Evidence: [[inat:380448004|first reliable observation]] · [[inat:382755080|last reliable observation]].
 
-### Day 2 · July 5: Copper Creek basin → Granite Pass → Simpson Meadow
+### Day 2 · July 5: Granite Lake → Granite Pass → Simpson Meadow
 
 The sequence moves north over the Granite Pass corridor, then descends toward the Middle Fork Kings River at Simpson Meadow.
 
@@ -57,21 +78,21 @@ The points follow the Middle Fork upstream. The final reliable record is farther
 
 Evidence: [[inat:382758108|first reliable observation]] · [[inat:382760070|last reliable observation]].
 
-### Day 4 · July 7: Middle Fork Kings → Palisade Creek → Deer Meadow vicinity
+### Day 4 · July 7: Middle Fork Kings → Palisade Creek → Lower Palisade Lake
 
-The sequence turns east along Palisade Creek toward the Golden Staircase approach. The afternoon endpoint is in the Deer Meadow vicinity.
+The sequence turns east along Palisade Creek and climbs the Golden Staircase corridor to the Palisade Lakes. I slept at Lower Palisade Lake that night.
 
 Evidence: [[inat:382760108|first reliable observation]] · [[inat:382763799|last reliable observation]].
 
-### Day 5 · July 8: Deer Meadow → Palisade Lakes → Mather Pass → Upper Basin
+### Day 5 · July 8: Lower Palisade Lake → Mather Pass → Lake Marjorie
 
-A long north-to-south progression links the Golden Staircase and Palisade Lakes corridor with Mather Pass and the Upper Basin.
+The sequence continues south from Lower Palisade Lake over Mather Pass and through Upper Basin toward Lake Marjorie.
 
 Evidence: [[inat:382763822|first reliable observation]] · [[inat:382767367|last reliable observation]].
 
-### Day 6 · July 9: Upper Basin → Pinchot Pass → Twin Lakes vicinity
+### Day 6 · July 9: Lake Marjorie → Pinchot Pass → Twin Lakes vicinity
 
-The records work south from Upper Basin across the Pinchot Pass corridor and into the lakes basin below it.
+The records work south from Lake Marjorie across the Pinchot Pass corridor and into the lakes basin below it.
 
 Evidence: [[inat:384350039|first reliable observation]] · [[inat:382768240|last reliable observation]].
 
@@ -81,21 +102,21 @@ The sequence descends to Woods Creek, then climbs toward Rae Lakes. A late-night
 
 Evidence: [[inat:382768268|first reliable observation]] · [[inat:384350020|last reliable observation]].
 
-### Day 8 · July 11: Rae Lakes → Glen Pass → Kearsarge Lakes
+### Day 8 · July 11: Rae Lakes → Glen Pass → Kearsarge Pass → Gilbert Lake
 
-The points head south across the Glen Pass corridor, then east into the Kearsarge Lakes basin. They support a side trip here; they do not establish a resupply or an Onion Valley visit.
+The points head south across the Glen Pass corridor and then east through the Kearsarge Pass area. I remember sleeping at Gilbert Lake that night, although I am less certain of that lake name.
 
 Evidence: [[inat:384349978|first reliable observation]] · [[inat:382770167|last reliable observation]].
 
-### Day 9 · July 12: Kearsarge Lakes → Kearsarge Pass → upper Bubbs Creek
+### Day 9 · July 12: Gilbert Lake → Kearsarge Pass → Wheelbarrow Camp vicinity
 
-The sequence returns west over Kearsarge Pass and works toward the upper Bubbs Creek drainage, north of Forester Pass.
+The sequence returns west over Kearsarge Pass and works up the Bubbs Creek drainage. I slept around Wheelbarrow Camp, north of Forester Pass.
 
 Evidence: [[inat:384349951|first reliable observation]] · [[inat:382772903|last reliable observation]].
 
-### Day 10 · July 13: Upper Bubbs Creek → Forester Pass → upper Kern / Wallace Creek
+### Day 10 · July 13: Wheelbarrow Camp vicinity → Forester Pass → Junction Meadow
 
-The points continue south through the Forester Pass corridor, then descend through the Tyndall Creek and Wallace Creek side of the upper Kern country.
+From the Wheelbarrow Camp area, the route continues south over Forester Pass and through the Tyndall Creek and Wallace Creek country. I slept at Junction Meadow that night.
 
 Evidence: [[inat:382772926|first reliable observation]] · [[inat:382784513|last reliable observation]].
 
@@ -111,9 +132,9 @@ The records move through Big Arroyo and the Kaweah Gap corridor to Hamilton Lake
 
 Evidence: [[inat:383665969|first reliable observation]] · [[inat:384444217|last reliable observation]].
 
-### Day 13 · July 16: Hamilton Lakes → Elizabeth Pass approach
+### Day 13 · July 16: Hamilton Lakes → Elizabeth Pass → Deadman Canyon
 
-The reliable points only cover the morning, ending near the Elizabeth Pass trail approach. The next day begins north of the pass in Deadman Canyon, so the crossing belongs in the gap between these records—not at a confirmed time or campsite.
+The reliable points only cover the morning, ending near the Elizabeth Pass trail approach. I slept in Deadman Canyon, north of the pass. The crossing time remains an estimate: it falls between these morning observations and the following morning’s records in Deadman Canyon.
 
 Evidence: [[inat:383665906|first reliable observation]] · [[inat:382835071|last reliable observation]].
 
