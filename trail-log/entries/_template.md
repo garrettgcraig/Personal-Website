@@ -37,6 +37,10 @@ tags: [backpacking, sierra]                    # list of short tags
     Observation map without GPS: [[observations:data/inat-trip.json]]
                        JSON includes observations and optional day labels; no track or elevation is inferred.
 
+    Daily trail route + nature pins: [[daymap:data/routes.geojson|inat:data/inat-trip.json|day:2026-07-04]]
+                       One dated GeoJSON feature per day. Approximate mapped trail route,
+                       with start/end and optional camp metadata; lazy-loaded.
+
     Photo:             [[photo:trail-log/photos/slug/lake.jpg|Optional caption]]
                        (caption is optional; omit the "|caption" for no caption)
     Gallery:           [[gallery:img1.jpg|img2.jpg|img3.jpg]]
