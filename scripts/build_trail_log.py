@@ -94,7 +94,7 @@ SCRIPT_BLOCK = '''\t\t\t<script src="assets/js/jquery.min.js"></script>
 \t\t\t<script src="assets/js/util.js"></script>'''
 
 # Bump to cache-bust the locally-served assets we edit (trail-map.js / trail-log.css).
-ASSET_VERSION = "7"
+ASSET_VERSION = "8"
 
 # Leaflet head <link>s — only emitted when the entry has a map.
 # Includes Leaflet core + markercluster (used to spiderfy overlapping iNat pins).
@@ -191,6 +191,7 @@ PHOTO_RE = re.compile(r"^[ \t]*\[\[photo:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 GALLERY_RE = re.compile(r"^[ \t]*\[\[gallery:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 # Inline directive can appear anywhere.
 OBSERVATIONS_RE = re.compile(r"^[ \t]*\[\[observations:([^\]]+)\]\][ \t]*$", re.MULTILINE)
+DAYMAP_RE = re.compile(r"^[ \t]*\[\[daymap:([^\]]+)\]\][ \t]*$", re.MULTILINE)
 INAT_RE = re.compile(r"\[\[inat:(\d+)\|([^\]]+)\]\]")
 
 
@@ -247,10 +248,21 @@ def _inat_sub(match):
     )
 
 
+def _daymap_sub(match):
+    parts = match.group(1).split("|")
+    attrs = 'data-route="%s"' % html_escape(parts[0].strip())
+    for part in parts[1:]:
+        key, _, value = part.partition(":")
+        if key.strip() in ("inat", "day"):
+            attrs += ' data-%s="%s"' % (key.strip(), html_escape(value.strip()))
+    return '\n<div class="trail-map trail-day-map" %s aria-label="Daily trail route map"></div>\n' % attrs
+
+
 def preprocess_directives(body):
     """Convert all custom directives to raw HTML. Returns (body, has_map)."""
-    has_map = bool(MAP_RE.search(body) or OBSERVATIONS_RE.search(body))
+    has_map = bool(MAP_RE.search(body) or OBSERVATIONS_RE.search(body) or DAYMAP_RE.search(body))
     body = OBSERVATIONS_RE.sub(lambda m: '\n<div class="trail-map trail-observation-map" data-inat="%s" aria-label="Daily iNaturalist observation map"></div>\n' % html_escape(m.group(1).strip()), body)
+    body = DAYMAP_RE.sub(_daymap_sub, body)
     body = MAP_RE.sub(_map_sub, body)
     body = PHOTO_RE.sub(_photo_sub, body)
     body = GALLERY_RE.sub(_gallery_sub, body)
@@ -275,7 +287,7 @@ def build_page(meta, body_html, has_map):
 
     head = (
         "<!DOCTYPE HTML>\n"
-        "<html>\n"
+        '<html class="trail-log-page">\n'
         "\t<head>\n"
         "\t\t<title>%s - Trail Log - Garrett G. Craig</title>\n"
         '\t\t<meta charset="utf-8" />\n'

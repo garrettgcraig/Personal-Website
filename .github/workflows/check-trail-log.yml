@@ -1,9 +1,9 @@
 name: Check trail log
 on:
   push:
-    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
+    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/big-seki-routes.geojson', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
   pull_request:
-    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
+    paths: ['trail-*.html', 'trail-log/**', 'data/inat-*.json', 'data/big-seki-routes.geojson', 'data/trail-log.json', 'assets/js/trail-map.js', 'assets/css/trail-log.css', 'scripts/build_trail_log.py', 'tests/trail-log.test.py', '.github/workflows/check-trail-log.yml']
 permissions:
   contents: read
 jobs:

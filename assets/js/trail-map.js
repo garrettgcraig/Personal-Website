@@ -6,11 +6,18 @@
 // No-ops gracefully if Leaflet / leaflet-gpx aren't present.
 (function () {
 	document.addEventListener('DOMContentLoaded', function () {
-		var maps = document.querySelectorAll('.trail-map[data-gpx], .trail-observation-map[data-inat]');
+		var maps = document.querySelectorAll('.trail-map[data-gpx], .trail-observation-map[data-inat], .trail-day-map[data-route]');
 		if (!maps.length) return;
 		if (typeof L === 'undefined') return;
 		maps.forEach(function (el) {
- if (el.dataset.gpx && typeof L.GPX !== 'undefined') setupMap(el);
+ if (el.dataset.route) {
+  if ('IntersectionObserver' in window) {
+   var observer = new IntersectionObserver(function (entries) {
+    if (entries.some(function (entry) { return entry.isIntersecting; })) { observer.disconnect(); setupDayMap(el); }
+   }, { rootMargin: '300px' });
+   observer.observe(el);
+  } else setupDayMap(el);
+ } else if (el.dataset.gpx && typeof L.GPX !== 'undefined') setupMap(el);
  else if (!el.dataset.gpx) setupObservationMap(el);
  });
 	});
@@ -82,6 +89,61 @@
 			L.control.layers(baseLayers, overlays, { collapsed: true }).addTo(map);
 		}
 	}
+
+ // Daily trail itinerary: shared downloads, maps initialized near the viewport.
+ var jsonCache = {};
+ function fetchJson(url) {
+  if (!jsonCache[url]) jsonCache[url] = fetch(url).then(function (r) {
+   if (!r.ok) throw new Error(r.status); return r.json();
+  }).catch(function (error) { delete jsonCache[url]; throw error; });
+  return jsonCache[url];
+ }
+ function setupDayMap(el) {
+  var street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+   maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+  var topo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+   maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map'
+  });
+  var map = L.map(el, { layers: [street], scrollWheelZoom: false }).setView([36.8, -118.5], 9);
+  map.createPane('trail-stops').style.zIndex = '625';
+  var layers = L.control.layers({ 'Trail map': street, 'Topographic': topo }, {}, { collapsed: true }).addTo(map);
+  var status = document.createElement('p'); status.className = 'trail-map-status';
+  status.setAttribute('role', 'status'); status.textContent = 'Loading trail map…'; el.after(status);
+  function load() {
+   status.textContent = 'Loading trail map…';
+   Promise.allSettled([fetchJson(el.dataset.route), fetchJson(el.dataset.inat)]).then(function (results) {
+    var bounds = L.latLngBounds([]), routeOK = false;
+    if (results[0].status === 'fulfilled') {
+     var feature = results[0].value.features.find(function (f) { return f.properties.day === el.dataset.day; });
+     if (feature && feature.geometry.coordinates.length > 1) {
+      routeOK = true;
+      var route = L.geoJSON(feature, { style: { color: '#167c91', weight: 4, opacity: 0.95 } }).addTo(map);
+      layers.addOverlay(route, 'Trail route'); bounds.extend(route.getBounds());
+      map.attributionControl.addAttribution('Trails: <a href="https://www.nps.gov/seki/planyourvisit/park_atlas.htm">NPS / USFS</a>');
+      var props = feature.properties;
+      var start = L.circleMarker([props.start[1], props.start[0]], { pane: 'trail-stops', radius: 5, color: '#fff', weight: 2, fillColor: '#167c91', fillOpacity: 1 }).addTo(map);
+      start.bindPopup('Start of day');
+      var end = L.circleMarker([props.end[1], props.end[0]], { pane: 'trail-stops', radius: 8, color: '#fff', weight: 2, fillColor: '#9a5521', fillOpacity: 1 }).addTo(map);
+      end.bindPopup(props.camp ? '<strong>Camp</strong><br>' + esc(props.camp) + (props.camp_uncertain ? '<br>If I remember right.' : '') : 'Back to Roads End');
+     }
+    }
+    if (results[1].status === 'fulfilled') {
+     var obs = results[1].value.observations.filter(function (o) { return o.day === el.dataset.day; });
+     var nature = observationsLayer(obs, true); nature.layer.addTo(map); layers.addOverlay(nature.layer, 'Nature sightings');
+     obs.forEach(function (o) { bounds.extend([o.lat, o.lng]); });
+    }
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 14 });
+    if (routeOK && results[1].status === 'fulfilled') { status.remove(); }
+    else {
+     status.textContent = !routeOK ? 'The trail route could not load. ' : 'Nature sightings could not load. ';
+     var retry = document.createElement('button'); retry.type = 'button'; retry.textContent = 'Reload map';
+     retry.addEventListener('click', function () { window.location.reload(); }); status.appendChild(retry);
+    }
+   });
+  }
+  load();
+ }
 
  // Observation-only maps never manufacture tracks, distances or elevations.
  function setupObservationMap(el) {
@@ -229,7 +291,7 @@
   }, onFail);
  }
 
- function observationsLayer(obs) {
+ function observationsLayer(obs, compact) {
   var layer = (typeof L.markerClusterGroup === 'function')
    ? L.markerClusterGroup({ showCoverageOnHover: false, spiderfyOnMaxZoom: true, spiderfyDistanceMultiplier: 1.6, maxClusterRadius: 40 })
    : L.layerGroup();
@@ -238,7 +300,7 @@
    if (typeof o.lat !== 'number' || typeof o.lng !== 'number') return;
    var color = ICONIC_COLORS[o.iconic] || '#888888';
    var marker = L.marker([o.lat, o.lng], { icon: dotIcon(color) });
-   marker.bindPopup(popupHtml(o), { maxWidth: 240 }); layer.addLayer(marker); count++;
+   marker.bindPopup(popupHtml(o, compact), { maxWidth: 240 }); layer.addLayer(marker); count++;
   });
   return { layer: layer, count: count };
  }
@@ -253,7 +315,7 @@
 		});
 	}
 
-	function popupHtml(o) {
+	function popupHtml(o, compact) {
 		var title = o.common
 			? esc(o.common) + '<br><em>' + esc(o.name || '') + '</em>'
 			: '<em>' + esc(o.name || 'Unknown') + '</em>';
@@ -263,7 +325,7 @@
 		return '<div class="trail-inat-popup">' + img +
 			'<strong>' + title + '</strong><br>' +
  (o.time ? '<span>' + esc(new Date(o.time).toLocaleString('en-US', {timeZone: 'America/Los_Angeles'})) + ' Pacific</span><br>' : '') +
- (o.accuracy_m != null ? '<span>Location uncertainty: ' + esc(o.accuracy_m) + ' m</span><br>' : '') +
+ (!compact && o.accuracy_m != null ? '<span>Location uncertainty: ' + esc(o.accuracy_m) + ' m</span><br>' : '') +
  (o.attribution ? '<small>' + esc(o.attribution) + '</small><br>' : '') +
 			'<a href="' + esc(o.url) + '" target="_blank" rel="noopener">View on iNaturalist &rarr;</a></div>';
 	}

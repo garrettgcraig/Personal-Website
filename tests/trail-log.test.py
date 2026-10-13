@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import math
 from pathlib import Path
 import unittest
 from datetime import datetime
@@ -28,6 +29,33 @@ class TrailLogTests(unittest.TestCase):
         html, _ = builder.preprocess_directives('[[observations:file" onmouseover="bad]]')
         self.assertIn('&quot;', html)
         self.assertNotIn(' onmouseover="', html)
+
+    def test_daily_route_directive_and_escaping(self):
+        markup, has_map = builder.preprocess_directives('[[daymap:route.geojson|inat:obs.json|day:2026-07-04]]')
+        self.assertTrue(has_map)
+        self.assertIn('data-route="route.geojson"', markup)
+        self.assertIn('data-day="2026-07-04"', markup)
+        self.assertIn('data-inat="obs.json"', markup)
+        markup, _ = builder.preprocess_directives('[[daymap:bad"path|day:bad"day]]')
+        self.assertIn('&quot;', markup)
+
+    def test_daily_routes_are_continuous_and_match_the_itinerary(self):
+        routes = json.loads((ROOT / 'data/big-seki-routes.geojson').read_text())['features']
+        snapshot = json.loads((ROOT / 'data/inat-big-seki.json').read_text())
+        self.assertEqual([f['properties']['day'] for f in routes], [d['date'] for d in snapshot['days']])
+        for i, feature in enumerate(routes):
+            props = feature['properties']
+            pts = feature['geometry']['coordinates']
+            self.assertGreater(len(pts), 2)
+            for a, b in zip(pts, pts[1:]):
+                # No straight cross-country shortcuts or joins across missing data.
+                self.assertLess(math.hypot((a[0]-b[0])*89000, (a[1]-b[1])*111200), 30)
+            if i:
+                self.assertEqual(props['start'], routes[i-1]['properties']['end'])
+            if i < 14:
+                self.assertEqual(props['camp'], snapshot['overnight_stops'][i]['name'])
+        self.assertTrue(routes[7]['properties']['camp_uncertain'])
+        self.assertIsNone(routes[-1]['properties']['camp'])
 
     def test_snapshot_dates_precision_and_counts_are_consistent(self):
         data = json.loads((ROOT / 'data/inat-big-seki.json').read_text())
