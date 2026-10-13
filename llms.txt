@@ -1,0 +1,45 @@
+# Garrett G. Craig
+
+> Garrett Craig's personal website: environmental science and conservation research, nature photography, trail journals, and tools for exploring the natural world.
+
+The links below lead to the site's public pages. Trail journals also have plain Markdown versions; use the HTML pages for interactive maps and photographs.
+
+## About
+
+- [Garrett G. Craig](https://garrettgcraig.com/): Biography, interests, photography, research, and contact.
+
+## Research
+
+- [Research](https://garrettgcraig.com/research): Current and past work in conservation, climate, and ecological restoration.
+- [Amazonian climate impacts](https://garrettgcraig.com/project-amazon-climate): Projected climate impacts in Indigenous Peoples' and Local Communities' territories.
+- [Fossorial animal colonization](https://garrettgcraig.com/project-fossorial): Burrowing animals and ecological restoration.
+- [Herpetofauna and restoration](https://garrettgcraig.com/project-herpetofauna): Reptile and amphibian responses to restoration.
+- [Greenhouse gas emissions and eTRM](https://garrettgcraig.com/project-ghg-etrm): Standardizing emissions-savings calculations.
+
+## Photography
+
+- [Photography](https://garrettgcraig.com/photography): Nature photography galleries.
+- [Wildlife](https://garrettgcraig.com/photography-wildlife): Wildlife photographs.
+- [Landscapes](https://garrettgcraig.com/photography-landscapes): Landscape photographs.
+- [Flora](https://garrettgcraig.com/photography-flora): Plant photographs.
+- [Macro](https://garrettgcraig.com/photography-macro): Close-up photographs.
+
+## Tools and projects
+
+- [Projects](https://garrettgcraig.com/projects): Environmental data tools and applications.
+- [Public lands tracker](https://garrettgcraig.com/wilderness): Interactive map of wilderness areas, national parks, and national forests, with visited-land tracking.
+- [SeedFinder](https://garrettgcraig.com/seedfinder/): A map for exploring which plants may have collectible seed nearby.
+- [KnowKi](https://garrettgcraig.com/knowki/): An app for learning local species by sight, with support information.
+- [Santa Barbara wildlife crossings](https://garrettgcraig.com/wildlife-crossings/): Wildlife crossing priorities along Santa Barbara County's state highways.
+
+## Trail journals
+
+- [Trail log](https://garrettgcraig.com/trail-log): Backpacking and hiking journals.
+- [Big SEKI Loop — July 2026](https://garrettgcraig.com/trail-big-seki-loop.md): Fifteen days through Kings Canyon and Sequoia, with a detour over Kearsarge Pass.
+- [San Raf — Nira to Mission Pine Spring](https://garrettgcraig.com/trail-san-raf-nira-to-mission-pine-spring.md): Three days up the Manzana and into the high country to Mission Pine Spring.
+
+## Optional
+
+- [Sitemap](https://garrettgcraig.com/sitemap.xml): Complete list of public website pages.
+- [KnowKi field guides](https://garrettgcraig.com/knowki/field-guides): Species field-guide information.
+- [KnowKi privacy policy](https://garrettgcraig.com/knowki/privacy): Privacy information for KnowKi.

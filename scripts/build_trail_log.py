@@ -274,7 +274,7 @@ def preprocess_directives(body):
 # Page assembly
 # --------------------------------------------------------------------------
 
-def build_page(meta, body_html, has_map):
+def build_page(meta, body_html, has_map, markdown_url=""):
     """Assemble the full HTML document string for an entry."""
     title = html_escape(meta["title"])
     meta_line = "%s &middot; %s" % (
@@ -300,6 +300,9 @@ def build_page(meta, body_html, has_map):
         '\t\t<script src="assets/js/darkmode.js"></script>\n'
         "\t</head>\n"
     ) % (title, leaflet_css_line)
+
+    if markdown_url:
+        head = head.replace("\t</head>", '\t\t<link rel="alternate" type="text/markdown" href="%s" />\n\t</head>' % html_escape(markdown_url))
 
     # Scripts: standard block, then (if map) leaflet+gpx+trail-map, else
     # just trail-map.js, then main.js last.
@@ -385,7 +388,7 @@ def build():
         md.reset()
         body_html = md.convert(body)
 
-        page = build_page(meta, body_html, has_map)
+        page = build_page(meta, body_html, has_map, "trail-%s.md" % slug)
         out_name = "trail-%s.html" % slug
         out_path = os.path.join(REPO_ROOT, out_name)
         with open(out_path, "w", encoding="utf-8") as out:
@@ -418,6 +421,10 @@ def build():
         % (len(entries), "y" if len(entries) == 1 else "ies",
            os.path.relpath(MANIFEST_PATH, REPO_ROOT))
     )
+
+    # Keep crawler discovery and readable journals in sync when entries change.
+    from build_search_discovery import build as build_search_files
+    build_search_files()
 
 
 if __name__ == "__main__":

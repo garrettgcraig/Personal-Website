@@ -1,3 +1,28 @@
 # iOS fetches this to verify KnowKi's Universal Links; it must be served as JSON.
 /.well-known/apple-app-site-association
   Content-Type: application/json
+
+# Help AI readers discover the site's public guide.
+/*
+  Link: <https://garrettgcraig.com/llms.txt>; rel="describedby"
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+
+/trail-*.md
+  Content-Type: text/markdown; charset=utf-8
+
+# BEGIN GENERATED TRAIL MARKDOWN HEADERS
+/trail-big-seki-loop.md
+  Link: <https://garrettgcraig.com/trail-big-seki-loop>; rel="canonical"
+
+/trail-san-raf-nira-to-mission-pine-spring.md
+  Link: <https://garrettgcraig.com/trail-san-raf-nira-to-mission-pine-spring>; rel="canonical"
+
+# END GENERATED TRAIL MARKDOWN HEADERS
