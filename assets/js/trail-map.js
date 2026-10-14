@@ -311,7 +311,7 @@
    if (typeof o.lat !== 'number' || typeof o.lng !== 'number') return;
    var color = ICONIC_COLORS[o.iconic] || '#888888';
    var marker = L.marker([o.lat, o.lng], { icon: dotIcon(color) });
-   marker.bindPopup(popupHtml(o, compact), { maxWidth: 240 }); layer.addLayer(marker); count++;
+   marker.bindPopup(popupHtml(o, compact), { maxWidth: 240, keepInView: true, autoPanPaddingTopLeft: [20, 70], autoPanPaddingBottomRight: [20, 20] }); layer.addLayer(marker); count++;
   });
   return { layer: layer, count: count };
  }
@@ -331,7 +331,7 @@
 			? esc(o.common) + '<br><em>' + esc(o.name || '') + '</em>'
 			: '<em>' + esc(o.name || 'Unknown') + '</em>';
 		var img = o.photo
-			? '<img src="' + esc(o.photo) + '" alt="" style="width:100%;border-radius:4px;margin-bottom:.4rem;" loading="lazy" />'
+			? '<img src="' + esc(o.photo) + '" alt="" class="trail-inat-photo" loading="lazy" />'
 			: '';
 		return '<div class="trail-inat-popup">' + img +
 			'<strong>' + title + '</strong><br>' +
