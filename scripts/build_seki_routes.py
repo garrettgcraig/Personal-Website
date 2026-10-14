@@ -55,7 +55,7 @@ camps[2]=[-118.579425,37.052194] # next morning along the Middle Fork
 camps[8]=[-118.370372,36.714079] # north of Forester, next morning
 camps[9]=[-118.41375,36.5769] # Junction Meadow, Kern
 camps[12]=[-118.585165,36.636762] # Deadman Canyon, next morning
-# Gilbert Lake endpoint is on its western shore, east of Kearsarge Pass.
+# Gilbert Lake (confirmed) endpoint is on its western shore, east of Kearsarge Pass.
 features=[]
 for i,day in enumerate(days):
  group=[o for o in obs if o['day']==day['date']]
@@ -79,7 +79,7 @@ for i,day in enumerate(days):
    simplified=simplified[:cut+1]
   else:pos[n]=len(simplified);simplified.append(n)
  points=[[round(v,6) for v in coords[n]] for n in simplified]
- props={'day':day['date'],'label':day['label'],'start':start,'end':end,'camp':x['overnight_stops'][i]['name'] if i<14 else None,'camp_uncertain':i==7}
+ props={'day':day['date'],'label':day['label'],'start':start,'end':end,'camp':x['overnight_stops'][i]['name'] if i<14 else None,'camp_uncertain':False}
  features.append({'type':'Feature','properties':props,'geometry':{'type':'LineString','coordinates':points}})
  print(day['date'],len(anchors),round(length/1609,1),'miles',len(points),'maxsnap',round(max_snap),flush=True)
 (ROOT/'data/big-seki-routes.geojson').write_text(json.dumps({'type':'FeatureCollection','source':'NPS SEKI Park Atlas trails (layer 13) and USFS Kearsarge Pass trails (layer 14)','source_url':'https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/SEKI_ParkAtlas2_4_HikingandBackpacking_MASTER/FeatureServer','route_kind':'approximate trail itinerary','features':features},separators=(',',':'))+'\n')

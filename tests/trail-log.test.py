@@ -54,7 +54,7 @@ class TrailLogTests(unittest.TestCase):
                 self.assertEqual(props['start'], routes[i-1]['properties']['end'])
             if i < 14:
                 self.assertEqual(props['camp'], snapshot['overnight_stops'][i]['name'])
-        self.assertTrue(routes[7]['properties']['camp_uncertain'])
+        self.assertFalse(routes[7]['properties']['camp_uncertain'])
         self.assertIsNone(routes[-1]['properties']['camp'])
 
     def test_snapshot_dates_precision_and_counts_are_consistent(self):
