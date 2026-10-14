@@ -98,16 +98,32 @@
   }).catch(function (error) { delete jsonCache[url]; throw error; });
   return jsonCache[url];
  }
- function setupDayMap(el) {
+ // Shared basemaps for the itinerary and observation maps. Satellite with named
+ // peaks, creeks and camps (USGS) is the default; plain satellite, topo and street are alternatives.
+ function basemaps() {
+  var usgs = function (name) {
+   return L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/' + name + '/MapServer/tile/{z}/{y}/{x}',
+    { maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map' });
+  };
+  var esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+   { maxZoom: 19, attribution: 'Imagery &copy; Esri' });
+  var esriPlaces = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
   var street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   });
-  var topo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
-   maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map'
-  });
-  var map = L.map(el, { layers: [street], scrollWheelZoom: false }).setView([36.8, -118.5], 9);
+  var hybrid = usgs('USGSImageryTopo');
+  return { initial: hybrid, choices: {
+   'Satellite + trail names': hybrid,
+   'Satellite + place names': L.layerGroup([esriSat, esriPlaces]),
+   'Topographic': usgs('USGSTopo'),
+   'Street': street
+  } };
+ }
+ function setupDayMap(el) {
+  var base = basemaps();
+  var map = L.map(el, { layers: [base.initial], scrollWheelZoom: false }).setView([36.8, -118.5], 9);
   map.createPane('trail-stops').style.zIndex = '625';
-  var layers = L.control.layers({ 'Trail map': street, 'Topographic': topo }, {}, { collapsed: true }).addTo(map);
+  var layers = L.control.layers(base.choices, {}, { collapsed: true }).addTo(map);
   var status = document.createElement('p'); status.className = 'trail-map-status';
   status.setAttribute('role', 'status'); status.textContent = 'Loading trail map…'; el.after(status);
   function load() {
@@ -118,11 +134,11 @@
      var feature = results[0].value.features.find(function (f) { return f.properties.day === el.dataset.day; });
      if (feature && feature.geometry.coordinates.length > 1) {
       routeOK = true;
-      var route = L.geoJSON(feature, { style: { color: '#167c91', weight: 4, opacity: 0.95 } }).addTo(map);
+      var route = L.geoJSON(feature, { style: { color: '#ffd23f', weight: 4, opacity: 0.95 } }).addTo(map);
       layers.addOverlay(route, 'Trail route'); bounds.extend(route.getBounds());
       map.attributionControl.addAttribution('Trails: <a href="https://www.nps.gov/seki/planyourvisit/park_atlas.htm">NPS / USFS</a>');
       var props = feature.properties;
-      var start = L.circleMarker([props.start[1], props.start[0]], { pane: 'trail-stops', radius: 5, color: '#fff', weight: 2, fillColor: '#167c91', fillOpacity: 1 }).addTo(map);
+      var start = L.circleMarker([props.start[1], props.start[0]], { pane: 'trail-stops', radius: 5, color: '#fff', weight: 2, fillColor: '#ffd23f', fillOpacity: 1 }).addTo(map);
       start.bindPopup('Start of day');
       var end = L.circleMarker([props.end[1], props.end[0]], { pane: 'trail-stops', radius: 8, color: '#fff', weight: 2, fillColor: '#9a5521', fillOpacity: 1 }).addTo(map);
       end.bindPopup(props.camp ? '<strong>Camp</strong><br>' + esc(props.camp) + (props.camp_uncertain ? '<br>If I remember right.' : '') : 'Back to Roads End');
@@ -147,14 +163,9 @@
 
  // Observation-only maps never manufacture tracks, distances or elevations.
  function setupObservationMap(el) {
-  var street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-   maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  });
-  var topo = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
-   maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map'
-  });
-  var map = L.map(el, { layers: [street] }).setView([36.8, -118.5], 9);
-  L.control.layers({ 'Street': street, 'Topographic': topo }, null, { collapsed: true }).addTo(map);
+  var base = basemaps();
+  var map = L.map(el, { layers: [base.initial] }).setView([36.8, -118.5], 9);
+  L.control.layers(base.choices, null, { collapsed: true }).addTo(map);
   var controls = document.createElement('div');
   controls.className = 'trail-observation-controls';
   var label = document.createElement('label'), select = document.createElement('select'), status = document.createElement('p');
