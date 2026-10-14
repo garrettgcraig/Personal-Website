@@ -2,7 +2,7 @@
 
 The journal is edited in `trail-log/entries/2026-07-04-big-seki-loop.md`. Each day places its narrative, camp, and map together. Add Garrett's trip details there, then run `python scripts/build_trail_log.py`.
 
-`data/big-seki-routes.geojson` holds 15 approximate daily itineraries on mapped trails, rather than a GPS recording. Camp coordinates represent areas; camp names follow the hiker's journal. No measured mileage or elevation is advertised.
+`data/big-seki-routes.geojson` holds 15 approximate daily itineraries on mapped trails, rather than a GPS recording. Camp coordinates represent areas; camp names follow the hiker's journal. Daily mileage in the journal is approximate, measured along each mapped route and rounded to the nearest half mile (July 17 uses the journal's own 15 miles); no elevation is advertised.
 
 Trail geometry was downloaded October 12, 2026 from the NPS SEKI Park Atlas service:
 https://services1.arcgis.com/fBc8EJBxQRMcHlei/ArcGIS/rest/services/SEKI_ParkAtlas2_4_HikingandBackpacking_MASTER/FeatureServer

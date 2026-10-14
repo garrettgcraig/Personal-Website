@@ -14,6 +14,8 @@ Day 1 was a real slog up the mountain out of Copper Creek. We took frequent brea
 
 The descent into the basin was lovely, with open views most of the way, but the low spots near Granite Creek were mosquito-infested. We arrived at Granite Lake around 6:45 pm with loads of daylight and not another soul in sight. The clouds lit up pink and orange a bit later, and by nightfall we were blanketed and warm, eerily too warm for 10,000 feet in early July. There was very little snow on the north faces of the basin peaks.
 
+**Approx. distance:** about 10.5 miles.
+
 **Camp:** Granite Lake.
 
 ## Day 2 · July 5: Granite Lake to Simpson Meadow
@@ -21,6 +23,8 @@ The descent into the basin was lovely, with open views most of the way, but the 
 Day 2 started warm and cloudy, and we had to throw our flies on in the middle of the night for some drizzle. There were more gorgeous flowers on the way up to Granite Pass, and huge 360° views at the top, with massive peaks and layered landscapes. We lunched at Dougherty Creek (technically above it, away from the mosquitoes), then made a small climb before starting the descent I'd been dreading: 4,000 feet over four or five miles.
 
 Mi's knee started causing a lot of pain on the way down, so we went slowly for much of it. We passed through a few ecotones and an area that had burned in the last decade or so, judging by the manzanita scrub. Oaks reappeared around 7,000 feet, with lupines and thimbleberries (not yet fruiting) a little lower. We scrambled a bit to find a camp at Simpson Meadow, but G found an old trail crew camp near the river on the upper Middle Fork Kings. I slept super well. The meadow was dry and the river was running fast and low.
+
+**Approx. distance:** about 13.5 miles.
 
 **Camp:** Old trail crew camp near the Middle Fork Kings, by Simpson Meadow.
 
@@ -32,6 +36,8 @@ Ma hit a wall about a third of the way into the day, and her feet were causing h
 
 I was hoping Ma would feel better on the way up to Palisades the next day. Is and Iz had gone back to the car and planned to reevaluate again that day.
 
+**Approx. distance:** about 8 miles.
+
 **Camp:** Confluence of Palisade Creek and the Middle Fork Kings.
 
 ## Day 4 · July 7: Palisade Creek to Lower Palisade Lake
@@ -41,6 +47,8 @@ A short day up alongside Palisade Creek, our first retracing of the JMT. Ma's fe
 The Golden Staircase was a fun climb that got us into a good rhythm. We lunched partway up, maybe a third of the way, and I dunked my socks and shoes and looked at the twinberries fruiting alongside the little stream. We passed tons of northbound PCT folks, upwards of 40, I would guess.
 
 We arrived at Lower Palisade Lake around 2:30 and I immediately went for a dip and rinse off the gravelly sand bar. Frigid, but so refreshing. G fished some, then Ma and Mi arrived and we decided to just stay put for the night. The afternoon was reading, water play, dinner, and cards, then stargazing before bed. Very few mosquitoes up here.
+
+**Approx. distance:** about 7 miles.
 
 **Camp:** Lower Palisade Lake.
 
@@ -54,6 +62,8 @@ There are some red-rock peaks up here, and the granite chunks around the lake ar
 
 The JMT crew was set to meet us at Marjorie the next day. Ma was struggling with foot pain and might choose to get off the trail at Kearsarge. I'd probably finish David Sedaris's new book while we waited for the other crew. Is and Iz had texted the night before to say they'd do the second half with us, so we'd see them on Saturday.
 
+**Approx. distance:** about 12 miles.
+
 **Camp:** Lake Marjorie, 11,115 feet.
 
 ## Day 6 · July 9: Pinchot Pass to Twin Lakes
@@ -64,6 +74,8 @@ Before lunch we had a message from Is to reply to, then a message from the JMT c
 
 The descent from Pinchot was fine for me, but Ma's feet were hurting again, so she would likely head out at Onion Valley. We saw grouse at Twin Lakes.
 
+**Approx. distance:** about 4.5 miles.
+
 **Camp:** Twin Lakes, south of Pinchot Pass.
 
 ## Day 7 · July 10: Woods Creek to Rae Lakes
@@ -72,6 +84,8 @@ We headed up from Twin Lakes through some pretty meadows in the morning and towa
 
 I scrambled a bit at Rae Lakes looking for an ideal site but ended up on the middle isthmus. I skinny dipped upon arrival, and the water was relatively warm. The resident baby bear strolled through right after we tented, and I chased him around for a while to try to rehabituate him. D and W fished most of the evening.
 
+**Approx. distance:** about 11.5 miles.
+
 **Camp:** Rae Lakes, on the middle isthmus.
 
 ## Day 8 · July 11: Glen Pass and Kearsarge Pass
@@ -79,6 +93,8 @@ I scrambled a bit at Rae Lakes looking for an ideal site but ended up on the mid
 We packed up early-ish and topped Glen Pass around 8:30 after a nice climb out of the Rae Lakes basin. The descent was fast (I ran) and increasingly hot. There was so much less snow on this trip than two years ago. No bears today.
 
 We paused on Kearsarge for our last group pass, then I ran down to Gilbert Lake after arranging a burrito delivery from Is and Iz. On the way down I went for a mucky skinny dip with W and E. I reached Onion Valley around 2:30, found our resupply buckets, and loaded up under a tree's shade. Is and Iz rolled up shortly after Ma, K, and D made it down to the parking lot. We apparently looked like chimney sweeps. I said a sad goodbye to Ma and W.
+
+**Approx. distance:** about 9.5 miles.
 
 **Camp:** Gilbert Lake.
 
@@ -90,6 +106,8 @@ I got to camp (which, again, I only remembered once I saw it) around 4 or 4:30, 
 
 I hoped our morning climb would go off without a hitch. Lots of laughs with friends tonight, and I'm so glad to be with this crew. I just wish Ma were here to share in it.
 
+**Approx. distance:** about 11.5 miles.
+
 **Camp:** Base of Forester Pass, just below treeline.
 
 ## Day 10 · July 13: Forester Pass to Junction Meadow
@@ -100,6 +118,8 @@ The first sprinkles fell as we reached the base of the pass, and except for a br
 
 I turned down into a valley full of twisted, maimed-looking junipers, stately trees that resembled giant bonsais. This morning the skies are clear and we've seen deer and squirrels around last night's campfire.
 
+**Approx. distance:** about 14.5 miles.
+
 **Camp:** Junction Meadow, on the Kern.
 
 ## Day 11 · July 14: Down the Kern to Moraine Lake
@@ -109,6 +129,8 @@ Relatively comfortable walking down the Kern, shaded until we hit a burn scar th
 Just before reaching the Kern Hot Springs, at a small creek crossing, I had probably my closest run-in with a rattlesnake. I couldn't hear it over the babbling of the creek, and by the time I did I was only 3–4 feet from it. If it had wanted to strike, it could have. Coiled atop a log in the shade, it blended in perfectly, and when I finally became aware, its head was raised and glaring straight at me.
 
 I stopped for a dip in the Kern and the hot spring tub, which was really hot. Then I crossed a bridge built partially atop a giant boulder to begin our roughly 2,600-foot ascent back out of Kern Canyon. Thankfully the clouds had started building by that point in the afternoon, and the views down the Kern were breathtaking. Around 8,800 feet we hit a cool fern forest with gilia and lupines interspersed. We saw another deer passing around Sky Parlor Meadow. Moraine Lake has gorgeous views to the south. No fish, but some bird visitors.
+
+**Approx. distance:** about 14.5 miles.
 
 **Camp:** Moraine Lake.
 
@@ -122,6 +144,8 @@ With storm clouds seemingly building in a few directions, we set off on the rest
 
 On the picturesque descent we followed part of a never-completed road carved and blasted into the mountainside. We met a deer and a snake on the trail, and Is caught a trout for the group to share.
 
+**Approx. distance:** about 14.5 miles.
+
 **Camp:** Hamilton Lakes.
 
 ## Day 13 · July 16: Elizabeth Pass to Ranger Meadow
@@ -132,6 +156,8 @@ After the Bearpaw junction it got real brushy, like two to six years of neglect 
 
 Then came the descent from hell. Despite recent trail work up high, the talus was so bad underfoot that I was in pain before reaching its end. Then came the mystery trail, where you couldn't see where your feet were going to land with each step. I fell or tripped more times in those 3,000 feet of descent than in the whole trip. There were cool little woodlands near our camp, on a ledge overlooking Ranger Meadow.
 
+**Approx. distance:** about 10.5 miles.
+
 **Camp:** A ledge overlooking Ranger Meadow.
 
 ## Day 14 · July 17: Roaring River and Avalanche Pass
@@ -140,11 +166,15 @@ An uneventful day. We got up a little earlier to make our 15 miles, which meant 
 
 The climb up Avalanche Pass was fine, a pretty monotonous section of forest, to be frank. There was no view at the top, then a pretty easy descent down to Screwball Camp, where we had a fire and chatted with a couple of guys from Berkeley, N and A.
 
+**Approx. distance:** about 15 miles.
+
 **Camp:** Screwball Camp, on Aplin Creek.
 
 ## Day 15 · July 18: Back to Roads End
 
 Down from Screwball Camp to Bubbs Creek and back to Roads End.
+
+**Approx. distance:** about 7.5 miles.
 
 ## Along the way
 
