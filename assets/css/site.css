@@ -430,3 +430,23 @@ body.dark-mode .trail-card-tags span {
 	flex-wrap: wrap;
 	row-gap: var(--space-3);
 }
+
+/* Small caps label above section and card titles */
+#wrapper .eyebrow {
+	font-family: var(--font-ui);
+	font-size: var(--text-eyebrow);
+	font-weight: 600;
+	letter-spacing: var(--tracking-eyebrow);
+	text-transform: uppercase;
+	color: var(--color-accent) !important;
+	margin: 0 0 var(--space-2);
+}
+
+/* Text-only research cards on the home page */
+.home-research a {
+	padding-top: var(--space-4);
+}
+
+.home-research .eyebrow {
+	margin: 0 1rem var(--space-2) !important;
+}
