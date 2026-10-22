@@ -27,7 +27,7 @@ def build_outputs():
     pages = []
     for path in sorted(ROOT.rglob('*.html')):
         relative = path.relative_to(ROOT).as_posix()
-        if relative.startswith(('.', 'assets/', 'work/')):
+        if relative.startswith(('.', 'assets/', 'work/', 'node_modules/')):
             continue
         if path.name == 'index-demo.html' or re.fullmatch(r'google[0-9a-f]+\.html', path.name):
             continue

@@ -1,0 +1,8 @@
+{
+  "name": "garrettgcraig-site",
+  "private": true,
+  "description": "Dependencies for the site's Netlify functions (the Timeline game).",
+  "dependencies": {
+    "@netlify/blobs": "11.1.6"
+  }
+}

@@ -40,5 +40,7 @@ jobs:
             echo "No catalog changes."
           else
             git commit -m "Fill in Spotify IDs for the Timeline catalog"
+            # Someone may have pushed during the long lookup; replay this commit on top.
+            git pull --rebase origin "${{ github.head_ref || github.ref_name }}"
             git push
           fi

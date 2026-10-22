@@ -1,0 +1,38 @@
+name: Timeline smoke test
+# After Netlify finishes a deploy preview, plays one turn against its game API.
+on:
+  pull_request:
+    paths: ['timeline/**', 'netlify/**', 'netlify.toml', 'package.json', 'scripts/timeline_smoke.py', '.github/workflows/timeline-smoke.yml']
+permissions:
+  contents: read
+  statuses: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/timeline-room.test.mjs
+      - name: Wait for the Netlify deploy preview
+        id: preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          for i in $(seq 1 60); do
+            line=$(gh api "repos/${{ github.repository }}/commits/$SHA/statuses" \
+              --jq '[.[] | select(.context | test("deploy-preview"))][0] | "\(.state) \(.target_url)"')
+            state=${line%% *}; url=${line#* }
+            echo "attempt $i: $line"
+            if [ "$state" = "success" ]; then echo "url=$url" >> "$GITHUB_OUTPUT"; exit 0; fi
+            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then echo "Deploy preview failed."; exit 1; fi
+            sleep 15
+          done
+          echo "Timed out waiting for the deploy preview."; exit 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/timeline_smoke.py "${{ steps.preview.outputs.url }}"

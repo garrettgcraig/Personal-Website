@@ -1,0 +1,4 @@
+# Only function settings live here. Build and publish settings stay in the Netlify UI.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
