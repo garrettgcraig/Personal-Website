@@ -1,3 +1,7 @@
 .claude/worktrees/
 node_modules/
 __pycache__/
+
+# Design-tool scratch (decision pages, review captures)
+**/.impeccable/questions/
+**/.impeccable/review/

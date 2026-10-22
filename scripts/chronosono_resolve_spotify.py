@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""Fill in Spotify track IDs for the Tunestamp catalog without the Spotify API.
+"""Fill in Spotify track IDs for the ChronoSono catalog without the Spotify API.
 
-Songs in tunestamp/songs.js without a Spotify ID are looked up in Wikidata, which records
+Songs in chronosono/songs.js without a Spotify ID are looked up in Wikidata, which records
 Spotify track IDs (property P2207) and first release dates (P577) for many songs. A song is
 accepted only when the title matches and one of its listed performers matches the artist.
 
 The first IDs came from two public datasets (the Billboard year-end Hot 100 data in the
 `billboard` R package, and the TidyTuesday 2020-01-21 Spotify songs data); see
-scripts/tunestamp_seed_ids.py. Results are cached in data/tunestamp-catalog-cache.json, and a
-report of misses and year disagreements goes to data/tunestamp-catalog-report.md.
+scripts/chronosono_seed_ids.py. Results are cached in data/chronosono-catalog-cache.json, and a
+report of misses and year disagreements goes to data/chronosono-catalog-report.md.
 
 Usage:
-  python scripts/tunestamp_resolve_spotify.py [--limit N] [--retry-misses]
+  python scripts/chronosono_resolve_spotify.py [--limit N] [--retry-misses]
 """
 
 from __future__ import annotations
@@ -29,14 +29,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SONGS_JS = ROOT / "tunestamp" / "songs.js"
-CACHE = ROOT / "data" / "tunestamp-catalog-cache.json"
-REPORT = ROOT / "data" / "tunestamp-catalog-report.md"
+SONGS_JS = ROOT / "chronosono" / "songs.js"
+CACHE = ROOT / "data" / "chronosono-catalog-cache.json"
+REPORT = ROOT / "data" / "chronosono-catalog-report.md"
 
 WIKIDATA_URL = "https://query.wikidata.org/sparql"
 WIKIDATA_GAP = 2.0  # seconds between queries, to stay well inside Wikidata's limits
 BATCH = 25  # songs per query
-USER_AGENT = "TunestampCatalog/1.0 (https://garrettgcraig.com/tunestamp/; catalog maintenance)"
+USER_AGENT = "ChronoSonoCatalog/1.0 (https://garrettgcraig.com/chronosono/; catalog maintenance)"
 SPOTIFY_ID = re.compile(r"^[A-Za-z0-9]{22}$")
 
 
@@ -199,7 +199,7 @@ def write_report(rows: list[list], cache: dict, path: Path = REPORT) -> None:
             differs.append((t, a, y, other, "Wikidata" if e.get("wikidataYear") else "Billboard year-end chart"))
     misses = [(t, a, y) for t, a, y, sp in rows if not sp]
     lines = [
-        "# Tunestamp catalog report",
+        "# ChronoSono catalog report",
         "",
         f"Updated {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}.",
         "",
@@ -209,7 +209,7 @@ def write_report(rows: list[list], cache: dict, path: Path = REPORT) -> None:
         "",
         "## Years that disagree by two or more",
         "",
-        "Another source dates these songs differently from `tunestamp/songs.js`. Chart years often trail the "
+        "Another source dates these songs differently from `chronosono/songs.js`. Chart years often trail the "
         "release (a song can chart a year or two later), so check before changing anything.",
         "",
     ]

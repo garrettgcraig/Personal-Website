@@ -1,10 +1,10 @@
-name: Tunestamp catalog
-# Looks up Spotify track IDs for new songs in tunestamp/songs.js in Wikidata (no Spotify API) and
+name: ChronoSono catalog
+# Looks up Spotify track IDs for new songs in chronosono/songs.js in Wikidata (no Spotify API) and
 # commits them back to the branch. Runs when the catalog changes
 # on a pull request, or by hand from the Actions tab.
 on:
   pull_request:
-    paths: ['tunestamp/songs.js', 'scripts/tunestamp_resolve_spotify.py', 'tests/tunestamp-catalog.test.py', 'scripts/tunestamp_seed_ids.py', '.github/workflows/tunestamp-catalog.yml']
+    paths: ['chronosono/songs.js', 'scripts/chronosono_resolve_spotify.py', 'tests/chronosono-catalog.test.py', 'scripts/chronosono_seed_ids.py', '.github/workflows/chronosono-catalog.yml']
   workflow_dispatch:
     inputs:
       retry_misses:
@@ -14,7 +14,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: tunestamp-catalog-${{ github.head_ref || github.ref_name }}
+  group: chronosono-catalog-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: false
 jobs:
   resolve:
@@ -29,17 +29,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python tests/tunestamp-catalog.test.py
-      - run: python scripts/tunestamp_resolve_spotify.py ${{ inputs.retry_misses && '--retry-misses' || '' }}
+      - run: python tests/chronosono-catalog.test.py
+      - run: python scripts/chronosono_resolve_spotify.py ${{ inputs.retry_misses && '--retry-misses' || '' }}
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tunestamp/songs.js data/tunestamp-catalog-cache.json data/tunestamp-catalog-report.md
+          git add chronosono/songs.js data/chronosono-catalog-cache.json data/chronosono-catalog-report.md
           if git diff --cached --quiet; then
             echo "No catalog changes."
           else
-            git commit -m "Fill in Spotify IDs for the Tunestamp catalog"
+            git commit -m "Fill in Spotify IDs for the ChronoSono catalog"
             # Someone may have pushed during the long lookup; replay this commit on top.
             git pull --rebase origin "${{ github.head_ref || github.ref_name }}"
             git push

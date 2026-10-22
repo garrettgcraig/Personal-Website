@@ -1,8 +1,8 @@
-name: Tunestamp smoke test
+name: ChronoSono smoke test
 # After Netlify finishes a deploy preview, plays one turn against its game API.
 on:
   pull_request:
-    paths: ['tunestamp/**', 'netlify/**', 'netlify.toml', 'package.json', 'scripts/tunestamp_smoke.py', '.github/workflows/tunestamp-smoke.yml']
+    paths: ['chronosono/**', 'netlify/**', 'netlify.toml', 'package.json', 'scripts/chronosono_smoke.py', '.github/workflows/chronosono-smoke.yml']
 permissions:
   contents: read
   statuses: read
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/tunestamp-room.test.mjs
+      - run: node --test tests/chronosono-room.test.mjs
       - name: Wait for the Netlify deploy preview
         id: preview
         env:
@@ -35,4 +35,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python scripts/tunestamp_smoke.py "${{ steps.preview.outputs.url }}"
+      - run: python scripts/chronosono_smoke.py "${{ steps.preview.outputs.url }}"

@@ -1,4 +1,4 @@
-# Tunestamp catalog report
+# ChronoSono catalog report
 
 Updated 2026-10-22 17:04 UTC.
 
@@ -8,7 +8,7 @@ Where the IDs came from: billboard 322, listenbrainz 98, tidytuesday 135, wikida
 
 ## Years that disagree by two or more
 
-Another source dates these songs differently from `tunestamp/songs.js`. Chart years often trail the release (a song can chart a year or two later), so check before changing anything.
+Another source dates these songs differently from `chronosono/songs.js`. Chart years often trail the release (a song can chart a year or two later), so check before changing anything.
 
 - Layla, Derek & The Dominos: listed 1970, Billboard year-end chart 1972
 - Dream On, Aerosmith: listed 1973, Billboard year-end chart 1976

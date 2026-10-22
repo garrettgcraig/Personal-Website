@@ -1,9 +1,9 @@
-// Tunestamp, Public edition. One page that becomes either the DJ phone or a team phone.
+// ChronoSono, Public edition. One page that becomes either the DJ phone or a team phone.
 // The DJ phone opens each song as an ordinary Spotify link while face down; no Spotify API.
-import { SONGS } from "/tunestamp/songs.js";
-import * as G from "/tunestamp/game.js";
+import { SONGS } from "/chronosono/songs.js";
+import * as G from "/chronosono/game.js";
 
-const API = "/tunestamp/api";
+const API = "/chronosono/api";
 const ALL = G.toCards(SONGS);
 const YEAR_MIN = G.YEAR_FLOOR;
 const YEAR_MAX = Math.max(new Date().getFullYear(), ...SONGS.map((r) => r[2]));
@@ -56,6 +56,7 @@ function deviceId() {
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const decade = (y) => Math.floor(y / 10) * 10;
+const possessive = (name) => (/s$/i.test(name) ? `${name}'` : `${name}'s`);
 const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
 const spotifyUrl = (id) => `https://open.spotify.com/track/${id}`;
 
@@ -310,15 +311,85 @@ blind.addEventListener("click", (e) => {
   }, 300);
 });
 
+// ---------- Logo ----------
+
+// The way music has been carried, each drawn as a clock running backward: a record, a cassette
+// with clock-faced reels, a CD, an iPod click wheel, and an app tile, then back to the record.
+// SMIL so it runs without script; paused on the record under reduced motion.
+const LOGO_DUR = "15s";
+const LOGO_BODY = [
+  ["x", "4;4;2;2;4;4;14;14;6;6;4"],
+  ["y", "4;4;12;12;4;4;2;2;6;6;4"],
+  ["width", "56;56;60;60;56;56;36;36;52;52;56"],
+  ["height", "56;56;40;40;56;56;60;60;52;52;56"],
+  ["rx", "28;28;4;4;28;28;7;7;13;13;28"],
+];
+const LOGO_TIMES = "0;.17;.2;.37;.4;.57;.6;.77;.8;.97;1";
+const LOGO_EASE = Array.from({ length: 10 }, (_, i) => (i % 2 ? ".6 0 .2 1" : "0 0 1 1")).join(";");
+const fade = (values, times) => `<animate attributeName="opacity" values="${values}" keyTimes="${times}" dur="${LOGO_DUR}" repeatCount="indefinite"/>`;
+const stage = (from, to) => fade("0;0;1;1;0;0", `0;${from};${(from + 0.02).toFixed(2)};${to};${(to + 0.02).toFixed(2)};1`);
+const spin = (cx, cy, dur) => `<animateTransform attributeName="transform" type="rotate" from="0 ${cx} ${cy}" to="-360 ${cx} ${cy}" dur="${dur}" repeatCount="indefinite"/>`;
+
+// A clock face: twelve ticks and two hands turning counterclockwise. r is the tick radius.
+function clock(cx, cy, r, { animated = true, ticks = 12, weight = 1 } = {}) {
+  const tick = Array.from({ length: ticks }, (_, i) => {
+    const major = (i * 12) / ticks % 3 === 0;
+    return `<line x1="${cx}" y1="${cy - r}" x2="${cx}" y2="${cy - r + r * (major ? 0.2 : 0.12)}" transform="rotate(${(i * 360) / ticks} ${cx} ${cy})"/>`;
+  }).join("");
+  return `<g stroke="#121110" stroke-linecap="round">
+    <g stroke-width="${weight * 0.9}">${tick}</g>
+    <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - r * 0.55}" stroke-width="${weight * 1.7}">${animated ? spin(cx, cy, "36s") : ""}</line>
+    <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - r * 0.8}" stroke-width="${weight * 1.1}" transform="rotate(120 ${cx} ${cy})">${animated ? spin(cx, cy, "3s") : ""}</line>
+  </g>`;
+}
+
+function logoSvg({ animated = true, small = false } = {}) {
+  const body = animated
+    ? `<rect x="4" y="4" width="56" height="56" rx="28" fill="#c8202f">${LOGO_BODY.map(([a, v]) => `<animate attributeName="${a}" values="${v}" keyTimes="${LOGO_TIMES}" calcMode="spline" keySplines="${LOGO_EASE}" dur="${LOGO_DUR}" repeatCount="indefinite"/>`).join("")}</rect>`
+    : `<rect x="4" y="4" width="56" height="56" rx="28" fill="#c8202f"/>`;
+  const record = `<g>${animated ? fade("1;1;0;0;1", "0;.17;.19;.98;1") : ""}
+    <g fill="none" stroke="#121110" stroke-opacity=".38" stroke-width=".8"><circle cx="32" cy="32" r="25"/><circle cx="32" cy="32" r="21.5"/><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="14.5"/></g>
+    <circle cx="32" cy="32" r="11" fill="#f4efe3"/>${clock(32, 32, 9.4, { animated })}
+    <circle cx="32" cy="32" r="1.4" fill="#c8202f"/></g>`;
+  if (!animated) return `<svg class="logo${small ? " small" : ""}" viewBox="0 0 64 64" aria-hidden="true" focusable="false">${body}${record}</svg>`;
+  const reel = (cx) => `<circle cx="${cx}" cy="27" r="5.4" fill="#f4efe3"/>${clock(cx, 27, 4.6, { ticks: 4, weight: 0.75 })}`;
+  const cassette = `<g opacity="0">${stage(0.19, 0.37)}
+    <rect x="8" y="16" width="48" height="22" fill="#f4efe3"/><rect x="14" y="20.5" width="36" height="13" fill="#121110"/>
+    ${reel(24)}${reel(40)}<path d="M19 52 22 45H42L45 52Z" fill="#121110" fill-opacity=".3"/></g>`;
+  const cd = `<g opacity="0">${stage(0.39, 0.57)}
+    <circle cx="32" cy="32" r="25.5" fill="#f4efe3"/>
+    <g fill="none" stroke="#121110" stroke-opacity=".38" stroke-width=".8"><circle cx="32" cy="32" r="22"/><circle cx="32" cy="32" r="18.5"/><circle cx="32" cy="32" r="15"/></g>
+    <circle cx="32" cy="32" r="11" fill="#c8202f"/><circle cx="32" cy="32" r="9.2" fill="#f4efe3"/>
+    ${clock(32, 32, 8, { weight: 0.85 })}<circle cx="32" cy="32" r="1.3" fill="#121110"/></g>`;
+  const ipod = `<g opacity="0">${stage(0.59, 0.77)}
+    <rect x="18" y="7" width="28" height="21" rx="1.5" fill="#121110"/>
+    <g fill="#f4efe3"><rect x="21" y="11" width="16" height="2"/><rect x="21" y="15.5" width="11" height="2" fill-opacity=".6"/><rect x="21" y="22" width="22" height="2"/></g>
+    <circle cx="32" cy="44.5" r="11.5" fill="#f4efe3"/>${clock(32, 44.5, 10.2, {})}
+    <circle cx="32" cy="44.5" r="3" fill="#c8202f"/></g>`;
+  const tile = `<g opacity="0">${stage(0.79, 0.97)}
+    <circle cx="32" cy="32" r="15" fill="#f4efe3"/>${clock(32, 32, 12.6, { weight: 1.2 })}<circle cx="32" cy="32" r="1.6" fill="#c8202f"/></g>`;
+  return `<svg class="logo${small ? " small" : ""}" viewBox="0 0 64 64" role="img" aria-label="ChronoSono: a clock running backward, drawn as a record, a cassette, a CD, an iPod, and an app">${body}${record}${cassette}${cd}${ipod}${tile}</svg>`;
+}
+
+function settleLogos() {
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.querySelectorAll("svg.logo").forEach((svg) => {
+    svg.pauseAnimations?.();
+    svg.setCurrentTime?.(0);
+  });
+}
+
 // ---------- Home and join ----------
 
 function homeView() {
   const saved = store.get("ts.room");
   return `
-  <div class="home">
+  <div class="home split">
     <header class="masthead">
-      <h1 class="wordmark">Tunestamp</h1>
+      ${logoSvg()}
+      <h1 class="wordmark brandname">ChronoSono</h1>
       <p class="lede">Hear a song, then slot it into your team's timeline by year. One phone plays the music face down, so nobody sees the answer.</p>
+      <p class="hint"><a href="/chronosono/about/">How to play</a></p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
     ${saved ? `<div class="resume"><p>You were in game ${esc(saved)}.</p><button class="btn primary" data-action="rejoin">Go back to it</button></div>` : ""}
@@ -342,7 +413,8 @@ function roleView() {
   return `
   <div class="home">
     <header class="masthead">
-      <h1 class="wordmark small-mark">${creating ? "New game" : `Game ${esc(app.joinCode)}`}</h1>
+      <div class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></div>
+      <h1 class="wordmark small-mark" style="margin-top:18px">${creating ? "New game" : `Game ${esc(app.joinCode)}`}</h1>
       <p class="lede">What is this phone for?</p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
@@ -376,7 +448,7 @@ function roleView() {
 function lobbyView() {
   const v = app.view;
   const host = v.me.isHost;
-  const link = `${location.origin}/tunestamp/?room=${v.code}`;
+  const link = `${location.origin}/chronosono/?room=${v.code}`;
   const roster = [
     `<li><span>DJ phone</span>${v.djJoined ? `<span>${v.me.role === "dj" ? '<span class="you">This phone</span>' : "Ready"}</span>` : '<span class="missing">Waiting</span>'}</li>`,
     ...v.lobbyTeams.map((n, i) => `<li><span>${esc(n)}</span>${v.me.team === i ? '<span class="you">This phone</span>' : "<span>Ready</span>"}</li>`),
@@ -385,11 +457,12 @@ function lobbyView() {
   const canStart = v.djJoined && v.lobbyTeams.length >= 2;
   return `
   <div class="lobby">
+    <header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span></header>
     <div class="lobby-head">
       <div><div class="code-label">Room code</div><div class="code-big">${esc(v.code)}</div></div>
       <div class="actions"><button class="btn quiet" data-action="share" data-link="${esc(link)}">Share invite link</button></div>
     </div>
-    <p class="hint">Others open <strong>${esc(location.host)}/tunestamp</strong> and enter the code.</p>
+    <p class="hint">Others open <strong>${esc(location.host)}/chronosono</strong> and enter the code.</p>
     ${v.me.role === "dj" ? djLobbyNote() : ""}
     <section class="panel">
       <h2>Phones</h2>
@@ -529,12 +602,15 @@ function scoresView(v) {
 
 const dots = (n) => Array.from({ length: G.MAX_TOKENS }, (_, i) => `<i class="dot token ${i < n ? "full" : ""}"></i>`).join("");
 
-function sleeve(c, extra = "") {
-  return `<div class="sleeve d${decade(c.year)} ${extra}"><span class="sleeve-year">${c.year}</span><span class="sleeve-title">${esc(c.title)}</span><span class="sleeve-artist">${esc(c.artist)}</span></div>`;
+function strip(c, extra = "") {
+  return `<div class="strip d${decade(c.year)} ${extra}"><span class="strip-year">${c.year}</span><span class="strip-title">${esc(c.title)}</span><span class="strip-artist">${esc(c.artist)}</span></div>`;
 }
 
-function bigSleeve(c) {
-  return `<div class="sleeve big d${decade(c.year)} flip-in"><span class="sleeve-year">${c.year}</span><span class="sleeve-title">${esc(c.title)}</span><span class="sleeve-artist">${esc(c.artist)}</span></div>`;
+// The flip plays once per card, not on every re-render while the card is showing.
+function bigStrip(c) {
+  const fresh = app.ui.flipped !== c.id;
+  app.ui.flipped = c.id;
+  return `<div class="strip big d${decade(c.year)} ${fresh ? "flip-in" : ""}"><span class="strip-year">${c.year}</span><span class="strip-title">${esc(c.title)}</span><span class="strip-artist">${esc(c.artist)}</span></div>`;
 }
 
 // mode: "place" (active team picks), "challenge" (this team picks a different gap), or "view"
@@ -548,14 +624,14 @@ function railView(v, mode) {
     const mine = marks && g.placement === i;
     const ch = marks ? g.challenges.find((c) => c.gap === i) : null;
     const live = mode === "place" || (mode === "challenge" && !taken.includes(i));
-    let inner = '<span class="gap-plus" aria-hidden="true">+</span>';
-    if (mine) inner = '<span class="mystery" aria-hidden="true"></span>';
-    else if (ch) inner = `<span class="claim">${esc(g.teams[ch.player].name)}</span>`;
+    let inner = '<span class="gap-label" aria-hidden="true">Slot it here</span>';
+    if (mine) inner = '<span class="strip mystery" aria-hidden="true"><span class="strip-year">?</span><span class="strip-title">This song</span><span class="strip-artist">Year hidden until the reveal</span></span>';
+    else if (ch) inner = `<span class="claim">${esc(g.teams[ch.player].name)} says here</span>`;
     const label = i === 0 ? "Before the first card" : i === tl.length ? "After the last card" : `Between ${tl[i - 1].year} and ${tl[i].year}`;
     parts.push(`<button class="gap ${mine ? "placed" : ""} ${ch ? "claimed" : ""} ${live ? "live" : ""}" data-action="gap" data-gap="${i}" ${live ? "" : "disabled"} aria-label="${label}">${inner}</button>`);
-    if (i < tl.length) parts.push(sleeve(tl[i], v.stage === "result" && g.result?.keeps && g.result.card?.id === tl[i].id ? "new" : ""));
+    if (i < tl.length) parts.push(strip(tl[i], v.stage === "result" && g.result?.keeps && g.result.card?.id === tl[i].id ? "new" : ""));
   }
-  return `<div class="rail" role="list">${parts.join("")}</div>`;
+  return `<div class="rail">${parts.join("")}</div>`;
 }
 
 function secondsLeft(v) {
@@ -591,25 +667,27 @@ function teamView() {
         <p>Turn the DJ phone over and tap <strong>Next song</strong>.</p>
         ${isActive && g.canBuy ? `<div class="mini-actions"><button class="btn quiet" data-action="buy">Trade ${G.BUY_COST} tokens for a free card instead</button></div>` : ""}
       </div>
-      <h2 class="rail-title">${isActive ? "Your timeline" : `${activeName}'s timeline`}</h2>
+      <h2 class="rail-title">${isActive ? "Your timeline" : `${possessive(activeName)} timeline`}</h2>
       ${railView(v, "view")}`;
   } else if (v.stage === "place") {
     const banner = cued
       ? `<div class="banner wait">Waiting for the DJ phone. Turn it face down, wait for two beeps, then tap the back of the screen.</div>`
       : `<div class="banner">Song playing. Keep the DJ phone face down.</div>`;
     if (isActive) {
-      body = `${banner}
+      // The active team's screen keeps the rack high: one status line instead of a banner and hint.
+      const status = cued ? "Waiting for the DJ phone: face down, two beeps, then tap its back." : "Song playing. Keep the DJ phone face down.";
+      body = `
         <div class="stage team">
           <p class="stage-title">${g.placement === null ? "Where does it go?" : "Lock it in?"}</p>
-          <p class="hint">Tap the gap on your timeline where this song fits.</p>
+          <p class="status">${status}</p>
           ${v.config.mode === "expert" ? `<label class="field compact year-guess"><span>Exact year</span><input type="number" inputmode="numeric" data-field="yearGuess" min="${YEAR_MIN}" max="${YEAR_MAX}" value="${g.yearGuess ?? ""}"></label>` : ""}
-          <div class="actions"><button class="btn primary big" data-action="lock" ${g.placement === null || (v.config.mode === "expert" && g.yearGuess === null) ? "disabled" : ""}>Lock in</button></div>
-          <div class="mini-actions">
-            ${g.canSkip ? `<button class="btn quiet small" data-action="skip">Skip this song (1 token)</button>` : ""}
-            <button class="btn link" data-action="unplayable">Song didn't play?</button>
-          </div>
         </div>
-        <h2 class="rail-title">Your timeline</h2>
+        <div class="dock"><div class="dock-inner">
+          <button class="btn primary big" data-action="lock" ${g.placement === null || (v.config.mode === "expert" && g.yearGuess === null) ? "disabled" : ""}>Lock in</button>
+          ${g.canSkip ? `<button class="btn quiet small" data-action="skip">Skip (1 token)</button>` : ""}
+          <button class="btn link" data-action="unplayable">Song didn't play?</button>
+        </div></div>
+        <h2 class="sr-only">Your timeline</h2>
         ${railView(v, "place")}`;
     } else {
       body = `${banner}
@@ -618,7 +696,7 @@ function teamView() {
           <p class="hint">Get ready to challenge. If they lock in the wrong spot and you pick the right one, you take the card.</p>
           <div class="mini-actions"><button class="btn link" data-action="unplayable">Song didn't play?</button></div>
         </div>
-        <h2 class="rail-title">${activeName}'s timeline</h2>
+        <h2 class="rail-title">${possessive(activeName)} timeline</h2>
         ${railView(v, "view")}`;
     }
   } else if (v.stage === "challenge") {
@@ -635,9 +713,9 @@ function teamView() {
     else panel = `<p class="stage-title">${activeName} locked in</p><p class="hint">You need a token to challenge.</p>`;
     body = `
       <div class="stage team">
-        <div class="reveal-row"><div class="countdown" id="countdown">${secondsLeft(v) ?? ""}</div><div>${panel}</div></div>
+        <div class="challenge-row"><div class="countdown" id="countdown">${secondsLeft(v) ?? ""}</div><div>${panel}</div></div>
       </div>
-      <h2 class="rail-title">${activeName}'s timeline</h2>
+      <h2 class="rail-title">${possessive(activeName)} timeline</h2>
       ${railView(v, canChallenge ? "challenge" : "view")}`;
   } else if (v.stage === "judge") {
     const c = g.current;
@@ -646,8 +724,8 @@ function teamView() {
     else
       ask = `<p class="stage-title">Did ${activeName} name it?</p><p class="hint">Title and artist, said out loud before the reveal.${v.config.mode === "pro" ? " In Pro mode the card only counts with a yes." : " A yes earns them a token."}</p>
         <div class="actions"><button class="btn primary" data-action="judge" data-named="1">Yes</button><button class="btn quiet" data-action="judge" data-named="0">No</button></div>`;
-    body = `<div class="stage team"><div class="reveal-row">${bigSleeve(c)}<div>${ask}</div></div></div>
-      <h2 class="rail-title">${activeName}'s timeline</h2>${railView(v, "view")}`;
+    body = `<div class="stage team"><div class="reveal-row">${bigStrip(c)}<div>${ask}</div></div></div>
+      <h2 class="rail-title">${possessive(activeName)} timeline</h2>${railView(v, "view")}`;
   } else if (v.stage === "result") {
     const r = g.result;
     let line;
@@ -660,18 +738,18 @@ function teamView() {
     else if (!r.keeps && v.config.mode === "expert") notes.push(`Right spot, but the year guess was ${r.yearGuess}.`);
     if (r.tokenEarned) notes.push(`${activeName} earns a token for naming it.`);
     body = `<div class="banner safe">Safe to turn over the DJ phone. Tap Next song on it when you're ready.</div>
-      <div class="stage team"><div class="reveal-row">${bigSleeve(r.card)}<div>
+      <div class="stage team"><div class="reveal-row">${bigStrip(r.card)}<div>
         <p class="verdict ${r.keeps || r.outcome === "stolen" ? "good" : "bad"}">${line}</p>
         ${notes.map((n) => `<p class="hint">${n}</p>`).join("")}
         <p class="hint"><a href="${spotifyUrl(r.card.id)}" target="_blank" rel="noopener">Open in Spotify</a></p>
       </div></div></div>
-      <h2 class="rail-title">${activeName}'s timeline</h2>${railView(v, "view")}`;
+      <h2 class="rail-title">${possessive(activeName)} timeline</h2>${railView(v, "view")}`;
   }
 
   return `
-  <div class="game">
+  <div class="game ${body.includes('class="dock"') ? "docked" : ""}">
     <header class="gamebar">
-      <span class="wordmark small">Tunestamp</span>
+      <span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span>
       <span class="meta">${esc(v.code)}. Round ${g.round}. ${v.config.yearMin} to ${v.config.yearMax}.</span>
       <span class="spacer"></span>
       ${v.me.isHost ? `<button class="btn quiet small" data-action="end">End game</button>` : ""}
@@ -695,7 +773,7 @@ function othersView(v) {
 function djView() {
   const v = app.view;
   const g = v.game;
-  const header = `<header class="gamebar"><span class="wordmark small">Tunestamp</span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>`;
+  const header = `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>`;
   if (!dj.enabled || dj.noSensor) {
     return `${header}<div class="dj">
       <p class="stage-title">Get the DJ phone ready</p>
@@ -725,7 +803,7 @@ function djView() {
   if (v.stage === "ready" || v.stage === "result") {
     const up = esc(g.teams[v.stage === "result" ? (g.turn + 1) % g.teams.length : g.turn].name);
     return `${header}<div class="dj">
-      <p class="hint">Up next: ${up}</p>
+      <p class="up-next">Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
       <p class="hint">Tap, then turn the phone face down.</p>
     </div>`;
@@ -778,6 +856,8 @@ function render() {
   else if (v.me.role === "team") html = teamView();
   else html = `<div class="home"><p class="lede">This phone isn't part of game ${esc(v.code)}.</p><button class="btn primary" data-action="leave">Back</button></div>`;
   root.innerHTML = html;
+  root.classList.toggle("wide", root.firstElementChild?.classList.contains("split") ?? false);
+  settleLogos();
   if (v?.stage === "lobby" && v.me.isHost) updateDial();
   if (focus) root.querySelector(`[data-field="${focus}"]`)?.focus();
 }
@@ -794,7 +874,7 @@ async function enterRoom(code, role, name) {
     else v = await api("POST", `rooms/${code}/actions`, { deviceId: me, type: "join", role, name });
     applyView(v);
     app.screen = "room";
-    history.replaceState(null, "", `/tunestamp/?room=${v.code}`);
+    history.replaceState(null, "", `/chronosono/?room=${v.code}`);
     poll();
   } catch (e) {
     app.error = e.message;
@@ -831,7 +911,7 @@ const actions = {
         app.joinCode = code;
         app.screen = "join";
       } else app.screen = "room";
-      history.replaceState(null, "", `/tunestamp/?room=${code}`);
+      history.replaceState(null, "", `/chronosono/?room=${code}`);
       poll();
     } catch (e) {
       store.set("ts.room", null);
@@ -856,7 +936,7 @@ const actions = {
   async share(el) {
     const link = el.dataset.link;
     try {
-      if (navigator.share) await navigator.share({ title: "Join my Tunestamp game", text: `Room code ${app.view.code}`, url: link });
+      if (navigator.share) await navigator.share({ title: "Join my ChronoSono game", text: `Room code ${app.view.code}`, url: link });
       else {
         await navigator.clipboard.writeText(link);
         toast("Invite link copied.");
@@ -907,7 +987,7 @@ const actions = {
     store.set("ts.room", null);
     app.view = null;
     app.screen = "home";
-    history.replaceState(null, "", "/tunestamp/");
+    history.replaceState(null, "", "/chronosono/");
     render();
   },
 };

@@ -1,7 +1,7 @@
 // Song catalog: [title, artist, original release year, Spotify track ID].
 // The year is the first release of the song (single or first album), not a remaster or compilation.
-// Spotify IDs come from public datasets (scripts/tunestamp_seed_ids.py) and Wikidata
-// (scripts/tunestamp_resolve_spotify.py, run by the Tunestamp catalog workflow), plus a one-time
+// Spotify IDs come from public datasets (scripts/chronosono_seed_ids.py) and Wikidata
+// (scripts/chronosono_resolve_spotify.py, run by the ChronoSono catalog workflow), plus a one-time
 // ListenBrainz lookup checked by hand. Songs without an ID are left out of the game. To add a song,
 // add a row with null and open a pull request.
 export const SONGS = [

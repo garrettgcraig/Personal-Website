@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-time seeding of Spotify IDs for the Tunestamp catalog from two public datasets.
+"""One-time seeding of Spotify IDs for the ChronoSono catalog from two public datasets.
 
   1. Billboard year-end Hot 100 songs, 1960-2015, with Spotify track IDs, from the `billboard`
      R package (https://github.com/mikkelkrogsholm/billboard, data/spotify_track_data.rda).
@@ -11,7 +11,7 @@
 Billboard rows are preferred, since they point at the charting single. A song is matched only
 when both the normalized title and the lead artist agree.
 
-Usage: python scripts/tunestamp_seed_ids.py billboard.csv spotify_songs.csv
+Usage: python scripts/chronosono_seed_ids.py billboard.csv spotify_songs.csv
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-spec = importlib.util.spec_from_file_location("resolver", HERE / "tunestamp_resolve_spotify.py")
+spec = importlib.util.spec_from_file_location("resolver", HERE / "chronosono_resolve_spotify.py")
 R = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(R)
 

@@ -1,11 +1,11 @@
-// Netlify function for the Tunestamp game. Rooms live in Netlify Blobs with strong
+// Netlify function for the ChronoSono game. Rooms live in Netlify Blobs with strong
 // consistency, and every write is a compare-and-set on the blob's ETag, so two phones
 // tapping at the same moment can't overwrite each other.
 import { getStore } from "@netlify/blobs";
-import { handle } from "../../tunestamp/room.js";
+import { handle } from "../../chronosono/room.js";
 
 function blobStore() {
-  const store = getStore({ name: "tunestamp-rooms", consistency: "strong" });
+  const store = getStore({ name: "chronosono-rooms", consistency: "strong" });
   return {
     async get(code) {
       const hit = await store.getWithMetadata(code, { type: "json" });
@@ -22,7 +22,7 @@ const headers = { "Content-Type": "application/json; charset=utf-8", "Cache-Cont
 
 export default async (req) => {
   const url = new URL(req.url);
-  const path = url.pathname.replace(/^\/tunestamp\/api\/?/, "");
+  const path = url.pathname.replace(/^\/chronosono\/api\/?/, "");
   let body = {};
   if (req.method === "POST") {
     try {
@@ -38,4 +38,4 @@ export default async (req) => {
   return new Response(JSON.stringify(out.json), { status: out.status, headers });
 };
 
-export const config = { path: "/tunestamp/api/*" };
+export const config = { path: "/chronosono/api/*" };

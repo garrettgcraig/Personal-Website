@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location('tunestamp_resolver', ROOT / 'scripts/tunestamp_resolve_spotify.py')
+spec = importlib.util.spec_from_file_location('chronosono_resolver', ROOT / 'scripts/chronosono_resolve_spotify.py')
 resolver = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(resolver)
 
