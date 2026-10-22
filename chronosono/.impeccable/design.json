@@ -1,0 +1,544 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T00:00:00Z",
+  "title": "Design System: ChronoSono",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Black Lacquer",
+        "canonical": "oklch(17.8% 0.003 68)",
+        "tonalRamp": [
+          "oklch(15% 0.003 68)",
+          "oklch(26% 0.003 68)",
+          "oklch(37% 0.003 68)",
+          "oklch(48% 0.003 68)",
+          "oklch(59% 0.003 68)",
+          "oklch(70% 0.003 68)",
+          "oklch(82% 0.003 68)",
+          "oklch(95% 0.003 68)"
+        ]
+      },
+      "ground-2": {
+        "role": "neutral",
+        "displayName": "Raised Lacquer",
+        "canonical": "oklch(21.9% 0.007 78)",
+        "tonalRamp": [
+          "oklch(15% 0.007 78)",
+          "oklch(26% 0.007 78)",
+          "oklch(37% 0.007 78)",
+          "oklch(48% 0.007 78)",
+          "oklch(59% 0.007 78)",
+          "oklch(70% 0.007 78)",
+          "oklch(82% 0.007 78)",
+          "oklch(95% 0.007 78)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(33.9% 0.010 74)",
+        "tonalRamp": [
+          "oklch(15% 0.010 74)",
+          "oklch(26% 0.010 74)",
+          "oklch(37% 0.010 74)",
+          "oklch(48% 0.010 74)",
+          "oklch(59% 0.010 74)",
+          "oklch(70% 0.010 74)",
+          "oklch(82% 0.010 74)",
+          "oklch(95% 0.010 74)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "oklch(45.6% 0.016 78)",
+        "tonalRamp": [
+          "oklch(15% 0.016 78)",
+          "oklch(26% 0.016 78)",
+          "oklch(37% 0.016 78)",
+          "oklch(48% 0.016 78)",
+          "oklch(59% 0.016 78)",
+          "oklch(70% 0.016 78)",
+          "oklch(82% 0.016 78)",
+          "oklch(95% 0.016 78)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Cream Paper",
+        "canonical": "oklch(95.3% 0.017 88)",
+        "tonalRamp": [
+          "oklch(15% 0.017 88)",
+          "oklch(26% 0.017 88)",
+          "oklch(37% 0.017 88)",
+          "oklch(48% 0.017 88)",
+          "oklch(59% 0.017 88)",
+          "oklch(70% 0.017 88)",
+          "oklch(82% 0.017 88)",
+          "oklch(95% 0.017 88)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Faded Label",
+        "canonical": "oklch(76.0% 0.023 83)",
+        "tonalRamp": [
+          "oklch(15% 0.023 83)",
+          "oklch(26% 0.023 83)",
+          "oklch(37% 0.023 83)",
+          "oklch(48% 0.023 83)",
+          "oklch(59% 0.023 83)",
+          "oklch(70% 0.023 83)",
+          "oklch(82% 0.023 83)",
+          "oklch(95% 0.023 83)"
+        ]
+      },
+      "paper-ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(20.7% 0.008 67)",
+        "tonalRamp": [
+          "oklch(15% 0.008 67)",
+          "oklch(26% 0.008 67)",
+          "oklch(37% 0.008 67)",
+          "oklch(48% 0.008 67)",
+          "oklch(59% 0.008 67)",
+          "oklch(70% 0.008 67)",
+          "oklch(82% 0.008 67)",
+          "oklch(95% 0.008 67)"
+        ]
+      },
+      "paper-muted": {
+        "role": "neutral",
+        "displayName": "Faded Ink",
+        "canonical": "oklch(43.2% 0.019 73)",
+        "tonalRamp": [
+          "oklch(15% 0.019 73)",
+          "oklch(26% 0.019 73)",
+          "oklch(37% 0.019 73)",
+          "oklch(48% 0.019 73)",
+          "oklch(59% 0.019 73)",
+          "oklch(70% 0.019 73)",
+          "oklch(82% 0.019 73)",
+          "oklch(95% 0.019 73)"
+        ]
+      },
+      "red": {
+        "role": "primary",
+        "displayName": "Jukebox Red",
+        "canonical": "oklch(53.8% 0.200 24)",
+        "tonalRamp": [
+          "oklch(15% 0.160 24)",
+          "oklch(26% 0.200 24)",
+          "oklch(37% 0.200 24)",
+          "oklch(48% 0.200 24)",
+          "oklch(59% 0.200 24)",
+          "oklch(70% 0.200 24)",
+          "oklch(82% 0.200 24)",
+          "oklch(95% 0.160 24)"
+        ]
+      },
+      "red-down": {
+        "role": "primary",
+        "displayName": "Red Down",
+        "canonical": "oklch(46.7% 0.172 24)",
+        "tonalRamp": [
+          "oklch(15% 0.160 24)",
+          "oklch(26% 0.172 24)",
+          "oklch(37% 0.172 24)",
+          "oklch(48% 0.172 24)",
+          "oklch(59% 0.172 24)",
+          "oklch(70% 0.172 24)",
+          "oklch(82% 0.172 24)",
+          "oklch(95% 0.160 24)"
+        ]
+      },
+      "mustard": {
+        "role": "secondary",
+        "displayName": "Selector Mustard",
+        "canonical": "oklch(80.2% 0.161 82)",
+        "tonalRamp": [
+          "oklch(15% 0.160 82)",
+          "oklch(26% 0.161 82)",
+          "oklch(37% 0.161 82)",
+          "oklch(48% 0.161 82)",
+          "oklch(59% 0.161 82)",
+          "oklch(70% 0.161 82)",
+          "oklch(82% 0.161 82)",
+          "oklch(95% 0.160 82)"
+        ]
+      },
+      "good": {
+        "role": "status",
+        "displayName": "Good",
+        "canonical": "oklch(77.3% 0.134 158)",
+        "tonalRamp": [
+          "oklch(15% 0.134 158)",
+          "oklch(26% 0.134 158)",
+          "oklch(37% 0.134 158)",
+          "oklch(48% 0.134 158)",
+          "oklch(59% 0.134 158)",
+          "oklch(70% 0.134 158)",
+          "oklch(82% 0.134 158)",
+          "oklch(95% 0.134 158)"
+        ]
+      },
+      "good-field": {
+        "role": "status",
+        "displayName": "Safe Field",
+        "canonical": "oklch(50.6% 0.094 169)",
+        "tonalRamp": [
+          "oklch(15% 0.094 169)",
+          "oklch(26% 0.094 169)",
+          "oklch(37% 0.094 169)",
+          "oklch(48% 0.094 169)",
+          "oklch(59% 0.094 169)",
+          "oklch(70% 0.094 169)",
+          "oklch(82% 0.094 169)",
+          "oklch(95% 0.094 169)"
+        ]
+      },
+      "bad": {
+        "role": "status",
+        "displayName": "Bad",
+        "canonical": "oklch(72.3% 0.172 28)",
+        "tonalRamp": [
+          "oklch(15% 0.160 28)",
+          "oklch(26% 0.172 28)",
+          "oklch(37% 0.172 28)",
+          "oklch(48% 0.172 28)",
+          "oklch(59% 0.172 28)",
+          "oklch(70% 0.172 28)",
+          "oklch(82% 0.172 28)",
+          "oklch(95% 0.160 28)"
+        ]
+      },
+      "d1950": {
+        "role": "tertiary",
+        "displayName": "1950s Ink (red)",
+        "canonical": "oklch(53.8% 0.200 24)",
+        "tonalRamp": [
+          "oklch(15% 0.160 24)",
+          "oklch(26% 0.200 24)",
+          "oklch(37% 0.200 24)",
+          "oklch(48% 0.200 24)",
+          "oklch(59% 0.200 24)",
+          "oklch(70% 0.200 24)",
+          "oklch(82% 0.200 24)",
+          "oklch(95% 0.160 24)"
+        ]
+      },
+      "d1960": {
+        "role": "tertiary",
+        "displayName": "1960s Ink (blue)",
+        "canonical": "oklch(44.9% 0.153 261)",
+        "tonalRamp": [
+          "oklch(15% 0.153 261)",
+          "oklch(26% 0.153 261)",
+          "oklch(37% 0.153 261)",
+          "oklch(48% 0.153 261)",
+          "oklch(59% 0.153 261)",
+          "oklch(70% 0.153 261)",
+          "oklch(82% 0.153 261)",
+          "oklch(95% 0.153 261)"
+        ]
+      },
+      "d1970": {
+        "role": "tertiary",
+        "displayName": "1970s Ink (orange)",
+        "canonical": "oklch(62.8% 0.155 50)",
+        "tonalRamp": [
+          "oklch(15% 0.155 50)",
+          "oklch(26% 0.155 50)",
+          "oklch(37% 0.155 50)",
+          "oklch(48% 0.155 50)",
+          "oklch(59% 0.155 50)",
+          "oklch(70% 0.155 50)",
+          "oklch(82% 0.155 50)",
+          "oklch(95% 0.155 50)"
+        ]
+      },
+      "d1980": {
+        "role": "tertiary",
+        "displayName": "1980s Ink (magenta)",
+        "canonical": "oklch(54.1% 0.172 359)",
+        "tonalRamp": [
+          "oklch(15% 0.160 359)",
+          "oklch(26% 0.172 359)",
+          "oklch(37% 0.172 359)",
+          "oklch(48% 0.172 359)",
+          "oklch(59% 0.172 359)",
+          "oklch(70% 0.172 359)",
+          "oklch(82% 0.172 359)",
+          "oklch(95% 0.160 359)"
+        ]
+      },
+      "d1990": {
+        "role": "tertiary",
+        "displayName": "1990s Ink (green)",
+        "canonical": "oklch(57.3% 0.106 170)",
+        "tonalRamp": [
+          "oklch(15% 0.106 170)",
+          "oklch(26% 0.106 170)",
+          "oklch(37% 0.106 170)",
+          "oklch(48% 0.106 170)",
+          "oklch(59% 0.106 170)",
+          "oklch(70% 0.106 170)",
+          "oklch(82% 0.106 170)",
+          "oklch(95% 0.106 170)"
+        ]
+      },
+      "d2000": {
+        "role": "tertiary",
+        "displayName": "2000s Ink (violet)",
+        "canonical": "oklch(44.2% 0.134 295)",
+        "tonalRamp": [
+          "oklch(15% 0.134 295)",
+          "oklch(26% 0.134 295)",
+          "oklch(37% 0.134 295)",
+          "oklch(48% 0.134 295)",
+          "oklch(59% 0.134 295)",
+          "oklch(70% 0.134 295)",
+          "oklch(82% 0.134 295)",
+          "oklch(95% 0.134 295)"
+        ]
+      },
+      "d2010": {
+        "role": "tertiary",
+        "displayName": "2010s Ink (gold)",
+        "canonical": "oklch(74.4% 0.147 83)",
+        "tonalRamp": [
+          "oklch(15% 0.147 83)",
+          "oklch(26% 0.147 83)",
+          "oklch(37% 0.147 83)",
+          "oklch(48% 0.147 83)",
+          "oklch(59% 0.147 83)",
+          "oklch(70% 0.147 83)",
+          "oklch(82% 0.147 83)",
+          "oklch(95% 0.147 83)"
+        ]
+      },
+      "d2020": {
+        "role": "tertiary",
+        "displayName": "2020s Ink (steel blue)",
+        "canonical": "oklch(56.8% 0.107 238)",
+        "tonalRamp": [
+          "oklch(15% 0.107 238)",
+          "oklch(26% 0.107 238)",
+          "oklch(37% 0.107 238)",
+          "oklch(48% 0.107 238)",
+          "oklch(59% 0.107 238)",
+          "oklch(70% 0.107 238)",
+          "oklch(82% 0.107 238)",
+          "oklch(95% 0.107 238)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Wordmark and game-over headline."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Stage titles: whose turn it is and what to do; verdicts."
+      },
+      "key": {
+        "displayName": "Key",
+        "purpose": "Years, room codes, counts, countdown; always tabular."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Uppercase section headings and team names."
+      },
+      "strip-title": {
+        "displayName": "Strip Title",
+        "purpose": "Song titles on paper strips."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, rail titles, disclosure summaries."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Sentences; ledes cap at 46ch, hints at 60ch."
+      },
+      "body-small": {
+        "displayName": "Body Small",
+        "purpose": "Hints, artist lines, blurbs, counts."
+      }
+    },
+    "shadows": [
+      {
+        "name": "toast-lift",
+        "value": "0 10px 28px rgba(0, 0, 0, 0.55)",
+        "purpose": "The toast only; everything else is flat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Reveal flip and toast entrance."
+      },
+      {
+        "name": "state",
+        "value": "120ms",
+        "purpose": "Background, border, and color changes on controls, slots, and dial bars."
+      },
+      {
+        "name": "toast",
+        "value": "180ms",
+        "purpose": "Toast fade and 16px rise."
+      },
+      {
+        "name": "reveal-flip",
+        "value": "620ms, rotateX(-96deg) to 0 from the top edge, brightness 0.45 to 1",
+        "purpose": "The fresh reveal strip turning over."
+      },
+      {
+        "name": "logo-cycle",
+        "value": "15s; minute hand 3s, hour hand 36s, both counterclockwise",
+        "purpose": "Home-screen logo morph through record, cassette, CD, iPod, app tile. Static in game bars; rests on the record under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "max-width: 420px"
+      },
+      {
+        "name": "wide",
+        "value": "min-width: 900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action in a view: Join, Start game, Lock in.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Lock in</button>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-btn{font-family:var(--label);font-weight:700;font-size:1.05rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text);background:transparent;border:1px solid var(--rule-strong);border-radius:2px;padding:0.5em 1.1em;min-height:48px;cursor:pointer;transition:background-color 120ms,border-color 120ms,color 120ms;} .ds-btn:hover{border-color:var(--text);} .ds-btn:active{transform:translateY(1px);} .ds-btn:focus-visible{outline:3px solid var(--mustard);outline-offset:3px;} .ds-btn-primary{background:var(--red);border-color:var(--red);color:#fff;} .ds-btn-primary:hover{background:var(--red-down);border-color:var(--red-down);}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Secondary actions: share invite, no challenge, leave game.",
+      "html": "<button class=\"ds-btn\">No challenge</button>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-btn{font-family:var(--label);font-weight:700;font-size:1.05rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text);background:transparent;border:1px solid var(--rule-strong);border-radius:2px;padding:0.5em 1.1em;min-height:48px;cursor:pointer;transition:background-color 120ms,border-color 120ms,color 120ms;} .ds-btn:hover{border-color:var(--text);} .ds-btn:active{transform:translateY(1px);} .ds-btn:focus-visible{outline:3px solid var(--mustard);outline-offset:3px;} "
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Year-range presets; the selected one fills mustard.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-chip ds-chip-on\">1980s</button><button class=\"ds-chip\">1990s</button><button class=\"ds-chip\">All years</button></div>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-chip{font-family:var(--label);font-size:0.98rem;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--rule-strong);border-radius:2px;padding:0.35em 0.85em;min-height:42px;cursor:pointer;} .ds-chip:hover{border-color:var(--text);} .ds-chip:focus-visible{outline:3px solid var(--mustard);outline-offset:3px;} .ds-chip-on{background:var(--mustard);border-color:var(--mustard);color:var(--paper-ink);}"
+    },
+    {
+      "name": "Room Code Input",
+      "kind": "input",
+      "refersTo": "code-input",
+      "description": "The join field: a paper slip with a red band, set in the gothic key face.",
+      "html": "<label class=\"ds-field\"><span>Room code</span><input class=\"ds-code\" type=\"text\" maxlength=\"4\" value=\"KQTB\"></label>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-field{display:grid;gap:6px;} .ds-field>span{font-family:var(--label);font-size:0.98rem;font-weight:600;color:var(--muted);} .ds-code{min-height:64px;padding:0.15em 0.5em;text-transform:uppercase;letter-spacing:0.3em;font-family:var(--key);font-size:2.4rem;line-height:1;background:var(--paper);color:var(--paper-ink);border:0;border-top:7px solid var(--red);border-radius:0;caret-color:var(--red);width:100%;} .ds-code:focus{outline:none;box-shadow:0 0 0 3px var(--mustard);}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Team name and other text entry on raised lacquer.",
+      "html": "<label class=\"ds-field\"><span>Team name</span><input class=\"ds-input\" type=\"text\" value=\"The Back Row\"></label>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-field{display:grid;gap:6px;} .ds-field>span{font-family:var(--label);font-size:0.98rem;font-weight:600;color:var(--muted);} .ds-input{font-family:var(--body);font-size:17px;color:var(--text);background:var(--ground-2);border:1px solid var(--rule-strong);border-radius:2px;padding:0.5em 0.75em;min-height:52px;width:100%;} .ds-input:focus{border-color:var(--mustard);outline:none;box-shadow:0 0 0 1px var(--mustard);}"
+    },
+    {
+      "name": "Title Strip Rack",
+      "kind": "custom",
+      "refersTo": "strip",
+      "description": "The signature: a team's timeline of paper strips with decade bands, the hidden song face down, and a live slot.",
+      "html": "<div class=\"ds-rack\"><div class=\"ds-strip\" style=\"--deck:var(--d1960)\"><span class=\"ds-year\">1966</span><span class=\"ds-title\">Good Vibrations</span><span class=\"ds-artist\">The Beach Boys</span></div><button class=\"ds-slot\">Put it here</button><div class=\"ds-strip ds-mystery\"><span class=\"ds-year\">?</span><span class=\"ds-title\">This song</span><span class=\"ds-artist\">Year hidden until the reveal</span></div><div class=\"ds-strip\" style=\"--deck:var(--d1990)\"><span class=\"ds-year\">1991</span><span class=\"ds-title\">Under the Bridge</span><span class=\"ds-artist\">Red Hot Chili Peppers</span></div></div>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-rack{display:flex;flex-direction:column;gap:8px;background:var(--ground);padding:12px;} .ds-strip{display:grid;grid-template-columns:4.6rem 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;background:var(--paper);color:var(--paper-ink);border-top:7px solid var(--deck,var(--mustard));padding:8px 14px 9px 12px;min-height:66px;} .ds-year{grid-row:1/3;font-family:var(--key);font-size:2.5rem;line-height:1;font-variant-numeric:tabular-nums;} .ds-title{font-family:var(--label);font-weight:700;font-size:1.12rem;line-height:1.15;text-transform:uppercase;letter-spacing:0.01em;} .ds-artist{font-family:var(--body);font-size:0.92rem;line-height:1.25;color:var(--paper-muted);} .ds-mystery{border-top-color:var(--mustard);background:var(--ground-2);color:var(--text);border-left:1px dashed var(--rule-strong);border-right:1px dashed var(--rule-strong);border-bottom:1px dashed var(--rule-strong);} .ds-mystery .ds-year{color:var(--mustard);} .ds-mystery .ds-artist{color:var(--muted);} .ds-slot{height:50px;background:var(--ground-2);border:1px solid var(--rule);border-top:7px solid var(--rule-strong);color:var(--text);font-family:var(--label);font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:background-color 120ms,color 120ms,border-color 120ms;} .ds-slot:hover{background:var(--mustard);border-color:var(--mustard);color:var(--paper-ink);} .ds-slot:focus-visible{outline:3px solid var(--mustard);outline-offset:3px;}"
+    },
+    {
+      "name": "Reveal Strip",
+      "kind": "card",
+      "refersTo": "strip-big",
+      "description": "The song turned over at the reveal; flips in from its top edge.",
+      "html": "<div class=\"ds-big\" style=\"--deck:var(--d1990)\"><span class=\"ds-year\">1991</span><span class=\"ds-title\">Under the Bridge</span><span class=\"ds-artist\">Red Hot Chili Peppers</span></div>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-big{display:grid;background:var(--paper);color:var(--paper-ink);border-top:12px solid var(--deck);padding:14px 18px 18px;transform-origin:50% 0;animation:ds-flip 620ms var(--ease-out) both;} .ds-year{font-family:var(--key);font-size:6rem;line-height:0.9;font-variant-numeric:tabular-nums;} .ds-title{font-family:var(--label);font-weight:700;font-size:1.6rem;line-height:1.15;text-transform:uppercase;letter-spacing:0.01em;margin-top:6px;} .ds-artist{font-family:var(--body);font-size:1.1rem;color:var(--paper-muted);} @keyframes ds-flip{from{transform:perspective(900px) rotateX(-96deg);filter:brightness(0.45);}to{transform:none;filter:none;}} @media (prefers-reduced-motion:reduce){.ds-big{animation:none;}}"
+    },
+    {
+      "name": "Score Row",
+      "kind": "custom",
+      "refersTo": "score-on",
+      "description": "Hairline grid of team cells; the active team fills mustard.",
+      "html": "<div class=\"ds-scores\"><div class=\"ds-score ds-on\"><span class=\"ds-name\">The Back Row</span><span class=\"ds-cards\">4 cards</span><span class=\"ds-tokens\"><i class=\"ds-dot ds-full\"></i><i class=\"ds-dot ds-full\"></i><i class=\"ds-dot\"></i></span></div><div class=\"ds-score\"><span class=\"ds-name\">Kitchen</span><span class=\"ds-cards\">3 cards</span><span class=\"ds-tokens\"><i class=\"ds-dot ds-full\"></i><i class=\"ds-dot\"></i><i class=\"ds-dot\"></i></span></div></div>",
+      "css": ":host{--ground:#121110;--ground-2:#1c1a17;--rule:#3b3732;--rule-strong:#5c564d;--text:#f4efe3;--muted:#b8b0a1;--paper:#f4efe3;--paper-ink:#1a1714;--paper-muted:#574f45;--red:#c8202f;--red-down:#a51a26;--mustard:#f2b21b;--d1960:#1f4fa8;--d1990:#1c8c6e;--key:'League Gothic','Barlow Condensed',sans-serif;--label:'Barlow Condensed','Barlow',sans-serif;--body:'Barlow',system-ui,sans-serif;--ease-out:cubic-bezier(0.16,1,0.3,1);} .ds-scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);} .ds-score{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;background:var(--ground);color:var(--text);padding:10px 12px;} .ds-on{background:var(--mustard);color:var(--paper-ink);} .ds-name{font-family:var(--label);font-weight:700;font-size:1.08rem;text-transform:uppercase;letter-spacing:0.02em;grid-column:1/-1;} .ds-cards{font-family:var(--body);font-size:0.9rem;color:var(--muted);font-variant-numeric:tabular-nums;} .ds-on .ds-cards{color:var(--paper-ink);} .ds-tokens{display:flex;gap:4px;} .ds-dot{width:10px;height:10px;border:1.5px solid currentColor;display:inline-block;opacity:0.55;} .ds-full{background:currentColor;opacity:1;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Jukebox Title Rack",
+    "overview": "Every song in ChronoSono is a printed paper title strip: cream stock, a flat band of ink across the top that names its decade, and the year set large in a condensed gothic as the selection key. A team's timeline is a rack of these strips stacked on black lacquer. The hidden song is the one strip still face down, a dark dashed blank with a mustard band and a question mark, and the reveal turns it over like a page in the rack.\n\nThe system is built for a dim living room and an arm's-length read. Contrast is high, type is tall and condensed, tap targets start at 40px and the important ones are 48px to 60px. Chrome is quiet: white-on-black labels, one-pixel rules between sections, lists that read as ruled ledgers rather than stacked cards. Color lives on paper (the decade bands) and in two signals: red for the brand and the main action, mustard for \"this one, now.\"\n\nTwo things move: the logo on the home screen and the reveal flip. Everything else changes state in 120ms or less, and reduced motion stops all of it.",
+    "keyCharacteristics": [
+      "Black lacquer ground, cream paper strips, ink type on paper.",
+      "One flat colored top band per decade, eight decades, never a gradient.",
+      "League Gothic for years, codes, counts, and short commands; Barlow Condensed uppercase for labels; Barlow for sentences.",
+      "Square surfaces; a 2px corner only on tappable controls.",
+      "Depth by tone (ground, raised ground, paper), separated by one-pixel rules.",
+      "A morphing logo: a clock running backward carried through record, cassette, CD, iPod, and app tile."
+    ],
+    "rules": [
+      {
+        "name": "The Decade Ink Rule",
+        "body": "Decade color appears only as the flat top band of a paper strip, and every band sits beside its year in type. Color is never the only cue for a decade.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mustard Means Now Rule",
+        "body": "Mustard marks the one selected, current, or focused thing on screen. If nothing is selected, there is no mustard.",
+        "section": "colors"
+      },
+      {
+        "name": "The Red Is the Brand Rule",
+        "body": "Red marks the brand (logo, room code) and the single primary action in a view. It is not used for errors; errors use bad.",
+        "section": "colors"
+      },
+      {
+        "name": "The Gothic Key Rule",
+        "body": "League Gothic is for numbers, codes, names of the moment, and commands of a few words. It never sets a sentence.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Count Rule",
+        "body": "Every number that changes or lines up (years, codes, counts, scores, the countdown) uses tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Rack Rule",
+        "body": "Strips, panels, buttons, and cells sit flat on the ground. Separation comes from tone and hairlines, never from shadows or glows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put every song on a paper strip with its decade band on top and its year in League Gothic beside it.",
+      "**Do** keep decade color to the band; the year in type is the cue that does not rely on color.",
+      "**Do** use mustard for exactly what is selected, current, or focused, and red for the brand and the one primary action.",
+      "**Do** separate sections and list rows with one-pixel rules on the open ground instead of boxing them.",
+      "**Do** keep tap targets at 48px or more for anything used mid-game (40px only for small secondary buttons).",
+      "**Do** use tabular figures for every number that changes.",
+      "**Do** keep motion to the logo and the reveal, with state transitions at 120ms, and honor reduced motion."
+    ],
+    "donts": [
+      "**Don't** round surfaces; strips, panels, banners, and cells stay square, and controls stop at 2px.",
+      "**Don't** use glows or soft gradients. Hard-stop gradients that draw a crisp line (the dial handles) are fine.",
+      "**Don't** add shadows to strips, panels, or buttons; the toast is the only lifted element.",
+      "**Don't** set sentences in League Gothic or in uppercase.",
+      "**Don't** show a song title, artist, or year before the reveal; the mystery strip is the only representation of the current song.",
+      "**Don't** use real brand logos in the mark or anywhere else."
+    ]
+  }
+}

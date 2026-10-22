@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DJ phone test</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#10262b">
+<style>
+  :root { --bg:#10262b; --panel:#163238; --line:#2e5159; --text:#efe6d2; --muted:#a3b8b2; --amber:#f5a623; --ink:#15201e; --good:#a8d672; --bad:#ee8a74; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:17px/1.5 system-ui, -apple-system, sans-serif; }
+  main { max-width:560px; margin:0 auto; padding:28px 18px 80px; }
+  h1 { font-size:2rem; line-height:1.1; margin:0 0 8px; letter-spacing:-0.02em; }
+  h2 { font-size:1.1rem; margin:0 0 8px; }
+  p { margin:0 0 10px; }
+  .muted { color:var(--muted); font-size:.92rem; }
+  section { background:var(--panel); border-radius:14px; padding:18px; margin:16px 0; }
+  input { width:100%; font:inherit; color:var(--text); background:#0b1c20; border:1.5px solid var(--line); border-radius:10px; padding:.6em .75em; min-height:44px; }
+  input:focus { outline:none; border-color:var(--amber); }
+  .btn { display:inline-flex; align-items:center; justify-content:center; font:inherit; font-weight:650; color:var(--ink); background:var(--amber); border:0; border-radius:10px; padding:.7em 1.1em; min-height:48px; text-decoration:none; margin:6px 8px 0 0; cursor:pointer; }
+  .btn.quiet { background:transparent; color:var(--text); border:1.5px solid var(--line); }
+  .status { font-weight:650; }
+  .ok { color:var(--good); } .bad { color:var(--bad); }
+  ol { padding-left:1.2em; margin:6px 0 0; } li { margin-bottom:6px; }
+  #blind { position:fixed; inset:0; display:none; z-index:10; background:#000; color:#333; text-decoration:none; font-size:1rem; align-items:center; justify-content:center; text-align:center; padding:24px; }
+  #blind.armed { display:flex; }
+</style>
+</head>
+<body>
+<main>
+  <h1>DJ phone test</h1>
+  <p class="muted">Three quick tests on the phone you'd use as the DJ phone. They show whether the no-API version of the game can work. Have Spotify installed and logged in.</p>
+
+  <section>
+    <h2>1. Pick a song</h2>
+    <p class="muted">In Spotify, open any song, tap Share, then Copy link, and paste it here. Or keep the sample.</p>
+    <input id="link" inputmode="url" autocomplete="off" spellcheck="false" value="https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT">
+    <p id="parsed" class="muted"></p>
+  </section>
+
+  <section>
+    <h2>2. Plain tap</h2>
+    <p>Tap the button with the screen facing you. Then note what happens.</p>
+    <a id="plain" class="btn" href="#">Open song in Spotify</a>
+    <a id="scheme" class="btn quiet" href="#">Try the spotify: version</a>
+    <p class="muted">Afterward, come back to this page and try the other button.</p>
+  </section>
+
+  <section>
+    <h2>3. Face-down tap</h2>
+    <p>This is how the DJ phone would work. Tap Start, then turn the phone so the screen faces the floor. You'll hear two beeps when it's ready. Then tap anywhere on the screen without looking.</p>
+    <button id="startB" class="btn">Start</button>
+    <p id="tilt" class="status muted">Not started.</p>
+  </section>
+
+  <section>
+    <h2>What to tell me</h2>
+    <ol>
+      <li>Did Spotify open, or did the song open in the browser?</li>
+      <li>Did the song start playing on its own, or did you have to press play?</li>
+      <li>Did the face-down tap work?</li>
+      <li>With the screen locked, does the lock screen show the song name?</li>
+    </ol>
+    <p class="muted">Also mention iPhone or Android, and whether you use Spotify Free or Premium.</p>
+  </section>
+</main>
+
+<a id="blind" href="#">Tap anywhere</a>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function trackId() {
+  const raw = $("link").value.trim();
+  const m = raw.match(/track[/:]([A-Za-z0-9]{22})/);
+  return m ? m[1] : null;
+}
+
+function refreshLinks() {
+  const id = trackId();
+  $("parsed").textContent = id ? `Song ID ${id}` : "That doesn't look like a Spotify song link.";
+  $("parsed").className = id ? "muted ok" : "muted bad";
+  const web = id ? `https://open.spotify.com/track/${id}` : "#";
+  $("plain").href = web;
+  $("blind").href = web;
+  $("scheme").href = id ? `spotify:track:${id}` : "#";
+}
+$("link").addEventListener("input", refreshLinks);
+refreshLinks();
+
+// Two short beeps so the person knows the phone is armed without looking at it.
+let audio = null;
+function beep() {
+  if (!audio) return;
+  const t = audio.currentTime;
+  [0, 0.22].forEach((offset) => {
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.frequency.value = 880;
+    g.gain.setValueAtTime(0.0001, t + offset);
+    g.gain.exponentialRampToValueAtTime(0.4, t + offset + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.15);
+    o.connect(g).connect(audio.destination);
+    o.start(t + offset);
+    o.stop(t + offset + 0.16);
+  });
+}
+
+let downSince = null;
+let armed = false;
+// How far the screen points away from the sky: 0° face up, 90° standing on an edge,
+// 180° face down. Combines front-to-back tilt (beta) and side-to-side tilt (gamma),
+// so it reads the same in portrait and landscape.
+function screenAngle(beta, gamma) {
+  const r = Math.PI / 180;
+  const up = Math.cos(beta * r) * Math.cos(gamma * r);
+  return Math.acos(Math.max(-1, Math.min(1, up))) / r;
+}
+
+function describe(angle) {
+  if (angle >= 145) return "Face down. Tap anywhere.";
+  if (angle >= 115) return `Almost face down (${Math.round(angle)}°). Lay it flat.`;
+  if (angle >= 65) return `Standing on its edge, screen facing sideways (${Math.round(angle)}°). Lay it face down.`;
+  if (angle >= 35) return `Tilted, screen visible (${Math.round(angle)}°). Turn it over.`;
+  return `Face up (${Math.round(angle)}°). Turn it over.`;
+}
+
+function onOrient(e) {
+  if (e.beta === null || e.beta === undefined || e.gamma === null || e.gamma === undefined) return;
+  const angle = screenAngle(e.beta, e.gamma);
+  const faceDown = angle >= 145;
+  $("tilt").textContent = describe(angle);
+  $("tilt").className = "status " + (faceDown ? "ok" : "muted");
+  if (faceDown) {
+    if (downSince === null) downSince = Date.now();
+    if (!armed && Date.now() - downSince > 600) {
+      armed = true;
+      $("blind").classList.add("armed");
+      beep();
+    }
+  } else {
+    downSince = null;
+    if (armed) {
+      armed = false;
+      $("blind").classList.remove("armed");
+    }
+  }
+}
+
+$("startB").addEventListener("click", async () => {
+  if (!trackId()) return;
+  // Safari grants motion access only when asked during the tap itself, so this call
+  // must come before any await. The sound setup also starts here without waiting.
+  const needsPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+  const permission = needsPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted");
+  try {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+    audio.resume();
+  } catch {}
+  try {
+    const res = await permission;
+    if (res !== "granted") {
+      $("tilt").textContent = "Motion access was declined. In Safari, open Settings > Apps > Safari > Advanced, turn on Motion & Orientation Access if you see it, then reload and try again.";
+      $("tilt").className = "status bad";
+      return;
+    }
+  } catch (err) {
+    $("tilt").textContent = `This browser wouldn't share motion data (${err && err.name ? err.name : "unknown error"}).`;
+    $("tilt").className = "status bad";
+    return;
+  }
+  window.addEventListener("deviceorientation", onOrient);
+  $("tilt").textContent = "Waiting for motion data. Turn the phone over.";
+  setTimeout(() => {
+    if ($("tilt").textContent.startsWith("Waiting")) {
+      $("tilt").textContent = "No motion data arrived. This works on phones only.";
+      $("tilt").className = "status bad";
+    }
+  }, 4000);
+});
+
+// After returning from Spotify, reset so the test can run again.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    armed = false;
+    downSince = null;
+    $("blind").classList.remove("armed");
+  }
+});
+</script>
+</body>
+</html>
