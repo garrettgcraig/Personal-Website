@@ -1,10 +1,10 @@
 # Tunestamp catalog report
 
-Updated 2026-10-22 15:33 UTC.
+Updated 2026-10-22 15:36 UTC.
 
-457 of 590 songs have a Spotify ID and can be played. Songs without one are left out of the game.
+483 of 590 songs have a Spotify ID and can be played. Songs without one are left out of the game.
 
-Where the IDs came from: billboard 322, tidytuesday 135.
+Where the IDs came from: billboard 322, tidytuesday 135, wikidata 26.
 
 ## Years that disagree by two or more
 
@@ -21,7 +21,7 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Latch, Disclosure: listed 2012, Billboard year-end chart 2014
 - Take Me to Church, Hozier: listed 2013, Billboard year-end chart 2015
 
-## No Spotify ID yet (133)
+## No Spotify ID yet (107)
 
 - Rock Around the Clock, Bill Haley & His Comets (1954)
 - Mr. Sandman, The Chordettes (1954)
@@ -32,7 +32,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Heartbreak Hotel, Elvis Presley (1956)
 - Hound Dog, Elvis Presley (1956)
 - Blue Suede Shoes, Carl Perkins (1956)
-- I Walk the Line, Johnny Cash (1956)
 - Blueberry Hill, Fats Domino (1956)
 - Be-Bop-A-Lula, Gene Vincent (1956)
 - Why Do Fools Fall in Love, Frankie Lymon & The Teenagers (1956)
@@ -48,7 +47,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - All I Have to Do Is Dream, The Everly Brothers (1958)
 - Fever, Peggy Lee (1958)
 - Lollipop, The Chordettes (1958)
-- Tequila, The Champs (1958)
 - Splish Splash, Bobby Darin (1958)
 - Chantilly Lace, The Big Bopper (1958)
 - Lonely Teardrops, Jackie Wilson (1958)
@@ -56,25 +54,13 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Dream Lover, Bobby Darin (1959)
 - What'd I Say, Ray Charles (1959)
 - Put Your Head on My Shoulder, Paul Anka (1959)
-- Crazy, Patsy Cline (1961)
-- Louie Louie, The Kingsmen (1963)
 - Dancing in the Street, Martha and the Vandellas (1964)
-- Help!, The Beatles (1965)
-- Yesterday, The Beatles (1965)
 - I Got You (I Feel Good), James Brown (1965)
-- Eleanor Rigby, The Beatles (1966)
 - Hey Joe, The Jimi Hendrix Experience (1966)
-- Penny Lane, The Beatles (1967)
-- All You Need Is Love, The Beatles (1967)
 - (You Make Me Feel Like) A Natural Woman, Aretha Franklin (1967)
 - Purple Haze, The Jimi Hendrix Experience (1967)
-- What a Wonderful World, Louis Armstrong (1967)
 - All Along the Watchtower, The Jimi Hendrix Experience (1968)
-- Here Comes the Sun, The Beatles (1969)
-- Sugar, Sugar, The Archies (1969)
-- Your Song, Elton John (1970)
 - Oye Como Va, Santana (1970)
-- Life on Mars?, David Bowie (1971)
 - It's Too Late, Carole King (1971)
 - Free Bird, Lynyrd Skynyrd (1973)
 - Mamma Mia, ABBA (1975)
@@ -86,12 +72,9 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Super Freak, Rick James (1981)
 - Flashdance... What a Feeling, Irene Cara (1983)
 - Purple Rain, Prince (1984)
-- Ghostbusters, Ray Parker Jr. (1984)
 - We Are the World, USA for Africa (1985)
-- Running Up That Hill (A Deal with God), Kate Bush (1985)
 - Wild Thing, Tone Loc (1988)
 - Ride on Time, Black Box (1989)
-- Parklife, Blur (1994)
 - Killing Me Softly, Fugees (1996)
 - Men in Black, Will Smith (1997)
 - Iris, Goo Goo Dolls (1998)
@@ -102,7 +85,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Alright, Kendrick Lamar (2015)
 - Cruel Summer, Taylor Swift (2019)
 - Levitating, Dua Lipa (2020)
-- Dynamite, BTS (2020)
 - WAP, Cardi B (2020)
 - Savage Love (Laxed - Siren Beat), Jawsh 685 (2020)
 - Mood, 24kGoldn (2020)
@@ -110,7 +92,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Pink Pony Club, Chappell Roan (2020)
 - drivers license, Olivia Rodrigo (2021)
 - good 4 u, Olivia Rodrigo (2021)
-- Butter, BTS (2021)
 - STAY, The Kid LAROI (2021)
 - MONTERO (Call Me By Your Name), Lil Nas X (2021)
 - Peaches, Justin Bieber (2021)
@@ -119,11 +100,8 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Shivers, Ed Sheeran (2021)
 - Easy On Me, Adele (2021)
 - As It Was, Harry Styles (2022)
-- Anti-Hero, Taylor Swift (2022)
 - About Damn Time, Lizzo (2022)
-- Unholy, Sam Smith (2022)
 - Kill Bill, SZA (2022)
-- Calm Down, Rema (2022)
 - Tití Me Preguntó, Bad Bunny (2022)
 - Me Porto Bonito, Bad Bunny (2022)
 - Flowers, Miley Cyrus (2023)
@@ -141,7 +119,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Please Please Please, Sabrina Carpenter (2024)
 - BIRDS OF A FEATHER, Billie Eilish (2024)
 - TEXAS HOLD 'EM, Beyoncé (2024)
-- A Bar Song (Tipsy), Shaboozey (2024)
 - Not Like Us, Kendrick Lamar (2024)
 - Good Luck, Babe!, Chappell Roan (2024)
 - Beautiful Things, Benson Boone (2024)
@@ -150,9 +127,6 @@ Another source dates these songs differently from `tunestamp/songs.js`. Chart ye
 - Too Sweet, Hozier (2024)
 - Messy, Lola Young (2024)
 - luther, Kendrick Lamar (2024)
-- Sailor Song, Gigi Perez (2024)
 - Abracadabra, Lady Gaga (2025)
 - Ordinary, Alex Warren (2025)
 - Manchild, Sabrina Carpenter (2025)
-- Golden, HUNTR/X (2025)
-- The Fate of Ophelia, Taylor Swift (2025)

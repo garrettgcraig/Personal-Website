@@ -11,6 +11,10 @@
   "source": "billboard",
   "spotify": "50uGbeaQIxKiSc7jvRTjWx"
  },
+ "(You Make Me Feel Like) A Natural Woman|Aretha Franklin": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "...Baby One More Time|Britney Spears": {
   "chartYear": 1999,
   "checked": "2026-10-22",
@@ -34,6 +38,12 @@
   "source": "billboard",
   "spotify": "6HA97v4wEGQ5TUClRM0XLc"
  },
+ "A Bar Song (Tipsy)|Shaboozey": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "2FQrifJ1N335Ljm3TjTVVf",
+  "wikidataYear": 2024
+ },
  "A Hard Day's Night|The Beatles": {
   "chartYear": 1964,
   "checked": "2026-10-22",
@@ -51,6 +61,18 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6wDviYDtmSDZ0S6TVMM9Vc"
+ },
+ "APT.|ROSÉ": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "About Damn Time|Lizzo": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Abracadabra|Lady Gaga": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Africa|Toto": {
   "chartYear": 1983,
@@ -76,6 +98,14 @@
   "source": "billboard",
   "spotify": "0ifSeVGUr7py5GggttDhXw"
  },
+ "All Along the Watchtower|The Jimi Hendrix Experience": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "All I Have to Do Is Dream|The Everly Brothers": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "All Star|Smash Mouth": {
   "chartYear": 1999,
   "checked": "2026-10-22",
@@ -87,6 +117,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4eLQPgkIwZI6OlllntlLdF"
+ },
+ "All You Need Is Love|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "68BTFws92cRztMS1oQ7Ewj",
+  "wikidataYear": null
+ },
+ "Alright|Kendrick Lamar": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "American Idiot|Green Day": {
   "checked": "2026-10-22",
@@ -121,6 +161,12 @@
   "source": "billboard",
   "spotify": "57JVGBtBLCfHw2muk5416J"
  },
+ "Anti-Hero|Taylor Swift": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "02Zkkf2zMkwRGQjZ7T4p8f",
+  "wikidataYear": 2022
+ },
  "Apologize|Timbaland": {
   "chartYear": 2007,
   "checked": "2026-10-22",
@@ -131,6 +177,14 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1pKYYY0dkg23sQQXi0Q5zN"
+ },
+ "As It Was|Harry Styles": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "BIRDS OF A FEATHER|Billie Eilish": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Baby Got Back|Sir Mix-A-Lot": {
   "chartYear": 1992,
@@ -148,6 +202,10 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "08mG3Y1vljYA6bvDt4Wqkj"
+ },
+ "Bad Habits|Ed Sheeran": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Bad Moon Rising|Creedence Clearwater Revival": {
   "chartYear": 1969,
@@ -190,6 +248,10 @@
   "source": "billboard",
   "spotify": "2G2YzndIA6jeWFPBXhUjh5"
  },
+ "Be-Bop-A-Lula|Gene Vincent": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Beat It|Michael Jackson": {
   "chartYear": 1983,
   "checked": "2026-10-22",
@@ -201,6 +263,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1VuBmEauSZywQVtqbxNqka"
+ },
+ "Beautiful Things|Benson Boone": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Believer|Imagine Dragons": {
   "checked": "2026-10-22",
@@ -281,6 +347,14 @@
   "source": "billboard",
   "spotify": "5FgtdSf7I5lClThz2ptWvl"
  },
+ "Blue Suede Shoes|Carl Perkins": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Blueberry Hill|Fats Domino": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Blurred Lines|Robin Thicke": {
   "chartYear": 2013,
   "checked": "2026-10-22",
@@ -358,11 +432,21 @@
   "source": "billboard",
   "spotify": "2EwS2VaAsnGrwMkpJaIjug"
  },
+ "Butter|BTS": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "6xQkWjHFvQk5JqHtq57Pqf",
+  "wikidataYear": null
+ },
  "Bye Bye Bye|*NSYNC": {
   "chartYear": 2000,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2yiZyjMEByt9sJBZWnWaDR"
+ },
+ "Bye Bye Love|The Everly Brothers": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "California Dreamin'|The Mamas & The Papas": {
   "chartYear": 1966,
@@ -392,6 +476,12 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0vLwL4xuJ3s7SeaCdvMqkY"
+ },
+ "Calm Down|Rema": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "3BnDvpeuGOj21Ir2aVEtQo",
+  "wikidataYear": 2022
  },
  "Can't Buy Me Love|The Beatles": {
   "chartYear": 1964,
@@ -445,6 +535,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4VrWlk8IQxevMvERoX08iC"
+ },
+ "Chantilly Lace|The Big Bopper": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Chasing Cars|Snow Patrol": {
   "chartYear": 2006,
@@ -523,6 +617,12 @@
   "source": "billboard",
   "spotify": "2N5zMZX7YeL1tico8oQxa9"
  },
+ "Crazy|Patsy Cline": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "3zpj9dvJABiyMrmLCPw6i8",
+  "wikidataYear": null
+ },
  "Creep|Radiohead": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -533,6 +633,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "09O3ddhGb522o4JzeMvmCo"
+ },
+ "Cruel Summer|Taylor Swift": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Da Doo Ron Ron|The Crystals": {
   "chartYear": 1963,
@@ -562,6 +666,10 @@
   "source": "billboard",
   "spotify": "7FwBtcecmlpc1sLySPXeGE"
  },
+ "Dancing in the Street|Martha and the Vandellas": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Daydream Believer|The Monkees": {
   "chartYear": 1967,
   "checked": "2026-10-22",
@@ -578,6 +686,14 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7Kt59L2ZZGtOnIhvMwzG6f"
+ },
+ "Diana|Paul Anka": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Die With A Smile|Lady Gaga": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Don't Leave Me This Way|Thelma Houston": {
   "chartYear": 1977,
@@ -625,6 +741,10 @@
   "source": "billboard",
   "spotify": "3L7RtEcu1Hw3OXrpnthngx"
  },
+ "Dream Lover|Bobby Darin": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Dream On|Aerosmith": {
   "chartYear": 1976,
   "checked": "2026-10-22",
@@ -637,11 +757,31 @@
   "source": "billboard",
   "spotify": "703BT1NQsfIwPFv8MXQ47m"
  },
+ "Dynamite|BTS": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "0v1x6rN6JHRapa03JElljE",
+  "wikidataYear": 2020
+ },
  "Dynamite|Taio Cruz": {
   "chartYear": 2010,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1DqdF42leyFIzqNDv9CjId"
+ },
+ "Earth Angel|The Penguins": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Easy On Me|Adele": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Eleanor Rigby|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "5GjPQ0eI7AgmOnADn1EO6Q",
+  "wikidataYear": null
  },
  "Empire State of Mind|JAY-Z": {
   "checked": "2026-10-22",
@@ -658,6 +798,10 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "5sICkBXVmaCQk5aISGR3x1"
+ },
+ "Espresso|Sabrina Carpenter": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Every Breath You Take|The Police": {
   "chartYear": 1983,
@@ -711,6 +855,10 @@
   "source": "billboard",
   "spotify": "3aw9iWUQ3VrPQltgwvN9Xu"
  },
+ "Fast Car|Luke Combs": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Fast Car|Tracy Chapman": {
   "chartYear": 1988,
   "checked": "2026-10-22",
@@ -727,6 +875,10 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6QgjcU0zLnzq5OrUoSZ3OK"
+ },
+ "Fever|Peggy Lee": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Fight the Power|Public Enemy": {
   "checked": "2026-10-22",
@@ -761,6 +913,14 @@
   "source": "tidytuesday",
   "spotify": "7LVHVU3tWfcxj5aiPFEW4Q"
  },
+ "Flashdance... What a Feeling|Irene Cara": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Flowers|Miley Cyrus": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Footloose|Kenny Loggins": {
   "chartYear": 1984,
   "checked": "2026-10-22",
@@ -771,6 +931,10 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "4BP3uh0hFLFRb5cjsgLqDh"
+ },
+ "Free Bird|Lynyrd Skynyrd": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Free Fallin'|Tom Petty": {
   "chartYear": 1990,
@@ -813,10 +977,20 @@
   "source": "billboard",
   "spotify": "2Foc5Q5nqNiosCNqttzHof"
  },
+ "Ghostbusters|Ray Parker Jr.": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "0phGofl3ppS5Itk1zM9eKa",
+  "wikidataYear": null
+ },
  "Gimme Shelter|The Rolling Stones": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6H3kDe7CGoWYBabAeVWGiD"
+ },
+ "Gimme! Gimme! Gimme! (A Man After Midnight)|ABBA": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Girls Just Want to Have Fun|Cyndi Lauper": {
   "chartYear": 1984,
@@ -845,6 +1019,16 @@
   "source": "billboard",
   "spotify": "1PS1QMdUqOal0ai3Gt7sDQ"
  },
+ "Golden|HUNTR/X": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "1CPZ5BxNNd0n0nF4Orb9JS",
+  "wikidataYear": null
+ },
+ "Good Luck, Babe!|Chappell Roan": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Good Times|Chic": {
   "chartYear": 1979,
   "checked": "2026-10-22",
@@ -856,6 +1040,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6aU6a9tdn2vHhnPGlboFZX"
+ },
+ "Great Balls of Fire|Jerry Lee Lewis": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "HUMBLE.|Kendrick Lamar": {
   "checked": "2026-10-22",
@@ -890,16 +1078,40 @@
   "source": "billboard",
   "spotify": "6XDdmCAuodZfXtEgJcxpS2"
  },
+ "Heartbreak Hotel|Elvis Presley": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Heat Waves|Glass Animals": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Hello|Adele": {
   "chartYear": 2015,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0ENSn4fwAbCGeFGVUbXEU3"
  },
+ "Help!|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "7DD7eSuYSC5xk2ArU62esN",
+  "wikidataYear": null
+ },
+ "Here Comes the Sun|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "6dGnYIeXmHdcikdzNNDMm2",
+  "wikidataYear": null
+ },
  "Heroes|David Bowie": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "7Jh1bpe76CNTCgdgAdBw4Z"
+ },
+ "Hey Joe|The Jimi Hendrix Experience": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Hey Jude|The Beatles": {
   "chartYear": 1968,
@@ -988,6 +1200,14 @@
   "source": "tidytuesday",
   "spotify": "0wwPcA6wtMf6HUMpIRdeP7"
  },
+ "Houdini|Dua Lipa": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Hound Dog|Elvis Presley": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "How Deep Is Your Love|Bee Gees": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1016,6 +1236,10 @@
   "source": "billboard",
   "spotify": "3xghtFHGhPSXuzDSYH7r2r"
  },
+ "I Got You (I Feel Good)|James Brown": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "I Gotta Feeling|The Black Eyed Peas": {
   "chartYear": 2009,
   "checked": "2026-10-22",
@@ -1039,6 +1263,12 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "49Nm3tdtTOZ0nwGDGcqK5w"
+ },
+ "I Walk the Line|Johnny Cash": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "1TKPfF2fvn6gVLVfp3iG4j",
+  "wikidataYear": 1956
  },
  "I Wanna Dance with Somebody (Who Loves Me)|Whitney Houston": {
   "chartYear": 1987,
@@ -1109,6 +1339,10 @@
   "source": "billboard",
   "spotify": "60a0Rd6pjrkxjPbaKzXjfq"
  },
+ "Iris|Goo Goo Dolls": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Ironic|Alanis Morissette": {
   "chartYear": 1996,
   "checked": "2026-10-22",
@@ -1120,6 +1354,14 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1G7DcLzPnopdZjLkev0K4e"
+ },
+ "Isn't She Lovely|Stevie Wonder": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "It's Too Late|Carole King": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Jailhouse Rock|Elvis Presley": {
   "checked": "2026-10-22",
@@ -1188,6 +1430,10 @@
   "source": "billboard",
   "spotify": "0q4xWbV08szzUpGPhVsrcD"
  },
+ "Kill Bill|SZA": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Killer Queen|Queen": {
   "chartYear": 1975,
   "checked": "2026-10-22",
@@ -1200,10 +1446,18 @@
   "source": "billboard",
   "spotify": "60SJRvzXJnVeVfS4RiH14u"
  },
+ "Killing Me Softly|Fugees": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Killing in the Name|Rage Against the Machine": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "59WN2psjkt1tyaxjspN8fp"
+ },
+ "Kiss Me More|Doja Cat": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Kiss from a Rose|Seal": {
   "chartYear": 1995,
@@ -1223,11 +1477,19 @@
   "source": "billboard",
   "spotify": "40hgbG1iX08Apyy0FesR7p"
  },
+ "La Bamba|Ritchie Valens": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Lady Marmalade|Labelle": {
   "chartYear": 1975,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "20aZlN6QJxnLzhZbO7auv0"
+ },
+ "Last Night|Morgan Wallen": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Latch|Disclosure": {
   "chartYear": 2014,
@@ -1300,6 +1562,16 @@
   "source": "tidytuesday",
   "spotify": "5UqCQaDshqbIk3pkhy4Pjg"
  },
+ "Levitating|Dua Lipa": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Life on Mars?|David Bowie": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "3ZE3wv8V3w2T2f7nOCjV0N",
+  "wikidataYear": null
+ },
  "Light My Fire|The Doors": {
   "chartYear": 1967,
   "checked": "2026-10-22",
@@ -1356,10 +1628,22 @@
   "source": "tidytuesday",
   "spotify": "3w3y8KPTfNeOKPiqUTakBh"
  },
+ "Lollipop|The Chordettes": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "London Calling|The Clash": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "5jzma6gCzYtKB1DbEwFZKH"
+ },
+ "Lonely Teardrops|Jackie Wilson": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Lose Control|Teddy Swims": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Lose Yourself|Eminem": {
   "chartYear": 2002,
@@ -1378,6 +1662,12 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4d9RTWdrFLVAGhdzvqxkwn"
+ },
+ "Louie Louie|The Kingsmen": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "01V1OefuKzRulXoUhch18N",
+  "wikidataYear": null
  },
  "Love Shack|The B-52's": {
   "chartYear": 1989,
@@ -1402,6 +1692,10 @@
   "source": "tidytuesday",
   "spotify": "50kpGaPAhYJ3sGmk6vplg0"
  },
+ "Lovin On Me|Jack Harlow": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Low|Flo Rida": {
   "chartYear": 2008,
   "checked": "2026-10-22",
@@ -1414,11 +1708,27 @@
   "source": "billboard",
   "spotify": "2HNZxbvFvasRtlOJ9M6DgR"
  },
+ "MONTERO (Call Me By Your Name)|Lil Nas X": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Mack the Knife|Bobby Darin": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Mambo No. 5 (a Little Bit of...)|Lou Bega": {
   "chartYear": 1999,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7jQBORjiir0pNSKGaHevq9"
+ },
+ "Mamma Mia|ABBA": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Manchild|Sabrina Carpenter": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Manic Monday|The Bangles": {
   "chartYear": 1986,
@@ -1438,10 +1748,30 @@
   "source": "billboard",
   "spotify": "22sLuJYcvZOSoLLRYev1s5"
  },
+ "Maybellene|Chuck Berry": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Me Porto Bonito|Bad Bunny": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Men in Black|Will Smith": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Mercy|Duffy": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Message in a Bottle|The Police": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1oYYd2gnWZYrt89EBXdFiO"
+ },
+ "Messy|Lola Young": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Monday, Monday|The Mamas & The Papas": {
   "chartYear": 1966,
@@ -1460,6 +1790,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1SwE3FURO4wYshsLRggtfv"
+ },
+ "Mood|24kGoldn": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "More Than a Feeling|Boston": {
   "checked": "2026-10-22",
@@ -1482,6 +1816,10 @@
   "source": "tidytuesday",
   "spotify": "4q5cQyhhUW5X0PQVzA8VsG"
  },
+ "Mr. Sandman|The Chordettes": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Mr. Tambourine Man|The Byrds": {
   "chartYear": 1965,
   "checked": "2026-10-22",
@@ -1499,6 +1837,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0I3q5fE6wg7LIfHGngUTnV"
+ },
+ "Murder on the Dancefloor|Sophie Ellis-Bextor": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "My Generation|The Who": {
   "checked": "2026-10-22",
@@ -1533,6 +1875,10 @@
   "source": "tidytuesday",
   "spotify": "2ekn2ttSfGqwhhate0LSR0"
  },
+ "Night Moves|Bob Seger": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "No Diggity|Blackstreet": {
   "chartYear": 1996,
   "checked": "2026-10-22",
@@ -1550,6 +1896,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1KGi9sZVMeszgZOWivFpxs"
+ },
+ "Not Like Us|Kendrick Lamar": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Nothing Compares 2 U|Sinéad O'Connor": {
   "chartYear": 1990,
@@ -1601,11 +1951,31 @@
   "source": "billboard",
   "spotify": "7gCOF8DgdAMk6DofzOZn34"
  },
+ "Only You (And You Alone)|The Platters": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Oops!... I Did It Again|Britney Spears": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Ordinary|Alex Warren": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Oye Como Va|Santana": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Paint It Black|The Rolling Stones": {
   "chartYear": 1966,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "73SPjNZV2wVy8imEmckGYw"
+ },
+ "Paint The Town Red|Doja Cat": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Papa Don't Preach|Madonna": {
   "chartYear": 1986,
@@ -1618,6 +1988,12 @@
   "source": "tidytuesday",
   "spotify": "1jzDzZWeSDBg5fhNc3tczV"
  },
+ "Parklife|Blur": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "7FSzJQV6thyoQptFCUTV9c",
+  "wikidataYear": 1994
+ },
  "Party Rock Anthem|LMFAO": {
   "chartYear": 2011,
   "checked": "2026-10-22",
@@ -1629,6 +2005,20 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5Q0Nhxo0l2bP3pNjpGJwV1"
+ },
+ "Peaches|Justin Bieber": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Peggy Sue|Buddy Holly": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Penny Lane|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "1h04XMpzGzmAudoI6VHBgA",
+  "wikidataYear": null
  },
  "Perfect|Ed Sheeran": {
   "checked": "2026-10-22",
@@ -1656,6 +2046,14 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0jsHRQrycSwnpuKeJL53bS"
+ },
+ "Pink Pony Club|Chappell Roan": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Please Please Please|Sabrina Carpenter": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Poker Face|Lady Gaga": {
   "chartYear": 2009,
@@ -1698,11 +2096,27 @@
   "source": "billboard",
   "spotify": "7w87IxuO7BDcJ3YUqCyMTT"
  },
+ "Purple Haze|The Jimi Hendrix Experience": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Purple Rain|Prince": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Put Your Head on My Shoulder|Paul Anka": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Radioactive|Imagine Dragons": {
   "chartYear": 2013,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0Yo8GhK9HEaeIZetPARrW9"
+ },
+ "Rapper's Delight|The Sugarhill Gang": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Rather Be|Clean Bandit": {
   "chartYear": 2014,
@@ -1749,6 +2163,10 @@
   "source": "billboard",
   "spotify": "4yUgj0i6ttqorcmQYmkQIF"
  },
+ "Ride on Time|Black Box": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Riders on the Storm|The Doors": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1775,6 +2193,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3XSczvk4MRteOw4Yx3lqMU"
+ },
+ "Rock Around the Clock|Bill Haley & His Comets": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Rock with You|Michael Jackson": {
   "chartYear": 1980,
@@ -1811,21 +2233,41 @@
   "source": "billboard",
   "spotify": "01qiuRcLpJcFJBXUoSkn5p"
  },
+ "Running Up That Hill (A Deal with God)|Kate Bush": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "75FEaRjZTKLhTrFGsfMUXR",
+  "wikidataYear": null
+ },
  "SOS|Rihanna": {
   "chartYear": 2006,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "30cSNer6TV8x2utjULVeQ5"
  },
+ "STAY|The Kid LAROI": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Sabotage|Beastie Boys": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "0Puj4YlTm6xNzDDADXHMI9"
  },
+ "Sailor Song|Gigi Perez": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "0UYnhUfnUj5adChuAXvLUB",
+  "wikidataYear": 2024
+ },
  "Sandstorm|Darude": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "24CXuh2WNpgeSYUOvz14jk"
+ },
+ "Savage Love (Laxed - Siren Beat)|Jawsh 685": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Say My Name|Destiny's Child": {
   "chartYear": 2000,
@@ -1898,6 +2340,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3MbjEDPm5qtuJxiC86PWKy"
+ },
+ "Shivers|Ed Sheeran": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Shout|Tears for Fears": {
   "chartYear": 1985,
@@ -2012,6 +2458,10 @@
   "source": "tidytuesday",
   "spotify": "7IBfmCrfaR3SLVemWhsucQ"
  },
+ "Splish Splash|Bobby Darin": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Stairway to Heaven|Led Zeppelin": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2084,16 +2534,30 @@
   "source": "billboard",
   "spotify": "6C7RJEIUDqKkJRZVWdkfkH"
  },
+ "Sugar, Sugar|The Archies": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "1X4k8qzCxaF0Lx9oM3hff9",
+  "wikidataYear": null
+ },
  "Sultans of Swing|Dire Straits": {
   "chartYear": 1979,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6cr6UDpkjEaMQ80OjWqEBQ"
  },
+ "Summertime Blues|Eddie Cochran": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Sunflower|Post Malone": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "3KkXRkHbMCARz0aVfEt68P"
+ },
+ "Super Freak|Rick James": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Superstition|Stevie Wonder": {
   "chartYear": 1973,
@@ -2135,6 +2599,10 @@
   "source": "tidytuesday",
   "spotify": "3odPjdX1SjxxjIr0EZjEht"
  },
+ "TEXAS HOLD 'EM|Beyoncé": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Tainted Love|Soft Cell": {
   "chartYear": 1982,
   "checked": "2026-10-22",
@@ -2168,6 +2636,22 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5jzKL4BDMClWqRguW5qZvh"
+ },
+ "Tequila|The Champs": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "5gJKsGij5oGt5H5RSFYXPa",
+  "wikidataYear": null
+ },
+ "That'll Be the Day|The Crickets": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "The Fate of Ophelia|Taylor Swift": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "1dosSsKwYF7hoQA2kuu6wI",
+  "wikidataYear": null
  },
  "The Final Countdown|Europe": {
   "checked": "2026-10-22",
@@ -2245,6 +2729,14 @@
   "source": "billboard",
   "spotify": "77TT8Xvx637TpzV8kKGkUw"
  },
+ "Tití Me Preguntó|Bad Bunny": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Too Sweet|Hozier": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Torn|Natalie Imbruglia": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2284,6 +2776,10 @@
   "source": "tidytuesday",
   "spotify": "5PHGTeEdFxTEb4hepxug86"
  },
+ "Tutti Frutti|Little Richard": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Twist and Shout|The Beatles": {
   "chartYear": 1964,
   "checked": "2026-10-22",
@@ -2319,6 +2815,12 @@
   "source": "billboard",
   "spotify": "3d9DChrdc6BOeFsbrZ3Is0"
  },
+ "Unholy|Sam Smith": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "3nqQXoyQOWXiESFLlDF1hG",
+  "wikidataYear": 2022
+ },
  "Upside Down|Diana Ross": {
   "chartYear": 1980,
   "checked": "2026-10-22",
@@ -2336,6 +2838,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5VGlqQANWDKJFl0MBG3sg2"
+ },
+ "Valerie|Mark Ronson": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Video Killed the Radio Star|The Buggles": {
   "checked": "2026-10-22",
@@ -2360,6 +2866,10 @@
   "source": "billboard",
   "spotify": "27QvYgBk0CHOVHthWnkuWt"
  },
+ "WAP|Cardi B": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Wake Me Up Before You Go-Go|Wham!": {
   "chartYear": 1985,
   "checked": "2026-10-22",
@@ -2371,6 +2881,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "294vBlXfZYspeI29SXZaON"
+ },
+ "Wake Up Little Susie|The Everly Brothers": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Walk Like an Egyptian|The Bangles": {
   "chartYear": 1987,
@@ -2417,11 +2931,19 @@
   "source": "tidytuesday",
   "spotify": "1e9oZCCiX42nJl0AcqriVo"
  },
+ "Water|Tyla": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "We Are Young|fun.": {
   "chartYear": 2012,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4fz20fbPHtJg8CLuxKOGFV"
+ },
+ "We Are the World|USA for Africa": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "We Found Love|Rihanna": {
   "chartYear": 2011,
@@ -2446,6 +2968,20 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0lqNstW27BvhHXn6sqyQhX"
+ },
+ "What Was I Made For?|Billie Eilish": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "What a Wonderful World|Louis Armstrong": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "6SHg8p52iJfrgnCjfy5ZyO",
+  "wikidataYear": null
+ },
+ "What'd I Say|Ray Charles": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "What's Going On|Marvin Gaye": {
   "chartYear": 1971,
@@ -2488,11 +3024,23 @@
   "source": "tidytuesday",
   "spotify": "0hCB0YR03f6AmQaHbwWDe8"
  },
+ "Whole Lotta Shakin' Goin' On|Jerry Lee Lewis": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "Why Do Fools Fall in Love|Frankie Lymon & The Teenagers": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "Wild Thing|The Troggs": {
   "chartYear": 1966,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "695D3IeuIXeUHX2RUlnfQp"
+ },
+ "Wild Thing|Tone Loc": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Wish You Were Here|Pink Floyd": {
   "checked": "2026-10-22",
@@ -2510,6 +3058,10 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7lQ8MOhq6IN2w8EYcFNSUk"
+ },
+ "Wonderful Tonight|Eric Clapton": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  },
  "Wonderwall|Oasis": {
   "chartYear": 1996,
@@ -2544,6 +3096,12 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "3AJwUDP919kvQ9QcozQPxg"
+ },
+ "Yesterday|The Beatles": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "3iD2CCv5bsJRIaqJRYD0uJ",
+  "wikidataYear": null
  },
  "You Can Call Me Al|Paul Simon": {
   "checked": "2026-10-22",
@@ -2586,6 +3144,12 @@
   "source": "billboard",
   "spotify": "5GMw6X6BbCDGO9gApQYRSa"
  },
+ "Your Song|Elton John": {
+  "checked": "2026-10-22",
+  "source": "wikidata",
+  "spotify": "38zsOOcu31XbbYj9BIPUF1",
+  "wikidataYear": 1970
+ },
  "Zombie|The Cranberries": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2596,6 +3160,22 @@
   "source": "tidytuesday",
   "spotify": "2Fxmhks0bxGSBdJ92vM42m"
  },
+ "drivers license|Olivia Rodrigo": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "good 4 u|Olivia Rodrigo": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "greedy|Tate McRae": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
+ "luther|Kendrick Lamar": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
+ },
  "rockstar|Post Malone": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2605,5 +3185,9 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "3e9HZxeyfWwjeyPAMmWSSQ"
+ },
+ "vampire|Olivia Rodrigo": {
+  "checked": "2026-10-22",
+  "status": "no-wikidata-match"
  }
 }
