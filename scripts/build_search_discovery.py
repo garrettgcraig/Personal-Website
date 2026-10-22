@@ -27,7 +27,7 @@ def build_outputs():
     pages = []
     for path in sorted(ROOT.rglob('*.html')):
         relative = path.relative_to(ROOT).as_posix()
-        if relative.startswith(('.', 'assets/', 'work/')):
+        if relative.startswith(('.', 'assets/', 'work/', 'node_modules/')):
             continue
         if path.name == 'index-demo.html' or re.fullmatch(r'google[0-9a-f]+\.html', path.name):
             continue
@@ -86,6 +86,7 @@ The links below lead to the site's public pages. Trail journals also have plain 
 - [Public lands tracker](https://garrettgcraig.com/wilderness): Interactive map of wilderness areas, national parks, and national forests, with visited-land tracking.
 - [SeedFinder](https://garrettgcraig.com/seedfinder/): A map for exploring which plants may have collectible seed nearby.
 - [KnowKi](https://garrettgcraig.com/knowki/): An app for learning local species by sight, with support information.
+- [ChronoSono](https://garrettgcraig.com/chronosono/about/): A music timeline party game for phones, with how to play.
 - [Santa Barbara wildlife crossings](https://garrettgcraig.com/wildlife-crossings/): Wildlife crossing priorities along Santa Barbara County's state highways.
 
 ## Trail journals

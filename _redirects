@@ -7,3 +7,12 @@
 # links from earlier app builds, working.
 /localeyes/*   /knowki/:splat   301
 /localeyes     /knowki/         301
+
+# ChronoSono design notes live beside the game for the design tools; don't serve them.
+/chronosono/.impeccable/*   /chronosono/   404!
+/chronosono/PRODUCT.md      /chronosono/   404!
+/chronosono/DESIGN.md       /chronosono/   404!
+
+# Tunestamp was renamed to ChronoSono before launch (the name was taken). Keep test links working.
+/tunestamp/*   /chronosono/:splat   301
+/tunestamp     /chronosono/         301

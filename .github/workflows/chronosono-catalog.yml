@@ -1,0 +1,46 @@
+name: ChronoSono catalog
+# Looks up Spotify track IDs for new songs in chronosono/songs.js in Wikidata (no Spotify API) and
+# commits them back to the branch. Runs when the catalog changes
+# on a pull request, or by hand from the Actions tab.
+on:
+  pull_request:
+    paths: ['chronosono/songs.js', 'scripts/chronosono_resolve_spotify.py', 'tests/chronosono-catalog.test.py', 'scripts/chronosono_seed_ids.py', '.github/workflows/chronosono-catalog.yml']
+  workflow_dispatch:
+    inputs:
+      retry_misses:
+        description: 'Look up songs that failed before'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: chronosono-catalog-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  resolve:
+    # Only for branches in this repository, which can be pushed to.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tests/chronosono-catalog.test.py
+      - run: python scripts/chronosono_resolve_spotify.py ${{ inputs.retry_misses && '--retry-misses' || '' }}
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add chronosono/songs.js data/chronosono-catalog-cache.json data/chronosono-catalog-report.md
+          if git diff --cached --quiet; then
+            echo "No catalog changes."
+          else
+            git commit -m "Fill in Spotify IDs for the ChronoSono catalog"
+            # Someone may have pushed during the long lookup; replay this commit on top.
+            git pull --rebase origin "${{ github.head_ref || github.ref_name }}"
+            git push
+          fi
