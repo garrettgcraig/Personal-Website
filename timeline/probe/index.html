@@ -109,11 +109,28 @@ function beep() {
 
 let downSince = null;
 let armed = false;
+// How far the screen points away from the sky: 0° face up, 90° standing on an edge,
+// 180° face down. Combines front-to-back tilt (beta) and side-to-side tilt (gamma),
+// so it reads the same in portrait and landscape.
+function screenAngle(beta, gamma) {
+  const r = Math.PI / 180;
+  const up = Math.cos(beta * r) * Math.cos(gamma * r);
+  return Math.acos(Math.max(-1, Math.min(1, up))) / r;
+}
+
+function describe(angle) {
+  if (angle >= 145) return "Face down. Tap anywhere.";
+  if (angle >= 115) return `Almost face down (${Math.round(angle)}°). Lay it flat.`;
+  if (angle >= 65) return `Standing on its edge, screen facing sideways (${Math.round(angle)}°). Lay it face down.`;
+  if (angle >= 35) return `Tilted, screen visible (${Math.round(angle)}°). Turn it over.`;
+  return `Face up (${Math.round(angle)}°). Turn it over.`;
+}
+
 function onOrient(e) {
-  const beta = e.beta;
-  if (beta === null || beta === undefined) return;
-  const faceDown = Math.abs(beta) > 140;
-  $("tilt").textContent = faceDown ? "Face down. Tap anywhere." : `Screen up (tilt ${Math.round(beta)}°). Turn it over.`;
+  if (e.beta === null || e.beta === undefined || e.gamma === null || e.gamma === undefined) return;
+  const angle = screenAngle(e.beta, e.gamma);
+  const faceDown = angle >= 145;
+  $("tilt").textContent = describe(angle);
   $("tilt").className = "status " + (faceDown ? "ok" : "muted");
   if (faceDown) {
     if (downSince === null) downSince = Date.now();
