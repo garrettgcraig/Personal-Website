@@ -1,0 +1,452 @@
+/*
+	Brand layer for the main site. Loaded after main.css and darkmode.css
+	(both shared with sub-apps, so they stay untouched) and maps the HTML5 UP
+	template onto the tokens in brand.css. Dark-mode rules repeat
+	darkmode.css selectors with !important so this later file wins.
+*/
+
+/* Base */
+body,
+body.dark-mode {
+	background-color: var(--color-bg) !important;
+	color: var(--color-text) !important;
+}
+
+body {
+	font-family: var(--font-body);
+	font-weight: 400;
+	font-size: 1.0625rem;
+}
+
+input, select, textarea, label {
+	font-family: var(--font-ui);
+}
+
+::selection {
+	background: color-mix(in srgb, var(--color-highlight) 45%, transparent);
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-highlight);
+	outline-offset: 3px;
+}
+
+h1, h2, h3, h4, h5, h6,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
+body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
+body.dark-mode #wrapper > .banner h1,
+body.dark-mode #wrapper > .banner h2,
+body.dark-mode #wrapper > .spotlight h2,
+body.dark-mode #wrapper > .wrapper h2 {
+	font-family: var(--font-display);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: var(--color-text) !important;
+}
+
+h1 {
+	font-weight: 700;
+	letter-spacing: -0.03em;
+}
+
+strong, b,
+body.dark-mode strong, body.dark-mode b {
+	color: inherit;
+	font-weight: 600;
+}
+
+h1 strong {
+	font-weight: inherit;
+}
+
+p.major {
+	color: var(--color-muted);
+}
+
+#wrapper > .banner p.major {
+	font-family: var(--font-display);
+	font-size: 1.6rem;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+	color: var(--color-text);
+}
+
+#wrapper > section p,
+#wrapper > section li,
+body.dark-mode #wrapper > .banner p,
+body.dark-mode #wrapper > .spotlight p,
+body.dark-mode #wrapper > .wrapper p {
+	color: var(--color-text) !important;
+}
+
+#wrapper > section p.major,
+body.dark-mode #wrapper > .wrapper p.major {
+	color: var(--color-muted) !important;
+}
+
+a,
+body.dark-mode a {
+	color: var(--color-link);
+	text-underline-offset: 0.18em;
+}
+
+a:hover,
+body.dark-mode a:hover {
+	color: var(--color-text);
+}
+
+code {
+	font-family: var(--font-mono);
+}
+
+/* Sections and dividers */
+#wrapper,
+#wrapper > .banner,
+#wrapper > .spotlight,
+#wrapper > .wrapper,
+body.dark-mode #wrapper > .banner,
+body.dark-mode #wrapper > .spotlight,
+body.dark-mode #wrapper > .wrapper,
+body.dark-mode footer.wrapper {
+	background-color: var(--color-bg) !important;
+	color: var(--color-text) !important;
+}
+
+#wrapper.divided > * {
+	border-color: var(--color-border);
+}
+
+hr,
+body.dark-mode hr {
+	border-bottom-color: var(--color-border);
+}
+
+blockquote,
+body.dark-mode blockquote {
+	border-left: 3px solid var(--color-highlight) !important;
+	background: var(--color-surface) !important;
+	border-radius: 0 var(--radius-md) var(--radius-md) 0;
+	font-family: var(--font-body);
+	font-style: italic;
+	font-size: 1.15rem;
+}
+
+blockquote footer,
+body.dark-mode blockquote footer {
+	font-family: var(--font-ui);
+	color: var(--color-muted) !important;
+}
+
+/* Buttons */
+input[type="submit"], input[type="reset"], input[type="button"], button, .button,
+body.dark-mode .button {
+	font-family: var(--font-ui);
+	font-weight: 600;
+	letter-spacing: 0;
+	text-transform: none;
+	font-size: 0.95rem;
+	border-radius: var(--radius-pill);
+	background-color: transparent !important;
+	box-shadow: inset 0 0 0 1.5px var(--color-text) !important;
+	color: var(--color-text) !important;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hover, button:hover, .button:hover,
+body.dark-mode .button:hover {
+	box-shadow: inset 0 0 0 1.5px var(--color-accent) !important;
+	color: var(--color-accent) !important;
+}
+
+.button:active,
+body.dark-mode .button:active {
+	background-color: color-mix(in srgb, var(--color-accent) 15%, transparent) !important;
+}
+
+.button.primary,
+body.dark-mode .button.primary {
+	background-color: var(--color-accent) !important;
+	box-shadow: none !important;
+	color: var(--color-on-accent) !important;
+}
+
+.button.primary:hover,
+body.dark-mode .button.primary:hover {
+	background-color: var(--color-text) !important;
+	color: var(--color-bg) !important;
+}
+
+/* The template's toggle button picks up the generic button rules above. */
+#dark-mode-toggle,
+body.dark-mode #dark-mode-toggle {
+	background: var(--color-raised) !important;
+	border: 1px solid var(--color-border) !important;
+	box-shadow: var(--shadow-soft) !important;
+	color: var(--color-text) !important;
+	border-radius: 50%;
+}
+
+#dark-mode-toggle:hover,
+body.dark-mode #dark-mode-toggle:hover {
+	border-color: var(--color-accent) !important;
+}
+
+body.dark-mode #dark-mode-toggle svg {
+	fill: var(--color-highlight);
+}
+
+/* Tags (card tags and the inline-styled pills on research pages) */
+.project-card .card-tags span,
+body.dark-mode .project-card .card-tags span,
+.trail-card-tags span,
+span[style*="#e8f5e9"] {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent) !important;
+	color: var(--color-text) !important;
+	font-family: var(--font-ui);
+	font-weight: 500 !important;
+	letter-spacing: 0.02em !important;
+	text-transform: none !important;
+	border-radius: var(--radius-pill) !important;
+}
+
+/* Cards */
+.project-card,
+body.dark-mode .project-card,
+.home-projects a,
+body.dark-mode .home-projects a {
+	background: var(--color-raised) !important;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-soft) !important;
+}
+
+.project-card .card-body p,
+body.dark-mode .project-card .card-body p,
+.home-projects p {
+	color: var(--color-muted) !important;
+}
+
+.home-projects h3 {
+	color: var(--color-text);
+}
+
+/* Gallery captions */
+body.dark-mode .gallery .caption {
+	background-color: var(--color-bg) !important;
+}
+
+body.dark-mode .gallery .caption p {
+	color: var(--color-muted) !important;
+}
+
+/* iNaturalist widget on the home page */
+.inat-widget,
+body.dark-mode .inat-widget {
+	background: var(--color-raised) !important;
+	border: 1px solid var(--color-border);
+	box-shadow: var(--shadow-soft) !important;
+	border-radius: var(--radius-md) !important;
+}
+
+.inat-widget .inat-footer a,
+body.dark-mode .inat-widget .inat-footer a,
+body.dark-mode .inat-value a {
+	color: var(--color-text) !important;
+}
+
+.inat-widget .inat-footer a:hover,
+body.dark-mode .inat-widget .inat-footer a:hover {
+	color: var(--color-link) !important;
+}
+
+.inat-label, .inat-meta, .inat-label, .inat-value,
+body.dark-mode .inat-label, body.dark-mode .inat-meta {
+	font-family: var(--font-ui) !important;
+	color: var(--color-muted) !important;
+}
+
+/* Footer */
+footer.wrapper p,
+body.dark-mode footer p {
+	color: var(--color-muted) !important;
+	font-size: var(--text-small);
+}
+
+footer .icons a,
+body.dark-mode footer .icons a {
+	color: var(--color-text) !important;
+}
+
+footer .icons a:hover,
+body.dark-mode footer .icons a:hover {
+	color: var(--color-accent) !important;
+}
+
+/* Site nav */
+.site-nav {
+	position: sticky;
+	top: 0;
+	z-index: 9000;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-4);
+	padding: var(--space-3) clamp(16px, 4vw, 40px);
+	background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--color-border);
+	font-family: var(--font-ui);
+}
+
+.site-nav a {
+	text-decoration: none;
+	color: var(--color-text);
+}
+
+.site-nav .site-name {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-3);
+	font-family: var(--font-display);
+	font-size: 1.15rem;
+	white-space: nowrap;
+}
+
+.site-nav .site-name svg {
+	width: 30px;
+	height: 30px;
+	flex: none;
+}
+
+.site-nav ul {
+	display: flex;
+	gap: var(--space-1);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.site-nav li {
+	padding: 0;
+}
+
+.site-nav ul a {
+	display: block;
+	padding: 0.35rem 0.75rem;
+	border-radius: var(--radius-pill);
+	font-size: 0.92rem;
+	font-weight: 500;
+	color: var(--color-muted);
+	white-space: nowrap;
+}
+
+.site-nav ul a:hover {
+	color: var(--color-text);
+	background: var(--color-surface);
+}
+
+.site-nav ul a[aria-current="page"] {
+	color: var(--color-accent);
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+@media (max-width: 760px) {
+	.site-nav {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-2);
+		padding-bottom: var(--space-2);
+	}
+
+	.site-nav ul {
+		width: calc(100% + 2 * clamp(16px, 4vw, 40px));
+		margin: 0 calc(-1 * clamp(16px, 4vw, 40px));
+		padding: 0 clamp(16px, 4vw, 40px);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.site-nav ul::-webkit-scrollbar {
+		display: none;
+	}
+
+	.site-nav ul a {
+		padding-left: 0.6rem;
+		padding-right: 0.6rem;
+	}
+}
+
+/* Trail Log (trail-log.css loads before this file) */
+.trail-meta,
+.trail-card-meta,
+.trail-empty,
+.trail-card .card-body p,
+body.dark-mode .trail-meta,
+body.dark-mode figure.trail-photo figcaption,
+body.dark-mode .trail-card-meta,
+body.dark-mode .trail-empty,
+body.dark-mode .trail-card .card-body p {
+	color: var(--color-muted) !important;
+}
+
+.trail-entry h2,
+body.dark-mode .trail-entry h2 {
+	border-top: 1px solid var(--color-border) !important;
+	color: var(--color-text) !important;
+}
+
+.trail-entry a,
+body.dark-mode .trail-entry a {
+	color: var(--color-link) !important;
+	border-bottom: 1px solid color-mix(in srgb, var(--color-link) 40%, transparent);
+}
+
+.trail-entry a:hover,
+body.dark-mode .trail-entry a:hover {
+	color: var(--color-text) !important;
+}
+
+.trail-card,
+body.dark-mode .trail-card {
+	background: var(--color-raised) !important;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-soft) !important;
+}
+
+.trail-card-tags span,
+body.dark-mode .trail-card-tags span {
+	background: color-mix(in srgb, var(--color-accent) 12%, transparent) !important;
+	color: var(--color-text) !important;
+}
+
+.leaflet-container {
+	font-family: var(--font-ui);
+}
+
+/* Let the hero's three buttons wrap instead of running under the photo. */
+#wrapper > .banner ul.actions {
+	flex-wrap: wrap;
+	row-gap: var(--space-3);
+}
+
+/* Small caps label above section and card titles */
+#wrapper .eyebrow {
+	font-family: var(--font-ui);
+	font-size: var(--text-eyebrow);
+	font-weight: 600;
+	letter-spacing: var(--tracking-eyebrow);
+	text-transform: uppercase;
+	color: var(--color-accent) !important;
+	margin: 0 0 var(--space-2);
+}
+
+/* Text-only research cards on the home page */
+.home-research a {
+	padding-top: var(--space-4);
+}
+
+.home-research .eyebrow {
+	margin: 0 1rem var(--space-2) !important;
+}

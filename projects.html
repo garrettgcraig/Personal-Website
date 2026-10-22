@@ -9,8 +9,23 @@
 		<title>Projects - Garrett G. Craig</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- SEO -->
+		<meta name="description" content="Apps and maps for nature: KnowKi, SeedFinder, Santa Barbara Wildlife Crossings, the Public Lands Tracker, and the iNat Rarity Explorer." />
+		<link rel="canonical" href="https://garrettgcraig.com/projects" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Garrett G. Craig" />
+		<meta property="og:title" content="Projects" />
+		<meta property="og:description" content="Apps and maps for nature: KnowKi, SeedFinder, Santa Barbara Wildlife Crossings, the Public Lands Tracker, and the iNat Rarity Explorer." />
+		<meta property="og:url" content="https://garrettgcraig.com/projects" />
+		<meta property="og:image" content="https://garrettgcraig.com/images/og-card.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<!-- /SEO -->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" href="assets/css/darkmode.css" />
+		<!-- BRAND-CSS -->
+		<link rel="stylesheet" href="assets/css/brand.css" />
+		<link rel="stylesheet" href="assets/css/site.css" />
+		<!-- /BRAND-CSS -->
 		<link rel="icon" type="image/svg+xml" href="favicon.svg" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<script src="assets/js/darkmode.js"></script>
@@ -77,6 +92,12 @@
 		</style>
 	</head>
 	<body class="is-preload">
+		<!-- NAV -->
+		<nav class="site-nav" aria-label="Site">
+			<a class="site-name" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>Garrett G. Craig</a>
+			<ul><li><a href="projects.html" aria-current="page">Projects</a></li><li><a href="research.html">Research</a></li><li><a href="trail-log.html">Trail Log</a></li><li><a href="photography.html">Photography</a></li></ul>
+		</nav>
+		<!-- /NAV -->
 
 		<!-- Dark mode toggle -->
 		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
@@ -112,36 +133,6 @@
 									</div>
 								</div>
 
-								<!-- Public Lands Tracker -->
-								<div class="project-card">
-									<img class="card-image" src="https://live.staticflickr.com/65535/54671945286_dfa082ba05_c.jpg" alt="Public lands landscape" />
-									<div class="card-body">
-										<h3>Public Lands Tracker</h3>
-										<div class="card-tags">
-											<span>Leaflet</span>
-											<span>Interactive Map</span>
-											<span>Public Lands</span>
-										</div>
-										<p>Track your visits to America's wilderness areas, national parks, and national forests. Toggle layers, search by name, and watch your progress across 1,350+ public lands. Saves automatically in your browser.</p>
-										<a href="wilderness.html" class="button small">Launch Tracker</a>
-									</div>
-								</div>
-
-								<!-- iNat Rarity Explorer -->
-								<div class="project-card">
-									<img class="card-image" src="images/inat-rarest.jpg" alt="iNat Rarity Explorer chart" />
-									<div class="card-body">
-										<h3>iNat Rarity Explorer</h3>
-										<div class="card-tags">
-											<span>R / Shiny</span>
-											<span>iNaturalist API</span>
-											<span>Biodiversity</span>
-										</div>
-										<p>Discover which of your iNaturalist observations are the rarest on Earth. Ranks every taxon you've logged by its global observation count, with an interactive lollipop chart and a sortable table linking back to each record.</p>
-										<a href="https://garrettgcraig.shinyapps.io/inat-rarest/" class="button small" target="_blank" rel="noopener">Launch Explorer</a>
-									</div>
-								</div>
-
 								<!-- SeedFinder -->
 								<div class="project-card">
 									<img class="card-image" src="images/seedfinder.jpg" alt="SeedFinder species timelines showing ripe-seed windows" />
@@ -169,6 +160,36 @@
 										</div>
 										<p>Where should Caltrans build or retrofit wildlife crossings on Santa Barbara County's state highways? Combines community-science roadkill, culvert and bridge inventories, traffic, night stopping-sight distance and terrain to rank every half-kilometer of highway, with a 3D satellite tour of each type of solution.</p>
 										<a href="wildlife-crossings/" class="button small">Explore the Map</a>
+									</div>
+								</div>
+
+								<!-- Public Lands Tracker -->
+								<div class="project-card">
+									<img class="card-image" src="https://live.staticflickr.com/65535/54671945286_dfa082ba05_c.jpg" alt="Public lands landscape" />
+									<div class="card-body">
+										<h3>Public Lands Tracker</h3>
+										<div class="card-tags">
+											<span>Leaflet</span>
+											<span>Interactive Map</span>
+											<span>Public Lands</span>
+										</div>
+										<p>Track your visits to America's wilderness areas, national parks, and national forests. Toggle layers, search by name, and watch your progress across 1,350+ public lands. Saves automatically in your browser.</p>
+										<a href="wilderness.html" class="button small">Launch Tracker</a>
+									</div>
+								</div>
+
+								<!-- iNat Rarity Explorer -->
+								<div class="project-card">
+									<img class="card-image" src="images/inat-rarest.jpg" alt="iNat Rarity Explorer chart" />
+									<div class="card-body">
+										<h3>iNat Rarity Explorer</h3>
+										<div class="card-tags">
+											<span>R / Shiny</span>
+											<span>iNaturalist API</span>
+											<span>Biodiversity</span>
+										</div>
+										<p>Discover which of your iNaturalist observations are the rarest on Earth. Ranks every taxon you've logged by its global observation count, with an interactive lollipop chart and a sortable table linking back to each record.</p>
+										<a href="https://garrettgcraig.shinyapps.io/inat-rarest/" class="button small" target="_blank" rel="noopener">Launch Explorer</a>
 									</div>
 								</div>
 

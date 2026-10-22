@@ -6,15 +6,72 @@
 -->
 <html>
 	<head>
-		<title>Garrett G. Craig</title>
+		<title>Garrett G. Craig · Conservation scientist and builder of tools for nature</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- SEO -->
+		<meta name="description" content="Maps, models, and apps for biodiversity, restoration, and climate resilience, plus photography and trail notes from Garrett G. Craig." />
+		<link rel="canonical" href="https://garrettgcraig.com/" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Garrett G. Craig" />
+		<meta property="og:title" content="Garrett G. Craig: conservation scientist and builder of tools for nature" />
+		<meta property="og:description" content="Maps, models, and apps for biodiversity, restoration, and climate resilience, plus photography and trail notes from Garrett G. Craig." />
+		<meta property="og:url" content="https://garrettgcraig.com/" />
+		<meta property="og:image" content="https://garrettgcraig.com/images/og-card.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<!-- /SEO -->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" href="assets/css/darkmode.css" />
+		<!-- BRAND-CSS -->
+		<link rel="stylesheet" href="assets/css/brand.css" />
+		<link rel="stylesheet" href="assets/css/site.css" />
+		<!-- /BRAND-CSS -->
 		<link rel="icon" type="image/svg+xml" href="favicon.svg" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<script src="assets/js/darkmode.js"></script>
 		<style>
+			.home-projects {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 1.25rem;
+				margin: 2rem 0 2.5rem;
+				text-align: left;
+			}
+			.home-projects a {
+				display: block;
+				background: #fff;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+				border-bottom: 0;
+				color: inherit;
+				text-decoration: none;
+				transition: transform 0.25s ease;
+			}
+			.home-projects a:hover {
+				transform: translateY(-3px);
+			}
+			.home-projects img {
+				width: 100%;
+				height: 140px;
+				object-fit: cover;
+				display: block;
+			}
+			.home-projects h3 {
+				font-size: 1rem;
+				margin: 1rem 1rem 0.35rem;
+			}
+			.home-projects p {
+				font-size: 0.85rem;
+				line-height: 1.5;
+				margin: 0 1rem 1rem;
+			}
+			body.dark-mode .home-projects a {
+				background: rgba(255,255,255,0.05);
+			}
+			#first .content ul {
+				text-align: left;
+			}
 			.gallery.style2 article {
 				width: auto !important;
 				flex: 0 0 auto !important;
@@ -31,6 +88,12 @@
 		</style>
 	</head>
 	<body class="is-preload">
+		<!-- NAV -->
+		<nav class="site-nav" aria-label="Site">
+			<a class="site-name" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>Garrett G. Craig</a>
+			<ul><li><a href="projects.html">Projects</a></li><li><a href="research.html">Research</a></li><li><a href="trail-log.html">Trail Log</a></li><li><a href="photography.html">Photography</a></li></ul>
+		</nav>
+		<!-- /NAV -->
 
 		<!-- Dark mode toggle -->
 		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
@@ -45,18 +108,105 @@
 					<section class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
 						<div class="content">
 							<h1><strong>Garrett G. Craig</strong></h1>
-							<p class="major">Environmental scientist, photographer, and nature enthusiast.</p>
+							<p class="major">Conservation scientist and builder of tools for nature.</p>
+							<p>Maps, models, and apps for biodiversity, restoration, and climate resilience.</p>
+							<ul class="actions">
+								<li><a href="#projects" class="button primary">See my work</a></li>
+								<li><a href="#research" class="button">Research</a></li>
+								<li><a href="#contact" class="button">Get in touch</a></li>
+							</ul>
 						</div>
 						<div class="image" style="overflow: hidden;">
 							<img src="https://live.staticflickr.com/65535/54670657554_ab47691769_o.jpg" alt="" style="width: calc(100% + 800px); height: 100%; object-fit: cover; margin-left: -400px;" />
 						</div>
 					</section>
 
+				<!-- Projects -->
+					<section class="wrapper style1 align-center" id="projects">
+						<div class="inner">
+							<p class="eyebrow">Work</p>
+							<h2>Projects</h2>
+							<p>Apps and maps I've built for exploring and protecting nature.</p>
+							<div class="home-projects">
+								<a href="https://knowki.app/" target="_blank" rel="noopener">
+									<img src="images/knowki.jpg" alt="KnowKi wordmark beside Ki the kiwi" loading="lazy" />
+									<h3>KnowKi</h3>
+									<p>iPhone and web app that teaches you the plants and animals around you until you know them by sight.</p>
+								</a>
+								<a href="seedfinder/">
+									<img src="images/seedfinder.jpg" alt="SeedFinder species timelines showing ripe-seed windows" loading="lazy" />
+									<h3>SeedFinder</h3>
+									<p>Which native plants have collectible seed right now, modeled from iNaturalist phenology.</p>
+								</a>
+								<a href="wildlife-crossings/">
+									<img src="images/wildlife-crossings.jpg" alt="3D satellite map of US 101 at Gaviota Pass with roadkill records and crossing structures" loading="lazy" />
+									<h3>Santa Barbara Wildlife Crossings</h3>
+									<p>Ranks every half-kilometer of state highway in Santa Barbara County for wildlife crossings.</p>
+								</a>
+								<a href="wilderness.html">
+									<img src="https://live.staticflickr.com/65535/54671945286_dfa082ba05_c.jpg" alt="Public lands landscape" loading="lazy" />
+									<h3>Public Lands Tracker</h3>
+									<p>Track your visits to 1,350+ wilderness areas, national parks, and national forests.</p>
+								</a>
+								<a href="https://garrettgcraig.shinyapps.io/inat-rarest/" target="_blank" rel="noopener">
+									<img src="images/inat-rarest.jpg" alt="iNat Rarity Explorer chart" loading="lazy" />
+									<h3>iNat Rarity Explorer</h3>
+									<p>R/Shiny app that finds the globally rarest taxa in your iNaturalist observations.</p>
+								</a>
+							</div>
+							<ul class="actions stacked">
+								<li><a href="projects.html" class="button">All projects</a></li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- Research -->
+					<section class="wrapper style1 align-center" id="research">
+						<div class="inner">
+							<p class="eyebrow">Work</p>
+							<h2>Research</h2>
+							<p>My research sits where conservation planning meets climate risk and the people who live with both. Recent work maps climate hazards across Indigenous Peoples' and local communities' territories in the Amazon for Conservation International, and models how agroforestry and agrivoltaics change ecosystem services across Sub-Saharan Africa at emLab.</p>
+							<div class="home-projects home-research">
+								<a href="project-amazon-climate.html">
+									<p class="eyebrow">Capstone · Conservation International</p>
+									<h3>Climate Hazards in Amazonian IPLC Territories</h3>
+									<p>Wildfire, heat, flooding, and water stress across Indigenous Peoples' and local communities' territories.</p>
+								</a>
+								<a href="research.html">
+									<p class="eyebrow">emLab Arnhold Fellowship</p>
+									<h3>Multifunctional Landscapes in Sub-Saharan Africa</h3>
+									<p>Ecosystem service change under agroforestry and agrivoltaics scenarios.</p>
+								</a>
+								<a href="project-fossorial.html">
+									<p class="eyebrow">Co-author · under review</p>
+									<h3>Wildlife Use of Artificial Refuges</h3>
+									<p>Camera-trap analysis of rubble refuges, logs, and boulders at a regraded restoration site.</p>
+								</a>
+							</div>
+							<ul class="actions stacked">
+								<li><a href="research.html" class="button">All research</a></li>
+							</ul>
+						</div>
+					</section>
+
 				<!-- About Me -->
 					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in" id="first">
 						<div class="content">
+							<p class="eyebrow">About</p>
 							<h2>About Me</h2>
-							<p>Graduate of UC Santa Barbara's Bren School with a Master's in Environmental Science and Management, focused on conservation, environmental policy, climate resilience, and regenerative ways of living with nature. During non-desk hours, I'm often hiking and/or birding, giving far too much effort in beach volleyball, chuckling at clever crossword clues, or photographing neature.</p>
+							<p>I'm a conservation scientist who spent most of a decade in healthcare technology before switching fields. I pair spatial analysis (R, Google Earth Engine, ArcGIS Pro, prioritizr) with the project and product skills it takes to ship tools people use.</p>
+							<h3>Now</h3>
+							<ul>
+								<li>MESM '26, UC Santa Barbara Bren School (Conservation Planning)</li>
+								<li>emLab Arnhold Fellow: ecosystem services under agroforestry and agrivoltaics, Sub-Saharan Africa</li>
+								<li>Capstone for Conservation International: climate hazards and Indigenous Peoples' and local communities' (IPLC) territories across the Amazon</li>
+							</ul>
+							<h3>Before</h3>
+							<ul>
+								<li>Peace Corps, Senegal: community economic development</li>
+								<li>Epic, Cedar, Flatiron Health: implementation and project management</li>
+							</ul>
+							<p>Off the clock: hiking, birding, beach volleyball, crosswords, photographing neature.</p>
 						</div>
 						<div class="image">
 							<img src="images/about.jpg" alt="Garrett Craig" />
@@ -66,6 +216,7 @@
 				<!-- Photography -->
 					<section class="wrapper style1 align-center" id="photography">
 						<div class="inner">
+							<p class="eyebrow">Off the clock</p>
 							<h2>Photography</h2>
 							<p>Shooting with a camera is my longest-running hobby. It's outlived Lego set construction, Chicago sports fandom, Pokémon card collecting, and through-the-mail autograph hunting, among other pursuits that fell to the wayside years ago. My photos capture more than just scenes for me; they capture my feelings at the moment the shutter clicked.</p>
 							<ul class="actions stacked">
@@ -115,37 +266,34 @@
 
 					</section>
 
-				<!-- Research -->
-					<section class="spotlight style1 orient-left content-align-left image-position-center onscroll-image-fade-in" id="research">
-						<div class="content">
-							<h2>Research</h2>
-							<p>My research focuses on cutting-edge topics in technology and innovation. I'm particularly interested in exploring how emerging technologies can solve real-world problems and contribute to scientific advancement. Here you'll find information about my current projects, publications, and research interests.</p>
+				<!-- Trail Log -->
+					<section class="wrapper style1 align-center" id="trail-log">
+						<div class="inner">
+							<p class="eyebrow">Off the clock</p>
+							<h2>Trail Log</h2>
+							<p>Field notes, maps, and photos from the trail.</p>
+							<div class="home-projects" id="home-trips">
+								<a href="trail-big-seki-loop.html">
+									<img src="trail-log/photos/big-seki-loop/cover.jpg" alt="" loading="lazy" />
+									<h3>Big SEKI Loop — July 2026</h3>
+									<p>Fifteen days through Kings Canyon and Sequoia, with a detour over Kearsarge Pass.</p>
+								</a>
+								<a href="trail-san-raf-nira-to-mission-pine-spring.html">
+									<img src="trail-log/photos/nira-mission-pine/cover.jpg" alt="" loading="lazy" />
+									<h3>San Raf — Nira to Mission Pine Spring</h3>
+									<p>Three days up the Manzana and into the high country to Mission Pine Spring.</p>
+								</a>
+							</div>
 							<ul class="actions stacked">
-								<li><a href="research.html" class="button">View My Research</a></li>
+								<li><a href="trail-log.html" class="button">All trips</a></li>
 							</ul>
-						</div>
-						<div class="image">
-							<img src="images/research.jpg" alt="Research team" style="object-fit: contain !important; background: #000;" />
 						</div>
 					</section>
-
-				<!-- Four -->
-					<!-- <section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
-						<div class="content">
-							<h2>Pharetra etiam nulla</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id ante sed ex pharetra lacinia sit amet vel massa. Donec facilibus laoreet nulla eu bibendum. Donec ut ex risus. Fusce lorem lectus, pharetra pretium massa et, hendrerit vestibulum odio lorem ipsum dolor sit amet.</p>
-							<ul class="actions stacked">
-								<li><a href="#" class="button">Learn More</a></li>
-							</ul>
-						</div>
-						<div class="image">
-							<img src="images/spotlight03.jpg" alt="" />
-						</div>
-					</section> -->
 
 				<!-- Field Work -->
 					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in" id="fieldwork">
 						<div class="content">
+							<p class="eyebrow">Off the clock</p>
 							<h2>Nerdy by Nature</h2>
 							<p>I'm an iNaturalist evangelist because I think we all care 
             more for what we can name.</p>
@@ -267,122 +415,14 @@
 						</div>
 					</section>
 
-				<!-- Projects -->
-					<section class="wrapper style1 align-center" id="projects">
-						<div class="inner">
-							<h2>Projects</h2>
-							<p>Interactive tools and applications I've built for exploring environmental data.</p>
-							<ul class="actions stacked">
-								<li><a href="projects.html" class="button">View Projects</a></li>
-							</ul>
-						</div>
-					</section>
-
-				<!-- Trail Log -->
-					<section class="wrapper style1 align-center" id="trail-log">
-						<div class="inner">
-							<h2>Trail Log</h2>
-							<p>Field notes, maps, and photos from the trail.</p>
-							<ul class="actions stacked">
-								<li><a href="trail-log.html" class="button">View Trail Log</a></li>
-							</ul>
-						</div>
-					</section>
-
-				<!-- Six -->
-					<!-- <section class="wrapper style1 align-center">
-						<div class="inner">
-							<h2>Ipsum sed consequat</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id ante sed ex pharetra lacinia sit amet vel massa. Donec facilisis laoreet nulla eu bibendum. Donec ut ex risus. Fusce lorem lectus, pharetra pretium massa et, hendrerit vestibulum odio lorem ipsum.</p>
-							<div class="items style1 medium onscroll-fade-in">
-								<section>
-									<span class="icon style2 major fa-gem"></span>
-									<h3>Lorem</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-save"></span>
-									<h3>Ipsum</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-chart-bar"></span>
-									<h3>Dolor</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-wifi"></span>
-									<h3>Amet</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-cog"></span>
-									<h3>Magna</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon style2 major fa-paper-plane"></span>
-									<h3>Tempus</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-desktop"></span>
-									<h3>Aliquam</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-sync-alt"></span>
-									<h3>Elit</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-hashtag"></span>
-									<h3>Morbi</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-bolt"></span>
-									<h3>Turpis</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-envelope"></span>
-									<h3>Ultrices</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-								<section>
-									<span class="icon solid style2 major fa-leaf"></span>
-									<h3>Risus</h3>
-									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi dui turpis, cursus eget orci amet aliquam congue semper. Etiam eget ultrices risus nec tempor elit.</p>
-								</section>
-							</div>
-						</div>
-					</section> -->
-
-				<!-- Seven -->
-					<section class="wrapper style1 align-center">
+				<!-- Contact -->
+					<section class="wrapper style1 align-center" id="contact">
 						<div class="inner medium">
 							<h2>Get in touch</h2>
-							<form method="post" action="mailto:garrettgcraig@gmail.com" enctype="text/plain">
-								<div class="fields">
-									<div class="field half">
-										<label for="name">Name</label>
-										<input type="text" name="name" id="name" value="" />
-									</div>
-									<div class="field half">
-										<label for="email">Email</label>
-										<input type="email" name="email" id="email" value="" />
-									</div>
-									<div class="field">
-										<label for="message">Message</label>
-										<textarea name="message" id="message" rows="6"></textarea>
-									</div>
-								</div>
-								<ul class="actions special">
-									<li><input type="submit" name="submit" id="submit" value="Send Message" /></li>
-								</ul>
-							</form>
-
+							<p>The best way to reach me is on LinkedIn. I'm glad to talk about conservation planning, geospatial work, or tools for nature.</p>
+							<ul class="actions special">
+								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="button primary" target="_blank" rel="noopener">Message me on LinkedIn</a></li>
+							</ul>
 						</div>
 					</section>
 
@@ -400,6 +440,16 @@
 					</footer>
 
 			</div>
+
+		<!-- Refresh the latest trips from the Trail Log manifest -->
+			<script>
+				fetch('data/trail-log.json').then(function (r) { return r.json(); }).then(function (data) {
+					var esc = function (t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; };
+					document.getElementById('home-trips').innerHTML = data.entries.slice(0, 3).map(function (e) {
+						return '<a href="' + esc(e.url) + '"><img src="' + esc(e.cover) + '" alt="" loading="lazy" /><h3>' + esc(e.title) + '</h3><p>' + esc(e.summary) + '</p></a>';
+					}).join('');
+				}).catch(function () {});
+			</script>
 
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
