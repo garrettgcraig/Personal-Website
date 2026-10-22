@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+  <!-- Signature graphic: layered ridgelines under a high-desert sky -->
+  <rect width="1200" height="800" fill="#DDE7EE"/>
+  <circle cx="880" cy="300" r="56" fill="#F3DFA8"/>
+  <path d="M0 520 C 150 470, 260 480, 380 505 S 640 440, 780 475 S 1030 515, 1200 465 V800 H0 Z" fill="#B9CCD8"/>
+  <path d="M0 590 C 120 560, 240 545, 360 570 S 600 610, 760 570 S 1000 530, 1200 570 V800 H0 Z" fill="#D3A43B"/>
+  <path d="M0 660 C 160 630, 300 650, 460 638 S 760 612, 900 645 S 1100 670, 1200 652 V800 H0 Z" fill="#5E6E3A"/>
+  <path d="M0 740 C 200 722, 400 734, 600 726 S 900 718, 1200 738 V800 H0 Z" fill="#1B2530"/>
+</svg>

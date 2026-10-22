@@ -41,6 +41,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from seo_meta import ORIGIN, DEFAULT_IMAGE, seo_block  # noqa: E402
+import site_chrome  # noqa: E402
 from datetime import date, datetime
 
 try:
@@ -351,6 +352,12 @@ def build_page(meta, body_html, has_map, markdown_url="", page_name=""):
         + "\t</body>\n"
         + "</html>\n"
     )
+    page = site_chrome.replace_or_insert(
+        page, site_chrome.CSS_START, site_chrome.CSS_END, site_chrome.css_links(),
+        r'((?:[^\n]*<link rel="stylesheet" href="assets/css/(?:main|darkmode|trail-log)\.css[^"]*" />\n)+)')
+    page = site_chrome.replace_or_insert(
+        page, site_chrome.NAV_START, site_chrome.NAV_END, site_chrome.nav_html("trail-log.html"),
+        r'(<body[^>]*>\n)')
     return page
 
 
