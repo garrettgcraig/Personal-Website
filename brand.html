@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Brand Guide · Garrett G. Craig</title>
+	<meta name="description" content="The brand guide for garrettgcraig.com: guiding words, the High Desert palette, type, the Ridgeline G mark, components, data viz colors, voice, and photography style." />
+	<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+	<link rel="stylesheet" href="assets/css/brand.css" />
+	<script src="assets/js/darkmode.js"></script>
+	<style>
+		*, *::before, *::after { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body {
+			margin: 0;
+			background: var(--color-bg);
+			color: var(--color-text);
+			font-family: var(--font-body);
+			font-size: var(--text-body);
+			line-height: var(--leading-body);
+			-webkit-font-smoothing: antialiased;
+		}
+		a { color: var(--color-link); text-underline-offset: 0.18em; }
+		h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: var(--leading-tight); margin: 0; }
+		h2 { font-size: var(--text-h2); margin-bottom: var(--space-4); }
+		h3 { font-size: var(--text-h3); margin-bottom: var(--space-2); }
+		p { margin: 0 0 var(--space-4); max-width: var(--measure); }
+		code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
+
+		.eyebrow {
+			font-family: var(--font-body);
+			font-size: var(--text-eyebrow);
+			font-weight: 600;
+			letter-spacing: var(--tracking-eyebrow);
+			text-transform: uppercase;
+			color: var(--color-accent);
+			margin-bottom: var(--space-3);
+		}
+		.muted { color: var(--color-muted); }
+
+		.page { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+		.topbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-6) 0; }
+		.topbar a { text-decoration: none; color: var(--color-text); }
+		.wordmark { white-space: nowrap; display: inline-flex; align-items: center; gap: var(--space-3); font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; }
+		.wordmark svg { width: 36px; height: 36px; flex: none; }
+		.toc { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: var(--text-small); }
+		.toc a { color: var(--color-muted); }
+		.toc a:hover { color: var(--color-link); }
+
+		.hero { padding: var(--space-16) 0 var(--space-8); }
+		.hero h1 { font-size: var(--text-display); font-weight: 400; max-width: 14ch; }
+		.hero p { font-size: 1.2rem; color: var(--color-muted); margin-top: var(--space-6); }
+
+		section.block { padding: var(--space-16) 0; border-top: 1px solid var(--color-border); }
+		.grid { display: grid; gap: var(--space-6); }
+		.g2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+		.g3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+		.g4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+		/* Essence */
+		.words { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-8) 0; }
+		.word { background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-6); }
+		.word strong { display: block; font-family: var(--font-display); font-size: 1.75rem; font-weight: 400; font-style: italic; margin-bottom: var(--space-2); }
+		.word span { color: var(--color-muted); font-size: var(--text-small); }
+		.muses li { margin-bottom: var(--space-3); }
+		.muses { padding-left: 1.1em; max-width: var(--measure); }
+
+		/* Color */
+		.swatch { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); background: var(--color-raised); }
+		.swatch .chip { height: 112px; display: flex; align-items: flex-end; padding: var(--space-3); font-family: var(--font-mono); font-size: 0.75rem; }
+		.swatch .info { padding: var(--space-4); font-size: var(--text-small); }
+		.swatch .info strong { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; display: block; }
+		.swatch .info p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+		.chips-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+		.mini { flex: 1 1 110px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); overflow: hidden; font-size: 0.75rem; background: var(--color-raised); }
+		.mini div { height: 48px; }
+		.mini span { display: block; padding: var(--space-2); font-family: var(--font-mono); }
+		.rules { width: 100%; border-collapse: collapse; font-size: var(--text-small); margin-top: var(--space-6); }
+		.rules th, .rules td { text-align: left; padding: var(--space-3); border-bottom: 1px solid var(--color-border); vertical-align: top; }
+		.rules th { font-weight: 600; color: var(--color-muted); font-size: var(--text-eyebrow); letter-spacing: 0.08em; text-transform: uppercase; }
+		.pass { color: var(--color-secondary); font-weight: 600; }
+		.fail { color: var(--color-muted); }
+		.table-wrap { overflow-x: auto; }
+
+		/* Type */
+		.specimen { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-6); padding: var(--space-6) 0; border-bottom: 1px solid var(--color-border); align-items: baseline; }
+		.specimen .label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-muted); }
+		@media (max-width: 640px) { .specimen { grid-template-columns: 1fr; gap: var(--space-2); } }
+
+		/* Signature */
+		.signature { border-radius: var(--radius-lg); overflow: hidden; background: var(--color-raised); border: 1px solid var(--color-border); }
+		.signature svg { display: block; width: 100%; height: auto; }
+
+		/* Mark */
+		.mark-tile { border-radius: var(--radius-lg); padding: var(--space-8); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); min-height: 240px; border: 1px solid var(--color-border); }
+		.mark-tile svg { width: 112px; height: 112px; }
+		.mark-tile .sizes { display: flex; align-items: center; gap: var(--space-4); }
+		.mark-tile .sizes svg:nth-child(1) { width: 48px; height: 48px; }
+		.mark-tile .sizes svg:nth-child(2) { width: 32px; height: 32px; }
+		.mark-tile .sizes svg:nth-child(3) { width: 16px; height: 16px; }
+		.big-wordmark { display: flex; align-items: center; gap: var(--space-4); font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 400; }
+		.big-wordmark svg { width: 64px; height: 64px; flex: none; }
+
+		/* Components */
+		.btn {
+			display: inline-flex; align-items: center; gap: var(--space-2);
+			font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+			padding: 0.7rem 1.25rem; border-radius: var(--radius-pill);
+			border: 1.5px solid transparent; text-decoration: none; cursor: pointer;
+			transition: transform 0.15s ease, background-color 0.15s ease;
+		}
+		.btn:hover { transform: translateY(-1px); }
+		.btn:focus-visible { outline: 2px solid var(--color-highlight); outline-offset: 3px; }
+		.btn-primary { background: var(--color-accent); color: var(--color-on-accent); }
+		.btn-secondary { background: transparent; color: var(--color-text); border-color: var(--color-text); }
+		.btn-quiet { background: transparent; color: var(--color-link); padding-left: 0; padding-right: 0; }
+		.btn-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+		.tag { display: inline-block; font-size: 0.78rem; font-weight: 500; padding: 0.2rem 0.7rem; border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); }
+		.tag.secondary { background: color-mix(in srgb, var(--color-secondary) 16%, transparent); color: var(--color-text); }
+		.tag.accent { background: color-mix(in srgb, var(--color-accent) 16%, transparent); color: var(--color-text); }
+		.card { background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-soft); }
+		.card .art { height: 140px; background: linear-gradient(160deg, var(--gc-sky-pale), var(--gc-mist) 55%, var(--gc-ochre)); }
+		body.dark-mode .card .art { background: linear-gradient(160deg, #1B3A52, #2D5A7B 55%, #8a6a2e); }
+		.card .body { padding: var(--space-6); }
+		.card .body p { color: var(--color-muted); font-size: var(--text-small); }
+		.stat { background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-6); }
+		.stat .num { font-family: var(--font-mono); font-size: 2.2rem; font-weight: 500; line-height: 1; color: var(--color-text); }
+		.stat .unit { font-family: var(--font-mono); color: var(--color-muted); font-size: 1rem; }
+		.stat .lbl { margin-top: var(--space-2); color: var(--color-muted); font-size: var(--text-small); }
+		.stat { border-top: 3px solid var(--color-highlight); }
+
+		/* Data viz */
+		pre { background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-6); overflow-x: auto; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.6; margin: 0; }
+		.ramp { display: flex; border-radius: var(--radius-sm); overflow: hidden; height: 36px; margin: var(--space-2) 0 var(--space-6); }
+		.ramp div { flex: 1; }
+		.chart svg { width: 100%; height: auto; display: block; }
+		.chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--color-muted); }
+
+		/* Voice */
+		.dodont { border-radius: var(--radius-md); padding: var(--space-6); border: 1px solid var(--color-border); background: var(--color-raised); }
+		.dodont h3 { display: flex; align-items: center; gap: var(--space-2); }
+		.dodont ul { margin: 0; padding-left: 1.1em; }
+		.dodont li { margin-bottom: var(--space-3); }
+		.dodont.do { border-top: 3px solid var(--color-secondary); }
+		.dodont.dont { border-top: 3px solid var(--color-accent); }
+
+		/* Photography */
+		.photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+		.photos figure { margin: 0; }
+		.photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); display: block; }
+		.photos figcaption { font-size: var(--text-small); margin-top: var(--space-2); }
+		.photos figcaption em { font-family: var(--font-display); font-style: italic; font-size: 1rem; }
+
+		footer.page-foot { padding: var(--space-12) 0; border-top: 1px solid var(--color-border); color: var(--color-muted); font-size: var(--text-small); }
+
+		/* Dark mode toggle (same control as the rest of the site) */
+		#dark-mode-toggle { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100; width: 3rem; height: 3rem; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-raised); color: var(--color-text); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-soft); padding: 0; }
+		#dark-mode-toggle svg { width: 1.3rem; height: 1.3rem; }
+		.dm-toggle-sun, .dm-toggle-moon { display: none; line-height: 0; }
+		body.dark-mode #dark-mode-toggle svg { fill: var(--color-highlight); }
+	</style>
+</head>
+<body>
+
+	<button id="dark-mode-toggle" aria-label="Switch to dark mode">
+		<span class="dm-toggle-moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg></span>
+		<span class="dm-toggle-sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.25v2.5M12 19.25v2.5M2.25 12h2.5M19.25 12h2.5M5.1 5.1l1.77 1.77M17.13 17.13l1.77 1.77M5.1 18.9l1.77-1.77M17.13 6.87l1.77-1.77" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+	</button>
+
+	<!-- The mark, defined once and reused -->
+	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+		<symbol id="mark" viewBox="0 0 100 100">
+			<rect width="100" height="100" rx="22" fill="#1B2530"/>
+			<path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/>
+			<path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+		</symbol>
+		<symbol id="mark-reverse" viewBox="0 0 100 100">
+			<rect width="100" height="100" rx="22" fill="#F6F6F2"/>
+			<path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#1B2530" stroke-width="8" stroke-linecap="round"/>
+			<path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#2D5A7B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+		</symbol>
+		<symbol id="mark-bare" viewBox="0 0 100 100">
+			<path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+			<path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+		</symbol>
+	</svg>
+
+	<div class="page">
+		<header class="topbar">
+			<a class="wordmark" href="index.html"><svg aria-hidden="true"><use href="#mark"/></svg>Garrett G. Craig</a>
+			<nav class="toc" aria-label="Brand guide sections">
+				<a href="#essence">Essence</a><a href="#color">Color</a><a href="#type">Type</a><a href="#signature">Signature</a><a href="#mark-section">Mark</a><a href="#components">Components</a><a href="#dataviz">Data viz</a><a href="#voice">Voice</a><a href="#photography">Photography</a>
+			</nav>
+		</header>
+
+		<div class="hero">
+			<div class="eyebrow">Brand guide · v1 · October 2026</div>
+			<h1>Clear tools, warm light, open country.</h1>
+			<p>How garrettgcraig.com looks, sounds, and shows its data. Use these tokens from <code>assets/css/brand.css</code> instead of hard-coded values. Sub-apps (KnowKi, SeedFinder, Wildlife Crossings, Wilderness) keep their own identities.</p>
+		</div>
+
+		<!-- Essence -->
+		<section class="block" id="essence">
+			<div class="eyebrow">01 · Essence</div>
+			<h2>Four guiding words</h2>
+			<div class="words">
+				<div class="word"><strong>curious</strong><span>Lead with the question. Name the species, the place, the thing you didn't expect.</span></div>
+				<div class="word"><strong>grounded</strong><span>Evidence before adjectives. Real data, real places, honest limits.</span></div>
+				<div class="word"><strong>clear</strong><span>One idea per screen, plain words, generous space. Maps and charts that read in seconds.</span></div>
+				<div class="word"><strong>warm</strong><span>Sunlit paper and ochre, not chrome and neon. Friendly, unhurried, a little funny.</span></div>
+			</div>
+			<div class="grid g2">
+				<div>
+					<h3>Personality</h3>
+					<p>A field scientist who also ships software: careful with claims, generous with explanation, happiest outdoors. The site should feel clean, warm, and calm, like a well-kept field notebook left open on a sunny table.</p>
+				</div>
+				<div>
+					<h3>Inspiration</h3>
+					<ul class="muses">
+						<li><strong>Georgia O'Keeffe</strong>: high-desert sky, desert ochres, sage, soft flower forms. The palette.</li>
+						<li><strong>Henri Cartier-Bresson</strong>: geometry, black and white, the decisive moment. The layout and photo edit.</li>
+						<li><strong>Michael Pollan</strong>: the garden as a lens on big systems, told as narrative nonfiction. The writing.</li>
+						<li><strong>Robin Wall Kimmerer</strong>: sweetgrass, moss, reciprocity; attention as a gift. The ethic.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<!-- Color -->
+		<section class="block" id="color">
+			<div class="eyebrow">02 · Color</div>
+			<h2>Desert Sky palette</h2>
+			<p class="muted">Paper carries the page; ink carries the words; sky marks the one thing to do next. Sage and ochre support, highlight, and chart.</p>
+
+			<h3 style="margin-top: var(--space-8)">Core</h3>
+			<div class="grid g3">
+				<div class="swatch"><div class="chip" style="background:#F6F6F2;color:#1B2530">#F6F6F2</div><div class="info"><strong>Paper</strong><p>Page background: sun-bleached, slightly cool. Dark mode uses Night #121A21.</p></div></div>
+				<div class="swatch"><div class="chip" style="background:#1B2530;color:#F6F6F2">#1B2530</div><div class="info"><strong>Ink</strong><p>Body text and headings. Deep slate, never pure black.</p></div></div>
+				<div class="swatch"><div class="chip" style="background:#2D5A7B;color:#F6F6F2">#2D5A7B</div><div class="info"><strong>Sky</strong><p>Primary accent: buttons, links, eyebrows, active nav. The high-desert sky an hour before dusk.</p></div></div>
+				<div class="swatch"><div class="chip" style="background:#5E6E3A;color:#F6F6F2">#5E6E3A</div><div class="info"><strong>Sage</strong><p>Secondary: tags, success, "do" states, vegetation on maps.</p></div></div>
+				<div class="swatch"><div class="chip" style="background:#D3A43B;color:#1B2530">#D3A43B</div><div class="info"><strong>Ochre</strong><p>Highlights, focus rings, stat-tile rules, the ridge in the mark. Not for text.</p></div></div>
+				<div class="swatch"><div class="chip" style="background:#B9CCD8;color:#1B2530">#B9CCD8</div><div class="info"><strong>Mist</strong><p>Quiet fills, map water, the far ridge in the signature graphic. Not for text.</p></div></div>
+			</div>
+
+			<h3 style="margin-top: var(--space-12)">Extensions</h3>
+			<div class="chips-row">
+				<div class="mini"><div style="background:#1B3A52"></div><span>Sky deep #1B3A52</span></div>
+				<div class="mini"><div style="background:#DDE7EE"></div><span>Sky pale #DDE7EE</span></div>
+				<div class="mini"><div style="background:#CFD6BF"></div><span>Sage pale #CFD6BF</span></div>
+				<div class="mini"><div style="background:#A65A3C"></div><span>Clay #A65A3C · charts</span></div>
+				<div class="mini"><div style="background:#6B4A73"></div><span>Mesa #6B4A73 · charts</span></div>
+			</div>
+
+			<h3 style="margin-top: var(--space-12)">Neutrals</h3>
+			<div class="chips-row">
+				<div class="mini"><div style="background:#FBFBF8"></div><span>Paper 50 #FBFBF8</span></div>
+				<div class="mini"><div style="background:#F6F6F2"></div><span>Paper 100 #F6F6F2</span></div>
+				<div class="mini"><div style="background:#ECEDE7"></div><span>Stone 200 #ECEDE7</span></div>
+				<div class="mini"><div style="background:#D8DAD3"></div><span>Stone 300 #D8DAD3</span></div>
+				<div class="mini"><div style="background:#9AA6B0"></div><span>Slate 400 #9AA6B0</span></div>
+				<div class="mini"><div style="background:#56606A"></div><span>Slate 600 #56606A</span></div>
+				<div class="mini"><div style="background:#1B2530"></div><span>Ink 800 #1B2530</span></div>
+				<div class="mini"><div style="background:#121A21"></div><span>Night 900 #121A21</span></div>
+			</div>
+
+			<h3 style="margin-top: var(--space-12)">Contrast rules</h3>
+			<p class="muted">WCAG AA needs 4.5:1 for body text and 3:1 for large text and UI shapes.</p>
+			<div class="table-wrap">
+			<table class="rules">
+				<thead><tr><th>Pair</th><th>Ratio</th><th>Use</th></tr></thead>
+				<tbody>
+					<tr><td>Ink on Paper</td><td class="pass">14.3:1</td><td>Body text, headings</td></tr>
+					<tr><td>Slate 600 on Paper</td><td class="pass">5.9:1</td><td>Captions, meta, muted text (5.4:1 on Stone 200)</td></tr>
+					<tr><td>Sky on Paper</td><td class="pass">6.8:1</td><td>Links, eyebrows (6.2:1 on Stone 200)</td></tr>
+					<tr><td>Paper on Sky</td><td class="pass">6.8:1</td><td>Primary button label</td></tr>
+					<tr><td>Sage on Paper</td><td class="pass">5.1:1</td><td>Secondary text, tags</td></tr>
+					<tr><td>Ink on Ochre</td><td class="pass">6.8:1</td><td>Text on an ochre highlight fill</td></tr>
+					<tr><td>Ochre or Mist on Paper</td><td class="fail">2.1 / 1.5:1</td><td>Fills, rules, charts only, never text</td></tr>
+					<tr><td>Dark: Text #E8ECEE on Night</td><td class="pass">14.8:1</td><td>Body text</td></tr>
+					<tr><td>Dark: Sky light #8DB7D6 on Night</td><td class="pass">8.3:1</td><td>Links, buttons (Night label on it: 8.3:1)</td></tr>
+					<tr><td>Dark: Slate 400 #9AA6B0 on Night</td><td class="pass">7.1:1</td><td>Muted text</td></tr>
+				</tbody>
+			</table>
+			</div>
+		</section>
+
+		<!-- Typography -->
+		<section class="block" id="type">
+			<div class="eyebrow">03 · Typography</div>
+			<h2>Fraunces, Inter, JetBrains Mono</h2>
+			<p class="muted">Fraunces brings the soft, old-style warmth; Inter keeps UI and body text clear; JetBrains Mono is for numbers, coordinates, and code.</p>
+			<div class="specimen"><div class="label">Display<br/>Fraunces 400<br/>clamp 2.5–4.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-display);line-height:1.05">Tools for nature</div></div>
+			<div class="specimen"><div class="label">H2<br/>Fraunces 500<br/>1.75–2.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-h2);font-weight:500;line-height:1.15">Mapping who stewards the Amazon</div></div>
+			<div class="specimen"><div class="label">H3<br/>Fraunces 500<br/>1.375rem</div><div style="font-family:var(--font-display);font-size:var(--text-h3);font-weight:500">Field notes from the Big SEKI loop</div></div>
+			<div class="specimen"><div class="label">Eyebrow<br/>Inter 600, caps<br/>0.75rem, +0.16em</div><div class="eyebrow" style="margin:0">Conservation planning · Geospatial</div></div>
+			<div class="specimen"><div class="label">Body<br/>Inter 400<br/>1.0625rem / 1.65</div><div><p style="margin:0">I build maps, models, and apps that help people see what is living around them and decide what to protect next. Most of my work sits where field ecology meets software.</p></div></div>
+			<div class="specimen"><div class="label">Data<br/>JetBrains Mono 400</div><div class="mono" style="font-size:1rem">36.5785° N, 118.2923° W · 1,284 obs · 12.4 km</div></div>
+		</section>
+
+		<!-- Signature graphic -->
+		<section class="block" id="signature">
+			<div class="eyebrow">04 · Signature graphic</div>
+			<h2>Layered ridgelines</h2>
+			<p class="muted">Four soft ridges receding into a high-desert sky, like an O'Keeffe hill seen as a contour map. Use as a section divider, page footer band, or social-card background. Keep it wide and low; never stack text on the darkest ridge.</p>
+			<div class="signature">
+				<svg viewBox="0 0 1200 260" preserveAspectRatio="none" role="img" aria-label="Layered ridgeline graphic">
+					<rect width="1200" height="260" fill="#DDE7EE"/>
+					<circle cx="900" cy="88" r="34" fill="#F3DFA8"/>
+					<path d="M0 150 C 150 110, 260 120, 380 140 S 640 90, 780 118 S 1030 150, 1200 112 V260 H0 Z" fill="#B9CCD8"/>
+					<path d="M0 182 C 120 160, 240 150, 360 170 S 600 200, 760 168 S 1000 140, 1200 170 V260 H0 Z" fill="#D3A43B"/>
+					<path d="M0 214 C 160 190, 300 205, 460 196 S 760 176, 900 200 S 1100 222, 1200 206 V260 H0 Z" fill="#5E6E3A"/>
+					<path d="M0 240 C 200 228, 380 236, 560 230 S 900 222, 1200 238 V260 H0 Z" fill="#1B2530"/>
+				</svg>
+			</div>
+		</section>
+
+		<!-- Mark -->
+		<section class="block" id="mark-section">
+			<div class="eyebrow">05 · Mark</div>
+			<h2>The Ridgeline G</h2>
+			<p class="muted">An open G whose crossbar is a mountain ridge: the monogram and the landscape in one stroke. Paper on ink is primary; ink on paper is the reverse. Keep clear space of one stroke width on all sides and don't recolor the ridge.</p>
+			<div class="grid g3">
+				<div class="mark-tile" style="background:#1B2530;color:#F6F6F2">
+					<svg aria-label="Ridgeline G mark, primary"><use href="#mark"/></svg>
+					<div class="sizes"><svg><use href="#mark"/></svg><svg><use href="#mark"/></svg><svg><use href="#mark"/></svg></div>
+					<span class="mono" style="font-size:0.75rem">Primary · 48 / 32 / 16 px</span>
+				</div>
+				<div class="mark-tile" style="background:#F6F6F2;color:#1B2530">
+					<svg aria-label="Ridgeline G mark, reverse"><use href="#mark-reverse"/></svg>
+					<div class="sizes"><svg><use href="#mark-reverse"/></svg><svg><use href="#mark-reverse"/></svg><svg><use href="#mark-reverse"/></svg></div>
+					<span class="mono" style="font-size:0.75rem">Reverse</span>
+				</div>
+				<div class="mark-tile" style="background:var(--color-raised);color:var(--color-text)">
+					<svg aria-label="Ridgeline G mark, no container"><use href="#mark-bare"/></svg>
+					<span class="mono" style="font-size:0.75rem">Bare · follows text color</span>
+				</div>
+			</div>
+			<h3 style="margin-top: var(--space-12)">Wordmark</h3>
+			<div class="big-wordmark"><svg aria-hidden="true"><use href="#mark"/></svg>Garrett G. Craig</div>
+			<p class="muted" style="margin-top: var(--space-4)">Fraunces 400, mark height ≈ 1.6× cap height, gap = ½ mark width. In tight spaces, use the mark alone.</p>
+		</section>
+
+		<!-- Components -->
+		<section class="block" id="components">
+			<div class="eyebrow">06 · Components</div>
+			<h2>Building blocks</h2>
+
+			<h3 style="margin-top: var(--space-8)">Buttons</h3>
+			<div class="btn-row">
+				<a class="btn btn-primary" href="#components">See my work</a>
+				<a class="btn btn-secondary" href="#components">Research</a>
+				<a class="btn btn-quiet" href="#components">Get in touch →</a>
+			</div>
+			<p class="muted" style="margin-top: var(--space-4)">Pill shape. One primary per view; secondary is an outline in ink; quiet is a text link with an arrow.</p>
+
+			<h3 style="margin-top: var(--space-8)">Tags</h3>
+			<div class="btn-row">
+				<span class="tag accent">Conservation planning</span>
+				<span class="tag secondary">Geospatial</span>
+				<span class="tag">R</span><span class="tag">Python</span><span class="tag">Swift</span>
+			</div>
+
+			<h3 style="margin-top: var(--space-8)">Cards</h3>
+			<div class="grid g3">
+				<article class="card"><div class="art"></div><div class="body"><div class="eyebrow">App · iOS + web</div><h3>KnowKi</h3><p>Learn the plants and animals around you until you know them by sight.</p><a class="btn btn-quiet" href="#components">Open →</a></div></article>
+				<article class="card"><div class="art" style="background:linear-gradient(160deg,#CFD6BF,#5E6E3A)"></div><div class="body"><div class="eyebrow">Tool · Map</div><h3>Wildlife Crossings</h3><p>Where roads and wildlife meet, and where crossings would help most.</p><a class="btn btn-quiet" href="#components">Open →</a></div></article>
+				<article class="card"><div class="art" style="background:linear-gradient(160deg,#DDE7EE,#2D5A7B)"></div><div class="body"><div class="eyebrow">Research</div><h3>Amazon climate</h3><p>Card body in muted text, one quiet action, image on top.</p><a class="btn btn-quiet" href="#components">Read →</a></div></article>
+			</div>
+
+			<h3 style="margin-top: var(--space-8)">Stat tiles</h3>
+			<div class="grid g4">
+				<div class="stat"><div class="num">1,284</div><div class="lbl">iNaturalist observations</div></div>
+				<div class="stat"><div class="num">160<span class="unit"> km</span></div><div class="lbl">Big SEKI loop</div></div>
+				<div class="stat"><div class="num">2<span class="unit"> yrs</span></div><div class="lbl">Peace Corps, Senegal</div></div>
+				<div class="stat"><div class="num">5</div><div class="lbl">Apps and tools shipped</div></div>
+			</div>
+			<p class="muted" style="margin-top: var(--space-4)">Sample values for illustration. Numbers set in mono, ochre top rule, label in muted Inter.</p>
+		</section>
+
+		<!-- Data viz -->
+		<section class="block" id="dataviz">
+			<div class="eyebrow">07 · Data viz</div>
+			<h2>Chart colors</h2>
+			<p class="muted">Categorical order is fixed so a series keeps its color across charts. Use at most six; past that, group into "other" in Slate 400. Label lines directly instead of relying on a legend.</p>
+
+			<div class="grid g2" style="margin-top: var(--space-6)">
+				<div>
+					<div class="eyebrow" style="color:var(--color-muted)">Categorical</div>
+					<div class="ramp"><div style="background:#2D5A7B"></div><div style="background:#D3A43B"></div><div style="background:#5E6E3A"></div><div style="background:#A65A3C"></div><div style="background:#6B4A73"></div><div style="background:#7FA3BD"></div></div>
+					<div class="eyebrow" style="color:var(--color-muted)">Sequential (sky)</div>
+					<div class="ramp"><div style="background:#F6F6F2"></div><div style="background:#DDE7EE"></div><div style="background:#B9CCD8"></div><div style="background:#7FA3BD"></div><div style="background:#2D5A7B"></div><div style="background:#1B3A52"></div></div>
+					<div class="eyebrow" style="color:var(--color-muted)">Diverging (sky ↔ clay)</div>
+					<div class="ramp"><div style="background:#1B3A52"></div><div style="background:#2D5A7B"></div><div style="background:#9DBBD0"></div><div style="background:#F6F6F2"></div><div style="background:#E3B9A3"></div><div style="background:#A65A3C"></div><div style="background:#6E3622"></div></div>
+				</div>
+				<div class="chart" aria-label="Example line chart using the categorical palette">
+					<svg viewBox="0 0 420 220" role="img" aria-label="Example chart with three labeled series">
+						<g stroke="var(--color-border)" stroke-width="1"><line x1="30" y1="190" x2="400" y2="190"/><line x1="30" y1="130" x2="400" y2="130"/><line x1="30" y1="70" x2="400" y2="70"/></g>
+						<polyline fill="none" stroke="#2D5A7B" stroke-width="2.5" points="30,160 90,150 150,120 210,128 270,96 330,84 360,70"/>
+						<polyline fill="none" stroke="#D3A43B" stroke-width="2.5" points="30,175 90,166 150,160 210,140 270,138 330,120 360,112"/>
+						<polyline fill="none" stroke="#5E6E3A" stroke-width="2.5" points="30,182 90,184 150,178 210,176 270,170 330,166 360,160"/>
+						<text x="366" y="74" style="fill:var(--color-link)">Birds</text>
+						<text x="366" y="116" style="fill:var(--color-text)">Plants</text>
+						<text x="366" y="164" style="fill:var(--color-secondary)">Herps</text>
+						<text x="30" y="208">2020</text><text x="340" y="208">2026</text>
+					</svg>
+				</div>
+			</div>
+
+			<div class="grid g2" style="margin-top: var(--space-6)">
+				<div>
+					<div class="eyebrow" style="color:var(--color-muted)">R · ggplot2</div>
+<pre>gc_pal &lt;- c(
+  sky   = "#2D5A7B", ochre = "#D3A43B",
+  sage  = "#5E6E3A", clay  = "#A65A3C",
+  mesa  = "#6B4A73", mist  = "#7FA3BD"
+)
+scale_color_gc &lt;- function(...) scale_color_manual(values = unname(gc_pal), ...)
+scale_fill_gc  &lt;- function(...) scale_fill_manual(values = unname(gc_pal), ...)
+
+theme_gc &lt;- theme_minimal(base_family = "Inter") +
+  theme(plot.background  = element_rect(fill = "#F6F6F2", color = NA),
+        text             = element_text(color = "#1B2530"),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Fraunces", size = 16))</pre>
+				</div>
+				<div>
+					<div class="eyebrow" style="color:var(--color-muted)">Python · matplotlib</div>
+<pre>from cycler import cycler
+import matplotlib as mpl
+
+GC = ["#2D5A7B", "#D3A43B", "#5E6E3A",
+      "#A65A3C", "#6B4A73", "#7FA3BD"]
+
+mpl.rcParams.update({
+    "axes.prop_cycle": cycler(color=GC),
+    "figure.facecolor": "#F6F6F2",
+    "axes.facecolor":   "#F6F6F2",
+    "axes.edgecolor":   "#6B6159",
+    "text.color":       "#1B2530",
+    "font.family":      "Inter",
+    "axes.spines.top":  False,
+    "axes.spines.right": False,
+})</pre>
+				</div>
+			</div>
+		</section>
+
+		<!-- Voice -->
+		<section class="block" id="voice">
+			<div class="eyebrow">08 · Voice</div>
+			<h2>How it sounds</h2>
+			<p class="muted">First person, plain American English, specific nouns. Write like a field note to a smart friend.</p>
+			<div class="grid g2">
+				<div class="dodont do">
+					<h3>Do</h3>
+					<ul>
+						<li>Name the thing: "Eastern newt in Pisgah National Forest," not "a cool salamander."</li>
+						<li>Lead with what it does: "Maps where roads cut wildlife corridors."</li>
+						<li>Give numbers with units and sources.</li>
+						<li>Say what you don't know yet.</li>
+						<li>Let a little humor in, especially off the clock.</li>
+					</ul>
+				</div>
+				<div class="dodont dont">
+					<h3>Don't</h3>
+					<ul>
+						<li>"Cutting-edge," "leveraging," "innovative solutions," "passionate about."</li>
+						<li>Claims a figure or a paper can't back up.</li>
+						<li>Jargon without a gloss (IPLC → Indigenous Peoples and local communities).</li>
+						<li>Walls of text; break it up with a map, a photo, or a number.</li>
+						<li>Exclamation points in professional copy.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<!-- Photography -->
+		<section class="block" id="photography">
+			<div class="eyebrow">09 · Photography</div>
+			<h2>Photo style</h2>
+			<div class="grid g2">
+				<div>
+					<p>Natural light, honest color, and a clear subject. Wait for the decisive moment: the animal's glance, the light breaking on a ridge. Favor strong geometry (horizons, diagonals, negative space) over busy frames. Black and white is welcome when shape is the story.</p>
+				</div>
+				<div>
+					<ul class="muses">
+						<li>No heavy HDR, oversaturation, or vignettes.</li>
+						<li>Keep crops close to the original aspect ratio; let images breathe on paper.</li>
+						<li>Caption as <em>Title</em>, then species or place and year.</li>
+						<li>Always write descriptive alt text.</li>
+					</ul>
+				</div>
+			</div>
+			<div class="photos" style="margin-top: var(--space-6)">
+				<figure><img src="https://live.staticflickr.com/65535/54668539227_465fa83d9c_c.jpg" alt="Angola colobus monkey resting in a treetop near Diani, Kenya" loading="lazy" /><figcaption><em>Treetop Relaxation</em><br/><span class="muted">Angola colobus, Diani, Kenya (2024)</span></figcaption></figure>
+				<figure><img src="https://live.staticflickr.com/65535/54670822814_756c4f5995_c.jpg" alt="Stars over Evolution Lakes in the Sierra Nevada" loading="lazy" /><figcaption><em>Starry Sierra</em><br/><span class="muted">Evolution Lakes, CA (2024)</span></figcaption></figure>
+				<figure><img src="https://live.staticflickr.com/65535/54671945286_dfa082ba05_c.jpg" alt="Bald eagle in the Boundary Waters, Minnesota" loading="lazy" /><figcaption><em>Border Baldy</em><br/><span class="muted">Boundary Waters, MN (2024)</span></figcaption></figure>
+			</div>
+		</section>
+
+		<footer class="page-foot">
+			&copy; Garrett G. Craig · <a href="index.html">Home</a>
+		</footer>
+	</div>
+</body>
+</html>

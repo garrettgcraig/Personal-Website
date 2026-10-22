@@ -1,0 +1,96 @@
+/*
+	Garrett G. Craig brand tokens: "Desert Sky" palette.
+	Light values live on :root; dark values apply when darkmode.js puts
+	.dark-mode on <body>. See brand.html for usage and contrast rules.
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+	/* Core palette */
+	--gc-paper: #F6F6F2;
+	--gc-ink: #1B2530;
+	--gc-sky: #2D5A7B;
+	--gc-sage: #5E6E3A;
+	--gc-ochre: #D3A43B;
+	--gc-mist: #B9CCD8;
+
+	/* Extensions */
+	--gc-sky-deep: #1B3A52;
+	--gc-sky-pale: #DDE7EE;
+	--gc-sage-pale: #CFD6BF;
+	--gc-clay: #A65A3C;
+	--gc-mesa: #6B4A73;
+
+	/* Neutrals, light to dark */
+	--gc-paper-50: #FBFBF8;
+	--gc-paper-100: #F6F6F2;
+	--gc-stone-200: #ECEDE7;
+	--gc-stone-300: #D8DAD3;
+	--gc-slate-400: #9AA6B0;
+	--gc-slate-600: #56606A;
+	--gc-ink-800: #1B2530;
+	--gc-night-900: #121A21;
+
+	/* Semantic roles */
+	--color-bg: var(--gc-paper-100);
+	--color-surface: var(--gc-stone-200);
+	--color-raised: var(--gc-paper-50);
+	--color-text: var(--gc-ink);
+	--color-muted: var(--gc-slate-600);
+	--color-border: rgba(27, 37, 48, 0.13);
+	--color-accent: var(--gc-sky);
+	--color-on-accent: var(--gc-paper);
+	--color-link: var(--gc-sky);
+	--color-secondary: var(--gc-sage);
+	--color-highlight: var(--gc-ochre);
+
+	/* Type */
+	--font-display: "Fraunces", Georgia, "Times New Roman", serif;
+	--font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+	--text-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+	--text-h2: clamp(1.75rem, 2.5vw + 1rem, 2.5rem);
+	--text-h3: 1.375rem;
+	--text-body: 1.0625rem;
+	--text-small: 0.875rem;
+	--text-eyebrow: 0.75rem;
+
+	--leading-tight: 1.12;
+	--leading-body: 1.65;
+	--tracking-eyebrow: 0.16em;
+
+	/* Space, shape, depth */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
+
+	--radius-sm: 6px;
+	--radius-md: 12px;
+	--radius-lg: 20px;
+	--radius-pill: 999px;
+
+	--shadow-soft: 0 1px 2px rgba(27, 37, 48, 0.06), 0 6px 20px rgba(27, 37, 48, 0.07);
+	--measure: 68ch;
+}
+
+body.dark-mode {
+	--color-bg: var(--gc-night-900);
+	--color-surface: #1B252E;
+	--color-raised: #222D37;
+	--color-text: #E8ECEE;
+	--color-muted: var(--gc-slate-400);
+	--color-border: rgba(232, 236, 238, 0.13);
+	--color-accent: #8DB7D6;
+	--color-on-accent: var(--gc-night-900);
+	--color-link: #8DB7D6;
+	--color-secondary: #B3C08A;
+	--color-highlight: #E0B656;
+	--shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
+}
