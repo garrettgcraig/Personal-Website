@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="noindex, nofollow" />
 		<!-- SEO -->
 		<meta name="description" content="The brand guide for garrettgcraig.com: palette, type, mark, components, chart colors, voice, and photo style." />
 		<link rel="canonical" href="https://garrettgcraig.com/brand" />
@@ -34,14 +35,14 @@
 			-webkit-font-smoothing: antialiased;
 		}
 		a { color: var(--color-link); text-underline-offset: 0.18em; }
-		h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: var(--leading-tight); margin: 0; }
+		h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; line-height: var(--leading-tight); margin: 0; }
 		h2 { font-size: var(--text-h2); margin-bottom: var(--space-4); }
 		h3 { font-size: var(--text-h3); margin-bottom: var(--space-2); }
 		p { margin: 0 0 var(--space-4); max-width: var(--measure); }
 		code, .mono { font-family: var(--font-mono); font-size: 0.85em; }
 
 		.eyebrow {
-			font-family: var(--font-body);
+			font-family: var(--font-ui);
 			font-size: var(--text-eyebrow);
 			font-weight: 600;
 			letter-spacing: var(--tracking-eyebrow);
@@ -69,7 +70,7 @@
 		/* Essence */
 		.words { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin: var(--space-8) 0; }
 		.word { background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-6); }
-		.word strong { display: block; font-family: var(--font-display); font-size: 1.75rem; font-weight: 400; font-style: italic; margin-bottom: var(--space-2); }
+		.word strong { display: block; font-family: var(--font-body); font-size: 1.75rem; font-weight: 400; font-style: italic; margin-bottom: var(--space-2); }
 		.word span { color: var(--color-muted); font-size: var(--text-small); }
 		.muses li { margin-bottom: var(--space-3); }
 		.muses { padding-left: 1.1em; max-width: var(--measure); }
@@ -78,7 +79,7 @@
 		.swatch { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); background: var(--color-raised); }
 		.swatch .chip { height: 112px; display: flex; align-items: flex-end; padding: var(--space-3); font-family: var(--font-mono); font-size: 0.75rem; }
 		.swatch .info { padding: var(--space-4); font-size: var(--text-small); }
-		.swatch .info strong { font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; display: block; }
+		.swatch .info strong { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; display: block; }
 		.swatch .info p { margin: var(--space-1) 0 0; color: var(--color-muted); }
 		.chips-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 		.mini { flex: 1 1 110px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); overflow: hidden; font-size: 0.75rem; background: var(--color-raised); }
@@ -107,13 +108,13 @@
 		.mark-tile .sizes svg:nth-child(1) { width: 48px; height: 48px; }
 		.mark-tile .sizes svg:nth-child(2) { width: 32px; height: 32px; }
 		.mark-tile .sizes svg:nth-child(3) { width: 16px; height: 16px; }
-		.big-wordmark { display: flex; align-items: center; gap: var(--space-4); font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 400; }
+		.big-wordmark { display: flex; align-items: center; gap: var(--space-4); font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 600; letter-spacing: -0.02em; }
 		.big-wordmark svg { width: 64px; height: 64px; flex: none; }
 
 		/* Components */
 		.btn {
 			display: inline-flex; align-items: center; gap: var(--space-2);
-			font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+			font-family: var(--font-ui); font-size: 0.95rem; font-weight: 600;
 			padding: 0.7rem 1.25rem; border-radius: var(--radius-pill);
 			border: 1.5px solid transparent; text-decoration: none; cursor: pointer;
 			transition: transform 0.15s ease, background-color 0.15s ease;
@@ -158,7 +159,7 @@
 		.photos figure { margin: 0; }
 		.photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); display: block; }
 		.photos figcaption { font-size: var(--text-small); margin-top: var(--space-2); }
-		.photos figcaption em { font-family: var(--font-display); font-style: italic; font-size: 1rem; }
+		.photos figcaption em { font-family: var(--font-body); font-style: italic; font-size: 1rem; }
 
 		footer.page-foot { padding: var(--space-12) 0; border-top: 1px solid var(--color-border); color: var(--color-muted); font-size: var(--text-small); }
 
@@ -173,7 +174,7 @@
 		<!-- NAV -->
 		<nav class="site-nav" aria-label="Site">
 			<a class="site-name" href="index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>Garrett G. Craig</a>
-			<ul><li><a href="projects.html">Projects</a></li><li><a href="research.html">Research</a></li><li><a href="trail-log.html">Trail Log</a></li><li><a href="photography.html">Photography</a></li><li><a href="brand.html" aria-current="page">Brand</a></li></ul>
+			<ul><li><a href="projects.html">Projects</a></li><li><a href="research.html">Research</a></li><li><a href="trail-log.html">Trail Log</a></li><li><a href="photography.html">Photography</a></li></ul>
 		</nav>
 		<!-- /NAV -->
 
@@ -299,13 +300,13 @@
 		<!-- Typography -->
 		<section class="block" id="type">
 			<div class="eyebrow">03 · Typography</div>
-			<h2>Fraunces, Inter, JetBrains Mono</h2>
-			<p class="muted">Fraunces brings the soft, old-style warmth; Inter keeps UI and body text clear; JetBrains Mono is for numbers, coordinates, and code.</p>
-			<div class="specimen"><div class="label">Display<br/>Fraunces 400<br/>clamp 2.5–4.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-display);line-height:1.05">Tools for nature</div></div>
-			<div class="specimen"><div class="label">H2<br/>Fraunces 500<br/>1.75–2.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-h2);font-weight:500;line-height:1.15">Mapping who stewards the Amazon</div></div>
-			<div class="specimen"><div class="label">H3<br/>Fraunces 500<br/>1.375rem</div><div style="font-family:var(--font-display);font-size:var(--text-h3);font-weight:500">Field notes from the Big SEKI loop</div></div>
+			<h2>Inter, Source Serif 4, JetBrains Mono</h2>
+			<p class="muted">Inter sets titles, headings, and UI (nav, buttons, tags, labels) in one clear, modern voice. Source Serif 4 carries the reading: body text, captions, and quotes. JetBrains Mono is for numbers, coordinates, and code.</p>
+			<div class="specimen"><div class="label">Display<br/>Inter 700<br/>clamp 2.5–4.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-display);font-weight:700;letter-spacing:-0.03em;line-height:1.05">Tools for nature</div></div>
+			<div class="specimen"><div class="label">H2<br/>Inter 600<br/>1.75–2.5rem</div><div style="font-family:var(--font-display);font-size:var(--text-h2);font-weight:500;line-height:1.15">Mapping who stewards the Amazon</div></div>
+			<div class="specimen"><div class="label">H3<br/>Inter 600<br/>1.375rem</div><div style="font-family:var(--font-display);font-size:var(--text-h3);font-weight:500">Field notes from the Big SEKI loop</div></div>
 			<div class="specimen"><div class="label">Eyebrow<br/>Inter 600, caps<br/>0.75rem, +0.16em</div><div class="eyebrow" style="margin:0">Conservation planning · Geospatial</div></div>
-			<div class="specimen"><div class="label">Body<br/>Inter 400<br/>1.0625rem / 1.65</div><div><p style="margin:0">I build maps, models, and apps that help people see what is living around them and decide what to protect next. Most of my work sits where field ecology meets software.</p></div></div>
+			<div class="specimen"><div class="label">Body<br/>Source Serif 4 400<br/>1.0625rem / 1.65</div><div><p style="margin:0">I build maps, models, and apps that help people see what is living around them and decide what to protect next. Most of my work sits where field ecology meets software.</p></div></div>
 			<div class="specimen"><div class="label">Data<br/>JetBrains Mono 400</div><div class="mono" style="font-size:1rem">36.5785° N, 118.2923° W · 1,284 obs · 12.4 km</div></div>
 		</section>
 
@@ -349,7 +350,7 @@
 			</div>
 			<h3 style="margin-top: var(--space-12)">Wordmark</h3>
 			<div class="big-wordmark"><svg aria-hidden="true"><use href="#mark"/></svg>Garrett G. Craig</div>
-			<p class="muted" style="margin-top: var(--space-4)">Fraunces 400, mark height ≈ 1.6× cap height, gap = ½ mark width. In tight spaces, use the mark alone.</p>
+			<p class="muted" style="margin-top: var(--space-4)">Inter 600, mark height ≈ 1.6× cap height, gap = ½ mark width. In tight spaces, use the mark alone.</p>
 		</section>
 
 		<!-- Components -->
@@ -433,7 +434,7 @@ theme_gc &lt;- theme_minimal(base_family = "Inter") +
   theme(plot.background  = element_rect(fill = "#F6F6F2", color = NA),
         text             = element_text(color = "#1B2530"),
         panel.grid.minor = element_blank(),
-        plot.title = element_text(family = "Fraunces", size = 16))</pre>
+        plot.title = element_text(family = "Inter", face = "bold", size = 16))</pre>
 				</div>
 				<div>
 					<div class="eyebrow" style="color:var(--color-muted)">Python · matplotlib</div>

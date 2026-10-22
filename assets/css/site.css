@@ -12,9 +12,14 @@ body.dark-mode {
 	color: var(--color-text) !important;
 }
 
-body, input, select, textarea {
+body {
 	font-family: var(--font-body);
 	font-weight: 400;
+	font-size: 1.0625rem;
+}
+
+input, select, textarea, label {
+	font-family: var(--font-ui);
 }
 
 ::selection {
@@ -34,13 +39,14 @@ body.dark-mode #wrapper > .banner h2,
 body.dark-mode #wrapper > .spotlight h2,
 body.dark-mode #wrapper > .wrapper h2 {
 	font-family: var(--font-display);
-	font-weight: 400;
-	letter-spacing: -0.01em;
+	font-weight: 600;
+	letter-spacing: -0.02em;
 	color: var(--color-text) !important;
 }
 
-h3, h4 {
-	font-weight: 500;
+h1 {
+	font-weight: 700;
+	letter-spacing: -0.03em;
 }
 
 strong, b,
@@ -50,7 +56,7 @@ body.dark-mode strong, body.dark-mode b {
 }
 
 h1 strong {
-	font-weight: 400;
+	font-weight: inherit;
 }
 
 p.major {
@@ -60,6 +66,8 @@ p.major {
 #wrapper > .banner p.major {
 	font-family: var(--font-display);
 	font-size: 1.6rem;
+	font-weight: 500;
+	letter-spacing: -0.01em;
 	line-height: 1.3;
 	color: var(--color-text);
 }
@@ -119,20 +127,21 @@ body.dark-mode blockquote {
 	border-left: 3px solid var(--color-highlight) !important;
 	background: var(--color-surface) !important;
 	border-radius: 0 var(--radius-md) var(--radius-md) 0;
-	font-family: var(--font-display);
+	font-family: var(--font-body);
+	font-style: italic;
 	font-size: 1.15rem;
 }
 
 blockquote footer,
 body.dark-mode blockquote footer {
-	font-family: var(--font-body);
+	font-family: var(--font-ui);
 	color: var(--color-muted) !important;
 }
 
 /* Buttons */
 input[type="submit"], input[type="reset"], input[type="button"], button, .button,
 body.dark-mode .button {
-	font-family: var(--font-body);
+	font-family: var(--font-ui);
 	font-weight: 600;
 	letter-spacing: 0;
 	text-transform: none;
@@ -193,7 +202,7 @@ body.dark-mode .project-card .card-tags span,
 span[style*="#e8f5e9"] {
 	background: color-mix(in srgb, var(--color-accent) 12%, transparent) !important;
 	color: var(--color-text) !important;
-	font-family: var(--font-body);
+	font-family: var(--font-ui);
 	font-weight: 500 !important;
 	letter-spacing: 0.02em !important;
 	text-transform: none !important;
@@ -252,7 +261,7 @@ body.dark-mode .inat-widget .inat-footer a:hover {
 
 .inat-label, .inat-meta, .inat-label, .inat-value,
 body.dark-mode .inat-label, body.dark-mode .inat-meta {
-	font-family: var(--font-body) !important;
+	font-family: var(--font-ui) !important;
 	color: var(--color-muted) !important;
 }
 
@@ -287,7 +296,7 @@ body.dark-mode footer .icons a:hover {
 	-webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);
 	border-bottom: 1px solid var(--color-border);
-	font-family: var(--font-body);
+	font-family: var(--font-ui);
 }
 
 .site-nav a {
@@ -413,7 +422,7 @@ body.dark-mode .trail-card-tags span {
 }
 
 .leaflet-container {
-	font-family: var(--font-body);
+	font-family: var(--font-ui);
 }
 
 /* Let the hero's three buttons wrap instead of running under the photo. */

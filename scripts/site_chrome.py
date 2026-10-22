@@ -16,7 +16,6 @@ LINKS = [
     ('research.html', 'Research'),
     ('trail-log.html', 'Trail Log'),
     ('photography.html', 'Photography'),
-    ('brand.html', 'Brand'),
 ]
 
 MARK = (
@@ -42,7 +41,7 @@ SECTIONS = {
     'photography-landscapes.html': 'photography.html',
     'photography-flora.html': 'photography.html',
     'photography-macro.html': 'photography.html',
-    'brand.html': 'brand.html',
+    'brand.html': None,  # unlisted: reachable by URL only
 }
 
 
