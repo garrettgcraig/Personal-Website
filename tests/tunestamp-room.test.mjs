@@ -1,9 +1,9 @@
-// Tests for the Timeline Public edition room server and rules.
-// Run with: node --test tests/timeline-room.test.mjs
+// Tests for the Tunestamp Public edition room server and rules.
+// Run with: node --test tests/tunestamp-room.test.mjs
 import test from "node:test";
 import assert from "node:assert/strict";
-import * as G from "../timeline/game.js";
-import * as R from "../timeline/room.js";
+import * as G from "../tunestamp/game.js";
+import * as R from "../tunestamp/room.js";
 
 // A catalog with fake Spotify IDs, since the real one is filled in by the catalog workflow.
 const rows = [];

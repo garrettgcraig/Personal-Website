@@ -1,14 +1,14 @@
-// Local server for trying the Timeline game without Netlify: serves the site and runs the
+// Local server for trying the Tunestamp game without Netlify: serves the site and runs the
 // room API in memory. Use --fake-ids to give every song a made-up Spotify ID, so games work
 // before the catalog workflow has filled in real ones.
 //
-//   node tests/timeline-dev-server.mjs [--port 8787] [--fake-ids]
+//   node tests/tunestamp-dev-server.mjs [--port 8787] [--fake-ids]
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as R from "../timeline/room.js";
-import { SONGS } from "../timeline/songs.js";
+import * as R from "../tunestamp/room.js";
+import { SONGS } from "../tunestamp/songs.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const args = process.argv.slice(2);
@@ -26,7 +26,7 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 http
   .createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    if (url.pathname.startsWith("/timeline/api/")) {
+    if (url.pathname.startsWith("/tunestamp/api/")) {
       let body = {};
       if (req.method === "POST") {
         const chunks = [];
@@ -35,11 +35,11 @@ http
           body = JSON.parse(Buffer.concat(chunks).toString() || "{}");
         } catch {}
       }
-      const out = await R.handle(store, { method: req.method, path: url.pathname.replace("/timeline/api/", ""), query: Object.fromEntries(url.searchParams), body });
+      const out = await R.handle(store, { method: req.method, path: url.pathname.replace("/tunestamp/api/", ""), query: Object.fromEntries(url.searchParams), body });
       res.writeHead(out.status, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       return res.end(JSON.stringify(out.json));
     }
-    if (url.pathname === "/timeline/songs.js") {
+    if (url.pathname === "/tunestamp/songs.js") {
       res.writeHead(200, { "Content-Type": types[".js"] });
       return res.end(songsModule);
     }
@@ -54,4 +54,4 @@ http
       res.end("Not found");
     }
   })
-  .listen(port, "127.0.0.1", () => console.log(`Timeline dev server on http://127.0.0.1:${port}/timeline/${fakeIds ? " (fake Spotify IDs)" : ""}`));
+  .listen(port, "127.0.0.1", () => console.log(`Tunestamp dev server on http://127.0.0.1:${port}/tunestamp/${fakeIds ? " (fake Spotify IDs)" : ""}`));

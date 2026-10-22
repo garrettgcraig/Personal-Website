@@ -1,4 +1,4 @@
-// Room server for the Timeline Public edition. Pure logic plus a small storage interface,
+// Room server for the Tunestamp Public edition. Pure logic plus a small storage interface,
 // so the same code runs in the Netlify function and in local tests.
 //
 // A room has one DJ phone (plays songs from Spotify links, face down) and 2 to 4 team phones.

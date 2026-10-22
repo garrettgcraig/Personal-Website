@@ -1,8 +1,8 @@
-name: Timeline smoke test
+name: Tunestamp smoke test
 # After Netlify finishes a deploy preview, plays one turn against its game API.
 on:
   pull_request:
-    paths: ['timeline/**', 'netlify/**', 'netlify.toml', 'package.json', 'scripts/timeline_smoke.py', '.github/workflows/timeline-smoke.yml']
+    paths: ['tunestamp/**', 'netlify/**', 'netlify.toml', 'package.json', 'scripts/tunestamp_smoke.py', '.github/workflows/tunestamp-smoke.yml']
 permissions:
   contents: read
   statuses: read
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/timeline-room.test.mjs
+      - run: node --test tests/tunestamp-room.test.mjs
       - name: Wait for the Netlify deploy preview
         id: preview
         env:
@@ -35,4 +35,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python scripts/timeline_smoke.py "${{ steps.preview.outputs.url }}"
+      - run: python scripts/tunestamp_smoke.py "${{ steps.preview.outputs.url }}"

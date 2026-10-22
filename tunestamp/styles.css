@@ -1,4 +1,4 @@
-/* Timeline: a hi-fi receiver look. Petrol-blue chassis, an amber tuning dial for the
+/* Tunestamp: a hi-fi receiver look. Petrol-blue chassis, an amber tuning dial for the
    year range, and record sleeves colored by decade. */
 
 :root {
@@ -347,7 +347,7 @@ input:focus { border-color: var(--amber); outline: none; }
 .report { display: flex; gap: 10px; align-items: flex-end; margin-top: 14px; flex-wrap: wrap; }
 .result-text .btn.link { margin-top: 16px; }
 
-/* Timeline rail */
+/* Tunestamp rail */
 .timeline-wrap h2 { margin-bottom: 12px; }
 .rail {
   display: flex; align-items: stretch; gap: 6px;

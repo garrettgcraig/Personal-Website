@@ -1,9 +1,9 @@
-// Timeline, Public edition. One page that becomes either the DJ phone or a team phone.
+// Tunestamp, Public edition. One page that becomes either the DJ phone or a team phone.
 // The DJ phone opens each song as an ordinary Spotify link while face down; no Spotify API.
-import { SONGS } from "/timeline/songs.js";
-import * as G from "/timeline/game.js";
+import { SONGS } from "/tunestamp/songs.js";
+import * as G from "/tunestamp/game.js";
 
-const API = "/timeline/api";
+const API = "/tunestamp/api";
 const ALL = G.toCards(SONGS);
 const YEAR_MIN = G.YEAR_FLOOR;
 const YEAR_MAX = Math.max(new Date().getFullYear(), ...SONGS.map((r) => r[2]));
@@ -45,11 +45,11 @@ const store = {
 };
 
 function deviceId() {
-  let id = store.get("tl.device");
+  let id = store.get("ts.device");
   if (!id) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     id = Array.from(crypto.getRandomValues(new Uint8Array(20)), (b) => chars[b % chars.length]).join("");
-    store.set("tl.device", id);
+    store.set("ts.device", id);
   }
   return id;
 }
@@ -76,7 +76,7 @@ const app = {
   screen: "home", // home | join | room
   joinCode: (params.get("room") || "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4),
   pendingRole: params.get("room") ? null : null,
-  name: store.get("tl.name", ""),
+  name: store.get("ts.name", ""),
   view: null,
   clockOffset: 0,
   busy: false,
@@ -111,7 +111,7 @@ function applyView(v) {
   const prev = app.view;
   app.view = v;
   app.clockOffset = v.serverNow - Date.now();
-  store.set("tl.room", v.code);
+  store.set("ts.room", v.code);
   if (prev?.stage !== v.stage || prev?.game?.turn !== v.game?.turn) app.ui.challengeMode = false;
   if (v.me.role === "dj" && v.play.status === "cued" && dj.playedNonce === v.play.nonce) {
     api("POST", `rooms/${v.code}/actions`, { deviceId: me, type: "played", nonce: v.play.nonce }).then(applyView).then(render).catch(() => {});
@@ -145,7 +145,7 @@ async function poll(now = false) {
     else tickCountdown();
   } catch (e) {
     if (/No game with code/.test(e.message)) {
-      store.set("tl.room", null);
+      store.set("ts.room", null);
       app.view = null;
       app.screen = "home";
       app.error = e.message;
@@ -184,7 +184,7 @@ async function keepAwake() {
 
 // ---------- DJ phone: motion, beeps, and the face-down tap ----------
 
-const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("tl.playedNonce", null), noSensorTimer: null, noSensor: false };
+const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false };
 
 function screenAngle(beta, gamma) {
   const r = Math.PI / 180;
@@ -295,7 +295,7 @@ blind.addEventListener("click", (e) => {
   }
   const nonce = v.play.nonce;
   dj.playedNonce = nonce;
-  store.set("tl.playedNonce", nonce);
+  store.set("ts.playedNonce", nonce);
   try {
     fetch(`${API}/rooms/${v.code}/actions`, {
       method: "POST",
@@ -313,11 +313,11 @@ blind.addEventListener("click", (e) => {
 // ---------- Home and join ----------
 
 function homeView() {
-  const saved = store.get("tl.room");
+  const saved = store.get("ts.room");
   return `
   <div class="home">
     <header class="masthead">
-      <h1 class="wordmark">Timeline</h1>
+      <h1 class="wordmark">Tunestamp</h1>
       <p class="lede">Hear a song, then slot it into your team's timeline by year. One phone plays the music face down, so nobody sees the answer.</p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
@@ -376,7 +376,7 @@ function roleView() {
 function lobbyView() {
   const v = app.view;
   const host = v.me.isHost;
-  const link = `${location.origin}/timeline/?room=${v.code}`;
+  const link = `${location.origin}/tunestamp/?room=${v.code}`;
   const roster = [
     `<li><span>DJ phone</span>${v.djJoined ? `<span>${v.me.role === "dj" ? '<span class="you">This phone</span>' : "Ready"}</span>` : '<span class="missing">Waiting</span>'}</li>`,
     ...v.lobbyTeams.map((n, i) => `<li><span>${esc(n)}</span>${v.me.team === i ? '<span class="you">This phone</span>' : "<span>Ready</span>"}</li>`),
@@ -389,7 +389,7 @@ function lobbyView() {
       <div><div class="code-label">Room code</div><div class="code-big">${esc(v.code)}</div></div>
       <div class="actions"><button class="btn quiet" data-action="share" data-link="${esc(link)}">Share invite link</button></div>
     </div>
-    <p class="hint">Others open <strong>${esc(location.host)}/timeline</strong> and enter the code.</p>
+    <p class="hint">Others open <strong>${esc(location.host)}/tunestamp</strong> and enter the code.</p>
     ${v.me.role === "dj" ? djLobbyNote() : ""}
     <section class="panel">
       <h2>Phones</h2>
@@ -671,7 +671,7 @@ function teamView() {
   return `
   <div class="game">
     <header class="gamebar">
-      <span class="wordmark small">Timeline</span>
+      <span class="wordmark small">Tunestamp</span>
       <span class="meta">${esc(v.code)}. Round ${g.round}. ${v.config.yearMin} to ${v.config.yearMax}.</span>
       <span class="spacer"></span>
       ${v.me.isHost ? `<button class="btn quiet small" data-action="end">End game</button>` : ""}
@@ -695,7 +695,7 @@ function othersView(v) {
 function djView() {
   const v = app.view;
   const g = v.game;
-  const header = `<header class="gamebar"><span class="wordmark small">Timeline</span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>`;
+  const header = `<header class="gamebar"><span class="wordmark small">Tunestamp</span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>`;
   if (!dj.enabled || dj.noSensor) {
     return `${header}<div class="dj">
       <p class="stage-title">Get the DJ phone ready</p>
@@ -794,7 +794,7 @@ async function enterRoom(code, role, name) {
     else v = await api("POST", `rooms/${code}/actions`, { deviceId: me, type: "join", role, name });
     applyView(v);
     app.screen = "room";
-    history.replaceState(null, "", `/timeline/?room=${v.code}`);
+    history.replaceState(null, "", `/tunestamp/?room=${v.code}`);
     poll();
   } catch (e) {
     app.error = e.message;
@@ -823,7 +823,7 @@ const actions = {
     render();
   },
   async rejoin() {
-    const code = store.get("tl.room");
+    const code = store.get("ts.room");
     try {
       const v = await api("GET", `rooms/${code}?device=${me}`);
       applyView(v);
@@ -831,10 +831,10 @@ const actions = {
         app.joinCode = code;
         app.screen = "join";
       } else app.screen = "room";
-      history.replaceState(null, "", `/timeline/?room=${code}`);
+      history.replaceState(null, "", `/tunestamp/?room=${code}`);
       poll();
     } catch (e) {
-      store.set("tl.room", null);
+      store.set("ts.room", null);
       app.error = e.message;
     }
     render();
@@ -850,13 +850,13 @@ const actions = {
     root.querySelector('[data-field="name"]')?.focus();
   },
   confirmTeam() {
-    store.set("tl.name", app.name);
+    store.set("ts.name", app.name);
     enterRoom(app.joinCode, "team", app.name);
   },
   async share(el) {
     const link = el.dataset.link;
     try {
-      if (navigator.share) await navigator.share({ title: "Join my Timeline game", text: `Room code ${app.view.code}`, url: link });
+      if (navigator.share) await navigator.share({ title: "Join my Tunestamp game", text: `Room code ${app.view.code}`, url: link });
       else {
         await navigator.clipboard.writeText(link);
         toast("Invite link copied.");
@@ -904,10 +904,10 @@ const actions = {
   },
   rematch: () => act("rematch"),
   leave() {
-    store.set("tl.room", null);
+    store.set("ts.room", null);
     app.view = null;
     app.screen = "home";
-    history.replaceState(null, "", "/timeline/");
+    history.replaceState(null, "", "/tunestamp/");
     render();
   },
 };

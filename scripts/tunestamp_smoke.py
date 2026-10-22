@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Smoke test for a deployed Timeline game API: plays one turn with three fake phones.
+"""Smoke test for a deployed Tunestamp game API: plays one turn with three fake phones.
 
-Usage: python scripts/timeline_smoke.py https://deploy-preview-36--example.netlify.app
+Usage: python scripts/tunestamp_smoke.py https://deploy-preview-36--example.netlify.app
 """
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ import urllib.request
 
 def call(base: str, method: str, path: str, body: dict | None = None) -> dict:
     data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(f"{base}/timeline/api/{path}", data=data, method=method,
-                                 headers={"Content-Type": "application/json", "User-Agent": "timeline-smoke"})
+    req = urllib.request.Request(f"{base}/tunestamp/api/{path}", data=data, method=method,
+                                 headers={"Content-Type": "application/json", "User-Agent": "tunestamp-smoke"})
     try:
         with urllib.request.urlopen(req, timeout=20) as res:
             return json.loads(res.read())
