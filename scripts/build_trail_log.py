@@ -38,6 +38,9 @@ import json
 import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from seo_meta import ORIGIN, DEFAULT_IMAGE, seo_block  # noqa: E402
 from datetime import date, datetime
 
 try:
@@ -274,13 +277,21 @@ def preprocess_directives(body):
 # Page assembly
 # --------------------------------------------------------------------------
 
-def build_page(meta, body_html, has_map, markdown_url=""):
+def build_page(meta, body_html, has_map, markdown_url="", page_name=""):
     """Assemble the full HTML document string for an entry."""
     title = html_escape(meta["title"])
     meta_line = "%s &middot; %s" % (
         html_escape(format_date(meta["date"])),
         html_escape(meta["location"]),
     )
+
+    cover = meta.get("cover", "")
+    seo_tags = seo_block(
+        "%s - Trail Log" % meta["title"],
+        meta["summary"],
+        ORIGIN + "/" + page_name[:-5] if page_name else ORIGIN + "/trail-log",
+        ORIGIN + "/" + cover if cover else DEFAULT_IMAGE,
+    ).replace("%", "%%")
 
     # Conditionally include the Leaflet stylesheet in <head>.
     leaflet_css_line = ("\n" + LEAFLET_CSS) if has_map else ""
@@ -292,6 +303,7 @@ def build_page(meta, body_html, has_map, markdown_url=""):
         "\t\t<title>%s - Trail Log - Garrett G. Craig</title>\n"
         '\t\t<meta charset="utf-8" />\n'
         '\t\t<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />\n'
+        + seo_tags + "\n"
         '\t\t<link rel="stylesheet" href="assets/css/main.css" />\n'
         '\t\t<link rel="stylesheet" href="assets/css/darkmode.css" />\n'
         '\t\t<link rel="stylesheet" href="assets/css/trail-log.css?v=' + ASSET_VERSION + '" />%s\n'
@@ -388,8 +400,8 @@ def build():
         md.reset()
         body_html = md.convert(body)
 
-        page = build_page(meta, body_html, has_map, "trail-%s.md" % slug)
         out_name = "trail-%s.html" % slug
+        page = build_page(meta, body_html, has_map, "trail-%s.md" % slug, out_name)
         out_path = os.path.join(REPO_ROOT, out_name)
         with open(out_path, "w", encoding="utf-8") as out:
             out.write(page)
