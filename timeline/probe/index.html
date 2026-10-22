@@ -133,21 +133,23 @@ function onOrient(e) {
 
 $("startB").addEventListener("click", async () => {
   if (!trackId()) return;
+  // Safari grants motion access only when asked during the tap itself, so this call
+  // must come before any await. The sound setup also starts here without waiting.
+  const needsPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+  const permission = needsPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted");
   try {
     audio = new (window.AudioContext || window.webkitAudioContext)();
-    await audio.resume();
+    audio.resume();
   } catch {}
   try {
-    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-      const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") {
-        $("tilt").textContent = "Motion access was declined, so the face-down check can't run. Reload to try again.";
-        $("tilt").className = "status bad";
-        return;
-      }
+    const res = await permission;
+    if (res !== "granted") {
+      $("tilt").textContent = "Motion access was declined. In Safari, open Settings > Apps > Safari > Advanced, turn on Motion & Orientation Access if you see it, then reload and try again.";
+      $("tilt").className = "status bad";
+      return;
     }
   } catch (err) {
-    $("tilt").textContent = "This browser wouldn't share motion data.";
+    $("tilt").textContent = `This browser wouldn't share motion data (${err && err.name ? err.name : "unknown error"}).`;
     $("tilt").className = "status bad";
     return;
   }
