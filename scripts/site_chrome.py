@@ -36,6 +36,7 @@ SECTIONS = {
     'project-herpetofauna.html': 'research.html',
     'project-ghg-etrm.html': 'research.html',
     'trail-log.html': 'trail-log.html',
+    'day-hikes.html': 'trail-log.html',
     'photography.html': 'photography.html',
     'photography-wildlife.html': 'photography.html',
     'photography-landscapes.html': 'photography.html',

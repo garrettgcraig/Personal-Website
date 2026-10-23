@@ -27,6 +27,7 @@ PAGES = {
     'photography-flora.html': ('Flora Photography', 'Plants, trees, and fungi in their natural habitats, photographed by Garrett G. Craig.'),
     'photography-macro.html': ('Macro Photography', 'Small wonders of the natural world up close, photographed by Garrett G. Craig.'),
     'trail-log.html': ('Trail Log', 'Field notes, maps, and photos from backpacking trips in the Sierra Nevada, the Central Coast, and beyond.'),
+    'day-hikes.html': ('Day Hikes', 'Every day hike Garrett G. Craig has tracked since 2017 on one map, with repeat walks of the same trail shown once.'),
     'wilderness.html': ('Public Lands Tracker', "Track your visits to 1,350+ U.S. wilderness areas, national parks, and national forests on an interactive map."),
     'brand.html': ('Brand Guide', 'The brand guide for garrettgcraig.com: palette, type, mark, components, chart colors, voice, and photo style.'),
 }
