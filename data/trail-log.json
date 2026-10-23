@@ -30,6 +30,48 @@
       "url": "trail-san-raf-nira-to-mission-pine-spring.html"
     },
     {
+      "slug": "sespe-2025",
+      "title": "Sespe Wilderness — November 2025",
+      "date": "2025-11-26",
+      "location": "Sespe Wilderness, Ventura County, CA",
+      "summary": "Four days in the Sespe, November 26–29, about 34 miles.",
+      "cover": null,
+      "tags": [
+        "backpacking",
+        "sespe-wilderness",
+        "central-coast"
+      ],
+      "url": "trail-sespe-2025.html"
+    },
+    {
+      "slug": "san-rafael-2025",
+      "title": "San Rafael Wilderness — March 2025",
+      "date": "2025-03-26",
+      "location": "San Rafael Wilderness, Santa Barbara County, CA",
+      "summary": "Three days in the San Rafael Wilderness, March 26–28, about 44 miles.",
+      "cover": null,
+      "tags": [
+        "backpacking",
+        "san-rafael-wilderness",
+        "central-coast"
+      ],
+      "url": "trail-san-rafael-2025.html"
+    },
+    {
+      "slug": "eastern-sierra-2024",
+      "title": "Yosemite and the Eastern Sierra — August 2024",
+      "date": "2024-08-23",
+      "location": "Yosemite and the Eastern Sierra, CA",
+      "summary": "Six days in Yosemite and the Eastern Sierra, August 23–28, about 42 miles.",
+      "cover": "trail-log/photos/eastern-sierra-2024/cover.jpg",
+      "tags": [
+        "backpacking",
+        "sierra-nevada",
+        "yosemite"
+      ],
+      "url": "trail-eastern-sierra-2024.html"
+    },
+    {
       "slug": "boundary-waters-2024",
       "title": "Boundary Waters — July 2024",
       "date": "2024-07-24",
@@ -58,6 +100,20 @@
       "url": "trail-isle-royale-2024.html"
     },
     {
+      "slug": "smokies-2024",
+      "title": "Great Smoky Mountains — April 2024",
+      "date": "2024-04-26",
+      "location": "Great Smoky Mountains National Park, NC",
+      "summary": "Three days in the Smokies, April 26–28, about 42 miles.",
+      "cover": null,
+      "tags": [
+        "backpacking",
+        "great-smoky-mountains",
+        "appalachians"
+      ],
+      "url": "trail-smokies-2024.html"
+    },
+    {
       "slug": "isle-royale-2023",
       "title": "Isle Royale — May 2023",
       "date": "2023-05-24",
@@ -72,6 +128,48 @@
       "url": "trail-isle-royale-2023.html"
     },
     {
+      "slug": "colorado-trail-2022",
+      "title": "Colorado Trail — July 2022",
+      "date": "2022-07-19",
+      "location": "Colorado Trail, Front Range, CO",
+      "summary": "Three days on the Colorado Trail, July 19–21, about 57 miles.",
+      "cover": "trail-log/photos/colorado-trail-2022/cover.jpg",
+      "tags": [
+        "backpacking",
+        "colorado-trail",
+        "rockies"
+      ],
+      "url": "trail-colorado-trail-2022.html"
+    },
+    {
+      "slug": "sylvania-2022",
+      "title": "Sylvania Wilderness — June 2022",
+      "date": "2022-06-26",
+      "location": "Sylvania Wilderness, Ottawa National Forest, MI",
+      "summary": "Seven days in the Sylvania Wilderness, June 26–July 2, about 42 miles.",
+      "cover": null,
+      "tags": [
+        "sylvania-wilderness",
+        "ottawa-national-forest",
+        "northwoods"
+      ],
+      "url": "trail-sylvania-2022.html"
+    },
+    {
+      "slug": "pictured-rocks-2022",
+      "title": "Pictured Rocks — June 2022",
+      "date": "2022-06-17",
+      "location": "Pictured Rocks National Lakeshore, MI",
+      "summary": "Four days along Pictured Rocks, June 17–20, about 43 miles.",
+      "cover": "trail-log/photos/pictured-rocks-2022/cover.jpg",
+      "tags": [
+        "backpacking",
+        "pictured-rocks",
+        "lake-superior"
+      ],
+      "url": "trail-pictured-rocks-2022.html"
+    },
+    {
       "slug": "isle-royale-2022",
       "title": "Isle Royale — June 2022",
       "date": "2022-06-06",
@@ -84,6 +182,20 @@
         "lake-superior"
       ],
       "url": "trail-isle-royale-2022.html"
+    },
+    {
+      "slug": "smokies-2020",
+      "title": "Great Smoky Mountains — June 2020",
+      "date": "2020-06-04",
+      "location": "Great Smoky Mountains National Park, TN",
+      "summary": "Four days in the Smokies, June 4–7, about 31 miles.",
+      "cover": "trail-log/photos/smokies-2020/cover.jpg",
+      "tags": [
+        "backpacking",
+        "great-smoky-mountains",
+        "appalachians"
+      ],
+      "url": "trail-smokies-2020.html"
     }
   ]
 }

@@ -1,0 +1,301 @@
+{
+  "observations": [
+    {
+      "id": 328843207,
+      "name": "Ceanothus leucodermis",
+      "common": "chaparral whitethorn",
+      "iconic": "Plantae",
+      "lat": 34.5596088762,
+      "lng": -119.0657416683,
+      "time": "2025-11-27T08:32:23-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972162/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843207"
+    },
+    {
+      "id": 328843269,
+      "name": "Adenostoma fasciculatum",
+      "common": "chamise",
+      "iconic": "Plantae",
+      "lat": 34.5596088762,
+      "lng": -119.0657416683,
+      "time": "2025-11-27T08:32:38-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972346/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843269"
+    },
+    {
+      "id": 328843279,
+      "name": "Eriodictyon crassifolium",
+      "common": "Thick-leaved Yerba Santa",
+      "iconic": "Plantae",
+      "lat": 34.5593444975,
+      "lng": -119.0660702291,
+      "time": "2025-11-27T08:33:06-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972381/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843279"
+    },
+    {
+      "id": 328843300,
+      "name": "Arctostaphylos glauca",
+      "common": "Big Berry Manzanita",
+      "iconic": "Plantae",
+      "lat": 34.5593444975,
+      "lng": -119.0660702291,
+      "time": "2025-11-27T08:34:06-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972429/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843300"
+    },
+    {
+      "id": 328843318,
+      "name": "Quercus agrifolia",
+      "common": "coast live oak",
+      "iconic": "Plantae",
+      "lat": 34.5592416442,
+      "lng": -119.0659078469,
+      "time": "2025-11-27T08:57:41-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972474/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843318"
+    },
+    {
+      "id": 328843336,
+      "name": "Eriogonum fasciculatum",
+      "common": "California Buckwheat",
+      "iconic": "Plantae",
+      "lat": 34.562274604,
+      "lng": -119.0649490697,
+      "time": "2025-11-27T09:43:46-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972512/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843336"
+    },
+    {
+      "id": 328843355,
+      "name": "Senecio flaccidus",
+      "common": "threadleaf groundsel",
+      "iconic": "Plantae",
+      "lat": 34.564727591,
+      "lng": -119.0646996874,
+      "time": "2025-11-27T09:48:26-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972577/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843355"
+    },
+    {
+      "id": 328843366,
+      "name": "Pellaea andromedifolia",
+      "common": "Coffee Fern",
+      "iconic": "Plantae",
+      "lat": 34.5671925608,
+      "lng": -119.0628369158,
+      "time": "2025-11-27T09:56:03-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972624/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843366"
+    },
+    {
+      "id": 328843383,
+      "name": "Phacelia ramosissima",
+      "common": "branching phacelia",
+      "iconic": "Plantae",
+      "lat": 34.5674837999,
+      "lng": -119.0633921132,
+      "time": "2025-11-27T09:57:05-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972675/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843383"
+    },
+    {
+      "id": 328843399,
+      "name": "Corethrogyne filaginifolia",
+      "common": "California Aster",
+      "iconic": "Plantae",
+      "lat": 34.5675532783,
+      "lng": -119.0634629489,
+      "time": "2025-11-27T09:57:48-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972718/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843399"
+    },
+    {
+      "id": 328843413,
+      "name": "Dendromecon rigida",
+      "common": "Bush Poppy",
+      "iconic": "Plantae",
+      "lat": 34.5663090142,
+      "lng": -119.0554427329,
+      "time": "2025-11-27T10:24:08-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972769/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843413"
+    },
+    {
+      "id": 328843435,
+      "name": "Cuscuta californica",
+      "common": "California dodder",
+      "iconic": "Plantae",
+      "lat": 34.5685700349,
+      "lng": -119.0507536942,
+      "time": "2025-11-27T10:34:36-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972828/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843435"
+    },
+    {
+      "id": 328849431,
+      "name": "Melilotus albus",
+      "common": "White Sweetclover",
+      "iconic": "Plantae",
+      "lat": 34.5736427367,
+      "lng": -119.0481604362,
+      "time": "2025-11-27T10:59:58-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985567/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849431"
+    },
+    {
+      "id": 328849444,
+      "name": "Salix",
+      "common": "Willows",
+      "iconic": "Plantae",
+      "lat": 34.5736290246,
+      "lng": -119.0481158526,
+      "time": "2025-11-27T11:00:26-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985612/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849444"
+    },
+    {
+      "id": 328849460,
+      "name": "Apis mellifera",
+      "common": "Western Honey Bee",
+      "iconic": "Insecta",
+      "lat": 34.5728910724,
+      "lng": -119.0442619243,
+      "time": "2025-11-27T11:34:44-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985652/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849460"
+    },
+    {
+      "id": 328849483,
+      "name": "Ambrosia psilostachya",
+      "common": "western ragweed",
+      "iconic": "Plantae",
+      "lat": 34.5718232892,
+      "lng": -119.0387208721,
+      "time": "2025-11-27T11:46:22-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985724/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849483"
+    },
+    {
+      "id": 328849501,
+      "name": "Boletaceae",
+      "common": "boletes",
+      "iconic": "Fungi",
+      "lat": 34.5715020724,
+      "lng": -119.0383671784,
+      "time": "2025-11-27T11:48:09-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985775/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849501"
+    },
+    {
+      "id": 328849546,
+      "name": "Marrubium vulgare",
+      "common": "White Horehound",
+      "iconic": "Plantae",
+      "lat": 34.5697044335,
+      "lng": -119.0341577582,
+      "time": "2025-11-27T12:03:51-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595985940/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849546"
+    },
+    {
+      "id": 328849565,
+      "name": "Pardosa",
+      "common": "Thin-legged Wolf Spiders",
+      "iconic": "Arachnida",
+      "lat": 34.5697099414,
+      "lng": -119.0341648225,
+      "time": "2025-11-27T12:06:30-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986006/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849565"
+    },
+    {
+      "id": 328849583,
+      "name": "Ambrosia acanthicarpa",
+      "common": "Flatspine Bursage",
+      "iconic": "Plantae",
+      "lat": 34.5743830705,
+      "lng": -119.0141752729,
+      "time": "2025-11-27T13:06:54-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986044/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849583"
+    },
+    {
+      "id": 328849602,
+      "name": "Penstemon centranthifolius",
+      "common": "scarlet bugler",
+      "iconic": "Plantae",
+      "lat": 34.5749066299,
+      "lng": -119.0103158574,
+      "time": "2025-11-27T13:16:59-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986078/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849602"
+    },
+    {
+      "id": 328849638,
+      "name": "Candelariella rosulans",
+      "common": "Sagebrush Goldspeck Lichen",
+      "iconic": "Fungi",
+      "lat": 34.5738035865,
+      "lng": -119.0078390374,
+      "time": "2025-11-27T13:22:02-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986115/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849638"
+    },
+    {
+      "id": 328849687,
+      "name": "Magnoliopsida",
+      "common": "Dicots",
+      "iconic": "Plantae",
+      "lat": 34.5779416021,
+      "lng": -118.98950964,
+      "time": "2025-11-27T14:33:13-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986158/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849687"
+    },
+    {
+      "id": 328849746,
+      "name": "Epilobium canum",
+      "common": "California fuchsia",
+      "iconic": "Plantae",
+      "lat": 34.5786469129,
+      "lng": -118.9896171087,
+      "time": "2025-11-27T14:34:53-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986191/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849746"
+    },
+    {
+      "id": 328849771,
+      "name": "Datura wrightii",
+      "common": "Sacred Datura",
+      "iconic": "Plantae",
+      "lat": 34.5867591061,
+      "lng": -118.9964070023,
+      "time": "2025-11-27T15:01:46-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986241/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849771"
+    },
+    {
+      "id": 328850592,
+      "name": "Buteo jamaicensis",
+      "common": "Red-tailed Hawk",
+      "iconic": "Aves",
+      "lat": 34.5945777036,
+      "lng": -118.9993792054,
+      "time": "2025-11-27T16:02:38-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987886/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850592"
+    },
+    {
+      "id": 328917602,
+      "name": "Salpinctes obsoletus",
+      "common": "Rock Wren",
+      "iconic": "Aves",
+      "lat": 34.5938422862,
+      "lng": -118.9987754363,
+      "time": "2025-11-27T16:03:02-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596122996/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328917602"
+    }
+  ]
+}

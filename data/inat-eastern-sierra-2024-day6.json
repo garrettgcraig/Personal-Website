@@ -1,0 +1,15 @@
+{
+  "observations": [
+    {
+      "id": 300852779,
+      "name": "Elgaria coerulea",
+      "common": "Northern Alligator Lizard",
+      "iconic": "Reptilia",
+      "lat": 37.4304116667,
+      "lng": -118.9100633333,
+      "time": "2024-08-28T15:35:06-07:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/542101463/small.jpg",
+      "url": "https://www.inaturalist.org/observations/300852779"
+    }
+  ]
+}
