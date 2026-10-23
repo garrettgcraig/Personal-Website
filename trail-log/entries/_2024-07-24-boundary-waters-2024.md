@@ -12,6 +12,14 @@ tags: [canoeing, boundary-waters, superior-national-forest]
 
 **TODO:** What happened today.
 
+[[photo:trail-log/photos/boundary-waters-2024/54672263020.jpg|Snapping turtle underwater.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54672167903.jpg|Trumpeter swan.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54671940391.jpg|Yellow pond-lily.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54671106822.jpg|Milky Way over the trees.]]
+
 **Approx. distance:** about 8.5 miles.
 
 **Camp:** TODO. <!-- Nearby on OpenStreetMap: Gun Lake; Gull Lake -->
@@ -23,6 +31,8 @@ tags: [canoeing, boundary-waters, superior-national-forest]
 ## Day 2 · July 25: TODO place to place
 
 **TODO:** What happened today.
+
+[[photo:trail-log/photos/boundary-waters-2024/54671942551.jpg|Bald eagle.]]
 
 **Approx. distance:** about 7 miles.
 
@@ -36,6 +46,14 @@ tags: [canoeing, boundary-waters, superior-national-forest]
 
 **TODO:** What happened today.
 
+[[photo:trail-log/photos/boundary-waters-2024/54672267760.jpg|Merlin.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54672269680.jpg|Juvenile eagle on boulder.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54672173988.jpg|Eagle in flight.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54672181639.jpg|Common loon.]]
+
 **Approx. distance:** about 13 miles.
 
 **Camp:** TODO. <!-- Nearby on OpenStreetMap: Mudro Lake; Alruss Lake; Louis Lake; Range Lake; Sandpit Lake -->
@@ -47,6 +65,10 @@ tags: [canoeing, boundary-waters, superior-national-forest]
 ## Day 4 · July 27: TODO place to place
 
 **TODO:** What happened today.
+
+[[photo:trail-log/photos/boundary-waters-2024/54672174628.jpg|Ring-necked duck.]]
+
+[[photo:trail-log/photos/boundary-waters-2024/54671946231.jpg|River and rocks.]]
 
 **Approx. distance:** about 14 miles.
 
