@@ -326,3 +326,8 @@ body.dark-mode .trail-day-map .leaflet-popup-content a { color: #216b77 !importa
 @media (max-width: 736px) { .trail-day-map { height: 420px; } }
 
 html.trail-log-page, .trail-log-page body { min-width: 0; }
+
+/* ── Trips / Day hikes switcher ───────────────────────────────── */
+.dh-tabs { display: flex; gap: 0.5rem; justify-content: center; margin: 0 0 1.5rem; padding: 0; list-style: none; }
+.dh-tabs a { display: block; padding: 0.35rem 1rem; border-radius: 999px; font-weight: 500; text-decoration: none; color: var(--color-muted, #666); }
+.dh-tabs a[aria-current="page"] { color: var(--color-accent, #2D5A7B); background: color-mix(in srgb, var(--color-accent, #2D5A7B) 12%, transparent); }
