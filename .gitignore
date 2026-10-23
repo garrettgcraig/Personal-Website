@@ -5,3 +5,7 @@ __pycache__/
 # Design-tool scratch (decision pages, review captures)
 **/.impeccable/questions/
 **/.impeccable/review/
+
+# Local secrets (Flickr API key and OAuth token)
+.env
+.flickr-picks/
