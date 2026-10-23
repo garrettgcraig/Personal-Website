@@ -1,0 +1,59 @@
+{
+  "observations": [
+    {
+      "id": 328840934,
+      "name": "Agaricomycetes",
+      "common": "Mushrooms, Bracket Fungi, Puffballs, and Allies",
+      "iconic": "Fungi",
+      "lat": 34.5612515189,
+      "lng": -119.0962158518,
+      "time": "2025-11-26T15:59:45-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595967402/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328840934"
+    },
+    {
+      "id": 328841017,
+      "name": "Stephanomeria virgata",
+      "common": "rod wirelettuce",
+      "iconic": "Plantae",
+      "lat": 34.5600635226,
+      "lng": -119.0938073153,
+      "time": "2025-11-26T16:09:19-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595967524/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328841017"
+    },
+    {
+      "id": 328843152,
+      "name": "Pseudognaphalium",
+      "common": "rabbit-tobaccos",
+      "iconic": "Plantae",
+      "lat": 34.5600529383,
+      "lng": -119.0937714693,
+      "time": "2025-11-26T16:09:39-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595971933/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843152"
+    },
+    {
+      "id": 328843166,
+      "name": "Melilotus albus",
+      "common": "White Sweetclover",
+      "iconic": "Plantae",
+      "lat": 34.5599975033,
+      "lng": -119.0936288569,
+      "time": "2025-11-26T16:10:15-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972027/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843166"
+    },
+    {
+      "id": 328843188,
+      "name": "Gutierrezia californica",
+      "common": "California matchweed",
+      "iconic": "Plantae",
+      "lat": 34.5609156056,
+      "lng": -119.0901492045,
+      "time": "2025-11-26T16:18:22-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595972075/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328843188"
+    }
+  ]
+}

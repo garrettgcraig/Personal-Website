@@ -1,0 +1,70 @@
+{
+  "observations": [
+    {
+      "id": 328850608,
+      "name": "Anaxyrus boreas",
+      "common": "Western Toad",
+      "iconic": "Amphibia",
+      "lat": 34.5708389653,
+      "lng": -119.0487508105,
+      "time": "2025-11-29T10:20:21-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987943/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850608"
+    },
+    {
+      "id": 328850623,
+      "name": "Eleodes grandicollis",
+      "common": null,
+      "iconic": "Insecta",
+      "lat": 34.5687145003,
+      "lng": -119.0510543965,
+      "time": "2025-11-29T11:00:40-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595988003/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850623"
+    },
+    {
+      "id": 328850641,
+      "name": "Ranunculoideae",
+      "common": "Anemones, buttercups, larkspurs and allies",
+      "iconic": "Plantae",
+      "lat": 34.5672380061,
+      "lng": -119.0628474165,
+      "time": "2025-11-29T11:29:46-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595988055/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850641"
+    },
+    {
+      "id": 328850666,
+      "name": "Bombus vosnesenskii",
+      "common": "Yellow-faced Bumble Bee",
+      "iconic": "Insecta",
+      "lat": 34.5589202642,
+      "lng": -119.0751576947,
+      "time": "2025-11-29T12:05:51-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595988124/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850666"
+    },
+    {
+      "id": 328850684,
+      "name": "Agaricineae",
+      "common": null,
+      "iconic": "Fungi",
+      "lat": 34.5598629808,
+      "lng": -119.0916816853,
+      "time": "2025-11-29T12:46:29-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595988173/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850684"
+    },
+    {
+      "id": 328850731,
+      "name": "Magnoliopsida",
+      "common": "Dicots",
+      "iconic": "Plantae",
+      "lat": 34.5597687075,
+      "lng": -119.0922632875,
+      "time": "2025-11-29T12:47:51-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595988215/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850731"
+    }
+  ]
+}
