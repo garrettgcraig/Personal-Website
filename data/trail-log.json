@@ -28,6 +28,62 @@
         "central-coast"
       ],
       "url": "trail-san-raf-nira-to-mission-pine-spring.html"
+    },
+    {
+      "slug": "boundary-waters-2024",
+      "title": "Boundary Waters — July 2024",
+      "date": "2024-07-24",
+      "location": "Boundary Waters Canoe Area Wilderness, MN",
+      "summary": "Four days in the Boundary Waters, July 24–27, about 43 miles.",
+      "cover": "trail-log/photos/boundary-waters-2024/cover.jpg",
+      "tags": [
+        "canoeing",
+        "boundary-waters",
+        "superior-national-forest"
+      ],
+      "url": "trail-boundary-waters-2024.html"
+    },
+    {
+      "slug": "isle-royale-2024",
+      "title": "Isle Royale — May 2024",
+      "date": "2024-05-23",
+      "location": "Isle Royale National Park, MI",
+      "summary": "Seven days on Isle Royale, May 23–29, about 49 miles.",
+      "cover": "trail-log/photos/isle-royale-2024/cover.jpg",
+      "tags": [
+        "backpacking",
+        "isle-royale",
+        "lake-superior"
+      ],
+      "url": "trail-isle-royale-2024.html"
+    },
+    {
+      "slug": "isle-royale-2023",
+      "title": "Isle Royale — May 2023",
+      "date": "2023-05-24",
+      "location": "Isle Royale National Park, MI",
+      "summary": "Nine days on Isle Royale, May 24–June 1, about 65 miles.",
+      "cover": "trail-log/photos/isle-royale-2023/cover.jpg",
+      "tags": [
+        "backpacking",
+        "isle-royale",
+        "lake-superior"
+      ],
+      "url": "trail-isle-royale-2023.html"
+    },
+    {
+      "slug": "isle-royale-2022",
+      "title": "Isle Royale — June 2022",
+      "date": "2022-06-06",
+      "location": "Isle Royale National Park, MI",
+      "summary": "Seven days on Isle Royale, June 6–12, about 54 miles.",
+      "cover": "trail-log/photos/isle-royale-2022/cover.jpg",
+      "tags": [
+        "backpacking",
+        "isle-royale",
+        "lake-superior"
+      ],
+      "url": "trail-isle-royale-2022.html"
     }
   ]
 }
