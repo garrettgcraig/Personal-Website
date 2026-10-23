@@ -1,0 +1,323 @@
+{
+  "observations": [
+    {
+      "id": 328849985,
+      "name": "Mirabilis laevis",
+      "common": "Wishbone Bush",
+      "iconic": "Plantae",
+      "lat": 34.5940684254,
+      "lng": -118.9997753063,
+      "time": "2025-11-28T09:46:33-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986796/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849985"
+    },
+    {
+      "id": 328849998,
+      "name": "Mirabilis laevis",
+      "common": "Wishbone Bush",
+      "iconic": "Plantae",
+      "lat": 34.5941089525,
+      "lng": -118.9999438651,
+      "time": "2025-11-28T09:47:11-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986833/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328849998"
+    },
+    {
+      "id": 328874933,
+      "name": "Vanessa cardui",
+      "common": "Painted Lady",
+      "iconic": "Insecta",
+      "lat": 34.5956733832,
+      "lng": -119.0008015075,
+      "time": "2025-11-28T09:56:51-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036751/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874933"
+    },
+    {
+      "id": 328850030,
+      "name": "Baccharis salicifolia",
+      "common": "mule fat",
+      "iconic": "Plantae",
+      "lat": 34.5952564628,
+      "lng": -119.00117729,
+      "time": "2025-11-28T09:57:14-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986876/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850030"
+    },
+    {
+      "id": 328850081,
+      "name": "Pellaea mucronata",
+      "common": "bird's foot cliffbrake",
+      "iconic": "Plantae",
+      "lat": 34.59538489,
+      "lng": -119.0009626242,
+      "time": "2025-11-28T09:58:49-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595986927/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850081"
+    },
+    {
+      "id": 328850199,
+      "name": "Selaginella bigelovii",
+      "common": "Bigelow's Spikemoss",
+      "iconic": "Plantae",
+      "lat": 34.5959855619,
+      "lng": -119.0010327655,
+      "time": "2025-11-28T09:59:08-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987036/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850199"
+    },
+    {
+      "id": 328917650,
+      "name": "Otospermophilus beecheyi",
+      "common": "California Ground Squirrel",
+      "iconic": "Mammalia",
+      "lat": 34.5952333333,
+      "lng": -119.0011833333,
+      "time": "2025-11-28T10:04:30-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596123039/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328917650"
+    },
+    {
+      "id": 328850232,
+      "name": "Opuntia",
+      "common": "Prickly Pears",
+      "iconic": "Plantae",
+      "lat": 34.5963974578,
+      "lng": -119.0005723055,
+      "time": "2025-11-28T10:04:57-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987111/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850232"
+    },
+    {
+      "id": 328874878,
+      "name": "Sayornis saya",
+      "common": "Say's Phoebe",
+      "iconic": "Aves",
+      "lat": 34.5951470795,
+      "lng": -118.9997210709,
+      "time": "2025-11-28T10:05:35-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036681/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874878"
+    },
+    {
+      "id": 328874877,
+      "name": "Uta stansburiana elegans",
+      "common": "Western Side-blotched Lizard",
+      "iconic": "Reptilia",
+      "lat": 34.5952333333,
+      "lng": -119.0011833333,
+      "time": "2025-11-28T10:06:13-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036678/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874877"
+    },
+    {
+      "id": 328850246,
+      "name": "Cercocarpus betuloides",
+      "common": "Birchleaf Mountain Mahogany",
+      "iconic": "Plantae",
+      "lat": 34.5964056941,
+      "lng": -119.0005455981,
+      "time": "2025-11-28T10:11:45-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987141/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850246"
+    },
+    {
+      "id": 328850263,
+      "name": "Salvia apiana",
+      "common": "white sage",
+      "iconic": "Plantae",
+      "lat": 34.596668837,
+      "lng": -119.0005432193,
+      "time": "2025-11-28T10:12:04-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987191/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850263"
+    },
+    {
+      "id": 328874846,
+      "name": "Vanessa cardui",
+      "common": "Painted Lady",
+      "iconic": "Insecta",
+      "lat": 34.5952333333,
+      "lng": -119.0011833333,
+      "time": "2025-11-28T10:12:32-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036655/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874846"
+    },
+    {
+      "id": 328850293,
+      "name": "Solanum douglasii",
+      "common": "greenspot nightshade",
+      "iconic": "Plantae",
+      "lat": 34.5966318156,
+      "lng": -119.0004858603,
+      "time": "2025-11-28T10:14:30-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987252/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850293"
+    },
+    {
+      "id": 328850312,
+      "name": "Dudleya lanceolata",
+      "common": "lanceleaf liveforever",
+      "iconic": "Plantae",
+      "lat": 34.5966475401,
+      "lng": -119.0004856782,
+      "time": "2025-11-28T10:15:03-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987324/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850312"
+    },
+    {
+      "id": 328850342,
+      "name": "Oenothera elata",
+      "common": "tall evening primrose",
+      "iconic": "Plantae",
+      "lat": 34.5966184722,
+      "lng": -119.000483687,
+      "time": "2025-11-28T10:15:46-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987387/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850342"
+    },
+    {
+      "id": 328850373,
+      "name": "Alnus rhombifolia",
+      "common": "white alder",
+      "iconic": "Plantae",
+      "lat": 34.5967807122,
+      "lng": -119.0004797267,
+      "time": "2025-11-28T10:17:58-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987455/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850373"
+    },
+    {
+      "id": 328850405,
+      "name": "Oenothera elata",
+      "common": "tall evening primrose",
+      "iconic": "Plantae",
+      "lat": 34.5968352688,
+      "lng": -119.0004183982,
+      "time": "2025-11-28T10:19:10-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987506/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850405"
+    },
+    {
+      "id": 328874809,
+      "name": "Apis mellifera",
+      "common": "Western Honey Bee",
+      "iconic": "Insecta",
+      "lat": 34.5871081732,
+      "lng": -118.9933390758,
+      "time": "2025-11-28T10:19:54-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036627/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874809"
+    },
+    {
+      "id": 328850465,
+      "name": "Calasterella californica",
+      "common": "California asterella",
+      "iconic": "Plantae",
+      "lat": 34.5968752457,
+      "lng": -119.0006831259,
+      "time": "2025-11-28T10:25:14-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987548/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850465"
+    },
+    {
+      "id": 328850483,
+      "name": "Hazardia squarrosa",
+      "common": "saw-toothed goldenbush",
+      "iconic": "Plantae",
+      "lat": 34.5966526355,
+      "lng": -119.0005656536,
+      "time": "2025-11-28T10:26:08-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987586/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850483"
+    },
+    {
+      "id": 328850506,
+      "name": "Prunus ilicifolia",
+      "common": "hollyleaf cherry",
+      "iconic": "Plantae",
+      "lat": 34.5965265367,
+      "lng": -119.0006131093,
+      "time": "2025-11-28T10:27:18-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987640/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850506"
+    },
+    {
+      "id": 328850528,
+      "name": "Populus fremontii",
+      "common": "Frémont Cottonwood",
+      "iconic": "Plantae",
+      "lat": 34.5964931183,
+      "lng": -119.0005935002,
+      "time": "2025-11-28T10:28:24-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987708/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850528"
+    },
+    {
+      "id": 328874730,
+      "name": "Sayornis saya",
+      "common": "Say's Phoebe",
+      "iconic": "Aves",
+      "lat": 34.5900752355,
+      "lng": -118.9942724306,
+      "time": "2025-11-28T10:54:17-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036497/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874730"
+    },
+    {
+      "id": 328874694,
+      "name": "Junonia grisea",
+      "common": "Gray Buckeye",
+      "iconic": "Insecta",
+      "lat": 34.5927118472,
+      "lng": -118.9963473428,
+      "time": "2025-11-28T10:57:57-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036385/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874694"
+    },
+    {
+      "id": 328874639,
+      "name": "Ovis canadensis",
+      "common": "Bighorn Sheep",
+      "iconic": "Mammalia",
+      "lat": 34.5051036885,
+      "lng": -119.0248385633,
+      "time": "2025-11-28T11:58:12-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596036236/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874639"
+    },
+    {
+      "id": 328874484,
+      "name": "Buteo jamaicensis",
+      "common": "Red-tailed Hawk",
+      "iconic": "Aves",
+      "lat": 34.5924447318,
+      "lng": -118.9927508132,
+      "time": "2025-11-28T12:01:58-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596035852/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874484"
+    },
+    {
+      "id": 328874002,
+      "name": "Vanessa cardui",
+      "common": "Painted Lady",
+      "iconic": "Insecta",
+      "lat": 34.5655950764,
+      "lng": -119.0024766555,
+      "time": "2025-11-28T12:04:51-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/596034934/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328874002"
+    },
+    {
+      "id": 328850543,
+      "name": "Agaricomycetes",
+      "common": "Mushrooms, Bracket Fungi, Puffballs, and Allies",
+      "iconic": "Fungi",
+      "lat": 34.5954189396,
+      "lng": -119.0027833944,
+      "time": "2025-11-28T12:09:08-08:00",
+      "photo": "https://inaturalist-open-data.s3.amazonaws.com/photos/595987764/small.jpg",
+      "url": "https://www.inaturalist.org/observations/328850543"
+    }
+  ]
+}
