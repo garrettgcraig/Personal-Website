@@ -84,20 +84,107 @@
 	margin-bottom: 0.4rem;
 }
 
+.trail-elev-plot {
+	position: relative;
+	margin: 1.4rem 0.4rem 0;
+	touch-action: pan-y;
+	cursor: crosshair;
+	outline-offset: 4px;
+}
+
 .trail-elev-svg {
 	display: block;
 	width: 100%;
 	height: 110px;
 }
 
+/* Start / end markers and labels on the profile */
+.trail-elev-pin {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	margin: -5px 0 0 -5px;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+}
+.trail-elev-pin-start { background: #5E6E3A; }
+.trail-elev-pin-end { background: #A65A3C; }
+
+.trail-elev-label {
+	position: absolute;
+	top: -1.3rem;
+	font-family: var(--font-mono, monospace);
+	font-size: 0.72rem;
+	color: #6f7785;
+	white-space: nowrap;
+	pointer-events: none;
+}
+.trail-elev-label-start { left: 0; }
+.trail-elev-label-end { right: 0; }
+
+/* Hover cursor */
+.trail-elev-cursor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 0;
+	border-left: 1px dashed rgba(27, 37, 48, 0.55);
+	pointer-events: none;
+}
+.trail-elev-dot {
+	position: absolute;
+	left: -6px;
+	width: 12px;
+	height: 12px;
+	margin-top: -6px;
+	border-radius: 50%;
+	background: #fff;
+	border: 3px solid #1B2530;
+}
+.trail-elev-readout {
+	position: absolute;
+	bottom: calc(100% + 0.2rem);
+	transform: translateX(6px);
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	background: #1B2530;
+	color: #F6F6F2;
+	font-family: var(--font-mono, monospace);
+	font-size: 0.72rem;
+	white-space: nowrap;
+	pointer-events: none;
+	z-index: 2;
+}
+.trail-elev-readout.flip { transform: translateX(calc(-100% - 6px)); }
+
+/* Map tooltips for endpoints and the hover point */
+.leaflet-tooltip.trail-endpoint-tip,
+.leaflet-tooltip.trail-here-tip {
+	font-family: var(--font-mono, monospace);
+	font-size: 0.72rem;
+	padding: 0.1rem 0.4rem;
+}
+.leaflet-tooltip.trail-here-tip {
+	background: #1B2530;
+	color: #F6F6F2;
+	border-color: #1B2530;
+}
+.leaflet-tooltip.trail-here-tip::before { border-right-color: #1B2530; }
+
 body.dark-mode .trail-elevation {
 	background: rgba(255, 255, 255, 0.04);
 	border-color: rgba(255, 255, 255, 0.1);
 }
 
-body.dark-mode .trail-elev-stats {
+body.dark-mode .trail-elev-stats,
+body.dark-mode .trail-elev-label {
 	color: #aab2c0;
 }
+
+body.dark-mode .trail-elev-cursor { border-left-color: rgba(232, 236, 238, 0.6); }
+body.dark-mode .trail-elev-readout { background: #E8ECEE; color: #121A21; }
 
 /* iNaturalist marker dots */
 .inat-dot span {

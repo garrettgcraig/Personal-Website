@@ -9,3 +9,4 @@ __pycache__/
 # Local secrets (Flickr API key and OAuth token)
 .env
 .flickr-picks/
+.cache/
