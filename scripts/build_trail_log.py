@@ -98,7 +98,7 @@ SCRIPT_BLOCK = '''\t\t\t<script src="assets/js/jquery.min.js"></script>
 \t\t\t<script src="assets/js/util.js"></script>'''
 
 # Bump to cache-bust the locally-served assets we edit (trail-map.js / trail-log.css).
-ASSET_VERSION = "11"
+ASSET_VERSION = "12"
 
 # Leaflet head <link>s — only emitted when the entry has a map.
 # Includes Leaflet core + markercluster (used to spiderfy overlapping iNat pins).

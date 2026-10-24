@@ -251,24 +251,43 @@
 		return 2 * R * Math.asin(Math.sqrt(s));
 	}
 
+	// Climb in meters for one segment. Terrain elevations still pick up the
+	// valley walls when the GPS line drifts a few meters sideways (canyons
+	// especially), so they're averaged over 200 m of trail before every rise
+	// is counted. Raw GPS altitude jitters far more, so only climbs past a
+	// 10 m swing count.
+	function climb(d, e, terrain) {
+		var total = 0, ref = null, i;
+		if (terrain) {
+			var avg = [], lo = 0, hi = 0, sum = 0;
+			for (i = 0; i < e.length; i++) {
+				while (hi < e.length && d[hi] <= d[i] + 100) sum += e[hi++];
+				while (d[lo] < d[i] - 100) sum -= e[lo++];
+				avg.push(sum / (hi - lo));
+			}
+			for (i = 1; i < avg.length; i++) if (avg[i] > avg[i - 1]) total += avg[i] - avg[i - 1];
+			return total;
+		}
+		for (i = 0; i < e.length; i++) {
+			if (ref == null || ref - e[i] >= 10) ref = e[i];
+			else if (e[i] - ref >= 10) { total += e[i] - ref; ref = e[i]; }
+		}
+		return total;
+	}
+
 	function renderElevation(container, segs, map, terrain) {
 		var M2FT = 3.28084, M2MI = 1 / 1609.34;
 		var pts = [];            // {d: miles, e: feet, lat, lon}
 		var distM = 0, gainM = 0;
 		segs.forEach(function (seg) {
-			// Terrain elevations are smooth, so every rise counts. Raw GPS altitude
-			// jitters by meters, so only count climbs past a 10 m swing.
-			var ref = null;
+			var d = [], e = [];
 			for (var i = 0; i < seg.length; i++) {
 				if (i > 0) distM += haversine(seg[i - 1], seg[i]); // no inter-segment jump
-				var e = seg[i].ele;
-				if (e != null) {
-					if (terrain) { if (ref != null && e > ref) gainM += e - ref; ref = e; }
-					else if (ref == null || ref - e >= 10) ref = e;
-					else if (e - ref >= 10) { gainM += e - ref; ref = e; }
-					pts.push({ d: distM * M2MI, e: e * M2FT, lat: seg[i].lat, lon: seg[i].lon });
-				}
+				if (seg[i].ele == null) continue;
+				d.push(distM); e.push(seg[i].ele);
+				pts.push({ d: distM * M2MI, e: seg[i].ele * M2FT, lat: seg[i].lat, lon: seg[i].lon });
 			}
+			gainM += climb(d, e, terrain);
 		});
 		if (pts.length < 2) { container.style.display = 'none'; return; }
 
