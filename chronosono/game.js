@@ -242,14 +242,22 @@ export function reveal(s, { named = false } = {}) {
 
   const outcome = keeps ? "kept" : stolenBy !== null ? "stolen" : "discarded";
   const result = { card, placedRight, keeps, stolenBy, tokenEarned, named, yearGuess: s.yearGuess, outcome };
-  return {
+  const revealed = {
     ...next,
     lives,
     phase: "reveal",
     result,
     history: [...next.history, { card, player: s.turn, outcome, stolenBy }],
   };
+  // The game ends the moment a card takes a team to the target, on a keep or a steal.
+  const gainer = keeps ? s.turn : stolenBy;
+  if (gainer !== null && revealed.players[gainer].timeline.length >= s.config.target) {
+    return { ...revealed, phase: "over", winner: gainer, endReason: reachedReason(s) };
+  }
+  return revealed;
 }
+
+const reachedReason = (s) => (s.config.mode === "coop" ? "You reached the target together." : `First to ${s.config.target} cards.`);
 
 export function nextTurn(s) {
   if (s.phase !== "reveal") return s;
@@ -260,21 +268,15 @@ function advance(s) {
   const n = s.players.length;
   if (s.config.mode === "coop") {
     const p = s.players[0];
-    if (p.timeline.length >= s.config.target) return { ...s, phase: "over", winner: 0, endReason: "You reached the target together." };
+    if (p.timeline.length >= s.config.target) return { ...s, phase: "over", winner: 0, endReason: reachedReason(s) };
     if (s.lives <= 0) return { ...s, phase: "over", winner: null, endReason: "Out of lives." };
     return { ...s, phase: "ready", round: s.round + 1 };
   }
+  // A traded-in card can also reach the target; the game ends right there.
+  const done = s.players.findIndex((p) => p.timeline.length >= s.config.target);
+  if (done >= 0) return { ...s, phase: "over", winner: done, endReason: reachedReason(s) };
   const turn = (s.turn + 1) % n;
   const round = turn === 0 ? s.round + 1 : s.round;
-  // Check for a winner only when a full round ends, so every player gets the same number of turns.
-  if (turn === 0) {
-    const counts = s.players.map((p) => p.timeline.length);
-    const best = Math.max(...counts);
-    if (best >= s.config.target) {
-      const leaders = counts.flatMap((c, i) => (c === best ? [i] : []));
-      if (leaders.length === 1) return { ...s, turn, round, phase: "over", winner: leaders[0], endReason: `First to ${s.config.target} cards.` };
-    }
-  }
   return { ...s, turn, round, phase: "ready" };
 }
 
