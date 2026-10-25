@@ -197,8 +197,10 @@ const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
 // A link only opens the song in Spotify on a computer; the DJ presses play there. On a Mac, the
 // ChronoSono DJ Shortcut can tell the Spotify app to play it (and hide its window) instead.
 const isMac = () => /mac/i.test(navigator.userAgentData?.platform || navigator.platform || "") && navigator.maxTouchPoints < 2; // iPads report Mac too
-dj.shortcut = store.get("ts.djShortcut", false);
-const viaShortcut = () => dj.computer && dj.shortcut && isMac();
+// true: use the Shortcut; false: the DJ chose to press play in Spotify; null: not asked yet, so a
+// Mac DJ sees the Shortcut setup first (the page can't tell whether it's installed).
+dj.shortcut = store.get("ts.djShortcut", null);
+const viaShortcut = () => dj.computer && dj.shortcut === true && isMac();
 const SHORTCUT_NAME = "ChronoSono DJ";
 const SHORTCUT_FILE = "/chronosono/dj/ChronoSono%20DJ.shortcut"; // signed for anyone; plays the song and hides Spotify
 const START_DELAY_MS = 3000; // the Shortcut takes a moment to get Spotify going
@@ -889,7 +891,7 @@ function computerDjView(v, g, header) {
       ${sc ? "" : `<button class="btn link" data-action="toggleAppLinks">${dj.appLinks ? "Open songs in a browser tab instead" : "Open songs in the Spotify app instead"}</button>`}
       <button class="btn link" data-action="usePhone">Use a phone's motion sensor instead</button>
     </div>`;
-  if (app.ui.shortcutSetup && isMac()) return `${header}${shortcutSetupView()}`;
+  if ((app.ui.shortcutSetup || dj.shortcut === null) && isMac()) return `${header}${shortcutSetupView()}`;
   if (djNeedsPlay()) {
     return `${header}<div class="dj">
       <p class="stage-title">Ready to play</p>
@@ -930,7 +932,7 @@ function shortcutSetupView() {
     </ol>
     <div class="actions">
       <button class="btn primary big" data-action="useShortcut">Use the Shortcut</button>
-      <button class="btn quiet" data-action="hideShortcutSetup">Not now</button>
+      <button class="btn quiet" data-action="skipShortcut">Skip, I'll press play in Spotify</button>
     </div>
   </div>`;
 }
@@ -1143,7 +1145,9 @@ const actions = {
     app.ui.shortcutSetup = true;
     render();
   },
-  hideShortcutSetup() {
+  skipShortcut() {
+    dj.shortcut = false;
+    store.set("ts.djShortcut", false);
     app.ui.shortcutSetup = false;
     render();
   },
