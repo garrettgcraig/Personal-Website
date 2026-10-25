@@ -429,7 +429,7 @@ function homeView() {
     <header class="masthead">
       ${logoSvg()}
       <h1 class="wordmark brandname">ChronoSono</h1>
-      <p class="tagline">Find out who really knows their music.</p>
+      <p class="tagline">Find out who really knows their music, and the embarrassing reasons why.</p>
       <figure class="brag strip d1980">
         <span class="strip-year">1987</span>
         <blockquote>“I <em>know</em> The Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
