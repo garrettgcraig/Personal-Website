@@ -91,6 +91,8 @@ a:hover { text-decoration-thickness: 2px; }
 /* ---------- Logo ---------- */
 
 .brand { display: flex; align-items: center; gap: 16px; }
+a.brand { color: inherit; text-decoration: none; }
+a.brand:hover .wordmark { color: var(--mustard); }
 .logo { width: 64px; height: 64px; flex: none; display: block; }
 .logo.small { width: 34px; height: 34px; }
 .gamebar .brand { gap: 10px; }
