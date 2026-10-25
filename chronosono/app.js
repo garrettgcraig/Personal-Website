@@ -431,8 +431,8 @@ function homeView() {
       <h1 class="wordmark brandname">ChronoSono</h1>
       <p class="tagline">Find out who really knows their music.</p>
       <figure class="brag strip d1980">
-        <span class="strip-year">1981</span>
-        <blockquote>“I <em>know</em> Open Arms came out in 1981. I slow-danced to it at my senior prom with my arms wide open the entire song, because I'd misunderstood the assignment. My date danced with the chaperone.”</blockquote>
+        <span class="strip-year">1987</span>
+        <blockquote>“I <em>know</em> (I've Had) The Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
       </figure>
       <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden.</p>
       <p class="hint"><a href="/chronosono/about/">How to play</a></p>
