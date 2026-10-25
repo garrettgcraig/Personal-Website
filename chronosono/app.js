@@ -190,8 +190,8 @@ async function keepAwake() {
 
 // ---------- DJ phone: motion, beeps, and the face-down tap ----------
 
-const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false, computer: store.get("ts.djComputer", false), appLinks: store.get("ts.djApp", false) };
-// A computer DJ opens songs in one reused Spotify tab (or the Spotify app) and keeps its screen turned away.
+const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false, computer: store.get("ts.djComputer", false), appLinks: store.get("ts.djApp", true) };
+// A computer DJ opens songs in the Spotify desktop app (or, as an option, one reused browser tab) and keeps its screen turned away.
 const SPOTIFY_TAB = "chronosono-spotify";
 const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
 const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id));
@@ -872,6 +872,7 @@ function computerDjView(v, g, header) {
       <p class="up-next">Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
       <p class="hint">Turn the screen away from the teams first. The song opens in ${where}.</p>
+      ${dj.appLinks ? `<p class="hint">The first time, your browser asks to open Spotify. Choose Open, and tick Always allow if it offers. No Spotify app on this computer? Use a browser tab instead.</p>` : ""}
       ${options}
     </div>`;
   }
