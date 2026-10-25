@@ -25,12 +25,15 @@
   ol { padding-left:1.2em; margin:6px 0 0; } li { margin-bottom:6px; }
   #blind { position:fixed; inset:0; display:none; z-index:10; background:#000; color:#333; text-decoration:none; font-size:1rem; align-items:center; justify-content:center; text-align:center; padding:24px; }
   #blind.armed { display:flex; }
+  .btn.hold { min-height:120px; width:100%; margin:8px 0 0; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; touch-action:none; }
+  #dark { position:fixed; inset:0; display:none; z-index:11; background:#000; pointer-events:none; }
+  #dark.on { display:block; }
 </style>
 </head>
 <body>
 <main>
   <h1>DJ phone test</h1>
-  <p class="muted">Three quick tests on the phone you'd use as the DJ phone. They show whether the no-API version of the game can work. Have Spotify installed and logged in.</p>
+  <p class="muted">Quick tests on the phone you'd use as the DJ phone. They show whether the no-API version of the game can work. Have Spotify installed and logged in.</p>
 
   <section>
     <h2>1. Pick a song</h2>
@@ -55,18 +58,38 @@
   </section>
 
   <section>
+    <h2>4. Hands-free timer</h2>
+    <p>Tap a Start button, then turn the phone face down and leave it. After 2 seconds face down you'll hear two beeps, and the page tries to open the song by itself. Browsers often block this, so note what happens. Try both buttons.</p>
+    <button id="timerWeb" class="btn">Start (song link)</button>
+    <button id="timerScheme" class="btn quiet">Start (spotify: link)</button>
+    <p id="timerStatus" class="status muted">Not started.</p>
+  </section>
+
+  <section>
+    <h2>5. Hold and let go</h2>
+    <p>Tap Allow motion first. Then press and hold one of the boxes. Keep your thumb on the screen and turn the phone face down. After 2 seconds face down you'll hear two beeps. Then lift your thumb, and the song should open.</p>
+    <button id="holdAllow" class="btn quiet">Allow motion</button>
+    <button id="holdWeb" class="btn hold">Hold here (song link)</button>
+    <button id="holdScheme" class="btn quiet hold">Hold here (spotify: link)</button>
+    <p id="holdStatus" class="status muted">Not started.</p>
+  </section>
+
+  <section>
     <h2>What to tell me</h2>
     <ol>
       <li>Did Spotify open, or did the song open in the browser?</li>
       <li>Did the song start playing on its own, or did you have to press play?</li>
       <li>Did the face-down tap work?</li>
       <li>With the screen locked, does the lock screen show the song name?</li>
+      <li>Test 4: with each button, did the song start by itself, open in the browser, ask you something, or do nothing? The line under the buttons says what the page saw.</li>
+      <li>Test 5: with each button, did the song start when you lifted your thumb?</li>
     </ol>
     <p class="muted">Also mention iPhone or Android, and whether you use Spotify Free or Premium.</p>
   </section>
 </main>
 
 <a id="blind" href="#">Tap anywhere</a>
+<div id="dark"></div>
 
 <script>
 const $ = (id) => document.getElementById(id);
@@ -188,6 +211,157 @@ document.addEventListener("visibilitychange", () => {
     $("blind").classList.remove("armed");
   }
 });
+
+// ---------- Tests 4 and 5: starting the song without a tap ----------
+// Separate from test 3 so that test keeps working exactly as before.
+
+const HOLD_MS = 2000;
+const links = () => {
+  const id = trackId();
+  return id ? { web: `https://open.spotify.com/track/${id}`, scheme: `spotify:track:${id}` } : null;
+};
+const setStatus = (el, text, cls = "muted") => { $(el).textContent = text; $(el).className = `status ${cls}`; };
+
+let motionOn = false;
+
+// Ask for motion access and start sound inside the tap that calls this (Safari requires it).
+function startMotion(statusEl) {
+  const needsPermission = typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function";
+  const permission = needsPermission ? DeviceOrientationEvent.requestPermission() : Promise.resolve("granted");
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    audio.resume();
+  } catch {}
+  return permission.then(
+    (res) => {
+      if (res === "granted") return (motionOn = true);
+      setStatus(statusEl, "Motion access was declined. Reload the page and allow it.", "bad");
+      return false;
+    },
+    (err) => {
+      setStatus(statusEl, `This browser wouldn't share motion data (${err && err.name ? err.name : "unknown error"}).`, "bad");
+      return false;
+    }
+  );
+}
+
+// One test runs at a time: { kind: "timer" | "hold", url, statusEl, downSince, fired }
+let hf = null;
+
+// What the page saw after it tried to open the song: the page going to the background means
+// an app opened; the page unloading means the browser loaded Spotify's web page instead.
+function watchOutcome(test) {
+  const t0 = Date.now();
+  localStorage.setItem("probe.pending", JSON.stringify({ kind: test.kind, url: test.url, t0 }));
+  setTimeout(() => {
+    if (document.visibilityState === "visible" && localStorage.getItem("probe.pending")) {
+      localStorage.removeItem("probe.pending");
+      setStatus(test.statusEl, `Tried to open ${test.url.startsWith("spotify:") ? "the spotify: link" : "the song link"}, but this page was still showing 3 seconds later. Either the browser blocked it, or it showed a question you couldn't see (check the screen).`, "bad");
+    }
+  }, 3000);
+}
+document.addEventListener("visibilitychange", () => {
+  const pending = JSON.parse(localStorage.getItem("probe.pending") || "null");
+  if (!pending) return;
+  if (document.visibilityState === "hidden") {
+    pending.left = "app";
+    localStorage.setItem("probe.pending", JSON.stringify(pending));
+  } else if (pending.left === "app") {
+    localStorage.removeItem("probe.pending");
+    const el = pending.kind === "timer" ? "timerStatus" : "holdStatus";
+    setStatus(el, `The page went to the background ${((Date.now() - pending.t0) / 1000).toFixed(0)} seconds ago, so another app (likely Spotify) opened. Did the song play?`, "ok");
+  }
+});
+window.addEventListener("pagehide", () => {
+  const pending = JSON.parse(localStorage.getItem("probe.pending") || "null");
+  if (pending && !pending.left) {
+    pending.left = "page";
+    localStorage.setItem("probe.pending", JSON.stringify(pending));
+  }
+});
+window.addEventListener("pageshow", () => {
+  const pending = JSON.parse(localStorage.getItem("probe.pending") || "null");
+  if (pending && pending.left === "page") {
+    localStorage.removeItem("probe.pending");
+    const el = pending.kind === "timer" ? "timerStatus" : "holdStatus";
+    setStatus(el, "Last try left this page and loaded a web page (likely Spotify's site) instead of opening the app.", "bad");
+  }
+});
+
+function openSong(test) {
+  test.fired = true;
+  $("dark").classList.remove("on");
+  watchOutcome(test);
+  location.href = test.url;
+}
+
+function onOrientHandsFree(e) {
+  if (!hf || hf.fired || e.beta == null || e.gamma == null) return;
+  const faceDown = screenAngle(e.beta, e.gamma) >= 145;
+  if (!faceDown) {
+    if (hf.downSince !== null && !hf.beeped) setStatus(hf.statusEl, "Turned back up before 2 seconds. Turn it face down again.");
+    hf.downSince = null;
+    hf.beeped = false;
+    return;
+  }
+  if (hf.downSince === null) {
+    hf.downSince = Date.now();
+    setStatus(hf.statusEl, "Face down. Counting 2 seconds.", "ok");
+  }
+  if (!hf.beeped && Date.now() - hf.downSince >= HOLD_MS) {
+    hf.beeped = true;
+    beep();
+    if (hf.kind === "timer") setTimeout(() => openSong(hf), 450);
+    else setStatus(hf.statusEl, "Beeped. Lift your thumb now.", "ok");
+  }
+}
+window.addEventListener("deviceorientation", onOrientHandsFree);
+
+// Test 4: Start, turn over, and the page tries to open the song on its own.
+for (const [id, which] of [["timerWeb", "web"], ["timerScheme", "scheme"]]) {
+  $(id).addEventListener("click", async () => {
+    const l = links();
+    if (!l) return;
+    hf = null;
+    if (!(await startMotion("timerStatus"))) return;
+    hf = { kind: "timer", url: l[which], statusEl: "timerStatus", downSince: null, beeped: false, fired: false };
+    setStatus("timerStatus", "Ready. Turn the phone face down and leave it.");
+  });
+}
+
+// Test 5: hold a thumb on the screen, turn over, and let go after the beeps.
+$("holdAllow").addEventListener("click", async () => {
+  if (await startMotion("holdStatus")) setStatus("holdStatus", "Motion is on. Now press and hold a box.", "ok");
+});
+for (const [id, which] of [["holdWeb", "web"], ["holdScheme", "scheme"]]) {
+  const el = $(id);
+  const press = (e) => {
+    e.preventDefault(); // no text selection, link preview, or long-press menu
+    const l = links();
+    if (!l) return;
+    if (!motionOn) {
+      setStatus("holdStatus", "Tap Allow motion first.", "bad");
+      return;
+    }
+    hf = { kind: "hold", url: l[which], statusEl: "holdStatus", downSince: null, beeped: false, fired: false };
+    $("dark").classList.add("on");
+    setStatus("holdStatus", "Holding. Turn the phone face down.");
+  };
+  const release = () => {
+    if (!hf || hf.kind !== "hold" || hf.fired) return;
+    $("dark").classList.remove("on");
+    if (hf.beeped) openSong(hf); // the lift is the touch that lets the page open the app
+    else {
+      setStatus("holdStatus", "Let go before the beeps, so nothing opened. Press and hold again.");
+      hf = null;
+    }
+  };
+  el.addEventListener("touchstart", press, { passive: false });
+  el.addEventListener("touchend", release);
+  el.addEventListener("touchcancel", () => { $("dark").classList.remove("on"); setStatus("holdStatus", "The phone cancelled the touch, so nothing opened. Press and hold again.", "bad"); hf = null; });
+  el.addEventListener("mousedown", press);
+  el.addEventListener("mouseup", release);
+}
 </script>
 </body>
 </html>
