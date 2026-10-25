@@ -190,11 +190,23 @@ async function keepAwake() {
 
 // ---------- DJ phone: motion, beeps, and the face-down tap ----------
 
-const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false, computer: store.get("ts.djComputer", false), appLinks: store.get("ts.djApp", false) };
-// A computer DJ opens songs in one reused Spotify tab (or the Spotify app) and keeps its screen turned away.
+const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false, computer: store.get("ts.djComputer", false), appLinks: store.get("ts.djApp", true) };
+// A computer DJ opens songs in the Spotify desktop app (or, as an option, one reused browser tab) and keeps its screen turned away.
 const SPOTIFY_TAB = "chronosono-spotify";
 const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
-const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id));
+// A link only opens the song in Spotify on a computer; the DJ presses play there. On a Mac, the
+// ChronoSono DJ Shortcut can tell the Spotify app to play it (and hide its window) instead.
+const isMac = () => /mac/i.test(navigator.userAgentData?.platform || navigator.platform || "") && navigator.maxTouchPoints < 2; // iPads report Mac too
+dj.shortcut = store.get("ts.djShortcut", false);
+const viaShortcut = () => dj.computer && dj.shortcut && isMac();
+const SHORTCUT_NAME = "ChronoSono DJ";
+const SHORTCUT_FILE = "/chronosono/dj/ChronoSono%20DJ.shortcut"; // signed for anyone; plays the song and hides Spotify
+const START_DELAY_MS = 3000; // the Shortcut takes a moment to get Spotify going
+const launchesApp = () => dj.appLinks || viaShortcut();
+const songUrl = (id) =>
+  viaShortcut()
+    ? `shortcuts://run-shortcut?name=${encodeURIComponent(SHORTCUT_NAME)}&input=text&text=${encodeURIComponent(`spotify:track:${id}`)}`
+    : dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id);
 
 function screenAngle(beta, gamma) {
   const r = Math.PI / 180;
@@ -317,7 +329,8 @@ function playOnComputer(tab = null) {
     return;
   }
   const url = songUrl(v.spotify);
-  if (dj.appLinks) location.href = url;
+  if (viaShortcut()) dj.countdownUntil = Date.now() + START_DELAY_MS;
+  if (launchesApp()) location.href = url;
   else if (tab) tab.location.href = url;
   else window.open(url, SPOTIFY_TAB);
   reportPlayed(v);
@@ -682,6 +695,19 @@ function tickCountdown() {
 }
 setInterval(tickCountdown, 250);
 
+function tickDjCountdown() {
+  if (!dj.countdownUntil) return;
+  const left = dj.countdownUntil - Date.now();
+  if (left <= 0) {
+    dj.countdownUntil = 0;
+    render();
+    return;
+  }
+  const el = document.getElementById("djCountdown");
+  if (el) el.textContent = Math.ceil(left / 1000);
+}
+setInterval(tickDjCountdown, 200);
+
 // ---------- Team phone ----------
 
 function teamView() {
@@ -851,11 +877,19 @@ function djView() {
 }
 
 function computerDjView(v, g, header) {
+  const sc = viaShortcut();
   const where = dj.appLinks ? "the Spotify app" : "a Spotify tab";
+  const macOption = isMac()
+    ? sc
+      ? `<button class="btn link" data-action="stopShortcut">Stop using the ${SHORTCUT_NAME} Shortcut</button>`
+      : `<button class="btn link" data-action="showShortcutSetup">Play songs in one click on this Mac</button>`
+    : "";
   const options = `<div class="mini-actions dj-options">
-      <button class="btn link" data-action="toggleAppLinks">${dj.appLinks ? "Open songs in a browser tab instead" : "Open songs in the Spotify app instead"}</button>
+      ${macOption}
+      ${sc ? "" : `<button class="btn link" data-action="toggleAppLinks">${dj.appLinks ? "Open songs in a browser tab instead" : "Open songs in the Spotify app instead"}</button>`}
       <button class="btn link" data-action="usePhone">Use a phone's motion sensor instead</button>
     </div>`;
+  if (app.ui.shortcutSetup && isMac()) return `${header}${shortcutSetupView()}`;
   if (djNeedsPlay()) {
     return `${header}<div class="dj">
       <p class="stage-title">Ready to play</p>
@@ -866,8 +900,8 @@ function computerDjView(v, g, header) {
   }
   if (v.stage === "place" || v.stage === "challenge" || v.stage === "judge") {
     return `${header}<div class="dj">
-      <p class="stage-title">Song playing</p>
-      <p class="hint">Keep Spotify out of sight until the team phones show the answer. If it opened without playing, press play in Spotify.</p>
+      ${sc && dj.countdownUntil > Date.now() ? `<p class="up-next">Starting in</p><p class="countdown dj-countdown" id="djCountdown">${Math.ceil((dj.countdownUntil - Date.now()) / 1000)}</p>` : `<p class="stage-title">${sc ? "Song playing" : "Press play in Spotify"}</p>`}
+      <p class="hint">${sc ? (dj.countdownUntil > Date.now() ? "The Shortcut is starting the song in Spotify." : "Spotify is playing it in the background. If nothing plays, check the Shortcut's setup steps.") : `The song is open in ${dj.appLinks ? "the Spotify app" : "the Spotify tab"}. Press play there, then keep it out of sight until the team phones show the answer.`}</p>
       <div class="mini-actions"><button class="btn link" data-action="replay">Song didn't start? Play it again</button></div>
     </div>`;
   }
@@ -876,11 +910,29 @@ function computerDjView(v, g, header) {
     return `${header}<div class="dj">
       <p class="up-next">Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
-      <p class="hint">Turn the screen away from the teams first. The song opens in ${where}.</p>
+      <p class="hint">${sc ? `The ${SHORTCUT_NAME} Shortcut plays the song in Spotify and hides its window.` : `Turn the screen away from the teams first. The song opens in ${where}, and you press play there.`}</p>
+      ${!sc && dj.appLinks ? `<p class="hint">The first time, your browser asks to open Spotify. Choose Open, and tick Always allow if it offers. No Spotify app on this computer? Use a browser tab instead.</p>` : ""}
       ${options}
     </div>`;
   }
   return `${header}<div class="dj"><p class="stage-title">Waiting</p></div>`;
+}
+
+// Mac only: install the ChronoSono DJ Shortcut, which tells the Spotify app to play each song.
+function shortcutSetupView() {
+  return `<div class="shortcut-setup">
+    <p class="stage-title">One-click play on this Mac</p>
+    <p class="hint">The ChronoSono DJ Shortcut tells the Spotify app on this Mac to play each song and hide its window, even if another song is playing. Set it up once:</p>
+    <ol class="dj-steps setup-steps">
+      <li><a class="btn small" href="${SHORTCUT_FILE}" download>Download the Shortcut</a><br>Open the file and click <strong>Add Shortcut</strong>. Keep its name, ${SHORTCUT_NAME}.</li>
+      <li>In the Shortcuts app, open <strong>Settings</strong>, then <strong>Advanced</strong>, and turn on <strong>Allow Running Scripts</strong>.</li>
+      <li>Click <strong>Use the Shortcut</strong>. On the first song, let your browser open Shortcuts (tick Always allow if it offers), and allow Shortcuts to control Spotify and System Events.</li>
+    </ol>
+    <div class="actions">
+      <button class="btn primary big" data-action="useShortcut">Use the Shortcut</button>
+      <button class="btn quiet" data-action="hideShortcutSetup">Not now</button>
+    </div>
+  </div>`;
 }
 
 // ---------- Game over ----------
@@ -916,7 +968,7 @@ function overView() {
     <p class="lede">${how}</p>
     ${
       isDj && winner
-        ? `<a class="dj-big victory-song" href="${dj.computer ? songUrl(VICTORY_SONG) : spotifyUrl(VICTORY_SONG)}" ${dj.computer && !dj.appLinks ? `target="${SPOTIFY_TAB}"` : ""}><span>Play the victory song</span></a>
+        ? `<a class="dj-big victory-song" href="${dj.computer ? songUrl(VICTORY_SONG) : spotifyUrl(VICTORY_SONG)}" ${dj.computer && !launchesApp() ? `target="${SPOTIFY_TAB}"` : ""}><span>Play the victory song</span></a>
            <p class="hint">Turn it up.</p>`
         : winner ? `<p class="hint">DJ: play the victory song.</p>` : ""
     }
@@ -1065,7 +1117,7 @@ const actions = {
     dj.downSince = null;
     // On a computer, open the Spotify tab inside this click so the browser allows it, then
     // point it at the song once the server has drawn one.
-    const tab = dj.computer && !dj.appLinks ? window.open("about:blank", SPOTIFY_TAB) : null;
+    const tab = dj.computer && !launchesApp() ? window.open("about:blank", SPOTIFY_TAB) : null;
     await act("next");
     if (dj.computer) playOnComputer(tab);
   },
@@ -1082,6 +1134,26 @@ const actions = {
     store.set("ts.djComputer", false);
     enableDj();
     act("djMode", { mode: "phone" }, { quiet: true });
+  },
+  showShortcutSetup() {
+    app.ui.shortcutSetup = true;
+    render();
+  },
+  hideShortcutSetup() {
+    app.ui.shortcutSetup = false;
+    render();
+  },
+  useShortcut() {
+    if (!isMac()) return;
+    dj.shortcut = true;
+    store.set("ts.djShortcut", true);
+    app.ui.shortcutSetup = false;
+    render();
+  },
+  stopShortcut() {
+    dj.shortcut = false;
+    store.set("ts.djShortcut", false);
+    render();
   },
   toggleAppLinks() {
     dj.appLinks = !dj.appLinks;

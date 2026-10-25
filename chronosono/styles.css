@@ -490,6 +490,11 @@ input.code-input:focus { box-shadow: 0 0 0 3px var(--mustard); }
 .angle.ok { color: var(--good); }
 .dj-steps { text-align: left; color: var(--muted); font-size: 1rem; max-width: 34ch; padding-left: 1.3em; }
 .dj-steps li { margin-bottom: 6px; }
+.shortcut-setup { padding: 8px 0 24px; }
+.shortcut-setup .dj-steps { max-width: none; }
+.shortcut-setup .setup-steps li { margin-bottom: 14px; }
+.shortcut-setup .setup-steps .btn { margin: 0 0 8px; }
+.dj-countdown { font-size: 8rem; margin: 0; }
 #blind {
   position: fixed; inset: 0; z-index: 20; display: none;
   background: #000; color: #222; text-decoration: none;
