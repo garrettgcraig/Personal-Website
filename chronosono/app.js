@@ -114,6 +114,11 @@ function applyView(v) {
   app.clockOffset = v.serverNow - Date.now();
   store.set("ts.room", v.code);
   if (prev?.stage !== v.stage || prev?.game?.turn !== v.game?.turn) app.ui.challengeMode = false;
+  const wantMode = dj.computer ? "computer" : "phone";
+  if (v.me.role === "dj" && v.djMode !== wantMode && dj.modeSent !== `${v.code}:${wantMode}`) {
+    dj.modeSent = `${v.code}:${wantMode}`;
+    api("POST", `rooms/${v.code}/actions`, { deviceId: me, type: "djMode", mode: wantMode }).then(applyView).then(render).catch(() => (dj.modeSent = null));
+  }
   if (v.me.role === "dj" && v.play.status === "cued" && dj.playedNonce === v.play.nonce) {
     api("POST", `rooms/${v.code}/actions`, { deviceId: me, type: "played", nonce: v.play.nonce }).then(applyView).then(render).catch(() => {});
   }
@@ -185,7 +190,11 @@ async function keepAwake() {
 
 // ---------- DJ phone: motion, beeps, and the face-down tap ----------
 
-const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false };
+const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNonce: null, playedNonce: store.get("ts.playedNonce", null), noSensorTimer: null, noSensor: false, computer: store.get("ts.djComputer", false), appLinks: store.get("ts.djApp", false) };
+// A computer DJ opens songs in one reused Spotify tab (or the Spotify app) and keeps its screen turned away.
+const SPOTIFY_TAB = "chronosono-spotify";
+const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
+const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id));
 
 function screenAngle(beta, gamma) {
   const r = Math.PI / 180;
@@ -286,14 +295,7 @@ function disarm() {
   blind.href = "#";
 }
 
-// The tap is a real link so iOS opens the Spotify app directly. Report playback without
-// waiting, since the page goes to the background as Spotify opens.
-blind.addEventListener("click", (e) => {
-  const v = app.view;
-  if (!blind.classList.contains("armed") || !v?.spotify) {
-    e.preventDefault();
-    return;
-  }
+function reportPlayed(v) {
   const nonce = v.play.nonce;
   dj.playedNonce = nonce;
   store.set("ts.playedNonce", nonce);
@@ -305,6 +307,32 @@ blind.addEventListener("click", (e) => {
       keepalive: true,
     });
   } catch {}
+}
+
+// Computer DJ: open the cued song. tab is a window opened earlier in the same click, if any.
+function playOnComputer(tab = null) {
+  const v = app.view;
+  if (!v?.spotify || !djNeedsPlay()) {
+    tab?.close();
+    return;
+  }
+  const url = songUrl(v.spotify);
+  if (dj.appLinks) location.href = url;
+  else if (tab) tab.location.href = url;
+  else window.open(url, SPOTIFY_TAB);
+  reportPlayed(v);
+  render();
+}
+
+// The tap is a real link so iOS opens the Spotify app directly. Report playback without
+// waiting, since the page goes to the background as Spotify opens.
+blind.addEventListener("click", (e) => {
+  const v = app.view;
+  if (!blind.classList.contains("armed") || !v?.spotify) {
+    e.preventDefault();
+    return;
+  }
+  reportPlayed(v);
   setTimeout(() => {
     disarm();
     render();
@@ -424,8 +452,8 @@ function roleView() {
         <span class="choice-blurb">Place songs on your timeline and challenge the other teams.</span>
       </button>
       <button class="choice" data-action="pickRole" data-role="dj">
-        <span class="choice-name">The DJ phone</span>
-        <span class="choice-blurb">Plays each song through Spotify while it lies face down. Needs the Spotify app and a motion sensor.</span>
+        <span class="choice-name">The DJ</span>
+        <span class="choice-blurb">Plays each song through Spotify. A phone plays it face down; a computer just keeps its screen turned away. Needs Spotify.</span>
       </button>
     </div>
     ${
@@ -450,7 +478,7 @@ function lobbyView() {
   const host = v.me.isHost;
   const link = `${location.origin}/chronosono/?room=${v.code}`;
   const roster = [
-    `<li><span>DJ phone</span>${v.djJoined ? `<span>${v.me.role === "dj" ? '<span class="you">This phone</span>' : "Ready"}</span>` : '<span class="missing">Waiting</span>'}</li>`,
+    `<li><span>${v.djMode === "computer" ? "DJ computer" : "DJ phone"}</span>${v.djJoined ? `<span>${v.me.role === "dj" ? `<span class="you">${dj.computer ? "This computer" : "This phone"}</span>` : "Ready"}</span>` : '<span class="missing">Waiting</span>'}</li>`,
     ...v.lobbyTeams.map((n, i) => `<li><span>${esc(n)}</span>${v.me.team === i ? '<span class="you">This phone</span>' : "<span>Ready</span>"}</li>`),
   ];
   if (v.lobbyTeams.length < 2) roster.push(`<li><span class="missing">Team ${v.lobbyTeams.length + 1}</span><span class="missing">Waiting</span></li>`);
@@ -469,13 +497,14 @@ function lobbyView() {
       <ul class="roster">${roster.join("")}</ul>
     </section>
     ${host ? settingsView() : `<section class="panel"><h2>Settings</h2><p class="summary">${summary(v.config, v.songsInRange)}</p><p class="hint">The phone that created the game picks the settings and starts it.</p></section>`}
-    ${host ? `<div class="start-row"><button class="btn primary big" data-action="start" ${canStart ? "" : "disabled"}>Start game</button>${canStart ? "" : `<span class="hint">Needs the DJ phone and two teams.</span>`}</div>` : ""}
+    ${host ? `<div class="start-row"><button class="btn primary big" data-action="start" ${canStart ? "" : "disabled"}>Start game</button>${canStart ? "" : `<span class="hint">Needs a DJ and two teams.</span>`}</div>` : ""}
   </div>`;
 }
 
 function djLobbyNote() {
+  if (dj.computer) return `<div class="banner safe">This computer is the DJ. Keep its screen turned away from the teams. <button class="btn link" data-action="usePhone">Use a phone's motion sensor instead</button></div>`;
   if (dj.enabled && !dj.noSensor) return `<div class="banner safe">This is the DJ phone. Motion sensor is on.</div>`;
-  if (dj.noSensor) return `<div class="banner warn">No motion data from this device. The DJ phone has to be a phone, so it can tell when it's face down.</div>`;
+  if (dj.noSensor) return `<div class="banner warn">No motion data from this device, so it can't tell when it's face down. <button class="btn primary small" data-action="useComputer">Use it as a computer DJ</button></div>`;
   return `<div class="banner warn">This is the DJ phone. <button class="btn primary small" data-action="enableDj">Turn on the motion sensor</button></div>`;
 }
 
@@ -658,24 +687,27 @@ function teamView() {
   const isActive = mineIdx === active;
   const activeName = esc(g.teams[active].name);
   const cued = v.play.status === "cued";
+  const pc = v.djMode === "computer";
   let body = "";
 
   if (v.stage === "ready") {
     body = `
       <div class="stage team">
         <p class="stage-title">${isActive ? "You're up" : `${activeName} is up`}</p>
-        <p>Turn the DJ phone over and tap <strong>Next song</strong>.</p>
+        <p>${pc ? "DJ: click <strong>Next song</strong> on the computer." : "Turn the DJ phone over and tap <strong>Next song</strong>."}</p>
         ${isActive && g.canBuy ? `<div class="mini-actions"><button class="btn quiet" data-action="buy">Trade ${G.BUY_COST} tokens for a free card instead</button></div>` : ""}
       </div>
       <h2 class="rail-title">${isActive ? "Your timeline" : `${possessive(activeName)} timeline`}</h2>
       ${railView(v, "view")}`;
   } else if (v.stage === "place") {
     const banner = cued
-      ? `<div class="banner wait">Waiting for the DJ phone. Turn it face down, wait for two beeps, then tap the back of the screen.</div>`
-      : `<div class="banner">Song playing. Keep the DJ phone face down.</div>`;
+      ? `<div class="banner wait">${pc ? "Waiting for the DJ to play the song." : "Waiting for the DJ phone. Turn it face down, wait for two beeps, then tap the back of the screen."}</div>`
+      : `<div class="banner">${pc ? "Song playing." : "Song playing. Keep the DJ phone face down."}</div>`;
     if (isActive) {
       // The active team's screen keeps the rack high: one status line instead of a banner and hint.
-      const status = cued ? "Waiting for the DJ phone: face down, two beeps, then tap its back." : "Song playing. Keep the DJ phone face down.";
+      const status = pc
+        ? cued ? "Waiting for the DJ to play the song." : "Song playing."
+        : cued ? "Waiting for the DJ phone: face down, two beeps, then tap its back." : "Song playing. Keep the DJ phone face down.";
       body = `
         <div class="stage team">
           <p class="stage-title">${g.placement === null ? "Where does it go?" : "Lock it in?"}</p>
@@ -737,7 +769,7 @@ function teamView() {
     else if (!r.keeps && v.config.mode === "pro") notes.push("Right spot, but the song wasn't named.");
     else if (!r.keeps && v.config.mode === "expert") notes.push(`Right spot, but the year guess was ${r.yearGuess}.`);
     if (r.tokenEarned) notes.push(`${activeName} earns a token for naming it.`);
-    body = `<div class="banner safe">Safe to turn over the DJ phone. Tap Next song on it when you're ready.</div>
+    body = `<div class="banner safe">${pc ? "DJ: click Next song when you're ready." : "Safe to turn over the DJ phone. Tap Next song on it when you're ready."}</div>
       <div class="stage team"><div class="reveal-row">${bigStrip(r.card)}<div>
         <p class="verdict ${r.keeps || r.outcome === "stolen" ? "good" : "bad"}">${line}</p>
         ${notes.map((n) => `<p class="hint">${n}</p>`).join("")}
@@ -773,7 +805,8 @@ function othersView(v) {
 function djView() {
   const v = app.view;
   const g = v.game;
-  const header = `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>`;
+  const header = `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>`;
+  if (dj.computer) return computerDjView(v, g, header);
   if (!dj.enabled || dj.noSensor) {
     return `${header}<div class="dj">
       <p class="stage-title">Get the DJ phone ready</p>
@@ -782,8 +815,9 @@ function djView() {
         <li>Make sure the Spotify app is installed and signed in.</li>
         <li>Tap below and allow motion access.</li>
       </ol>
-      ${dj.noSensor ? `<p class="error">No motion data arrived. The DJ phone has to be a phone.</p>` : ""}
+      ${dj.noSensor ? `<p class="error">No motion data arrived, so this device can't tell when it's face down.</p>` : ""}
       <button class="btn primary big" data-action="enableDj">Turn on the motion sensor</button>
+      <button class="btn link" data-action="useComputer">Use this as a computer DJ instead</button>
     </div>`;
   }
   if (djNeedsPlay()) {
@@ -806,6 +840,39 @@ function djView() {
       <p class="up-next">Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
       <p class="hint">Tap, then turn the phone face down.</p>
+    </div>`;
+  }
+  return `${header}<div class="dj"><p class="stage-title">Waiting</p></div>`;
+}
+
+function computerDjView(v, g, header) {
+  const where = dj.appLinks ? "the Spotify app" : "a Spotify tab";
+  const options = `<div class="mini-actions dj-options">
+      <button class="btn link" data-action="toggleAppLinks">${dj.appLinks ? "Open songs in a browser tab instead" : "Open songs in the Spotify app instead"}</button>
+      <button class="btn link" data-action="usePhone">Use a phone's motion sensor instead</button>
+    </div>`;
+  if (djNeedsPlay()) {
+    return `${header}<div class="dj">
+      <p class="stage-title">Ready to play</p>
+      <p class="hint">Turn the screen away from the teams, then click Play. The song opens in ${where}.</p>
+      <button class="dj-big" data-action="playSong"><span>Play song</span></button>
+      ${options}
+    </div>`;
+  }
+  if (v.stage === "place" || v.stage === "challenge" || v.stage === "judge") {
+    return `${header}<div class="dj">
+      <p class="stage-title">Song playing</p>
+      <p class="hint">Keep Spotify out of sight until the team phones show the answer. If it opened without playing, press play in Spotify.</p>
+      <div class="mini-actions"><button class="btn link" data-action="replay">Song didn't start? Play it again</button></div>
+    </div>`;
+  }
+  if (v.stage === "ready" || v.stage === "result") {
+    const up = esc(g.teams[v.stage === "result" ? (g.turn + 1) % g.teams.length : g.turn].name);
+    return `${header}<div class="dj">
+      <p class="up-next">Up next: <strong>${up}</strong></p>
+      <button class="dj-big" data-action="next"><span>Next song</span></button>
+      <p class="hint">Turn the screen away from the teams first. The song opens in ${where}.</p>
+      ${options}
     </div>`;
   }
   return `${header}<div class="dj"><p class="stage-title">Waiting</p></div>`;
@@ -844,9 +911,9 @@ function overView() {
     <p class="lede">${how}</p>
     ${
       isDj && winner
-        ? `<a class="dj-big victory-song" href="${spotifyUrl(VICTORY_SONG)}"><span>Play the victory song</span></a>
+        ? `<a class="dj-big victory-song" href="${dj.computer ? songUrl(VICTORY_SONG) : spotifyUrl(VICTORY_SONG)}" ${dj.computer && !dj.appLinks ? `target="${SPOTIFY_TAB}"` : ""}><span>Play the victory song</span></a>
            <p class="hint">Turn it up.</p>`
-        : winner ? `<p class="hint">DJ phone: play the victory song.</p>` : ""
+        : winner ? `<p class="hint">DJ: play the victory song.</p>` : ""
     }
     ${rack}
     <section class="panel"><h2>Final timelines</h2>
@@ -949,7 +1016,9 @@ const actions = {
   pickRole(el) {
     const role = el.dataset.role;
     if (role === "dj") {
-      enableDj(); // starts the motion permission request inside this tap
+      dj.computer = looksLikeComputer();
+      store.set("ts.djComputer", dj.computer);
+      if (!dj.computer) enableDj(); // starts the motion permission request inside this tap
       return enterRoom(app.joinCode, "dj");
     }
     app.pendingRole = "team";
@@ -985,17 +1054,39 @@ const actions = {
     setYears(+el.dataset.min, +el.dataset.max, "min");
   },
   start: () => act("start"),
-  next() {
+  async next() {
     keepAwake();
     if (dj.audio) dj.audio.resume();
     dj.downSince = null;
-    return act("next");
+    // On a computer, open the Spotify tab inside this click so the browser allows it, then
+    // point it at the song once the server has drawn one.
+    const tab = dj.computer && !dj.appLinks ? window.open("about:blank", SPOTIFY_TAB) : null;
+    await act("next");
+    if (dj.computer) playOnComputer(tab);
   },
   replay: () => act("replay"),
+  playSong: () => playOnComputer(),
+  useComputer() {
+    dj.computer = true;
+    store.set("ts.djComputer", true);
+    render();
+    act("djMode", { mode: "computer" }, { quiet: true });
+  },
+  usePhone() {
+    dj.computer = false;
+    store.set("ts.djComputer", false);
+    enableDj();
+    act("djMode", { mode: "phone" }, { quiet: true });
+  },
+  toggleAppLinks() {
+    dj.appLinks = !dj.appLinks;
+    store.set("ts.djApp", dj.appLinks);
+    render();
+  },
   buy: () => act("buy"),
   skip: () => act("skip"),
   unplayable() {
-    if (confirm("Swap in a different song? Use this if the DJ phone couldn't play this one.")) act("unplayable");
+    if (confirm("Swap in a different song? Use this if the DJ couldn't play this one.")) act("unplayable");
   },
   gap(el) {
     const gap = Number(el.dataset.gap);
