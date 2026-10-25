@@ -79,6 +79,8 @@ const app = {
   joinCode: (params.get("room") || "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4),
   pendingRole: params.get("room") ? null : null,
   name: store.get("ts.name", ""),
+  color: store.get("ts.color", null),
+  takenColors: [], // colors other teams already have, seen before this phone joins
   view: null,
   clockOffset: 0,
   busy: false,
@@ -484,12 +486,29 @@ function roleView() {
           <label class="field"><span>Team name</span><input type="text" maxlength="20" data-field="name" value="${esc(app.name)}" placeholder="Like Sharks or Table 2"></label>
           <button class="btn primary" data-action="confirmTeam" ${app.busy ? "disabled" : ""}>${creating ? "Create game" : "Join"}</button>
         </div>
+        <div class="field"><span>Team color</span>${swatches(joinColor(), app.takenColors, "pickColor")}</div>
         ${creating ? "" : `<p class="hint">Rejoining after a phone died? Type your team's exact name to take its seat back.</p>`}
       </section>`
         : ""
     }
     <button class="btn link" data-action="home">Back</button>
   </div>`;
+}
+
+// Six team colors; the room server hands out a free one when the pick is taken.
+const TEAM_COLORS = ["red", "blue", "green", "orange", "purple", "teal"];
+
+function swatches(current, taken, action) {
+  return `<div class="swatches" role="radiogroup" aria-label="Team color">${TEAM_COLORS.map((c) => {
+    const off = taken.includes(c) && c !== current;
+    return `<button class="swatch" style="--team: var(--team-${c})" role="radio" aria-checked="${c === current}" aria-label="${c}${off ? ", taken" : ""}" data-action="${action}" data-color="${c}" ${off ? "disabled" : ""}></button>`;
+  }).join("")}</div>`;
+}
+
+// The pick shown on the join form: the saved color if it's free, else the first free one.
+function joinColor() {
+  const free = TEAM_COLORS.filter((c) => !app.takenColors.includes(c));
+  return free.includes(app.color) ? app.color : free[0] || TEAM_COLORS[0];
 }
 
 // ---------- Lobby ----------
@@ -500,7 +519,7 @@ function lobbyView() {
   const link = `${location.origin}/chronosono/?room=${v.code}`;
   const roster = [
     `<li><span>${v.djMode === "computer" ? "DJ computer" : "DJ phone"}</span>${v.djJoined ? `<span>${v.me.role === "dj" ? `<span class="you">${dj.computer ? "This computer" : "This phone"}</span>` : "Ready"}</span>` : '<span class="missing">Waiting</span>'}</li>`,
-    ...v.lobbyTeams.map((n, i) => `<li><span>${esc(n)}</span>${v.me.team === i ? '<span class="you">This phone</span>' : "<span>Ready</span>"}</li>`),
+    ...v.lobbyTeams.map((n, i) => `<li><span class="team-name" style="--team: var(--team-${v.lobbyColors[i]})">${esc(n)}</span>${v.me.team === i ? '<span class="you">This phone</span>' : "<span>Ready</span>"}</li>`),
   ];
   if (v.lobbyTeams.length < 2) roster.push(`<li><span class="missing">Team ${v.lobbyTeams.length + 1}</span><span class="missing">Waiting</span></li>`);
   const canStart = v.djJoined && v.lobbyTeams.length >= 2;
@@ -516,6 +535,7 @@ function lobbyView() {
     <section class="panel">
       <h2>Who's here</h2>
       <ul class="roster">${roster.join("")}</ul>
+      ${v.me.role === "team" ? `<div class="field"><span>Your color</span>${swatches(v.lobbyColors[v.me.team], v.lobbyColors, "teamColor")}</div>` : ""}
     </section>
     ${host ? settingsView() : `<section class="panel"><h2>Settings</h2><p class="summary">${summary(v.config, v.songsInRange)}</p><p class="hint">The device that created the game picks the settings and starts it.</p></section>`}
     ${host ? `<div class="start-row"><button class="btn primary big" data-action="start" ${canStart ? "" : "disabled"}>Start game</button>${canStart ? "" : `<span class="hint">Needs a DJ and two teams.</span>`}</div>` : ""}
@@ -663,7 +683,7 @@ function scoresView(v) {
   const g = v.game;
   return `<section class="scores compact" aria-label="Scores">${g.teams
     .map(
-      (t, i) => `<div class="score ${i === g.turn && v.stage !== "over" ? "on" : ""}">
+      (t, i) => `<div class="score ${i === g.turn && v.stage !== "over" ? "on" : ""}" style="--team: var(--team-${t.color})">
       <span class="score-name">${esc(t.name)}${v.me.team === i ? " (you)" : ""}</span>
       <span class="score-cards">${t.cards.length} of ${v.config.target}</span>
       <span class="score-tokens" aria-label="${plural(t.tokens, "token")}">${dots(t.tokens)}</span></div>`
@@ -743,6 +763,9 @@ function teamView() {
   const activeName = esc(g.teams[active].name);
   const cued = v.play.status === "cued";
   const pc = v.djMode === "computer";
+  // After a skip or a swap, the DJ has to come back to ChronoSono to start the new song.
+  const fresh = cued && (v.play.reason === "skip" || v.play.reason === "unplayable");
+  const lead = v.play.reason === "skip" ? `${isActive ? "You" : activeName} skipped. New song.` : "New song.";
   let body = "";
 
   if (v.stage === "ready") {
@@ -755,18 +778,22 @@ function teamView() {
       <h2 class="rail-title">${isActive ? "Your timeline" : `${possessive(activeName)} timeline`}</h2>
       ${railView(v, "view")}`;
   } else if (v.stage === "place") {
-    const banner = cued
+    const banner = fresh
+      ? `<div class="banner warn">${lead} ${pc ? "DJ: click <strong>Play song</strong> on the computer." : "DJ: go back to ChronoSono on the DJ phone, then turn it face down."}</div>`
+      : cued
       ? `<div class="banner wait">${pc ? "Waiting for the DJ to play the song." : "Waiting for the DJ phone. Turn it face down, wait for two beeps, then tap the back of the screen."}</div>`
       : `<div class="banner">${pc ? "Song playing." : "Song playing. Keep the DJ phone face down."}</div>`;
     if (isActive) {
       // The active team's screen keeps the rack high: one status line instead of a banner and hint.
-      const status = pc
+      const status = fresh
+        ? `${lead} ${pc ? "DJ: click Play song on the computer." : "DJ: go back to ChronoSono on the DJ phone, then turn it face down."}`
+        : pc
         ? cued ? "Waiting for the DJ to play the song." : "Song playing."
         : cued ? "Waiting for the DJ phone: face down, two beeps, then tap its back." : "Song playing. Keep the DJ phone face down.";
       body = `
         <div class="stage team">
           <p class="stage-title">${g.placement === null ? "Where does it go?" : "Lock it in?"}</p>
-          <p class="status">${status}</p>
+          <p class="status${fresh ? " warn" : ""}">${status}</p>
           ${v.config.mode === "expert" ? `<label class="field compact year-guess"><span>Exact year</span><input type="number" inputmode="numeric" data-field="yearGuess" min="${YEAR_MIN}" max="${YEAR_MAX}" value="${g.yearGuess ?? ""}"></label>` : ""}
         </div>
         <div class="dock"><div class="dock-inner">
@@ -877,7 +904,8 @@ function djView() {
   }
   if (djNeedsPlay()) {
     return `${header}<div class="dj">
-      <p class="stage-title">Turn this phone face down</p>
+      ${djFresh(v) ? `<p class="up-next">${djFresh(v)}</p>` : ""}
+      <p class="stage-title">${djFresh(v) ? "New song ready. Turn me face down" : "Turn this phone face down"}</p>
       <p class="angle ${dj.angle >= FACE_DOWN ? "ok" : ""}" id="angle">${angleText(dj.angle)}</p>
       <p class="hint">Lay it flat, screen down. After two beeps, tap the back of the screen anywhere and the song starts in Spotify.</p>
     </div>`;
@@ -900,6 +928,14 @@ function djView() {
   return `${header}<div class="dj"><p class="stage-title">Waiting</p></div>`;
 }
 
+// Why the DJ is starting another song mid-turn, or "" for the usual Next song.
+function djFresh(v) {
+  const team = esc(v.game?.teams[v.game.turn]?.name || "The team");
+  if (v.play.reason === "skip") return `${team} skipped that song.`;
+  if (v.play.reason === "unplayable") return "That song didn't play, so here's another.";
+  return "";
+}
+
 function computerDjView(v, g, header) {
   const sc = viaShortcut();
   const where = dj.appLinks ? "the Spotify app" : "a Spotify tab";
@@ -916,7 +952,8 @@ function computerDjView(v, g, header) {
   if ((app.ui.shortcutSetup || dj.shortcut === null) && isMac()) return `${header}${shortcutSetupView()}`;
   if (djNeedsPlay()) {
     return `${header}<div class="dj">
-      <p class="stage-title">Ready to play</p>
+      ${djFresh(v) ? `<p class="up-next">${djFresh(v)}</p>` : ""}
+      <p class="stage-title">${djFresh(v) ? "New song ready" : "Ready to play"}</p>
       <p class="hint">Turn the screen away from the teams, then click Play. The song opens in ${where}.</p>
       <button class="dj-big" data-action="playSong"><span>Play song</span></button>
       ${options}
@@ -1031,6 +1068,9 @@ function render() {
   else if (v.me.role === "team") html = teamView();
   else html = `<div class="home"><p class="lede">This device isn't part of game ${esc(v.code)}.</p><button class="btn primary" data-action="leave">Back</button></div>`;
   root.innerHTML = html;
+  const myColor = v?.me.role === "team" && app.screen === "room" ? v.lobbyColors?.[v.me.team] : null;
+  if (myColor) document.body.dataset.team = myColor;
+  else delete document.body.dataset.team;
   // Sideways, the rack scrolls left to right: keep the card in play in view.
   if (matchMedia("(orientation: landscape) and (max-height: 560px)").matches) {
     root.querySelector(".rail .gap.placed, .rail .strip.new, .rail .gap.claimed")?.scrollIntoView({ block: "nearest", inline: "center" });
@@ -1043,14 +1083,14 @@ function render() {
 
 // ---------- Actions ----------
 
-async function enterRoom(code, role, name) {
+async function enterRoom(code, role, name, color) {
   app.busy = true;
   app.error = "";
   render();
   try {
     let v;
-    if (!code) v = await api("POST", "rooms", { deviceId: me, role, name });
-    else v = await api("POST", `rooms/${code}/actions`, { deviceId: me, type: "join", role, name });
+    if (!code) v = await api("POST", "rooms", { deviceId: me, role, name, color });
+    else v = await api("POST", `rooms/${code}/actions`, { deviceId: me, type: "join", role, name, color });
     applyView(v);
     app.screen = "room";
     history.replaceState(null, "", `/chronosono/?room=${v.code}`);
@@ -1087,6 +1127,7 @@ const actions = {
       const v = await api("GET", `rooms/${code}?device=${me}`);
       applyView(v);
       if (v.me.role === "guest") {
+        app.takenColors = v.lobbyColors || [];
         app.joinCode = code;
         app.screen = "join";
       } else app.screen = "room";
@@ -1112,7 +1153,17 @@ const actions = {
   },
   confirmTeam() {
     store.set("ts.name", app.name);
-    enterRoom(app.joinCode, "team", app.name);
+    enterRoom(app.joinCode, "team", app.name, joinColor());
+  },
+  pickColor(el) {
+    app.color = el.dataset.color;
+    store.set("ts.color", app.color);
+    render();
+  },
+  teamColor(el) {
+    app.color = el.dataset.color;
+    store.set("ts.color", app.color);
+    act("teamColor", { color: app.color });
   },
   async share(el) {
     const link = el.dataset.link;
@@ -1285,7 +1336,10 @@ root.addEventListener("keydown", (e) => {
       applyView(v);
       app.screen = v.me.role === "guest" ? "join" : "room";
       if (app.screen === "room") poll();
-      else app.view = null;
+      else {
+        app.takenColors = v.lobbyColors || [];
+        app.view = null;
+      }
     } catch (e) {
       app.error = e.message;
       app.screen = "home";
