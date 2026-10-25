@@ -813,15 +813,42 @@ function djView() {
 
 // ---------- Game over ----------
 
+// The DJ phone's victory song. The button doesn't say what it is.
+const VICTORY_SONG = "4cOdK2wGLETKBW3PvgPWqT";
+
 function overView() {
   const v = app.view;
   const g = v.game;
   const winner = g.winner !== null && g.winner !== undefined ? g.teams[g.winner] : null;
   const standings = [...g.teams].sort((a, b) => b.cards.length - a.cards.length);
+  const isDj = v.me.role === "dj";
+  const mine = winner && v.me.team === g.winner;
+  const r = g.result;
+  // How the last card got there, when that card is what won it.
+  let how = esc(g.endReason || "");
+  if (winner && r?.card && (r.outcome === "kept" || r.outcome === "stolen")) {
+    const song = `${esc(r.card.title)} (${r.card.year})`;
+    how = r.outcome === "stolen" ? `${esc(winner.name)} stole ${song} for card ${winner.cards.length}.` : `${esc(winner.name)} placed ${song} for card ${winner.cards.length}.`;
+  }
+  // The winner's rack flips through once per game, not on every re-render.
+  const key = `${v.code}:${g.round}:${g.winner}`;
+  const fresh = app.ui.celebrated !== key;
+  app.ui.celebrated = key;
+  const rack = winner
+    ? `<div class="rail victory-rack ${fresh ? "celebrate" : ""}">${winner.cards.map((c, i) => strip(c, r?.card?.id === c.id ? "new" : "").replace('class="strip', `style="--i:${i}" class="strip`)).join("")}</div>`
+    : "";
   return `
   <div class="over">
-    <h1 class="wordmark">${winner ? `${esc(winner.name)} wins` : "It's a draw"}</h1>
-    <p class="lede">${esc(g.endReason || "")}</p>
+    ${isDj ? `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>` : ""}
+    <h1 class="wordmark victory-name">${winner ? (mine ? "You win" : `${esc(winner.name)} wins`) : "It's a draw"}</h1>
+    <p class="lede">${how}</p>
+    ${
+      isDj && winner
+        ? `<a class="dj-big victory-song" href="${spotifyUrl(VICTORY_SONG)}"><span>Play the victory song</span></a>
+           <p class="hint">Turn it up.</p>`
+        : winner ? `<p class="hint">DJ phone: play the victory song.</p>` : ""
+    }
+    ${rack}
     <section class="panel"><h2>Final timelines</h2>
       <ol class="standings">${standings.map((t) => `<li><span class="st-name">${esc(t.name)}</span><span class="st-count">${plural(t.cards.length, "card")}</span></li>`).join("")}</ol>
     </section>

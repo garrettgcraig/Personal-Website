@@ -401,8 +401,14 @@ input:focus { border-color: var(--mustard); outline: none; box-shadow: 0 0 0 1px
 
 /* ---------- Game over ---------- */
 
-.over .wordmark { font-size: clamp(3.6rem, 18vw, 6rem); margin-bottom: 10px; }
-.over .lede { margin-bottom: 26px; }
+.over .victory-name { font-size: clamp(3.6rem, 18vw, 6rem); margin-bottom: 10px; }
+.over .lede { margin-bottom: 18px; }
+.victory-name { color: var(--mustard); }
+.victory-song { display: grid; place-items: center; margin: 8px auto 6px; text-decoration: none; }
+.over .victory-song + .hint { text-align: center; margin: 0 auto 18px; }
+.victory-rack { margin: 10px 0 26px; gap: 6px; }
+/* The winner's rack turns over strip by strip, like a jukebox paging through its titles. */
+.victory-rack.celebrate .strip { transform-origin: 50% 0; animation: strip-flip 620ms var(--ease-out) both; animation-delay: calc(var(--i) * 110ms); }
 .standings { list-style: none; padding: 0; margin: 0; }
 .standings li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 1.1rem; }
 .standings li:first-child { color: var(--mustard); }

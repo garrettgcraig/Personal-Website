@@ -176,6 +176,7 @@ function closeChallenge(room) {
   if (room.game.config.mode === "expert") {
     room.game = G.reveal(room.game, { named: false });
     room.stage = "result";
+    syncStage(room);
   } else {
     room.stage = "judge";
   }
@@ -329,6 +330,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       if (i === g.turn && named) throw new GameError("The other team decides whether you named it.", 403);
       room.game = G.reveal(g, { named });
       room.stage = "result";
+      syncStage(room); // the winning card ends the game right away
       break;
     }
 

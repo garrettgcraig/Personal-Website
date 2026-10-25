@@ -227,3 +227,50 @@ test("expired rooms read as gone", async () => {
   t.tick(R.ROOM_TTL_MS + 1);
   assert.equal((await t.view(A)).status, 404);
 });
+
+// A game where team 0 is up with one card from 1990, team 1 has one card, and the song is from 1985.
+function stealSetup(target) {
+  const card = (year, id) => ({ id, title: `Song ${year}`, artist: "Artist", year, spotify: id });
+  let s = G.createGame({ mode: "original", target, startTokens: 2, balance: false, yearMin: 1960, yearMax: 2020 }, ["Sharks", "Table 2"], [card(1970, "a"), card(1975, "b"), card(1980, "c")], seeded(3));
+  s = { ...s, players: [{ ...s.players[0], timeline: [card(1990, "p0")] }, { ...s.players[1], timeline: [card(2000, "p1")] }] };
+  s = { ...s, phase: "place", current: card(1985, "now") };
+  s = G.lockIn(G.place(s, 1)); // after 1990: wrong
+  return G.addChallenge(s, 1, 0); // before 1990: right
+}
+
+test("a steal that reaches the target ends the game at once", () => {
+  const s = G.reveal(stealSetup(2), { named: false });
+  assert.equal(s.phase, "over");
+  assert.equal(s.winner, 1);
+  assert.equal(s.result.stolenBy, 1);
+  assert.equal(s.result.card.year, 1985);
+});
+
+test("a steal short of the target keeps the game going", () => {
+  const s = G.reveal(stealSetup(3), { named: false });
+  assert.equal(s.phase, "reveal");
+  assert.equal(s.winner, null);
+});
+
+test("the room shows the winner as soon as the winning card is revealed", async () => {
+  const t = await setup({ target: 5 });
+  let guard = 0;
+  // Play until the game ends; it must end on a reveal, not on the DJ's next tap.
+  while ((await t.room()).stage !== "over" && guard++ < 50) {
+    const room = await t.room();
+    const active = room.game.turn === 0 ? A : B;
+    const other = active === A ? B : A;
+    await t.act(DJ, "next");
+    const placing = await t.room();
+    const tl = placing.game.players[placing.game.turn].timeline;
+    const gap = tl.filter((c) => c.year < placing.game.current.year).length; // always right
+    await t.act(active, "place", { gap });
+    await t.act(active, "lock");
+    if ((await t.room()).stage === "challenge") await t.act(other, "pass");
+    await t.act(other, "judge", { named: false });
+  }
+  const end = (await t.view(A)).json;
+  assert.equal(end.stage, "over");
+  assert.ok(end.game.result, "the winning card is still shown");
+  assert.equal(end.game.teams[end.game.winner].cards.length, end.config.target);
+});
