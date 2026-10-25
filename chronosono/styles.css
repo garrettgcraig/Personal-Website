@@ -77,6 +77,12 @@ a:hover { text-decoration-thickness: 2px; }
 .brandname { text-transform: none; letter-spacing: 0; }
 .small-mark { font-size: clamp(3.2rem, 15vw, 5rem); }
 .lede { color: var(--muted); font-size: 1.1rem; max-width: 46ch; margin: 16px 0 0; }
+.tagline { font-family: var(--label); font-weight: 700; font-size: 1.45rem; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.02em; margin: 18px 0 0; }
+/* The brag quote reads as one of the game's title strips, keyed by its year. */
+.brag { margin: 14px 0 0; max-width: 34rem; grid-template-rows: auto; }
+.brag .strip-year { grid-row: auto; }
+.brag blockquote { margin: 0; font-size: 1.02rem; line-height: 1.4; color: var(--paper-ink); }
+.brag em { font-style: italic; font-weight: 700; }
 .hint { color: var(--muted); font-size: 0.95rem; max-width: 60ch; }
 .hint.warn, .warn { color: var(--mustard); }
 .error { color: var(--bad); font-weight: 600; }

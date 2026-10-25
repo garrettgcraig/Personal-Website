@@ -416,7 +416,12 @@ function homeView() {
     <header class="masthead">
       ${logoSvg()}
       <h1 class="wordmark brandname">ChronoSono</h1>
-      <p class="lede">Hear a song, then slot it into your team's timeline by year. One phone plays the music face down, so nobody sees the answer.</p>
+      <p class="tagline">Find out who really knows their music.</p>
+      <figure class="brag strip d1980">
+        <span class="strip-year">1981</span>
+        <blockquote>“I <em>know</em> In the Air Tonight came out in 1981. It played at my senior prom.”</blockquote>
+      </figure>
+      <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden.</p>
       <p class="hint"><a href="/chronosono/about/">How to play</a></p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
