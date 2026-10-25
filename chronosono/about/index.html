@@ -1,112 +1,162 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
-	<head>
-		<title>ChronoSono - Garrett G. Craig</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="ChronoSono, a free music timeline party game: one device plays each song where nobody can see it, and each team places it on its own phone's timeline by year." />
-		<link rel="canonical" href="https://garrettgcraig.com/chronosono/about/" />
-		<link rel="stylesheet" href="../../assets/css/main.css" />
-		<link rel="stylesheet" href="../../assets/css/darkmode.css" />
-		<link rel="icon" type="image/svg+xml" href="../icon.svg" />
-		<meta property="og:type" content="website" /><meta property="og:title" content="ChronoSono: a music timeline party game" /><meta property="og:description" content="Hear a song, place it in time. A party game for phones you already own." /><meta property="og:url" content="https://garrettgcraig.com/chronosono/about/" /><meta property="og:image" content="https://garrettgcraig.com/images/chronosono.jpg" /><meta property="og:image:width" content="1190" /><meta property="og:image:height" content="700" /><meta name="twitter:card" content="summary_large_image" />
-		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
-		<script src="../../assets/js/darkmode.js"></script>
-		<style>
-			.doc { max-width: 46rem; margin: 0 auto; text-align: left; }
-			.doc h2 { margin-top: 2.5rem; }
-			.doc ul, .doc ol { margin-bottom: 1.5rem; }
-			.doc .shot { width: 100%; height: auto; margin: 1rem 0 0.5rem; display: block; }
-		</style>
-	</head>
-	<body class="is-preload">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How to play ChronoSono</title>
+  <meta name="description" content="How to play ChronoSono, a free music timeline party game: one device plays each song where nobody can see it, and each team places it on its own phone's timeline by year.">
+  <link rel="canonical" href="https://garrettgcraig.com/chronosono/about/">
+  <meta name="theme-color" content="#121110">
+  <link rel="icon" href="/chronosono/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/chronosono/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ChronoSono">
+  <meta property="og:title" content="How to play ChronoSono">
+  <meta property="og:description" content="Hear a song, place it in time. One device plays the music, and each team plays on its own phone.">
+  <meta property="og:url" content="https://garrettgcraig.com/chronosono/about/">
+  <meta property="og:image" content="https://garrettgcraig.com/chronosono/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700&family=League+Gothic&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/chronosono/styles.css">
+  <style>
+    .guide { max-width: 720px; margin: 0 auto; padding: 24px 20px 72px; }
+    .guide .gamebar a.brand { color: inherit; text-decoration: none; }
+    .guide .gamebar .play-link { margin-left: auto; }
+    .guide h1.wordmark { font-size: clamp(3.2rem, 15vw, 5rem); text-transform: uppercase; margin: 18px 0 10px; }
+    .guide .lede { max-width: 58ch; }
+    .guide section { border-top: 1px solid var(--rule); padding: 26px 0 10px; margin-top: 26px; }
+    .guide h2 { font-size: 1.35rem; margin-bottom: 12px; }
+    .guide h3 { font-size: 1.08rem; margin: 18px 0 6px; }
+    .guide p, .guide li { max-width: 62ch; }
+    .guide ul, .guide ol.plain { padding-left: 1.2em; margin: 0 0 12px; }
+    .guide li { margin-bottom: 6px; }
+    .guide strong { color: var(--text); }
+    .guide .shot { display: block; width: 100%; height: auto; margin: 22px 0 6px; border: 1px solid var(--rule); }
+    .guide .start { margin-top: 18px; }
 
-		<!-- Dark mode toggle -->
-		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
-			<span class="dm-toggle-moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg></span>
-			<span class="dm-toggle-sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg></span>
-		</button>
+    /* Steps and token costs set as the game's title strips: the key column carries the number. */
+    .guide .rack { list-style: none; padding: 0; margin: 4px 0 8px; display: grid; gap: 6px; }
+    .guide .rack .strip { grid-template-columns: 4.2rem 1fr; min-height: 0; padding: 10px 14px 12px 12px; align-items: start; }
+    .guide .rack .strip-year { font-size: 2.3rem; line-height: 0.95; }
+    .guide .rack .strip-title { font-size: 1.08rem; margin-bottom: 2px; }
+    .guide .rack .strip-artist { font-size: 0.98rem; line-height: 1.4; color: var(--paper-muted); }
+    .guide .rack .strip-artist strong { color: var(--paper-ink); }
+    .guide .rack .strip { border-top-color: var(--deck, var(--mustard)); }
 
-		<!-- Wrapper -->
-			<div id="wrapper" class="divided">
+    .guide .modes-list { display: grid; gap: 0; border-top: 1px solid var(--rule); margin-top: 6px; }
+    .guide .modes-list div { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+    .guide .modes-list b { font-family: var(--label); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.03em; display: block; }
 
-					<section class="wrapper style1">
-						<div class="inner doc">
-							<h1><strong>ChronoSono</strong></h1>
-							<p class="major">A music timeline party game. Hear a song, then place it on your team's timeline by year. One device plays the music where nobody can see it, and each team plays on its own phone.</p>
-							<p><a href="../" class="button primary">Play ChronoSono</a> <a href="../../projects.html" class="button">All projects</a></p>
-							<img class="shot" src="../../images/chronosono.jpg" alt="ChronoSono on two phones: a team's timeline of songs by year with a hidden song slotted in, and the reveal of Under the Bridge, 1991" width="1190" height="700" />
+    .guide footer { border-top: 1px solid var(--rule); margin-top: 34px; padding-top: 18px; color: var(--muted); font-size: 0.92rem; }
+    .guide footer p { max-width: 70ch; }
+  </style>
+</head>
+<body>
+<div class="guide">
+  <header class="gamebar">
+    <a class="brand" href="/chronosono/"><img class="logo small" src="/chronosono/icon.svg" alt="" width="34" height="34"><span class="wordmark small brandname">ChronoSono</span></a>
+    <a class="btn primary small play-link" href="/chronosono/">Play</a>
+  </header>
 
-							<h2>What you need</h2>
-							<ul>
-								<li>A <strong>DJ</strong>: a phone with the Spotify app, which plays each song face down, or a computer with Spotify, whose screen stays turned away from the teams.</li>
-								<li>One phone for each of two to four teams.</li>
-								<li>A speaker, or the DJ turned up loud.</li>
-								<li>Nothing to install on the team phones. Everyone opens <a href="../">garrettgcraig.com/chronosono</a>.</li>
-							</ul>
+  <h1 class="wordmark">How to play</h1>
+  <p class="lede">A music timeline party game. Hear a song, then place it on your team's timeline by year. One device plays the music where nobody can see it, and each team plays on its own phone.</p>
+  <img class="shot" src="/images/chronosono.jpg" alt="ChronoSono on two phones: a team's timeline of songs by year with a hidden song slotted in, and the reveal of Under the Bridge, 1991" width="1190" height="700">
 
-							<h2>How a game works</h2>
-							<ol>
-								<li>One device starts a game and gets a four-letter room code. Everyone else joins with the code or the invite link.</li>
-								<li>The device that started the game picks the years, the mode and the number of cards to win.</li>
-								<li>Each round, the DJ plays the next song without anyone seeing the title. A phone DJ taps <strong>Next song</strong>, lays the phone face down, and taps its back after two beeps. A computer DJ clicks <strong>Next song</strong> with the screen turned away.</li>
-								<li>The team whose turn it is slots the song into its timeline, between the years it thinks it falls. The other teams have 15 seconds to challenge with a token.</li>
-								<li>The card flips on every team phone. Place it right and you keep it. The first team to the target number of cards wins, even if the winning card is a steal, and the DJ gets a victory song to play.</li>
-							</ol>
+  <section>
+    <h2>What you need</h2>
+    <ul>
+      <li><strong>A DJ:</strong> one device with Spotify that plays the songs. A phone works face down; a computer works with its screen turned away from the teams.</li>
+      <li><strong>Two to four teams,</strong> each with a phone. Nothing to install: everyone opens <a href="/chronosono/">garrettgcraig.com/chronosono</a>.</li>
+      <li>A speaker, or the DJ turned up loud.</li>
+    </ul>
+  </section>
 
-							<h2>Modes</h2>
-							<ul>
-								<li><strong>Original:</strong> place each song in the right spot. Name the title and artist out loud for a bonus token.</li>
-								<li><strong>Pro:</strong> the card only counts if you also name the title and artist.</li>
-								<li><strong>Expert:</strong> place it and call the exact year.</li>
-							</ul>
+  <section>
+    <h2>Setting up</h2>
+    <ol class="plain">
+      <li>On any device, choose <strong>Start a new game</strong>. It gets a four-letter room code; share it or the invite link.</li>
+      <li>Everyone else opens the game, enters the code, and picks <strong>A team</strong> or <strong>The DJ</strong>.</li>
+      <li>The device that started the game picks the years (1960 to today by default), the mode, the cards to win (10 by default, 5 to 20), and each team's starting tokens (2 by default). An option evens out the decades so a wide range doesn't lean toward the busiest one.</li>
+    </ol>
+    <h3>A phone as the DJ</h3>
+    <p>Turn on the motion sensor when asked. Each round, tap <strong>Next song</strong>, lay the phone flat, screen down, and wait for two beeps. Then tap the back of the screen, and the song starts in Spotify. Keep it face down until the team phones say it's safe.</p>
+    <h3>A computer as the DJ</h3>
+    <p>A device without a touch screen becomes a computer DJ on its own. Turn the screen away from the teams and click <strong>Next song</strong>; the song opens in the Spotify app, and you press play there. No Spotify app? Choose the browser tab option instead.</p>
+    <h3>One-click play on a Mac</h3>
+    <p>On a Mac, the DJ screen offers the ChronoSono DJ Shortcut. Download it, add it to Shortcuts, and turn on Allow Running Scripts in Shortcuts' Advanced settings. After that, <strong>Next song</strong> counts down from 3, plays the song in Spotify, and hides Spotify's window, even if another song was playing.</p>
+  </section>
 
-							<h2>The songs</h2>
-							<p>About 580 well-known songs from 1954 to today, each with the year it first came out (not the year of a remaster or compilation). You can narrow the years before a game, and an option evens out the decades so a wide range doesn't lean toward the busiest one.</p>
+  <section>
+    <h2>A turn</h2>
+    <ol class="rack">
+      <li class="strip d1950"><span class="strip-year">1</span><span class="strip-title">The DJ plays a song</span><span class="strip-artist">Nobody sees the title. If you know it, say the title and artist out loud before the reveal.</span></li>
+      <li class="strip d1960"><span class="strip-year">2</span><span class="strip-title">Slot it in</span><span class="strip-artist">The team whose turn it is taps the gap on its timeline where the song belongs, then locks it in.</span></li>
+      <li class="strip d1970"><span class="strip-year">3</span><span class="strip-title">Challenge</span><span class="strip-artist">The other teams have <strong>15 seconds</strong>. Think they're wrong? Claim a different gap for 1 token.</span></li>
+      <li class="strip d1980"><span class="strip-year">4</span><span class="strip-title">The reveal</span><span class="strip-artist">The card flips on every team phone. Another team says whether the song was named.</span></li>
+      <li class="strip d1990"><span class="strip-year">5</span><span class="strip-title">Keep, steal, or lose it</span><span class="strip-artist">Placed right, you keep it. Placed wrong but a challenger got it right, they steal it. Otherwise nobody gets it.</span></li>
+    </ol>
+  </section>
 
-							<h2>How it stays hidden</h2>
-							<p>The DJ opens each song as an ordinary Spotify link, the same as tapping a link a friend sent you, while nobody can see the screen. The team phones never receive the song until the reveal. ChronoSono doesn't use the Spotify API, and it has no accounts and no ads.</p>
+  <section>
+    <h2>Tokens</h2>
+    <p>Each team holds up to 5.</p>
+    <ul class="rack">
+      <li class="strip d2010"><span class="strip-year">+1</span><span class="strip-title">Name it</span><span class="strip-artist">Say the title and artist before the reveal (not in Pro, where naming is required).</span></li>
+      <li class="strip d2000"><span class="strip-year">&minus;1</span><span class="strip-title">Challenge</span><span class="strip-artist">Claim a different gap on another team's turn.</span></li>
+      <li class="strip d2000"><span class="strip-year">&minus;1</span><span class="strip-title">Skip</span><span class="strip-artist">Swap the song on your turn for a new one.</span></li>
+      <li class="strip d2000"><span class="strip-year">&minus;3</span><span class="strip-title">Trade for a card</span><span class="strip-artist">Before the song plays, trade 3 tokens for a free card placed for you. It uses your turn.</span></li>
+    </ul>
+  </section>
 
-							<h2>Common questions</h2>
-							<h3>The song didn't play.</h3>
-							<p>On the DJ, choose <strong>Song didn't start? Play it again</strong>. If a song won't play at all, a team phone can tap <strong>Song didn't play?</strong> to swap in a different one.</p>
-							<h3>A phone DJ won't start the song when I tap it.</h3>
-							<p>It has to lie flat, screen down. Standing on its edge doesn't count. Wait for the two beeps, then tap. On an iPhone, allow motion access when asked; if you declined, reload the page and allow it.</p>
-							<h3>A team's phone died mid-game.</h3>
-							<p>Open the game again with the room code and type your team's exact name to take its seat back.</p>
-							<h3>Spotify shows the song on a phone DJ's lock screen.</h3>
-							<p>Keep the DJ phone face down until the team phones say it's safe to turn it over.</p>
-							<h3>On a computer DJ, Spotify opens the song but doesn't play it.</h3>
-							<p>Press play in Spotify. On a Mac, the DJ screen offers a one-click option that plays the song for you.</p>
+  <section>
+    <h2>Modes</h2>
+    <div class="modes-list">
+      <div><b>Original</b>Place each song in the right spot. Naming it earns a token.</div>
+      <div><b>Pro</b>The card only counts if you also name the title and artist.</div>
+      <div><b>Expert</b>Place it and call the exact year.</div>
+    </div>
+  </section>
 
-							<h2>Credits</h2>
-							<p>Inspired by music timeline card games such as Hitster. Song years and Spotify track IDs come from public Billboard chart data, the TidyTuesday Spotify songs dataset, Wikidata and ListenBrainz. ChronoSono is a free, noncommercial project and is not affiliated with or endorsed by Spotify or Hitster.</p>
-						</div>
-					</section>
+  <section>
+    <h2>Winning</h2>
+    <p>The first team to the target number of cards wins, the moment the card lands, even if it's a steal. The winner's timeline flips through on every phone, and the DJ gets a victory song to play. Play again with the same players from the end screen.</p>
+  </section>
 
-				<!-- Footer -->
-					<footer class="wrapper style1 align-center">
-						<div class="inner">
-							<ul class="icons">
-								<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-								<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
-							</ul>
-							<p>&copy; Garrett Craig. All rights reserved.</p>
-						</div>
-					</footer>
+  <section>
+    <h2>The songs</h2>
+    <p>About 590 well-known songs from 1954 to today, each dated by the year it first came out, not a remaster or compilation.</p>
+  </section>
 
-			</div>
+  <section>
+    <h2>How it stays hidden</h2>
+    <p>The DJ opens each song as an ordinary Spotify link, the same as tapping a link a friend sent you, while nobody can see the screen. The team phones never receive the song until the reveal. ChronoSono doesn't use the Spotify API, and it has no accounts and no ads.</p>
+  </section>
 
-		<!-- Scripts -->
-			<script src="../../assets/js/jquery.min.js"></script>
-			<script src="../../assets/js/jquery.scrollex.min.js"></script>
-			<script src="../../assets/js/jquery.scrolly.min.js"></script>
-			<script src="../../assets/js/browser.min.js"></script>
-			<script src="../../assets/js/breakpoints.min.js"></script>
-			<script src="../../assets/js/util.js"></script>
-			<script src="../../assets/js/main.js"></script>
+  <section>
+    <h2>Common questions</h2>
+    <h3>The song didn't play.</h3>
+    <p>On the DJ, choose <strong>Song didn't start? Play it again</strong>. If a song won't play at all, a team can tap <strong>Song didn't play?</strong> to swap in a different one at no cost.</p>
+    <h3>A phone DJ won't start the song when I tap it.</h3>
+    <p>It has to lie flat, screen down; standing on its edge doesn't count. Wait for the two beeps, then tap. On an iPhone, allow motion access when asked. If you declined, reload the page and allow it.</p>
+    <h3>Spotify shows the song on a phone DJ's lock screen.</h3>
+    <p>Keep the DJ phone face down until the team phones say it's safe to turn it over.</p>
+    <h3>On a computer, Spotify opens the song but doesn't play it.</h3>
+    <p>Press play in Spotify. On a Mac, set up the one-click Shortcut from the DJ screen and it plays for you.</p>
+    <h3>A team's phone died mid-game.</h3>
+    <p>Open the game again with the room code and type the team's exact name to take its seat back. A new DJ device can join the same way and take over.</p>
+    <h3>Can I turn my phone sideways?</h3>
+    <p>Yes. On a phone turned sideways, your timeline runs left to right as a row of cards.</p>
+  </section>
 
-	</body>
+  <a class="btn primary big start" href="/chronosono/">Play ChronoSono</a>
+
+  <footer>
+    <p>Inspired by music timeline card games such as Hitster. Song years and Spotify track IDs come from public Billboard chart data, the TidyTuesday Spotify songs dataset, Wikidata, and ListenBrainz. ChronoSono is a free, noncommercial project by <a href="/projects.html">Garrett Craig</a>, not affiliated with or endorsed by Spotify or Hitster.</p>
+  </footer>
+</div>
+</body>
 </html>

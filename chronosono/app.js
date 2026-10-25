@@ -461,7 +461,7 @@ function roleView() {
   return `
   <div class="home">
     <header class="masthead">
-      <div class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></div>
+      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
       <h1 class="wordmark small-mark" style="margin-top:18px">${creating ? "New game" : `Game ${esc(app.joinCode)}`}</h1>
       <p class="lede">What is this device for?</p>
     </header>
@@ -505,7 +505,7 @@ function lobbyView() {
   const canStart = v.djJoined && v.lobbyTeams.length >= 2;
   return `
   <div class="lobby">
-    <header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span></header>
+    <header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a></header>
     <div class="lobby-head">
       <div><div class="code-label">Room code</div><div class="code-big">${esc(v.code)}</div></div>
       <div class="actions"><button class="btn quiet" data-action="share" data-link="${esc(link)}">Share invite link</button></div>
@@ -814,7 +814,7 @@ function teamView() {
   return `
   <div class="game ${body.includes('class="dock"') ? "docked" : ""}">
     <header class="gamebar">
-      <span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span>
+      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
       <span class="meta">${esc(v.code)}. Round ${g.round}. ${v.config.yearMin} to ${v.config.yearMax}.</span>
       <span class="spacer"></span>
       ${v.me.isHost ? `<button class="btn quiet small" data-action="end">End game</button>` : ""}
@@ -838,7 +838,7 @@ function othersView(v) {
 function djView() {
   const v = app.view;
   const g = v.game;
-  const header = `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>`;
+  const header = `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>`;
   if (dj.computer) return computerDjView(v, g, header);
   if (!dj.enabled || dj.noSensor) {
     return `${header}<div class="dj">
@@ -965,7 +965,7 @@ function overView() {
     : "";
   return `
   <div class="over">
-    ${isDj ? `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>` : ""}
+    ${isDj ? `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>` : ""}
     <h1 class="wordmark victory-name">${winner ? (mine ? "You win" : `${esc(winner.name)} wins`) : "It's a draw"}</h1>
     <p class="lede">${how}</p>
     ${
