@@ -194,8 +194,8 @@ const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNon
 // A computer DJ opens songs in the Spotify desktop app (or, as an option, one reused browser tab) and keeps its screen turned away.
 const SPOTIFY_TAB = "chronosono-spotify";
 const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
-// The desktop app only shows a song for a bare spotify:track: link; a start time makes it play.
-const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}#0:01` : spotifyUrl(id));
+// A link only opens the song in Spotify on a computer; the DJ presses play there.
+const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id));
 
 function screenAngle(beta, gamma) {
   const r = Math.PI / 180;
@@ -862,8 +862,8 @@ function computerDjView(v, g, header) {
   }
   if (v.stage === "place" || v.stage === "challenge" || v.stage === "judge") {
     return `${header}<div class="dj">
-      <p class="stage-title">Song playing</p>
-      <p class="hint">Keep Spotify out of sight until the team phones show the answer. If it opened without playing, press play in Spotify.</p>
+      <p class="stage-title">Press play in Spotify</p>
+      <p class="hint">The song is open in ${dj.appLinks ? "the Spotify app" : "the Spotify tab"}. Press play there, then keep it out of sight until the team phones show the answer.</p>
       <div class="mini-actions"><button class="btn link" data-action="replay">Song didn't start? Play it again</button></div>
     </div>`;
   }
@@ -872,7 +872,7 @@ function computerDjView(v, g, header) {
     return `${header}<div class="dj">
       <p class="up-next">Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
-      <p class="hint">Turn the screen away from the teams first. The song opens in ${where}.</p>
+      <p class="hint">Turn the screen away from the teams first. The song opens in ${where}, and you press play there.</p>
       ${dj.appLinks ? `<p class="hint">The first time, your browser asks to open Spotify. Choose Open, and tick Always allow if it offers. No Spotify app on this computer? Use a browser tab instead.</p>` : ""}
       ${options}
     </div>`;

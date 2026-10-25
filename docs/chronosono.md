@@ -6,7 +6,7 @@ A music timeline party game at `/chronosono/`. One phone plays each song face do
 
 1. Someone opens `/chronosono/`, chooses **Start a new game**, and picks a role for their phone.
 2. Everyone else opens `/chronosono/` and enters the four-letter room code, or uses the invite link.
-3. One device joins as the **DJ**. A phone turns on its motion sensor and plays each song face down; it needs the Spotify app. A computer (picked automatically when there's no touch screen) opens each song in the Spotify desktop app with one click (or in a browser tab, as an option), and its screen stays turned away from the teams. Two to four phones join as **teams**.
+3. One device joins as the **DJ**. A phone turns on its motion sensor and plays each song face down; it needs the Spotify app. A computer (picked automatically when there's no touch screen) opens each song in the Spotify desktop app with one click (or in a browser tab, as an option), and the DJ presses play there, and its screen stays turned away from the teams. Two to four phones join as **teams**.
 4. The phone that created the game sets the years, mode, and cards to win, then starts.
 5. Each round, someone taps **Next song** on the DJ phone and lays it face down. After two beeps they tap the back of the screen, and the song opens in Spotify.
 6. The active team places the song on its timeline and locks in. Other teams have 15 seconds to challenge for a token. Then the card flips, an opposing team says whether the song was named, and the result shows on every team phone.
