@@ -429,7 +429,12 @@ function homeView() {
     <header class="masthead">
       ${logoSvg()}
       <h1 class="wordmark brandname">ChronoSono</h1>
-      <p class="lede">Hear a song, then slot it into your team's timeline by year. One phone plays the music face down, so nobody sees the answer.</p>
+      <p class="tagline">Find out who really knows their music.</p>
+      <figure class="brag strip d1980">
+        <span class="strip-year">1987</span>
+        <blockquote>“I <em>know</em> The Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
+      </figure>
+      <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden.</p>
       <p class="hint"><a href="/chronosono/about/">How to play</a></p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
@@ -443,7 +448,7 @@ function homeView() {
     </section>
     <section class="panel">
       <h2>Start a game</h2>
-      <p class="needs">You'll need at least three phones: one to play the music and one for each of two or more teams. The music phone needs the Spotify app.</p>
+      <p class="needs">You'll need one device to play the music, a phone or a computer with Spotify, and a phone for each of two or more teams.</p>
       <button class="btn primary" data-action="goCreate">Start a new game</button>
     </section>
   </div>`;
@@ -456,7 +461,7 @@ function roleView() {
     <header class="masthead">
       <div class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></div>
       <h1 class="wordmark small-mark" style="margin-top:18px">${creating ? "New game" : `Game ${esc(app.joinCode)}`}</h1>
-      <p class="lede">What is this phone for?</p>
+      <p class="lede">What is this device for?</p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
     <div class="choices">
@@ -506,10 +511,10 @@ function lobbyView() {
     <p class="hint">Others open <strong>${esc(location.host)}/chronosono</strong> and enter the code.</p>
     ${v.me.role === "dj" ? djLobbyNote() : ""}
     <section class="panel">
-      <h2>Phones</h2>
+      <h2>Who's here</h2>
       <ul class="roster">${roster.join("")}</ul>
     </section>
-    ${host ? settingsView() : `<section class="panel"><h2>Settings</h2><p class="summary">${summary(v.config, v.songsInRange)}</p><p class="hint">The phone that created the game picks the settings and starts it.</p></section>`}
+    ${host ? settingsView() : `<section class="panel"><h2>Settings</h2><p class="summary">${summary(v.config, v.songsInRange)}</p><p class="hint">The device that created the game picks the settings and starts it.</p></section>`}
     ${host ? `<div class="start-row"><button class="btn primary big" data-action="start" ${canStart ? "" : "disabled"}>Start game</button>${canStart ? "" : `<span class="hint">Needs a DJ and two teams.</span>`}</div>` : ""}
   </div>`;
 }
@@ -958,7 +963,7 @@ function overView() {
     : "";
   return `
   <div class="over">
-    ${isDj ? `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ phone, game ${esc(v.code)}</span></header>` : ""}
+    ${isDj ? `<header class="gamebar"><span class="brand">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></span><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>` : ""}
     <h1 class="wordmark victory-name">${winner ? (mine ? "You win" : `${esc(winner.name)} wins`) : "It's a draw"}</h1>
     <p class="lede">${how}</p>
     ${
@@ -975,7 +980,7 @@ function overView() {
       <ul class="played">${g.played.map((c) => `<li class="d${decade(c.year)}"><b>${c.year}</b> ${esc(c.title)}, ${esc(c.artist)}<a href="${spotifyUrl(c.id)}" target="_blank" rel="noopener">Spotify</a></li>`).join("")}</ul>
     </section>
     <div class="start-row">
-      ${v.me.isHost ? `<button class="btn primary big" data-action="rematch">Play again with the same phones</button>` : `<p class="hint">The phone that created the game can start a rematch.</p>`}
+      ${v.me.isHost ? `<button class="btn primary big" data-action="rematch">Play again with the same players</button>` : `<p class="hint">The device that created the game can start a rematch.</p>`}
       <button class="btn quiet" data-action="leave">Leave game</button>
     </div>
   </div>`;
@@ -1000,7 +1005,7 @@ function render() {
   else if (v.stage === "over") html = overView();
   else if (v.me.role === "dj") html = djView();
   else if (v.me.role === "team") html = teamView();
-  else html = `<div class="home"><p class="lede">This phone isn't part of game ${esc(v.code)}.</p><button class="btn primary" data-action="leave">Back</button></div>`;
+  else html = `<div class="home"><p class="lede">This device isn't part of game ${esc(v.code)}.</p><button class="btn primary" data-action="leave">Back</button></div>`;
   root.innerHTML = html;
   root.classList.toggle("wide", root.firstElementChild?.classList.contains("split") ?? false);
   settleLogos();
