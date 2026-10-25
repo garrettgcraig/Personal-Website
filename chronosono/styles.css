@@ -515,6 +515,52 @@ input.code-input:focus { box-shadow: 0 0 0 3px var(--mustard); }
   .logo { width: 104px; height: 104px; }
 }
 
+/* ---------- Phones turned sideways ----------
+   Short, wide screens: a thin header with the scores, one line for the turn, and the rack
+   laid out left to right as a row of song cards, oldest first, scrolling sideways. */
+
+@media (orientation: landscape) and (max-height: 560px) {
+  #app { max-width: none; padding: 10px max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); }
+  .game .gamebar { flex-wrap: nowrap; padding-bottom: 6px; margin-bottom: 8px; }
+  .game .gamebar .meta { order: 0; flex-basis: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .game .scores { display: flex; gap: 1px; margin-bottom: 8px; }
+  .game .score { flex: 1 1 0; grid-template-columns: 1fr auto auto; padding: 6px 10px; gap: 0 10px; }
+  .game .score-name { grid-column: auto; font-size: 0.98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .game .stage { padding: 0 0 6px; }
+  .game .stage.team .stage-title, .game .stage-title { font-size: 2rem; margin-bottom: 2px; }
+  .game .stage .hint, .game .status { margin-bottom: 2px; font-size: 0.88rem; max-width: none; }
+  .game .mini-actions { margin-top: 4px; }
+  .game .banner { padding: 6px 10px; margin-bottom: 8px; font-size: 0.9rem; }
+  .game .rail-title { margin: 4px 0 6px; font-size: 0.95rem; }
+  .game .actions { margin-top: 8px; }
+  .challenge-row { gap: 14px; align-items: center; }
+  .countdown { font-size: 3.2rem; }
+
+  /* The rack runs sideways. */
+  .rail { flex-direction: row; align-items: stretch; gap: 6px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: 10px; scrollbar-color: var(--rule-strong) transparent; }
+  .rail > * { flex: none; scroll-snap-align: center; }
+  .rail .strip { width: 150px; min-height: 128px; grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; align-items: start; row-gap: 4px; padding: 8px 12px 10px; }
+  .rail .strip-year { grid-row: auto; font-size: 2.3rem; }
+  .rail .strip-title { font-size: 1.02rem; align-self: end; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .rail .gap { width: 2px; height: auto; margin: 0; }
+  .rail .gap.live, .rail .gap.claimed { width: 52px; height: auto; margin: 0; }
+  .rail .gap-label, .rail .claim { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+  .rail .gap.placed { width: auto; margin: 0; }
+  .rail .gap.placed .strip { width: 150px; height: 100%; }
+
+  /* The reveal: card and verdict side by side. */
+  .reveal-row { grid-template-columns: auto 1fr; align-items: center; }
+  .strip.big { width: 220px; padding: 10px 14px 12px; border-top-width: 9px; }
+  .strip.big .strip-year { font-size: 3.6rem; }
+  .strip.big .strip-title { font-size: 1.2rem; }
+  .verdict { font-size: 2.4rem; }
+
+  .dock { padding: 8px max(16px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .dock-inner { max-width: none; }
+  .dock .btn.big { min-height: 48px; font-size: 1.15rem; }
+  .game.docked { padding-bottom: 74px; }
+}
+
 @media (max-width: 420px) {
   #app { padding: 18px 16px 80px; }
   .tick:nth-child(even) { visibility: hidden; }
