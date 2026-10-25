@@ -432,7 +432,7 @@ function homeView() {
       <p class="tagline">Find out who really knows their music.</p>
       <figure class="brag strip d1980">
         <span class="strip-year">1987</span>
-        <blockquote>“I <em>know</em> (I've Had) The Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
+        <blockquote>“I <em>know</em> Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
       </figure>
       <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden.</p>
       <p class="hint"><a href="/chronosono/about/">How to play</a></p>
