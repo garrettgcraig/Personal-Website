@@ -194,7 +194,8 @@ const dj = { enabled: false, audio: null, angle: null, downSince: null, armedNon
 // A computer DJ opens songs in the Spotify desktop app (or, as an option, one reused browser tab) and keeps its screen turned away.
 const SPOTIFY_TAB = "chronosono-spotify";
 const looksLikeComputer = () => !matchMedia("(pointer: coarse)").matches;
-const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}` : spotifyUrl(id));
+// The desktop app only shows a song for a bare spotify:track: link; a start time makes it play.
+const songUrl = (id) => (dj.appLinks ? `spotify:track:${id}#0:01` : spotifyUrl(id));
 
 function screenAngle(beta, gamma) {
   const r = Math.PI / 180;
