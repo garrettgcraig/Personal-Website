@@ -924,7 +924,7 @@ function shortcutSetupView() {
     <p class="stage-title">One-click play on this Mac</p>
     <p class="hint">The ChronoSono DJ Shortcut tells the Spotify app on this Mac to play each song and hide its window, even if another song is playing. Set it up once:</p>
     <ol class="dj-steps setup-steps">
-      <li><a class="btn small" href="${SHORTCUT_FILE}" download>Download the Shortcut</a><br>Open the file and click <strong>Add Shortcut</strong>. Keep its name, ${SHORTCUT_NAME}.</li>
+      <li><a class="btn small" href="${SHORTCUT_FILE}" download>Download the Shortcut</a><br>Open the file and click <strong>Add Shortcut</strong>. Keep its name, ${SHORTCUT_NAME}. Already have an older copy? Add this one and choose <strong>Replace</strong>.</li>
       <li>In the Shortcuts app, open <strong>Settings</strong>, then <strong>Advanced</strong>, and turn on <strong>Allow Running Scripts</strong>.</li>
       <li>Click <strong>Use the Shortcut</strong>. On the first song, let your browser open Shortcuts (tick Always allow if it offers), and allow Shortcuts to control Spotify and System Events.</li>
     </ol>
