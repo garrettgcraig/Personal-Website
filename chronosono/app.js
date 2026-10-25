@@ -1007,6 +1007,10 @@ function render() {
   else if (v.me.role === "team") html = teamView();
   else html = `<div class="home"><p class="lede">This device isn't part of game ${esc(v.code)}.</p><button class="btn primary" data-action="leave">Back</button></div>`;
   root.innerHTML = html;
+  // Sideways, the rack scrolls left to right: keep the card in play in view.
+  if (matchMedia("(orientation: landscape) and (max-height: 560px)").matches) {
+    root.querySelector(".rail .gap.placed, .rail .strip.new, .rail .gap.claimed")?.scrollIntoView({ block: "nearest", inline: "center" });
+  }
   root.classList.toggle("wide", root.firstElementChild?.classList.contains("split") ?? false);
   settleLogos();
   if (v?.stage === "lobby" && v.me.isHost) updateDial();
