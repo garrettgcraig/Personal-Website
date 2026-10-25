@@ -187,17 +187,17 @@ def query_with_retry(fetch, query: str, sleep=time.sleep) -> dict | None:
 def write_report(rows: list[list], cache: dict, path: Path = REPORT) -> None:
     have = sum(1 for r in rows if r[3])
     sources: dict[str, int] = {}
-    for t, a, _, sp in rows:
+    for t, a, _, sp, *_ in rows:
         if sp:
             src = (cache.get(key_for(t, a)) or {}).get("source", "unknown")
             sources[src] = sources.get(src, 0) + 1
     differs = []
-    for t, a, y, sp in rows:
+    for t, a, y, sp, *_ in rows:
         e = cache.get(key_for(t, a)) or {}
         other = e.get("wikidataYear") or e.get("chartYear")
         if sp and other and abs(other - y) >= 2:
             differs.append((t, a, y, other, "Wikidata" if e.get("wikidataYear") else "Billboard year-end chart"))
-    misses = [(t, a, y) for t, a, y, sp in rows if not sp]
+    misses = [(t, a, y) for t, a, y, sp, *_ in rows if not sp]
     lines = [
         "# ChronoSono catalog report",
         "",
@@ -228,7 +228,7 @@ def run(limit: int | None, retry_misses: bool, fetch=http_sparql, sleep=time.sle
     cache = load_cache(cache_path)
     todo = []
     for row in rows:
-        title, artist, _, spotify = row
+        title, artist, _, spotify = row[:4]
         entry = cache.get(key_for(title, artist))
         if spotify:
             continue
@@ -253,7 +253,7 @@ def run(limit: int | None, retry_misses: bool, fetch=http_sparql, sleep=time.sle
             break
         grouped = parse_results(data)
         for row in batch:
-            title, artist, year, _ = row
+            title, artist, year, _ = row[:4]
             cands = [c for v in label_variants(title) for c in grouped.get(v, [])]
             best = pick(cands, title, artist)
             k = key_for(title, artist)

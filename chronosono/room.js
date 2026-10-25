@@ -63,7 +63,15 @@ export function cleanConfig(raw = {}, prev = {}) {
     yearMin,
     yearMax,
     balance: raw.balance === undefined ? prev.balance ?? true : !!raw.balance,
+    genres: cleanGenres(raw.genres ?? prev.genres),
   };
+}
+
+// Known genres only, no repeats, in the standard order. All of them is stored as none, meaning all.
+function cleanGenres(raw) {
+  if (!Array.isArray(raw)) return [];
+  const picked = G.GENRES.filter((g) => raw.includes(g));
+  return picked.length === G.GENRES.length ? [] : picked;
 }
 
 export function newCode(rng = Math.random) {
@@ -155,10 +163,10 @@ function start(room, rng) {
   if (room.stage !== "lobby" && room.stage !== "over") throw new GameError("This game already started.", 409);
   if (!room.djId) throw new GameError("A DJ phone needs to join first.", 409);
   if (room.teams.length < 2) throw new GameError("At least two team phones need to join.", 409);
-  const pool = G.inRange(CARDS, room.config.yearMin, room.config.yearMax);
+  const pool = G.filterCards(CARDS, room.config);
   const need = G.songsNeeded(room.teams.length, room.config.target);
   if (pool.length < Math.min(need, room.teams.length * 3 + 10)) {
-    throw new GameError(`Only ${pool.length} songs fall in ${room.config.yearMin} to ${room.config.yearMax}. Widen the years.`, 409);
+    throw new GameError(`Only ${pool.length} songs fit these years and genres. Widen the years or add genres.`, 409);
   }
   room.game = G.createGame(room.config, room.teams.map((t) => t.name), CARDS, rng);
   room.stage = "ready";
@@ -393,7 +401,7 @@ export function viewFor(room, deviceId, now) {
     djJoined: !!room.djId,
     djMode: room.djMode || "phone",
     lobbyTeams: room.teams.map((t) => t.name),
-    songsInRange: G.inRange(CARDS, room.config.yearMin, room.config.yearMax).length,
+    songsInRange: G.filterCards(CARDS, room.config).length,
     play: { nonce: room.play.nonce, status: room.play.status },
     spotify: null,
     game: null,

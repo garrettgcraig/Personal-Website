@@ -1,10 +1,10 @@
 # ChronoSono catalog report
 
-Updated 2026-10-22 18:49 UTC.
+Updated 2026-10-25 06:26 UTC.
 
-589 of 590 songs have a Spotify ID and can be played. Songs without one are left out of the game.
+1042 of 1043 songs have a Spotify ID and can be played. Songs without one are left out of the game.
 
-Where the IDs came from: billboard 322, listenbrainz 98, share-link 8, tidytuesday 135, wikidata 26.
+Where the IDs came from: billboard 322, billboard-weekly 376, listenbrainz 175, share-link 8, tidytuesday 135, wikidata 26.
 
 ## Years that disagree by two or more
 
@@ -14,8 +14,8 @@ Another source dates these songs differently from `chronosono/songs.js`. Chart y
 - Dream On, Aerosmith: listed 1973, Billboard year-end chart 1976
 - Walk This Way, Aerosmith: listed 1975, Billboard year-end chart 1977
 - Thriller, Michael Jackson: listed 1982, Billboard year-end chart 1984
-- Welcome to the Jungle, Guns N' Roses: listed 1987, Billboard year-end chart 1989
 - Smooth Criminal, Michael Jackson: listed 1987, Billboard year-end chart 1989
+- Welcome to the Jungle, Guns N' Roses: listed 1987, Billboard year-end chart 1989
 - Blue (Da Ba Dee), Eiffel 65: listed 1998, Billboard year-end chart 2000
 - In the End, Linkin Park: listed 2000, Billboard year-end chart 2002
 - Latch, Disclosure: listed 2012, Billboard year-end chart 2014

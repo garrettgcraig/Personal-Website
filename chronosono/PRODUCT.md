@@ -29,7 +29,7 @@ The DJ phone plays each song by opening an ordinary Spotify track link after it 
 
 - Static page at `/chronosono/` plus a Netlify function at `/chronosono/api/*` storing rooms in Netlify Blobs.
 - Phones poll every one to two seconds; there is no real-time service.
-- Catalog: 590 songs with title, artist, original year, and Spotify ID (581 playable).
+- Catalog: about 1,040 songs with title, artist, original year, Spotify ID, and one or two of eight genres (Pop, Rock, Hip-hop, R&B & Soul, Country, Dance & Electronic, Latin, Folk & Singer-songwriter).
 - Game settings: year range, mode, cards to win.
 - Hosted on garrettgcraig.com but has its own identity, separate from the personal site's look (like KnowKi).
 

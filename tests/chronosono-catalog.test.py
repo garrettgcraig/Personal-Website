@@ -110,10 +110,13 @@ class RunTests(unittest.TestCase):
 
     def test_real_catalog_parses_and_has_no_duplicates(self):
         _, rows = resolver.read_catalog()
-        keys = [resolver.key_for(t, a).lower() for t, a, _, _ in rows]
+        keys = [resolver.key_for(t, a).lower() for t, a, *_ in rows]
         self.assertEqual(len(keys), len(set(keys)))
-        self.assertTrue(all(1950 <= y <= 2026 for _, _, y, _ in rows))
-        self.assertTrue(all(sp is None or resolver.SPOTIFY_ID.match(sp) for *_, sp in rows))
+        self.assertTrue(all(1950 <= r[2] <= 2026 for r in rows))
+        self.assertTrue(all(r[3] is None or resolver.SPOTIFY_ID.match(r[3]) for r in rows))
+        genres = {"Pop", "Rock", "Hip-hop", "R&B & Soul", "Country", "Dance & Electronic", "Latin", "Folk & Singer-songwriter"}
+        bad = [r[:2] for r in rows if len(r) < 5 or not 1 <= len(r[4]) <= 2 or not set(r[4]) <= genres]
+        self.assertEqual(bad, [], "every song needs one or two known genres")
 
 
 if __name__ == '__main__':

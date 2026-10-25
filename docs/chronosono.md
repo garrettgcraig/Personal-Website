@@ -31,7 +31,7 @@ A music timeline party game at `/chronosono/`. One phone plays each song face do
 
 ## Adding songs
 
-Add rows to `chronosono/songs.js` as `["Title", "Artist", year, null]` and open a pull request. The catalog workflow looks each new song up in Wikidata and commits any Spotify IDs it finds to the branch. Songs it can't match stay `null` and are left out of the game. To fill one by hand, open the song in Spotify, choose Share, then Copy song link, and paste the 22-character ID from the link (`open.spotify.com/track/<ID>`) into the row. Check `data/chronosono-catalog-report.md` for misses and possible year errors.
+Add rows to `chronosono/songs.js` as `["Title", "Artist", year, null, ["Genre"]]`, with one or two genres from `GENRES` in `chronosono/game.js` (main genre first), and open a pull request. The lobby's genre filter keeps a song if it fits any chosen genre. The catalog workflow looks each new song up in Wikidata and commits any Spotify IDs it finds to the branch. Songs it can't match stay `null` and are left out of the game. To fill one by hand, open the song in Spotify, choose Share, then Copy song link, and paste the 22-character ID from the link (`open.spotify.com/track/<ID>`) into the row. Check `data/chronosono-catalog-report.md` for misses and possible year errors.
 
 ## Running it locally
 

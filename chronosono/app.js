@@ -7,8 +7,9 @@ const API = "/chronosono/api";
 const ALL = G.toCards(SONGS);
 const YEAR_MIN = G.YEAR_FLOOR;
 const YEAR_MAX = Math.max(new Date().getFullYear(), ...SONGS.map((r) => r[2]));
-const HISTOGRAM = G.yearHistogram(ALL, YEAR_MIN, YEAR_MAX);
-const HIST_PEAK = Math.max(1, ...Object.values(HISTOGRAM));
+// Songs in the chosen genres, any year. The year chart and the genre counts both start from here.
+const ofGenres = (genres) => G.filterCards(ALL, { yearMin: YEAR_MIN, yearMax: YEAR_MAX, genres });
+const chosenGenres = (c) => (c.genres?.length ? c.genres : G.GENRES);
 const FACE_DOWN = 145; // degrees from face up
 const ARM_AFTER_MS = 600;
 
@@ -529,7 +530,8 @@ function djLobbyNote() {
 }
 
 function summary(c, n) {
-  return `${MODES[c.mode].name}, ${c.yearMin} to ${c.yearMax} (${plural(n, "song")}), first to ${c.target} cards, ${plural(c.startTokens, "starting token")}.`;
+  const genres = c.genres?.length ? `, ${c.genres.join(", ")} only` : "";
+  return `${MODES[c.mode].name}, ${c.yearMin} to ${c.yearMax}${genres} (${plural(n, "song")}), first to ${c.target} cards, ${plural(c.startTokens, "starting token")}.`;
 }
 
 function settingsView() {
@@ -538,6 +540,10 @@ function settingsView() {
   <section class="panel">
     <h2>Years in play</h2>
     ${dialView(c)}
+  </section>
+  <section class="panel">
+    <h2>Genres</h2>
+    ${genresView(c)}
   </section>
   <section class="panel">
     <h2>Mode</h2>
@@ -562,10 +568,23 @@ function stepper(key, label, value, min, max) {
     </div></div>`;
 }
 
+// One toggle per genre, each with its song count in the chosen years. None chosen means all.
+function genresView(c) {
+  const on = chosenGenres(c);
+  const all = on.length === G.GENRES.length;
+  return `
+  <div class="genres" role="group" aria-label="Genres">
+    ${G.GENRES.map((g) => `<button class="chip genre ${on.includes(g) ? "on" : ""}" aria-pressed="${on.includes(g)}" data-action="genre" data-genre="${esc(g)}">${esc(g)} <span class="chip-count" data-genre-count="${esc(g)}"></span></button>`).join("")}
+  </div>
+  <p class="hint genre-hint">${all ? "Every genre is in. Tap one to leave it out." : `${plural(on.length, "genre")} in. A song counts if it fits any of them.`} ${all ? "" : `<button class="btn link" data-action="allGenres">Use every genre</button>`}</p>`;
+}
+
 function dialView(c) {
+  const histogram = G.yearHistogram(ofGenres(c.genres || []), YEAR_MIN, YEAR_MAX);
+  const peak = Math.max(1, ...Object.values(histogram));
   const bars = [];
   for (let y = YEAR_MIN; y <= YEAR_MAX; y++) {
-    const h = HISTOGRAM[y] ? Math.max(8, (HISTOGRAM[y] / HIST_PEAK) * 100) : 2;
+    const h = histogram[y] ? Math.max(8, (histogram[y] / peak) * 100) : 2;
     bars.push(`<span class="bar d${decade(y)}" data-year="${y}" style="height:${h}%"></span>`);
   }
   const ticks = [];
@@ -601,13 +620,16 @@ function updateDial() {
   win.style.left = `${((c.yearMin - YEAR_MIN) / years) * 100}%`;
   win.style.width = `${((c.yearMax - c.yearMin + 1) / years) * 100}%`;
   root.querySelectorAll(".bar").forEach((b) => b.classList.toggle("out", +b.dataset.year < c.yearMin || +b.dataset.year > c.yearMax));
-  const count = G.inRange(ALL, c.yearMin, c.yearMax).length;
+  const count = G.filterCards(ALL, c).length;
   const need = G.songsNeeded(Math.max(2, app.view.lobbyTeams.length), c.target);
   const el = q("#dialCount");
   el.textContent = ALL.length === 0
     ? "Songs are still being matched to Spotify. Check back shortly."
-    : `${plural(count, "song")} in range. ${G.difficultyLabel(c.yearMin, c.yearMax)} difficulty.${count < need ? ` A game this size uses about ${need}, so widen the years or lower the cards to win.` : ""}`;
+    : `${plural(count, "song")} fit. ${G.difficultyLabel(c.yearMin, c.yearMax)} difficulty.${count < need ? ` A game this size uses about ${need}, so widen the years, add genres, or lower the cards to win.` : ""}`;
   el.classList.toggle("warn", count < need);
+  root.querySelectorAll("[data-genre-count]").forEach((n) => {
+    n.textContent = G.filterCards(ALL, { yearMin: c.yearMin, yearMax: c.yearMax, genres: [n.dataset.genreCount] }).length;
+  });
 }
 
 let configTimer = null;
@@ -1115,6 +1137,19 @@ const actions = {
   },
   preset(el) {
     setYears(+el.dataset.min, +el.dataset.max, "min");
+  },
+  genre(el) {
+    const c = app.ui.configDraft || app.view.config;
+    const on = chosenGenres(c);
+    const g = el.dataset.genre;
+    if (on.includes(g) && on.length === 1) return toast("Keep at least one genre.");
+    const next = on.includes(g) ? on.filter((x) => x !== g) : G.GENRES.filter((x) => x === g || on.includes(x));
+    changeConfig({ genres: next.length === G.GENRES.length ? [] : next }, { now: true });
+    render();
+  },
+  allGenres() {
+    changeConfig({ genres: [] }, { now: true });
+    render();
   },
   start: () => act("start"),
   async next() {

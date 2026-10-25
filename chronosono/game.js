@@ -6,17 +6,26 @@ export const CHALLENGE_COST = 1;
 export const BUY_COST = 3;
 export const COOP_LIVES = 3;
 export const YEAR_FLOOR = 1950;
+export const GENRES = ["Pop", "Rock", "Hip-hop", "R&B & Soul", "Country", "Dance & Electronic", "Latin", "Folk & Singer-songwriter"];
 
-// Catalog rows are [title, artist, year, spotifyTrackId | null]. Rows without a Spotify ID
+// Catalog rows are [title, artist, year, spotifyTrackId | null, genres]. Rows without a Spotify ID
 // can't be played from a link, so they are left out of the deck.
 export function toCards(songs) {
   return songs
     .filter((row) => typeof row[3] === "string" && row[3].length === 22)
-    .map(([title, artist, year, spotify]) => ({ id: spotify, title, artist, year, spotify }));
+    .map(([title, artist, year, spotify, genres]) => ({ id: spotify, title, artist, year, spotify, genres: genres || [] }));
 }
 
 export function inRange(cards, yearMin, yearMax) {
   return cards.filter((c) => c.year >= yearMin && c.year <= yearMax);
+}
+
+// The songs a game can draw: in the year range, and in any chosen genre (none chosen means all).
+export function filterCards(cards, { yearMin, yearMax, genres = [] }) {
+  const inYears = inRange(cards, yearMin, yearMax);
+  if (!genres.length) return inYears;
+  const want = new Set(genres);
+  return inYears.filter((c) => c.genres.some((g) => want.has(g)));
 }
 
 export function yearHistogram(cards, from, to) {
@@ -74,7 +83,7 @@ export function drawFromPool(pool, balance, rng) {
 
 export function createGame(config, names, allCards, rng = Math.random) {
   const coop = config.mode === "coop";
-  let pool = inRange(allCards, config.yearMin, config.yearMax);
+  let pool = filterCards(allCards, config);
   const playerNames = coop ? [names[0] || "Our group"] : names;
   const players = [];
   for (const name of playerNames) {
