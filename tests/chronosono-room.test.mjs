@@ -274,3 +274,15 @@ test("the room shows the winner as soon as the winning card is revealed", async 
   assert.ok(end.game.result, "the winning card is still shown");
   assert.equal(end.game.teams[end.game.winner].cards.length, end.config.target);
 });
+
+test("the DJ can switch to a computer, and every phone sees it", async () => {
+  const t = await setup();
+  assert.equal((await t.view(A)).json.djMode, "phone");
+  assert.equal((await t.act(A, "djMode", { mode: "computer" })).status, 403);
+  assert.equal((await t.act(DJ, "djMode", { mode: "computer" })).status, 200);
+  assert.equal((await t.view(A)).json.djMode, "computer");
+  assert.equal((await t.act(DJ, "djMode", { mode: "toaster" })).status, 400);
+  // A new DJ device starts as a phone again.
+  await t.act("dj-phone-0002", "join", { role: "dj" });
+  assert.equal((await t.view(A)).json.djMode, "phone");
+});

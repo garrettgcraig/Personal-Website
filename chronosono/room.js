@@ -106,6 +106,7 @@ export function createRoom(code, hostId, now) {
     config: cleanConfig({}),
     teams: [],
     djId: null,
+    djMode: "phone", // "phone": face down with a motion sensor; "computer": the DJ keeps the screen hidden
     stage: "lobby",
     game: null,
     play: { nonce: 0, status: "idle" },
@@ -122,6 +123,7 @@ function join(room, deviceId, { role, name }) {
     if (t >= 0 && room.stage === "lobby") room.teams.splice(t, 1);
     else if (t >= 0) throw new GameError("This phone is already playing as a team.", 409);
     room.djId = deviceId;
+    room.djMode = "phone";
     return;
   }
   if (role !== "team") throw new GameError("Choose DJ phone or team phone.");
@@ -231,6 +233,12 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
     case "played":
       if (deviceId !== room.djId) throw new GameError("Only the DJ phone reports playback.", 403);
       if (action.nonce === room.play.nonce && room.play.status === "cued") room.play.status = "playing";
+      break;
+
+    case "djMode":
+      if (deviceId !== room.djId) throw new GameError("Only the DJ can change how songs play.", 403);
+      if (action.mode !== "phone" && action.mode !== "computer") throw new GameError("The DJ is a phone or a computer.");
+      room.djMode = action.mode;
       break;
 
     case "replay":
@@ -383,6 +391,7 @@ export function viewFor(room, deviceId, now) {
     me: { role, team: teamIndex >= 0 ? teamIndex : null, isHost: deviceId === room.hostId },
     config: room.config,
     djJoined: !!room.djId,
+    djMode: room.djMode || "phone",
     lobbyTeams: room.teams.map((t) => t.name),
     songsInRange: G.inRange(CARDS, room.config.yearMin, room.config.yearMax).length,
     play: { nonce: room.play.nonce, status: room.play.status },
