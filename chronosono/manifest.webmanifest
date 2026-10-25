@@ -1,0 +1,16 @@
+{
+  "name": "ChronoSono",
+  "short_name": "ChronoSono",
+  "description": "A music timeline party game. One device plays the songs, and each team plays on its own phone.",
+  "start_url": "/chronosono/",
+  "scope": "/chronosono/",
+  "display": "standalone",
+  "background_color": "#121110",
+  "theme_color": "#121110",
+  "icons": [
+    { "src": "/chronosono/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/chronosono/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/chronosono/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/chronosono/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
