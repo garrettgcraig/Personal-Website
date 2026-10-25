@@ -46,7 +46,7 @@ def main(billboard_csv: str, tidytuesday_csv: str) -> None:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     added = 0
     for row in rows:
-        title, artist, _year, spotify = row
+        title, artist, _year, spotify = row[:4]
         if spotify:
             continue
         k = key(title, artist)

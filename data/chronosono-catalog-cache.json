@@ -1,4 +1,9 @@
 {
+ "('Til) I Kissed You|The Everly Brothers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2erTdgDOZmjJNaNhjhWXhJ"
+ },
  "(I Can't Get No) Satisfaction|The Rolling Stones": {
   "chartYear": 1965,
   "checked": "2026-10-22",
@@ -21,6 +26,26 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3MjUtNVVq3C8Fn0MP3zhXa"
+ },
+ "1, 2 Step|Ciara": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7uKcScNXuO3MWw6LowBjW1"
+ },
+ "34+35|Ariana Grande": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3jjBPF4NDMCU51psU8JPpR"
+ },
+ "50 Ways To Leave Your Lover|Paul Simon": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6Qb7gtV6Q4MnUjSbkFcopl"
+ },
+ "7 Years|Lukas Graham": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5kqIPrATaCc2LqxVWzQGbk"
  },
  "7 rings|Ariana Grande": {
   "checked": "2026-10-22",
@@ -51,11 +76,31 @@
   "source": "billboard",
   "spotify": "69d54YOS8TOQiUYjX57XeA"
  },
+ "A Horse With No Name|America": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "54eZmuggBFJbV7k248bTTt"
+ },
+ "A Teenager In Love|Dion & The Belmonts": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0QGwOFQChzflLAmPq5NwKo"
+ },
+ "A Thousand Miles|Vanessa Carlton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4w1lzcaoZ1IC2K5TwjalRP"
+ },
  "A Whiter Shade of Pale|Procol Harum": {
   "chartYear": 1967,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3eOcCcZWqgR6nMZ54jnTH8"
+ },
+ "ABCDEFU|Gayle": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4fouWK6XVHhzl78KzQ1UjL"
  },
  "ABC|The Jackson 5": {
   "chartYear": 1970,
@@ -78,11 +123,36 @@
   "source": "listenbrainz",
   "spotify": "3GbRFpPA3Q42XTjGgO72dd"
  },
+ "Achy Breaky Heart|Billy Ray Cyrus": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2EoIt9vdgFRNW03u5IvFsQ"
+ },
+ "Adia|Sarah McLachlan": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0rl84FuazRHYmK72krdmA1"
+ },
+ "Adore You|Harry Styles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1M4qEo4HE3PRaCOM7EXNJq"
+ },
  "Africa|Toto": {
   "chartYear": 1983,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2374M0fQpWi3dLnB54qaLX"
+ },
+ "Against All Odds (Take A Look At Me Now)|Phil Collins": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "63CHa6rmamv9OsehkRD8oz"
+ },
+ "Again|Janet Jackson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0IaMMHVbpJ0LrRAeigWOXr"
  },
  "Ain't No Mountain High Enough|Marvin Gaye": {
   "chartYear": 1967,
@@ -112,6 +182,21 @@
   "source": "listenbrainz",
   "spotify": "2yTzXsYOrevaVIzQQgB3YL"
  },
+ "All I Wanna Do|Sheryl Crow": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ZpQiJ78LKINrW9SQTgbXd"
+ },
+ "All My Life|K-Ci & JoJo": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5GorFaKkP2mLREQvhSblIg"
+ },
+ "All Of Me|John Legend": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3U4isOIWM3VvDubwSI3y7a"
+ },
  "All Star|Smash Mouth": {
   "chartYear": 1999,
   "checked": "2026-10-22",
@@ -124,16 +209,51 @@
   "source": "billboard",
   "spotify": "4eLQPgkIwZI6OlllntlLdF"
  },
+ "All The Small Things|Blink-182": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2m1hi0nfMR9vdGC8UcrnwU"
+ },
  "All You Need Is Love|The Beatles": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "68BTFws92cRztMS1oQ7Ewj",
   "wikidataYear": null
  },
+ "Alone|Heart": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "54b8qPFqYqIndfdxiLApea"
+ },
  "Alright|Kendrick Lamar": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "72yHa0Zcman8jBILFZHnpG"
+ },
+ "Always Be My Baby|Mariah Carey": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2aBxt229cbLDOvtL7Xbb9x"
+ },
+ "Always On Time|Ja Rule": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4hrae8atte6cRlSC9a7VCO"
+ },
+ "Always|Bon Jovi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2RChe0r2cMoyOvuKobZy44"
+ },
+ "Amarillo By Morning|George Strait": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4TnUKixNWMfajncgdSwFoi"
+ },
+ "Amazed|Lonestar": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6iNcyWk5iUEY7P9zeTc5hm"
  },
  "American Idiot|Green Day": {
   "checked": "2026-10-22",
@@ -150,6 +270,26 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6fl9npjIxV6oEFrWqJ6tnp"
+ },
+ "Angel Of Mine|Monica": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1AM1o0mKbgAK5oMpY8B3Z7"
+ },
+ "Angel|Sarah McLachlan": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3xZMPZQYETEn4hjor3TR1A"
+ },
+ "Angie|The Rolling Stones": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1GcVa4jFySlun4jLSuMhiq"
+ },
+ "Annie's Song|John Denver": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4J0DbyODwZJcmIAiTSJfMF"
  },
  "Another Brick in the Wall, Pt. 2|Pink Floyd": {
   "checked": "2026-10-22",
@@ -185,10 +325,20 @@
   "source": "tidytuesday",
   "spotify": "1pKYYY0dkg23sQQXi0Q5zN"
  },
+ "Arthur's Theme (Best That You Can Do)|Christopher Cross": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5fnOrhQ4KgT5irGCjIccGH"
+ },
  "As It Was|Harry Styles": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "5Zt8EeE4G0oRRWCcNG5M3X"
+ },
+ "Astronaut In The Ocean|Masked Wolf": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Ofmpyhv5UAQ70mENzB277"
  },
  "BIRDS OF A FEATHER|Billie Eilish": {
   "checked": "2026-10-22",
@@ -207,10 +357,20 @@
   "source": "billboard",
   "spotify": "5uM9zdUz8PpYJME9wZCM4W"
  },
+ "Back At One|Brian McKnight": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6mwA6YiKDjAUG8kWvRRUPh"
+ },
  "Back in Black|AC/DC": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "08mG3Y1vljYA6bvDt4Wqkj"
+ },
+ "Bad Day|Daniel Powter": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0mUyMawtxj1CJ76kn9gIZK"
  },
  "Bad Habits|Ed Sheeran": {
   "checked": "2026-10-22",
@@ -234,6 +394,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5lWFrW5T3JtxVCLDb7etPu"
+ },
+ "Bailamos|Enrique Iglesias": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2bbeNsFmjZqdoDhjLsKNWe"
+ },
+ "Bailando|Enrique Iglesias": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0OozoN53XvHPASSHHkPGhR"
  },
  "Baker Street|Gerry Rafferty": {
   "chartYear": 1978,
@@ -269,16 +439,41 @@
   "source": "billboard",
   "spotify": "1xEpz8iZDReyXevFcP89XG"
  },
+ "Beautiful Crazy|Luke Combs": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2rxQMGVafnNaRaXlRMWPde"
+ },
  "Beautiful Day|U2": {
   "chartYear": 2001,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1VuBmEauSZywQVtqbxNqka"
  },
+ "Beautiful Girls|Sean Kingston": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1hGy2eLcmC8eKx7qr1tOqx"
+ },
  "Beautiful Things|Benson Boone": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6tNQ70jh4OwmPGpYy6R2o9"
+ },
+ "Because You Loved Me|Celine Dion": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "28UMiBhn383n9S7GL4tsxD"
+ },
+ "Before He Cheats|Carrie Underwood": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0ZUo4YjG4saFnEJhdWp9Bt"
+ },
+ "Before You Go|Lewis Capaldi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2gMXnyrvIjhVBUZwvLZDMP"
  },
  "Believer|Imagine Dragons": {
   "checked": "2026-10-22",
@@ -303,11 +498,36 @@
   "source": "billboard",
   "spotify": "0kPeymTUiaidv48eRrMISu"
  },
+ "Better Now|Post Malone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7dt6x5M1jzdTEt8oCbisTK"
+ },
+ "Bidi Bidi Bom Bom|Selena": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "08rj3keDexxAbhXnRM86ri"
+ },
+ "Big Energy|Latto": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5lHxARJJrZc3ss4ZVmGWfz"
+ },
+ "Big Girls Don't Cry|Fergie": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Q4WeJmzxuDpzMu9QjQqbM"
+ },
  "Billie Jean|Michael Jackson": {
   "chartYear": 1983,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3EzlF0tKEQstSzFqWzkLZE"
+ },
+ "Bitch|Meredith Brooks": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3i6qNxyVgIdUZTTi5m25EM"
  },
  "Bitter Sweet Symphony|The Verve": {
   "chartYear": 1998,
@@ -325,6 +545,11 @@
   "source": "tidytuesday",
   "spotify": "4YMQXzscifAREG0a7KNGhB"
  },
+ "Black Velvet|Alannah Myles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1KU5EHSz04JhGg3rReGJ0N"
+ },
  "Black or White|Michael Jackson": {
   "chartYear": 1992,
   "checked": "2026-10-22",
@@ -336,6 +561,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2sC2P3BN0IXujNaaSyDmtP"
+ },
+ "Blaze Of Glory|Jon Bon Jovi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1sUTfgduT0WIQO8kXKXxLC"
  },
  "Bleeding Love|Leona Lewis": {
   "chartYear": 2008,
@@ -364,6 +594,16 @@
   "source": "listenbrainz",
   "spotify": "3nsWQtQPuit0cGI5Zplcw7"
  },
+ "Blue Velvet|Bobby Vinton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4QelFzhVgLomeQhvKrwM1S"
+ },
+ "Blueberry Faygo|Lil Mosey": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6wJYhPfqk3KGhHRG76WzOh"
+ },
  "Blueberry Hill|Fats Domino": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -374,6 +614,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6oZDct1pcrRPMnNvP0OXea"
+ },
+ "Body Like A Back Road|Sam Hunt": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7mldq42yDuxiUNn08nvzHO"
  },
  "Bohemian Rhapsody|Queen": {
   "chartYear": 1976,
@@ -386,6 +631,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7ro41pqd6RjNe03XEhb6q0"
+ },
+ "Boot Scootin' Boogie|Brooks & Dunn": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6iKWr2XH1DyT7TQzDZlvzd"
  },
  "Born in the U.S.A.|Bruce Springsteen": {
   "chartYear": 1985,
@@ -409,6 +659,31 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "224kL7H7v6VhHYK3yqxiha"
+ },
+ "Boy's a Liar Pt. 2|PinkPantheress & Ice Spice": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6AQbmUe0Qwf5PZnt4HmTXv"
+ },
+ "Brandy (You're A Fine Girl)|Looking Glass": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2BY7ALEWdloFHgQZG6VMLA"
+ },
+ "Break Up With Your Girlfriend, I'm Bored|Ariana Grande": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4kV4N9D1iKVxx1KLvtTpjS"
+ },
+ "Breaking Up Is Hard To Do|Neil Sedaka": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2x6pbpjVGjiWCcH89IK8AX"
+ },
+ "Breathe|Faith Hill": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3y4LxiYMgDl4RethdzpmNe"
  },
  "Bridge over Troubled Water|Simon & Garfunkel": {
   "chartYear": 1970,
@@ -451,6 +726,11 @@
   "source": "wikidata",
   "spotify": "6xQkWjHFvQk5JqHtq57Pqf",
   "wikidataYear": null
+ },
+ "Buy U A Drank (Shawty Snappin')|T-Pain": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2aIdVb8v9KTpEZnftkz2mD"
  },
  "Bye Bye Bye|*NSYNC": {
   "chartYear": 2000,
@@ -498,6 +778,11 @@
   "spotify": "3BnDvpeuGOj21Ir2aVEtQo",
   "wikidataYear": 2022
  },
+ "Calma|Pedro Capó": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6aLJnupvPpT9HLv3xaUhe1"
+ },
  "Can't Buy Me Love|The Beatles": {
   "chartYear": 1964,
   "checked": "2026-10-22",
@@ -509,6 +794,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6FXNfYIY6iEeCKuIeSYWgg"
+ },
+ "Can't Fight This Feeling|REO Speedwagon": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5WwqdeavrQrbeAMDxGawse"
  },
  "Can't Get You out of My Head|Kylie Minogue": {
   "chartYear": 2002,
@@ -522,10 +812,25 @@
   "source": "billboard",
   "spotify": "264A7BIyuZUxtCKG4wokXX"
  },
+ "Can't Hold Us|Macklemore & Ryan Lewis": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3bidbhpOYeV4knp8AIu8Xn"
+ },
  "Can't Stop the Feeling!|Justin Timberlake": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6JV2JOEocMgcZxYSZelKcc"
+ },
+ "Can't Take My Eyes Off You|Frankie Valli": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6ft9PAgNOjmZ2kFVP7LGqb"
+ },
+ "Candy Shop|50 Cent": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5D2mYZuzcgjpchVY1pmTPh"
  },
  "Car Wash|Rose Royce": {
   "chartYear": 1977,
@@ -533,11 +838,21 @@
   "source": "billboard",
   "spotify": "5gINgWhf5cFkAVNTsbXhwd"
  },
+ "Cardigan|Taylor Swift": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4R2kfaDFhslZEMJqAFNpdd"
+ },
  "Careless Whisper|George Michael": {
   "chartYear": 1985,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5GCnUZMQd3qzIY8YApxdoi"
+ },
+ "Cat's In The Cradle|Harry Chapin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2obblQ6tcePeOEVJV6nEGD"
  },
  "Celebration|Kool & The Gang": {
   "chartYear": 1981,
@@ -545,16 +860,31 @@
   "source": "billboard",
   "spotify": "46CznAEG4dbI5SbVQC3wPE"
  },
+ "Centerfold|The J. Geils Band": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1ynmMEK1fkyiZ6Z6F3ThEt"
+ },
  "Chandelier|Sia": {
   "chartYear": 2014,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4VrWlk8IQxevMvERoX08iC"
  },
+ "Chantaje|Shakira": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5V9SPnFUkXTTA2QYoznhIQ"
+ },
  "Chantilly Lace|The Big Bopper": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "07GtDOCxmye5KDWsTSACPk"
+ },
+ "Charlie Brown|The Coasters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6Q0aBakbTsjQO6iGdxmXlx"
  },
  "Chasing Cars|Snow Patrol": {
   "chartYear": 2006,
@@ -567,10 +897,35 @@
   "source": "tidytuesday",
   "spotify": "59tg0OPhiHlbsVZ9GFqUk5"
  },
+ "Chattahoochee|Alan Jackson": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "59kHPbwyyCApYA8RQQEuXm"
+ },
  "Cheap Thrills|Sia": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "27SdWb2rFzO6GWiYDBTD9j"
+ },
+ "Chicken Fried|Zac Brown Band": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0LQtEJt7x0s6knb6RKdRYc"
+ },
+ "Circles|Post Malone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "21jGcNKet2qwijlDFuPiPb"
+ },
+ "Circus|Britney Spears": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7jk7gqyEonmVVYahZN5zhW"
+ },
+ "Clarity|Zedd": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "60wwxj6Dd9NJlirf84wr2c"
  },
  "Clint Eastwood|Gorillaz": {
   "checked": "2026-10-22",
@@ -588,11 +943,36 @@
   "source": "tidytuesday",
   "spotify": "7BKLCZ1jbUBVqRi2FVlTVw"
  },
+ "Coal Miner's Daughter|Loretta Lynn": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6XDVV7QOUOdHynwoJTdAHL"
+ },
+ "Cold Heart (Pnau Remix)|Elton John & Dua Lipa": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6zSpb8dQRaw0M1dK8PBwQz"
+ },
+ "Come A Little Bit Closer|Jay & The Americans": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "252YuUdUaC5OojaBU0H1CP"
+ },
+ "Come And Get Your Love|Redbone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7GVUmCP00eSsqc4tzj1sDD"
+ },
  "Come On Eileen|Dexys Midnight Runners": {
   "chartYear": 1983,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0EMmVUYs9ZZRHtlADB88uz"
+ },
+ "Come Softly To Me|The Fleetwoods": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "603N4XGJUTbK760GLCvIIs"
  },
  "Come Together|The Beatles": {
   "checked": "2026-10-22",
@@ -615,11 +995,26 @@
   "source": "billboard",
   "spotify": "5xEM5hIgJ1jjgcEBfpkt2F"
  },
+ "Con Calma|Daddy Yankee": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6iWmRJKPaEMHElWBNUqRFv"
+ },
+ "Conga|Miami Sound Machine": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5J3NR8Ku0VfORGuheouz6P"
+ },
  "Counting Stars|OneRepublic": {
   "chartYear": 2014,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1QzFhzIOW7CyRJLpmq5CM0"
+ },
+ "Crazy Little Thing Called Love|Queen": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "35ItUJlMtjOQW3SSiTCrrw"
  },
  "Crazy in Love|Beyoncé": {
   "chartYear": 2003,
@@ -639,6 +1034,11 @@
   "spotify": "3zpj9dvJABiyMrmLCPw6i8",
   "wikidataYear": null
  },
+ "Creepin'|Metro Boomin": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7jHi6opPq439ruUlfH90Aw"
+ },
  "Creep|Radiohead": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -655,11 +1055,21 @@
   "source": "listenbrainz",
   "spotify": "1BxfuPKGuaTgP7aM0Bbdwr"
  },
+ "Cruise|Florida Georgia Line": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0i5el041vd6nxrGEU8QRxy"
+ },
  "Da Doo Ron Ron|The Crystals": {
   "chartYear": 1963,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7egakE6Nn9qVFi4xn1DEen"
+ },
+ "Da Ya Think I'm Sexy?|Rod Stewart": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4z7maGZkAonDlXlwo8q69f"
  },
  "Dakota|Stereophonics": {
   "checked": "2026-10-22",
@@ -677,6 +1087,11 @@
   "source": "billboard",
   "spotify": "4NtUY5IGzHCaqfZemmAu56"
  },
+ "Dancing With A Stranger|Sam Smith & Normani": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6Qs4SXO9dwPj5GKvVOv8Ki"
+ },
  "Dancing in the Dark|Bruce Springsteen": {
   "chartYear": 1984,
   "checked": "2026-10-22",
@@ -688,11 +1103,36 @@
   "source": "listenbrainz",
   "spotify": "5wJcMwXuy1x6EatowWOxha"
  },
+ "Danza Kuduro|Don Omar": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2a1o6ZejUi8U3wzzOtCOYw"
+ },
+ "Day 'N' Nite|Kid Cudi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5FEXPoPnzueFJQCPRIrC3c"
+ },
  "Daydream Believer|The Monkees": {
   "chartYear": 1967,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1LTgbCS6YUFi5ge1ctZZc0"
+ },
+ "December, 1963 (Oh, What a Night)|The Four Seasons": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1hQFF33xi8ruavZNyovtUN"
+ },
+ "Dedicated To The One I Love|The Shirelles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "36f5xtZ2CXIc1WOirnnD3j"
+ },
+ "Deja Vu|Olivia Rodrigo": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "61KpQadow081I2AsbeLcsb"
  },
  "Despacito|Luis Fonsi": {
   "checked": "2026-10-22",
@@ -715,11 +1155,56 @@
   "source": "listenbrainz",
   "spotify": "2plbrEY59IikOBgBGLjaoe"
  },
+ "Die a Happy Man|Thomas Rhett": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5kNe7PE09d6Kvw5pAsx23n"
+ },
+ "Dilemma|Nelly": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0ARK753YaiJbpLUk7z5yIM"
+ },
+ "Dirt Road Anthem|Jason Aldean": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2qYsSHsYkihWx043HVJQRV"
+ },
+ "Disturbia|Rihanna": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2VOomzT6VavJOGBeySqaMc"
+ },
+ "Do That To Me One More Time|Captain & Tennille": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0m4jVVZrsv0bLkAr1uM6UG"
+ },
+ "Do You Love Me|The Contours": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5MbNAHqNksNDycMZ0WUaO5"
+ },
+ "Don't Dream It's Over|Crowded House": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7G7tgVYORlDuVprcYHuFJh"
+ },
+ "Don't Go Breaking My Heart|Elton John & Kiki Dee": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5pKJtX4wBeby9qIfFhyOJj"
+ },
  "Don't Leave Me This Way|Thelma Houston": {
   "chartYear": 1977,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "76DaYoN2BXdu1dZFdw61qj"
+ },
+ "Don't Let Me Down|The Chainsmokers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1i1fxkWeaMmKEB4T7zqbzK"
  },
  "Don't Start Now|Dua Lipa": {
   "checked": "2026-10-22",
@@ -743,6 +1228,11 @@
   "source": "tidytuesday",
   "spotify": "5T8EDUDqKcs6OSOwEsfqG7"
  },
+ "Don't Stop The Music|Rihanna": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0ByMNEPAPpOR5H69DVrTNy"
+ },
  "Don't Worry, Be Happy|Bobby McFerrin": {
   "chartYear": 1988,
   "checked": "2026-10-22",
@@ -761,6 +1251,36 @@
   "source": "billboard",
   "spotify": "3L7RtEcu1Hw3OXrpnthngx"
  },
+ "Don't You Worry Child|Swedish House Mafia": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2V65y3PX4DkRhy1djlxd9p"
+ },
+ "Don't|Ed Sheeran": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1huvTbEYtgltjQRXzrNKGi"
+ },
+ "Donna|Ritchie Valens": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0VE4ayVlGs5DBoqOdgJ0Zv"
+ },
+ "Doo Wop (That Thing)|Lauryn Hill": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0uEp9E98JB5awlA084uaIg"
+ },
+ "Down Under|Men At Work": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "46RVKt5Edm1zl0rXhPJZxz"
+ },
+ "Down|Jay Sean": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7LP4Es66zdY7CyjepqmvAg"
+ },
  "Dream Lover|Bobby Darin": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -778,6 +1298,16 @@
   "source": "billboard",
   "spotify": "703BT1NQsfIwPFv8MXQ47m"
  },
+ "Drip Too Hard|Lil Baby & Gunna": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "78QR3Wp35dqAhFEc2qAGjE"
+ },
+ "Dust In The Wind|Kansas": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6zeE5tKyr8Nu882DQhhSQI"
+ },
  "Dynamite|BTS": {
   "checked": "2026-10-22",
   "source": "wikidata",
@@ -790,6 +1320,11 @@
   "source": "billboard",
   "spotify": "1DqdF42leyFIzqNDv9CjId"
  },
+ "Dákiti|Bad Bunny": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "47EiUVwUp4C9fGccaPuUCS"
+ },
  "Earth Angel|The Penguins": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -800,11 +1335,31 @@
   "source": "listenbrainz",
   "spotify": "0gplL1WMoJ6iYaPgMCL0gX"
  },
+ "Easy|Commodores": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1JQ6Xm1JrvHfvAqhl5pwaA"
+ },
+ "Eight Days A Week|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1Dg4dFJr3HW7sbA7vPejre"
+ },
+ "El Paso|Marty Robbins": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4f8hBeMXMvssn6HtFAtblo"
+ },
  "Eleanor Rigby|The Beatles": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "5GjPQ0eI7AgmOnADn1EO6Q",
   "wikidataYear": null
+ },
+ "Ella Baila Sola|Eslabon Armado & Peso Pluma": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3dnP0JxCgygwQH9Gm7q7nb"
  },
  "Empire State of Mind|JAY-Z": {
   "checked": "2026-10-22",
@@ -822,16 +1377,31 @@
   "source": "tidytuesday",
   "spotify": "5sICkBXVmaCQk5aISGR3x1"
  },
+ "Escape (The Pina Colada Song)|Rupert Holmes": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5IMtdHjJ1OtkxbGe4zfUxQ"
+ },
  "Espresso|Sabrina Carpenter": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "2oADPwknKEfMtwpMnr7xfg"
+ },
+ "Evergreen|Barbra Streisand": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2IcqY68BxP1ONPi3ME6aje"
  },
  "Every Breath You Take|The Police": {
   "chartYear": 1983,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2PnNomkEqlg9ADKCVG0Wt0"
+ },
+ "Every Rose Has Its Thorn|Poison": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "43GS3mtezoIFiuIZCLLiDY"
  },
  "Everybody (Backstreet's Back)|Backstreet Boys": {
   "chartYear": 1998,
@@ -844,11 +1414,21 @@
   "source": "tidytuesday",
   "spotify": "6PypGyiu0Y2lCDBN1XZEnP"
  },
+ "Everybody Loves Somebody|Dean Martin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "78VG6M1i7JQXBdygmWFwye"
+ },
  "Everybody Wants to Rule the World|Tears for Fears": {
   "chartYear": 1985,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4UcHfTlpdp83bw9beaw3C6"
+ },
+ "Everyday People|Sly & The Family Stone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7lL2lMWNtzOcf5HnEudNgn"
  },
  "Express Yourself|Madonna": {
   "chartYear": 1989,
@@ -879,6 +1459,16 @@
   "source": "billboard",
   "spotify": "3aw9iWUQ3VrPQltgwvN9Xu"
  },
+ "Fancy|Reba McEntire": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0FtV0YbnnjD7PXpLHFHPhn"
+ },
+ "Fantasy|Mariah Carey": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6xkryXuiZU360Lngd4sx13"
+ },
  "Fast Car|Luke Combs": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -890,6 +1480,11 @@
   "source": "billboard",
   "spotify": "2M9ro2krNb7nr7HSprkEgo"
  },
+ "Feather|Sabrina Carpenter": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2Zo1PcszsT9WQ0ANntJbID"
+ },
  "Feel Good Inc.|Gorillaz": {
   "chartYear": 2005,
   "checked": "2026-10-22",
@@ -900,6 +1495,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6QgjcU0zLnzq5OrUoSZ3OK"
+ },
+ "Felices los 4|Maluma": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "1RouRzlg8OKFeqc6LvdxmB"
  },
  "Fever|Peggy Lee": {
   "checked": "2026-10-22",
@@ -934,6 +1534,16 @@
   "source": "billboard",
   "spotify": "4r6eNCsrZnQWJzzvFh4nlg"
  },
+ "First Class|Jack Harlow": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3os9JEuXCDI2u8uoKi0xPY"
+ },
+ "Fishin' in the Dark|Nitty Gritty Dirt Band": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6DsHyGewKibBSuypJ4Cfax"
+ },
  "Fix You|Coldplay": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -949,11 +1559,41 @@
   "source": "listenbrainz",
   "spotify": "7DSAEUvxU8FajXtRloy8M0"
  },
+ "Folsom Prison Blues|Johnny Cash": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "25LSm8GJEYtryBaBOvZJ94"
+ },
+ "Foolish|Ashanti": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6zMUIb4uce1CzpbjR3vMdN"
+ },
  "Footloose|Kenny Loggins": {
   "chartYear": 1984,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2vz1CsL5WBsbpBcwgboTAw"
+ },
+ "For Once In My Life|Stevie Wonder": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4kP69y3GKHi9tXckfgp4bK"
+ },
+ "Forever After All|Luke Combs": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6IBcOGPsniK3Pso1wHIhew"
+ },
+ "Forever|Chris Brown": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3NZJlJemX3mzjf56MqC5ML"
+ },
+ "Fortnight|Taylor Swift": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2OzhQlSqBEmt7hmkYxfT6m"
  },
  "Fortunate Son|Creedence Clearwater Revival": {
   "checked": "2026-10-22",
@@ -1000,17 +1640,32 @@
   "source": "billboard",
   "spotify": "4aBVXXyOczufUUHQ0n9Jdg"
  },
+ "Get Busy|Sean Paul": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5qTvkDrSfvwDv6RBjjcfQr"
+ },
  "Get Lucky|Daft Punk": {
   "chartYear": 2013,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2Foc5Q5nqNiosCNqttzHof"
  },
+ "Gettin' Jiggy Wit It|Will Smith": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0weAUscowxeqDtpCgtbpgp"
+ },
  "Ghostbusters|Ray Parker Jr.": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "0phGofl3ppS5Itk1zM9eKa",
   "wikidataYear": null
+ },
+ "Ghost|Justin Bieber": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5dPz35akJjPqb17yeqNwqH"
  },
  "Gimme Shelter|The Rolling Stones": {
   "checked": "2026-10-22",
@@ -1021,6 +1676,11 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "4YbGZQCXVRnv0iXnlnKRB1"
+ },
+ "Girlfriend|Avril Lavigne": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "45hOioMDJktr86iKDHC8gr"
  },
  "Girls Just Want to Have Fun|Cyndi Lauper": {
   "chartYear": 1984,
@@ -1033,6 +1693,21 @@
   "source": "tidytuesday",
   "spotify": "0uppYCG86ajpV2hSR3dJJ0"
  },
+ "Give Me Everything|Pitbull": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4QNpBfC0zvjKqPJcyqBy9W"
+ },
+ "Give Me One Reason|Tracy Chapman": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4vDBJeeQCbhP9FaPPMsYkY"
+ },
+ "Go Crazy|Chris Brown & Young Thug": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1IIKrJVP1C9N7iPtG6eOsK"
+ },
  "God Save the Queen|Sex Pistols": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1042,6 +1717,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6DCZcSspjsKoFjzjrWoCdn"
+ },
+ "Going Bad|Meek Mill": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2IRZnDFmlqMuOrYOLnZZyc"
  },
  "Gold Digger|Kanye West": {
   "chartYear": 2005,
@@ -1054,6 +1734,16 @@
   "source": "wikidata",
   "spotify": "1CPZ5BxNNd0n0nF4Orb9JS",
   "wikidataYear": null
+ },
+ "Good As Hell|Lizzo": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Yh9lZcWyKrK9GjbhuS0hR"
+ },
+ "Good Days|SZA": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3YJJjQPAbDT7mGpX3WtQ9A"
  },
  "Good Luck, Babe!|Chappell Roan": {
   "checked": "2026-10-22",
@@ -1072,10 +1762,35 @@
   "source": "billboard",
   "spotify": "6aU6a9tdn2vHhnPGlboFZX"
  },
+ "Goodbyes|Post Malone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0t3ZvGKlmYmVsDzBJAXK8C"
+ },
+ "Got My Mind Set On You|George Harrison": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3OeUlriM0EZHdWleJtjoVr"
+ },
  "Great Balls of Fire|Jerry Lee Lewis": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "64VP3skE86iTvdOlbzuIcO"
+ },
+ "Green Onions|Booker T. & The MG's": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4fQMGlCawbTkH9yPPZ49kP"
+ },
+ "Green River|Creedence Clearwater Revival": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "11DjZQEZ69EXLo77HVj6yW"
+ },
+ "HIGHEST IN THE ROOM|Travis Scott": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3eekarcy7kvN4yt5ZFzltW"
  },
  "HUMBLE.|Kendrick Lamar": {
   "checked": "2026-10-22",
@@ -1088,6 +1803,11 @@
   "source": "billboard",
   "spotify": "4JehYebiI9JE8sR8MisGVb"
  },
+ "Happier|Marshmello & Bastille": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2dpaYNEQHiRxtZbfNsse99"
+ },
  "Happy Together|The Turtles": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1099,10 +1819,35 @@
   "source": "billboard",
   "spotify": "5b88tNINg4Q4nrRbrCXUmg"
  },
+ "Hard To Say I'm Sorry|Chicago": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "07TnWCHrFkvF61GzJuLVt0"
+ },
  "Havana|Camila Cabello": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1rfofaqEpACxVEHIZBJe6W"
+ },
+ "Have You Ever Really Loved A Woman?|Bryan Adams": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "32Gf5A7Hr8RdgggXG0Fdks"
+ },
+ "He Stopped Loving Her Today|George Jones": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "1q0wCfrE9eGFMzS2g8aVnx"
+ },
+ "He'll Have To Go|Jim Reeves": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7DH5dXVuQaqcKf9oTy9oUN"
+ },
+ "Heart Of Glass|Blondie": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0a4agFmqHXxcZl1nho1BxM"
  },
  "Heart of Gold|Neil Young": {
   "chartYear": 1972,
@@ -1110,15 +1855,40 @@
   "source": "billboard",
   "spotify": "6XDdmCAuodZfXtEgJcxpS2"
  },
+ "Heartaches By The Number|Guy Mitchell": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0mmveflIg5uKskiCOdRV3e"
+ },
  "Heartbreak Hotel|Elvis Presley": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6xNwKNYZcvgV3XTIwsgNio"
  },
+ "Heartless|Kanye West": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4EWCNWgDS8707fNSZ1oaA5"
+ },
  "Heat Waves|Glass Animals": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "02MWAaffLxlfxAUY7c5dvx"
+ },
+ "Heathens|twenty one pilots": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6i0V12jOa3mr6uu4WYhUBr"
+ },
+ "Heaven|Bryan Adams": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7Ewz6bJ97vUqk5HdkvguFQ"
+ },
+ "Hello Goodbye|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0vZ97gHhemKm6c64hTfJNA"
  },
  "Hello|Adele": {
   "chartYear": 2015,
@@ -1138,10 +1908,25 @@
   "spotify": "6dGnYIeXmHdcikdzNNDMm2",
   "wikidataYear": null
  },
+ "Here Without You|3 Doors Down": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3NLrRZoMF0Lx6zTlYqeIo4"
+ },
+ "Here You Come Again|Dolly Parton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6H7nDglS6xWpRidbhMwI2L"
+ },
  "Heroes|David Bowie": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "7Jh1bpe76CNTCgdgAdBw4Z"
+ },
+ "Hero|Mariah Carey": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4FCb4CUbFCMNRkI6lYc1zI"
  },
  "Hey Joe|The Jimi Hendrix Experience": {
   "checked": "2026-10-22",
@@ -1154,11 +1939,26 @@
   "source": "billboard",
   "spotify": "0eY0YgyLAZ4gtM57wwYN7H"
  },
+ "Hey There Delilah|Plain White T's": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4RCWB3V8V0dignt99LZ8vH"
+ },
  "Hey Ya!|OutKast": {
   "chartYear": 2004,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3AszgPDZd9q0DpDFt4HFBy"
+ },
+ "Hey, Soul Sister|Train": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4HlFJV71xXKIGcU3kRyttv"
+ },
+ "High Hopes|Panic! At The Disco": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1rqqCSm0Qe4I9rUvWncaom"
  },
  "Higher Love|Steve Winwood": {
   "chartYear": 1986,
@@ -1189,6 +1989,11 @@
   "source": "billboard",
   "spotify": "0W4Kpfp1w2xkY3PrV714B7"
  },
+ "Hold On|Wilson Phillips": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4VZDv8sASBS8UruUBGTFdk"
+ },
  "Hold the Line|Toto": {
   "chartYear": 1979,
   "checked": "2026-10-22",
@@ -1206,6 +2011,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6RcQOut9fWL6FSqeIr5M1r"
+ },
+ "Honky Tonk Women|The Rolling Stones": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3RZMzCvYsmJ0u2ioKTOsmJ"
+ },
+ "Hooked On A Feeling|Blue Swede": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6Ac4NVYYl2U73QiTt11ZKd"
  },
  "Hot N Cold|Katy Perry": {
   "chartYear": 2008,
@@ -1245,10 +2060,40 @@
   "source": "listenbrainz",
   "spotify": "64Ny7djQ6rNJspquof2KoX"
  },
+ "House Of The Rising Sun|The Animals": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7BY005dacJkbO6EPiOh2wb"
+ },
+ "How Am I Supposed To Live Without You|Michael Bolton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3RMeOetCdXttthQK0clPuz"
+ },
  "How Deep Is Your Love|Bee Gees": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1gIKd24bixkgYzuxse32oR"
+ },
+ "How Do I Live|LeAnn Rimes": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7BD50ATrF3Vab5FQy7vtK8"
+ },
+ "How To Save A Life|The Fray": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5fVZC9GiM4e8vu99W0Xf6J"
+ },
+ "How Will I Know|Whitney Houston": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5tdKaKLnC4SgtDZ6RlWeal"
+ },
+ "How You Remind Me|Nickelback": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0gmbgwZ8iqyMPmXefof8Yf"
  },
  "Hungry Like the Wolf|Duran Duran": {
   "chartYear": 1983,
@@ -1256,11 +2101,36 @@
   "source": "billboard",
   "spotify": "2HuHopKnnuGQEpGb0CssCs"
  },
+ "Hurts So Good|John Mellencamp": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "67eX1ovaHyVPUinMHeUtIM"
+ },
  "Hypnotize|The Notorious B.I.G.": {
   "chartYear": 1997,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6Tsu3OsuMz4KEGKbOYd6A0"
+ },
+ "I Can't Help Myself (Sugar Pie Honey Bunch)|Four Tops": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6b6IMqP565TbtFFZg9iFf3"
+ },
+ "I Don't Care|Ed Sheeran & Justin Bieber": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3HVWdVOQ0ZA45FuZGSfvns"
+ },
+ "I Don't Want To Miss A Thing|Aerosmith": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "225xvV8r1yKMHErSWivnow"
+ },
+ "I Feel Fine|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5hhF25sWnZvXhimOHLjTRE"
  },
  "I Feel Love|Donna Summer": {
   "checked": "2026-10-22",
@@ -1278,11 +2148,26 @@
   "source": "listenbrainz",
   "spotify": "3weSdbSSqLSDELNaYPA8r9"
  },
+ "I Got You Babe|Sonny & Cher": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4SGBuq37Ol4HJr7pQqFMKa"
+ },
  "I Gotta Feeling|The Black Eyed Peas": {
   "chartYear": 2009,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4vp2J1l5RD4gMZwGFLfRAu"
+ },
+ "I Had Some Help|Post Malone": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6N26C3tVDH3PKG0IrCIMSk"
+ },
+ "I Have Nothing|Whitney Houston": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "31er9IGsfFbwqy1pH4aiTP"
  },
  "I Heard It Through the Grapevine|Marvin Gaye": {
   "chartYear": 1969,
@@ -1290,17 +2175,62 @@
   "source": "billboard",
   "spotify": "1eIOGqQkIfxAodbz4NczXG"
  },
+ "I Just Called To Say I Love You|Stevie Wonder": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6RNDeRnWsRMjPdNVgupZCs"
+ },
  "I Kissed a Girl|Katy Perry": {
   "chartYear": 2008,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "005lwxGU1tms6HGELIcUv9"
  },
+ "I Knew I Loved You|Savage Garden": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6nozDLxeL0TE4MS9GqYU1v"
+ },
+ "I Like It|Cardi B": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "58q2HKrzhC3ozto2nDdN4z"
+ },
+ "I Love A Rainy Night|Eddie Rabbitt": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0zvNHIL7ci0ZzIoWU6RO2u"
+ },
+ "I Love Rock 'N Roll|Joan Jett & the Blackhearts": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2Cdvbe2G4hZsnhNMKyGrie"
+ },
+ "I Love You Always Forever|Donna Lewis": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1PEqh7awkpuepLBSq8ZwqD"
+ },
+ "I Need To Know|Marc Anthony": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7ffwRz8lZyDOE4Vj58Lo72"
+ },
+ "I Remember Everything|Zach Bryan": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "58pTPJPBjw1xL9OcLcQczU"
+ },
  "I Still Haven't Found What I'm Looking For|U2": {
   "chartYear": 1987,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "49Nm3tdtTOZ0nwGDGcqK5w"
+ },
+ "I Swear|All-4-One": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4WUnM4KNZ0kjp0CUeoyOnS"
  },
  "I Walk the Line|Johnny Cash": {
   "checked": "2026-10-22",
@@ -1319,6 +2249,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6e40mgJiCid5HRAGrbpGA6"
+ },
+ "I Want To Know What Love Is|Foreigner": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1JLn8RhQzHz3qDqsChcmBl"
  },
  "I Want You Back|The Jackson 5": {
   "chartYear": 1970,
@@ -1349,11 +2284,76 @@
   "source": "tidytuesday",
   "spotify": "7gSQv1OHpkIoAdUiRLdmI6"
  },
+ "I'll Make Love To You|Boyz II Men": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "61sQYdFNS6sEBYCyr1q5gn"
+ },
+ "I'm Gonna Be (500 Miles)|The Proclaimers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "66S14BkJDxgkYxLl5DCqOz"
+ },
+ "I'm Good (Blue)|David Guetta & Bebe Rexha": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5xk3iZlyYSurXmanrktlgs"
+ },
+ "I'm Not In Love|10cc": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5HQEmiV2lKnSO6qa2fsR7x"
+ },
+ "I'm Sorry|Brenda Lee": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4LJcNiq2pBb8OeqrGdBJQw"
+ },
+ "I'm Yours|Jason Mraz": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1EzrEOXmMH3G43AXT1y7pA"
+ },
  "I'm a Believer|The Monkees": {
   "chartYear": 1967,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1CSLeVCXmetBh8IkTPMFdL"
+ },
+ "I'm the Problem|Morgan Wallen": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3HlWVKwU0JqJXqJK9DWHnZ"
+ },
+ "Ice Ice Baby|Vanilla Ice": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3XVozq1aeqsJwpXrEZrDJ9"
+ },
+ "If I Ain't Got You|Alicia Keys": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3XVBdLihbNbxUwZosxcGuJ"
+ },
+ "If I Can't Have You|Shawn Mendes": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6LsAAHotRLMOHfCsSfYCsz"
+ },
+ "If I Could Turn Back Time|Cher": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6mYrhCAGWzTdF8QnKuchXM"
+ },
+ "If You Don't Know Me By Now|Simply Red": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7DFawVSjI88xR9mjnWwURg"
+ },
+ "If You Leave Me Now|Chicago": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0KMGxYKeUzK9wc5DZCt3HT"
  },
  "Imagine|John Lennon": {
   "checked": "2026-10-22",
@@ -1366,6 +2366,11 @@
   "source": "billboard",
   "spotify": "4RY96Asd9IefaL3X4LOLZ8"
  },
+ "In My Feelings|Drake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2G7V7zsVDxg1yRsu7Ew9RJ"
+ },
  "In the Air Tonight|Phil Collins": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1376,6 +2381,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "60a0Rd6pjrkxjPbaKzXjfq"
+ },
+ "Industry Baby|Lil Nas X": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "27NovPIUIRrOZoCHxABJwK"
  },
  "Iris|Goo Goo Dolls": {
   "checked": "2026-10-22",
@@ -1394,15 +2404,45 @@
   "source": "billboard",
   "spotify": "1G7DcLzPnopdZjLkev0K4e"
  },
+ "Islands in the Stream|Kenny Rogers & Dolly Parton": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4mnOVRRXsaqg9Nb041xR8u"
+ },
  "Isn't She Lovely|Stevie Wonder": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6RANU8AS5ICU5PEHh8BYtH"
  },
+ "It Must Have Been Love|Roxette": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6kvoHl80mfCVTv7XnZkjQn"
+ },
+ "It's All Coming Back To Me Now|Celine Dion": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5EQzuYfTZt7B2LqlvTF49l"
+ },
+ "It's All In The Game|Tommy Edwards": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2lmPUdIdzlFH64PWJrw6Zb"
+ },
+ "It's Only Make Believe|Conway Twitty": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1xVOttVNT27FBTD8iHjOfU"
+ },
  "It's Too Late|Carole King": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "12q3V8ShACq2PSWINMc2rC"
+ },
+ "Jack & Diane|John Mellencamp": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "43btz2xjMKpcmjkuRsvxyg"
  },
  "Jailhouse Rock|Elvis Presley": {
   "checked": "2026-10-22",
@@ -1414,6 +2454,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1sgfjgLRCqSfndpofU8T2C"
+ },
+ "Jesus, Take the Wheel|Carrie Underwood": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3lec3CzDPAxsZokPph5w87"
  },
  "Johnny B. Goode|Chuck Berry": {
   "checked": "2026-10-22",
@@ -1430,11 +2475,21 @@
   "source": "tidytuesday",
   "spotify": "5ByAIlEEnxYdvpnezg7HTX"
  },
+ "Jump Around|House Of Pain": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3TZwjdclvWt7iPJUnMpgcs"
+ },
  "Jump|Kris Kross": {
   "chartYear": 1992,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "27AHAtAirQapVldIm4c9ZX"
+ },
+ "Just A Lil Bit|50 Cent": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4nva9EpKntUTs6CRSGBCn9"
  },
  "Just Can't Get Enough|Depeche Mode": {
   "checked": "2026-10-22",
@@ -1446,6 +2501,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3E5XrOtqMAs7p2wKhwgOjf"
+ },
+ "Just Give Me A Reason|P!nk": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1mKXFLRA179hdOWQBwUk9e"
  },
  "Just the Way You Are|Billy Joel": {
   "chartYear": 1978,
@@ -1459,11 +2519,21 @@
   "source": "billboard",
   "spotify": "24lMtPOCzP5g4hrg3NklLa"
  },
+ "Kansas City|Wilbert Harrison": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4GvyP7CnBJEV2t7L7vOkjw"
+ },
  "Karma Chameleon|Culture Club": {
   "chartYear": 1984,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "48O0GrGJWml3DzHhC5sJ7a"
+ },
+ "Keep On Loving You|REO Speedwagon": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4rcHWl68ai6KvpXlc8vbnE"
  },
  "Kids in America|Kim Wilde": {
   "chartYear": 1982,
@@ -1503,6 +2573,16 @@
   "source": "share-link",
   "spotify": "47362Yh7VtOwx9jSpNssds"
  },
+ "Kiss Me Thru The Phone|Soulja Boy Tell 'em": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2q4rjDy9WhaN3o9MvDbO21"
+ },
+ "Kiss Me|Sixpence None The Richer": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "754kgU5rWscRTfvlsuEwFp"
+ },
  "Kiss from a Rose|Seal": {
   "chartYear": 1995,
   "checked": "2026-10-22",
@@ -1515,6 +2595,11 @@
   "source": "billboard",
   "spotify": "62LJFaYihsdVrrkgUOJC05"
  },
+ "Kryptonite|3 Doors Down": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6ZOBP3NvffbU4SZcrnt1k6"
+ },
  "Kung Fu Fighting|Carl Douglas": {
   "chartYear": 1974,
   "checked": "2026-10-22",
@@ -1526,11 +2611,21 @@
   "source": "listenbrainz",
   "spotify": "2aEeghgUcnu75tzcolFMfs"
  },
+ "La Tortura|Shakira": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "53AafWSzYsiJKnAtJTUB5f"
+ },
  "Lady Marmalade|Labelle": {
   "chartYear": 1975,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "20aZlN6QJxnLzhZbO7auv0"
+ },
+ "Last Kiss|Pearl Jam": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0QnONzv3TvHAWk294h6DaQ"
  },
  "Last Night|Morgan Wallen": {
   "checked": "2026-10-22",
@@ -1579,6 +2674,21 @@
   "source": "billboard",
   "spotify": "600HVBpzF1WfBdaRwbEvLz"
  },
+ "Let Me Blow Ya Mind|Eve": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3RmKpob8xzv1pzHEQrMJah"
+ },
+ "Let Me Love You|Mario": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ibKnFDaa3GhpPGlOUj7ff"
+ },
+ "Let Your Love Flow|Bellamy Brothers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "064SVQsmWl5EF0zahmzkQk"
+ },
  "Let's Dance|David Bowie": {
   "chartYear": 1983,
   "checked": "2026-10-22",
@@ -1590,6 +2700,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4KvL7mhd5DSmkOAIeBeCbM"
+ },
+ "Let's Groove|Earth, Wind & Fire": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3koCCeSaVUyrRo3N2gHrd8"
  },
  "Let's Stay Together|Al Green": {
   "chartYear": 1972,
@@ -1613,6 +2728,16 @@
   "source": "listenbrainz",
   "spotify": "1dI77VhaLcQSgQLSnIs03D"
  },
+ "Life Goes On|BTS": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "249gnXrbfmV8NG6jTEMSwD"
+ },
+ "Life Is A Highway|Rascal Flatts": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2Fs18NaCDuluPG1DHGw1XG"
+ },
  "Life on Mars?|David Bowie": {
   "checked": "2026-10-22",
   "source": "wikidata",
@@ -1624,6 +2749,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4NM09wCZmvxhWcOcdWll6H"
+ },
+ "Like That|Future & Metro Boomin": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5M2KX4eOJLWlPdjV1UPwzS"
  },
  "Like a Prayer|Madonna": {
   "chartYear": 1989,
@@ -1648,6 +2778,16 @@
   "source": "billboard",
   "spotify": "0gEyKnHvgkrkBM6fbeHdwK"
  },
+ "Listen To Your Heart|Roxette": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "78TnMTAFmWUWWCgNXR7D3K"
+ },
+ "Little Star|The Elegants": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3c7KT5CN8uYRaK3xThhdYt"
+ },
  "Little Talks|Of Monsters and Men": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1657,6 +2797,16 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1KgfeuVn5OlsBEtoEmBa1t"
+ },
+ "Live Like You Were Dying|Tim McGraw": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7B1QliUMZv7gSTUGAfMRRD"
+ },
+ "Live Your Life|T.I.": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3jlbL2OTD5YmIunYzgQTAN"
  },
  "Livin' la Vida Loca|Ricky Martin": {
   "chartYear": 1999,
@@ -1685,15 +2835,30 @@
   "source": "tidytuesday",
   "spotify": "5jzma6gCzYtKB1DbEwFZKH"
  },
+ "Lonely Boy|Paul Anka": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4kh2S9hRpPvoF9JkwZcYGN"
+ },
  "Lonely Teardrops|Jackie Wilson": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6TYR3IVgIwDK6ydc2EPEQq"
  },
+ "Lonesome Town|Ricky Nelson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0SsYlkXxZ5vkWOTsKxMfMz"
+ },
  "Lose Control|Teddy Swims": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6usohdchdzW9oML7VC4Uhk"
+ },
+ "Lose You To Love Me|Selena Gomez": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1HfMVBKM75vxSfsQ5VefZ5"
  },
  "Lose Yourself|Eminem": {
   "chartYear": 2002,
@@ -1719,17 +2884,37 @@
   "spotify": "01V1OefuKzRulXoUhch18N",
   "wikidataYear": null
  },
+ "Love Me Do|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3VbGCXWRiouAq8VyMYN2MI"
+ },
  "Love Shack|The B-52's": {
   "chartYear": 1989,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4W4wYHtsrgDiivRASVOINL"
  },
+ "Love Somebody|Morgan Wallen": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7hR22TOX3RorxJPcsz5Wbo"
+ },
+ "Love Song|Sara Bareilles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4E6cwWJWZw2zWf7VFbH7wf"
+ },
  "Love Story|Taylor Swift": {
   "chartYear": 2009,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0kN3oXYWWAk1uC0y2WoyOE"
+ },
+ "Love The Way You Lie|Eminem": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "15JINEqzVMv3SvJTAXAKED"
  },
  "Love Train|The O'Jays": {
   "chartYear": 1973,
@@ -1753,6 +2938,21 @@
   "source": "billboard",
   "spotify": "0CAfXk7DXMnon4gLudAp7J"
  },
+ "Lucid Dreams|Juice WRLD": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "285pBltuF7vW8TeWk8hdRR"
+ },
+ "ME!|Taylor Swift": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2Rk4JlNc2TPmZe2af99d45"
+ },
+ "MIA|Bad Bunny": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "116H0KvKr2Zl4RPuVBruDO"
+ },
  "MMMBop|Hanson": {
   "chartYear": 1997,
   "checked": "2026-10-22",
@@ -1764,10 +2964,30 @@
   "source": "listenbrainz",
   "spotify": "32L05FkUrYfVlc0IwJ45ld"
  },
+ "Macarena|Los del Río": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4Y6cDd4EPHcEbiUKdyvNwM"
+ },
  "Mack the Knife|Bobby Darin": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "3E5ndyOfO6vFDEIE42HA8o"
+ },
+ "Magic Carpet Ride|Steppenwolf": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4c4jJJoaiY21t2TyRZgdWS"
+ },
+ "Magic|Pilot": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "500h8jAdr7LvzzXlm1qxtK"
+ },
+ "Making Love Out Of Nothing At All|Air Supply": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "01MXkFA8sL7at6txavDErt"
  },
  "Mambo No. 5 (a Little Bit of...)|Lou Bega": {
   "chartYear": 1999,
@@ -1780,10 +3000,35 @@
   "source": "listenbrainz",
   "spotify": "2TxCwUlqaOH3TIyJqGgR91"
  },
+ "Mammas Don't Let Your Babies Grow Up to Be Cowboys|Waylon Jennings & Willie Nelson": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3GQPDb8kUqDugImsIyZhyz"
+ },
+ "Man! I Feel Like a Woman!|Shania Twain": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2mqaYmF0XmV8egZB6jQOtN"
+ },
  "Manchild|Sabrina Carpenter": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "42UBPzRMh5yyz0EDPr6fr1"
+ },
+ "Mandy|Barry Manilow": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6iXQrhhgBisdfvS34EMTZ3"
+ },
+ "Maneater|Daryl Hall & John Oates": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7j74lucZ59vqN67Ipe2ZcY"
+ },
+ "Maniac|Michael Sembello": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0QKfiqpEU4h9ycPSzIFwYe"
  },
  "Manic Monday|The Bangles": {
   "chartYear": 1986,
@@ -1808,10 +3053,25 @@
   "source": "listenbrainz",
   "spotify": "3SQhmctWreNM0X6Zkm2K5R"
  },
+ "Me And Bobby McGee|Janis Joplin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1IqFh00G2kvvMm8pRMpehA"
+ },
  "Me Porto Bonito|Bad Bunny": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "6Sq7ltF9Qa7SNFBsV5Cogx"
+ },
+ "Meant To Be|Bebe Rexha & Florida Georgia Line": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7iDa6hUg2VgEL1o1HjmfBn"
+ },
+ "Memories|Maroon 5": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2b8fOow8UzyDFAE27YhOZM"
  },
  "Men in Black|Will Smith": {
   "checked": "2026-10-22",
@@ -1832,6 +3092,36 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "3SKH53SPQbEnZR4cJPVaz2"
+ },
+ "Mi Gente|J Balvin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4ipnJyDU3Lq15qBAYNqlqK"
+ },
+ "Middle Child|J. Cole": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2JvzF1RMd7lE3KmFlsyZD8"
+ },
+ "Million Dollar Baby|Tommy Richman": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5AJ9hqTS2wcFQCELCFRO7A"
+ },
+ "Miss You|The Rolling Stones": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3hJLKtTpgct9Y9wKww0BiR"
+ },
+ "Missing You|John Waite": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1Qrdlkgg9I4J7r3P4kZNwr"
+ },
+ "Mo Money Mo Problems|The Notorious B.I.G.": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4INDiWSKvqSKDEu7mh8HFz"
  },
  "Monday, Monday|The Mamas & The Papas": {
   "chartYear": 1966,
@@ -1856,6 +3146,11 @@
   "source": "share-link",
   "spotify": "4jPy3l0RUwlUI9T5XHBW2m"
  },
+ "More Than Words|Extreme": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1gVgkQFOKa8Wc1HYsJtPdH"
+ },
  "More Than a Feeling|Boston": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -1871,6 +3166,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "2RlgNHKcydI9sayD2Df2xp"
+ },
+ "Mr. Blue|The Fleetwoods": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6bnFjTW3EnMG4BwreDnSHK"
  },
  "Mr. Jones|Counting Crows": {
   "checked": "2026-10-22",
@@ -1916,16 +3216,51 @@
   "source": "billboard",
   "spotify": "2wz9T22pzkpKNuaWLBnY28"
  },
+ "My Guy|Mary Wells": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4591VqUIXysNlmI5NcAIUd"
+ },
  "My Heart Will Go On|Celine Dion": {
   "chartYear": 1998,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5XW937AOOScplrDrHI11u4"
  },
+ "My Love Is Your Love|Whitney Houston": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1ckU1EhAO0Nr73QYw24SWJ"
+ },
+ "My Love|Justin Timberlake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4NeOWqHmlrGRuBvsLJC9rL"
+ },
  "My Sharona|The Knack": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1HOMkjp0nHMaTnfAkslCQj"
+ },
+ "Need You Now|Lady Antebellum": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "11EX5yhxr9Ihl3IN1asrfK"
+ },
+ "Need to Know|Doja Cat": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "10hcDov7xmcRviA8jLwEaI"
+ },
+ "Nel Blu Dipinto Di Blu (Volaré)|Domenico Modugno": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "006Ndmw2hHxvnLbJsBFnPx"
+ },
+ "Never Be Anyone Else But You|Ricky Nelson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0snHlyyyUp2hKYEz7ffmkx"
  },
  "Never Gonna Give You Up|Rick Astley": {
   "chartYear": 1988,
@@ -1938,6 +3273,16 @@
   "source": "tidytuesday",
   "spotify": "2ekn2ttSfGqwhhate0LSR0"
  },
+ "Nice For What|Drake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3CA9pLiwRIGtUBiMjbZmRw"
+ },
+ "Night Fever|Bee Gees": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5KgbyD2lQQlIupAaPjgiXg"
+ },
  "Night Moves|Bob Seger": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -1948,6 +3293,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6MdqqkQ8sSC0WB4i8PyRuQ"
+ },
+ "No Guidance|Chris Brown": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6XHVuErjQ4XNm6nDPVCxVX"
  },
  "No One|Alicia Keys": {
   "chartYear": 2007,
@@ -1961,6 +3311,16 @@
   "source": "billboard",
   "spotify": "1KGi9sZVMeszgZOWivFpxs"
  },
+ "No Tears Left To Cry|Ariana Grande": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2qT1uLXPVPzGgFOx4jtEuo"
+ },
+ "Nonstop|Drake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0TlLq3lA83rQOYtrqBqSct"
+ },
  "Not Like Us|Kendrick Lamar": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -1971,6 +3331,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4j6Hkosuk9xHcowXjtwefs"
+ },
+ "Nothing's Gonna Stop Us Now|Starship": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3X7uFMzJrEE0sxn62qd8Ch"
+ },
+ "November Rain|Guns N' Roses": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3YRCqOhFifThpSRFJ1VWFM"
  },
  "Numb|Linkin Park": {
   "chartYear": 2004,
@@ -1983,6 +3353,21 @@
   "source": "tidytuesday",
   "spotify": "72xXeUmBQDakumKfsTn3io"
  },
+ "ON|BTS": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0fZRNhPJ4AGmwY7rkpdbqK"
+ },
+ "Ode To Billie Joe|Bobbie Gentry": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4FdDorlbJTVHcH3djLbIfn"
+ },
+ "Oh! Carol|Neil Sedaka": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5zvOXJrzzUlvXwyuwZ0toZ"
+ },
  "Oh, Pretty Woman|Roy Orbison": {
   "chartYear": 1964,
   "checked": "2026-10-22",
@@ -1994,6 +3379,11 @@
   "source": "tidytuesday",
   "spotify": "2YpeDb67231RjR0MgVLzsG"
  },
+ "On the Road Again|Willie Nelson": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3MpK9vnxxgYvh0CNeGvx6G"
+ },
  "One Dance|Drake": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2003,6 +3393,21 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "0DiWol3AO6WpXZgp0goxAV"
+ },
+ "One Night|Elvis Presley": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6zGg2IF0FJYXRaOTPGWa24"
+ },
+ "One Of These Nights|Eagles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "608xszaAxVh4m7NcKJiAbF"
+ },
+ "One Week|Barenaked Ladies": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "29hBRadFZf9QTGRHZmxm65"
  },
  "One of Us|Joan Osborne": {
   "chartYear": 1996,
@@ -2026,10 +3431,20 @@
   "source": "listenbrainz",
   "spotify": "6naxalmIoLFWR0siv8dnQQ"
  },
+ "Ordinary World|Duran Duran": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0wokCRaKD0zPNhMRXAgVsr"
+ },
  "Ordinary|Alex Warren": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "2RkZ5LkEzeHGRsmDqKwmaJ"
+ },
+ "Owner Of A Lonely Heart|Yes": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0GTK6TesV108Jj5D3MHsYb"
  },
  "Oye Como Va|Santana": {
   "checked": "2026-10-22",
@@ -2046,6 +3461,11 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "4dHRp03oxqJQfjGU8ECo7v"
+ },
+ "Panini|Lil Nas X": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6fTt0CH2t0mdeB2N9XFG5r"
  },
  "Papa Don't Preach|Madonna": {
   "chartYear": 1986,
@@ -2124,6 +3544,21 @@
   "source": "listenbrainz",
   "spotify": "6rcuy6XqlB9bqvtIRDl25u"
  },
+ "Pink Shoe Laces|Dodie Stevens": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2DifRe6kiKZjeB1IqFl2jJ"
+ },
+ "Play That Funky Music|Wild Cherry": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5uuJruktM9fMdN9Va0DUMl"
+ },
+ "Please Mr. Postman|The Marvelettes": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6jX5mso4x00c1EiNMrTU9U"
+ },
  "Please Please Please|Sabrina Carpenter": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -2141,6 +3576,26 @@
   "source": "billboard",
   "spotify": "0sooJd5WbNnnz5k6yO7FIQ"
  },
+ "Pon de Replay|Rihanna": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4TsmezEQVSZNNPv5RJ65Ov"
+ },
+ "Pony|Ginuwine": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6mz1fBdKATx6qP4oP1I65G"
+ },
+ "Poor Little Fool|Ricky Nelson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5ayybTSXNwcarDtxQKqvWX"
+ },
+ "Positions|Ariana Grande": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "35mvY5S1H3J2QZyna3TFe0"
+ },
  "Pour Some Sugar on Me|Def Leppard": {
   "chartYear": 1988,
   "checked": "2026-10-22",
@@ -2157,6 +3612,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "6mv76kovZyVB0UHbqUsee0"
+ },
+ "Provenza|Karol G": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7dSZ6zGTQx66c2GF91xCrb"
  },
  "Pump Up the Jam|Technotronic": {
   "chartYear": 1990,
@@ -2190,10 +3650,20 @@
   "source": "billboard",
   "spotify": "0Yo8GhK9HEaeIZetPARrW9"
  },
+ "Ramblin Man|The Allman Brothers Band": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5cfYurP1XKldMBtvBBJiTs"
+ },
  "Rapper's Delight|The Sugarhill Gang": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "7sZDbHZiuHEzS00vzCuhqS"
+ },
+ "Rapstar|Polo G": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "43PGPuHIlVOc04jrZVh9L6"
  },
  "Rather Be|Clean Bandit": {
   "chartYear": 2014,
@@ -2211,6 +3681,16 @@
   "source": "tidytuesday",
   "spotify": "4TIJ7zSBNejpoIPaWpWRKc"
  },
+ "Red Red Wine|UB40": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4uOKFydzAejjSFqYbv1XPt"
+ },
+ "Redneck Woman|Gretchen Wilson": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6vCu5rwYDkSo9tFZdwf3uP"
+ },
  "Rehab|Amy Winehouse": {
   "chartYear": 2007,
   "checked": "2026-10-22",
@@ -2221,6 +3701,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "1K3RzyzlBhMzOZtR0yepeb"
+ },
+ "Replay|Iyaz": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5vlEg2fT4cFWAqU5QptIpQ"
  },
  "Respect|Aretha Franklin": {
   "chartYear": 1967,
@@ -2234,11 +3719,36 @@
   "source": "billboard",
   "spotify": "3jDdpx9PMlfMBS5tOBHFm9"
  },
+ "Rhinestone Cowboy|Glen Campbell": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0VwTeYNjcl30DyQlt3GPe0"
+ },
+ "Rhythm Is Gonna Get You|Gloria Estefan": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "6gBcyxdwgcnA8UQnB9vwRc"
+ },
  "Rhythm Is a Dancer|Snap!": {
   "chartYear": 1992,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4yUgj0i6ttqorcmQYmkQIF"
+ },
+ "Rich Flex|Drake & 21 Savage": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7uWIJXsugQIMaxcYXMxeZV"
+ },
+ "Rich Girl|Daryl Hall & John Oates": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0qRR9d89hIS0MHRkQ0ejxX"
+ },
+ "Ride Wit Me|Nelly": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Gf5nttwcX9aaSQXRWidEZ"
  },
  "Ride on Time|Black Box": {
   "checked": "2026-10-22",
@@ -2249,6 +3759,21 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "14XWXWv5FoCbFzLksawpEe"
+ },
+ "Ridin'|Chamillionaire": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3kZoay4ANo86ehb6s4RwS9"
+ },
+ "Right Here Waiting|Richard Marx": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4LFwNJWoj74Yd71fIr1W8x"
+ },
+ "Right Round|Flo Rida": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3GpbwCm3YxiWDvy29Uo3vP"
  },
  "Ring of Fire|Johnny Cash": {
   "chartYear": 1963,
@@ -2289,6 +3814,11 @@
   "source": "billboard",
   "spotify": "6HqSyUwK6m9baP574cwC49"
  },
+ "Rockin' Robin|Bobby Day": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4FlYcJnfkeBpowEHJ72Bmt"
+ },
  "Rolling in the Deep|Adele": {
   "chartYear": 2011,
   "checked": "2026-10-22",
@@ -2306,11 +3836,36 @@
   "source": "billboard",
   "spotify": "3yvZ1VUso9Xi7EvIyLaj4o"
  },
+ "Ruby Tuesday|The Rolling Stones": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4hupcimlg3UBbW1kAQ6vrT"
+ },
+ "Rude|MAGIC!": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6RtPijgfPKROxEzTHNRiDp"
+ },
+ "Run It!|Chris Brown": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7xYnUQigPoIDAMPVK79NEq"
+ },
+ "Runaround Sue|Dion": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1DndHckdH9m5rp6gYP086b"
+ },
  "Runaway|Del Shannon": {
   "chartYear": 1961,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "01qiuRcLpJcFJBXUoSkn5p"
+ },
+ "Running Bear|Johnny Preston": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1RYznli2VNO7FCbW1Hq4KM"
  },
  "Running Up That Hill (A Deal with God)|Kate Bush": {
   "checked": "2026-10-22",
@@ -2334,6 +3889,11 @@
   "source": "tidytuesday",
   "spotify": "0Puj4YlTm6xNzDDADXHMI9"
  },
+ "Sad!|XXXTENTACION": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ee8Jmje8o58CHK66QrVC2"
+ },
  "Sailor Song|Gigi Perez": {
   "checked": "2026-10-22",
   "source": "wikidata",
@@ -2345,10 +3905,25 @@
   "source": "tidytuesday",
   "spotify": "24CXuh2WNpgeSYUOvz14jk"
  },
+ "Saturn|SZA": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "1bjeWoagtHmUKputLVyDxQ"
+ },
  "Savage Love (Laxed - Siren Beat)|Jawsh 685": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "5T490vvoFNU6psep0NPmxs"
+ },
+ "Savage|Megan Thee Stallion": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "55CHeLEfn5iJ0IIkgaa4si"
+ },
+ "Save The Last Dance For Me|The Drifters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "391TUcoPonqYykPkSZ5Z9U"
  },
  "Say My Name|Destiny's Child": {
   "chartYear": 2000,
@@ -2361,6 +3936,11 @@
   "source": "tidytuesday",
   "spotify": "3Dv1eDb0MEgF93GpLXlucZ"
  },
+ "Say You, Say Me|Lionel Richie": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "17CPezzLWzvGfpZW6X8XT0"
+ },
  "Scar Tissue|Red Hot Chili Peppers": {
   "chartYear": 1999,
   "checked": "2026-10-22",
@@ -2372,6 +3952,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2wRXbDpe0Uv0ebgsCSkXHO"
+ },
+ "See You Again|Wiz Khalifa": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2JzZzZUQj3Qff7wapcbKjc"
  },
  "Semi-Charmed Life|Third Eye Blind": {
   "chartYear": 1997,
@@ -2395,6 +3980,11 @@
   "source": "tidytuesday",
   "spotify": "0ntQJM78wzOLVeCUAW7Y45"
  },
+ "SexyBack|Justin Timberlake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0O45fw2L5vsWpdsOdXwNAR"
+ },
  "Señorita|Shawn Mendes": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2416,16 +4006,31 @@
   "source": "tidytuesday",
   "spotify": "7qiZfU4dY1lWllzX7mPBI3"
  },
+ "She Drives Me Crazy|Fine Young Cannibals": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4d6eqRtpDX7tydHJGDZUBQ"
+ },
  "She Loves You|The Beatles": {
   "chartYear": 1964,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3MbjEDPm5qtuJxiC86PWKy"
  },
+ "She Will Be Loved|Maroon 5": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4llK75pXNWZz6KAho2Gp16"
+ },
  "Shivers|Ed Sheeran": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "3xWGA8pa0IKFI7IMPri4P0"
+ },
+ "Short People|Randy Newman": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "53yBKCc5S7u8zzutqepkiT"
  },
  "Shout|Tears for Fears": {
   "chartYear": 1985,
@@ -2437,6 +4042,16 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "0kzw2tRyuL9rzipi5ntlIy"
+ },
+ "Sicko Mode|Travis Scott": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2xLMifQCjDGFmkHkpNLD9h"
+ },
+ "Signed, Sealed, Delivered I'm Yours|Stevie Wonder": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2eF8pWbiivYsYRpbntYsnc"
  },
  "Since U Been Gone|Kelly Clarkson": {
   "chartYear": 2005,
@@ -2462,6 +4077,16 @@
   "source": "billboard",
   "spotify": "00Mb3DuaIH1kjrwOku9CGU"
  },
+ "Sleep Walk|Santo & Johnny": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0yK8sWD6cfrc7pGfaPIcZH"
+ },
+ "Smack That|Akon": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2kQuhkFX7uSVepCD3h29g5"
+ },
  "Smalltown Boy|Bronski Beat": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2477,6 +4102,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "79z9QkhHePTFsSeVw9uyj0"
+ },
+ "Smoke Gets In Your Eyes|The Platters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2vSxjnyrWrtxyfzO47EX6q"
  },
  "Smoke on the Water|Deep Purple": {
   "chartYear": 1973,
@@ -2495,6 +4125,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3i3GeK0qLQybu4ah42YmCY"
+ },
+ "Snooze|SZA": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7aQi48ImHQsfni7tDlFQvL"
+ },
+ "So Sick|Ne-Yo": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6brl7bwOHmGFkNw3MBqssT"
  },
  "Somebody That I Used to Know|Gotye": {
   "chartYear": 2012,
@@ -2519,6 +4159,26 @@
   "source": "billboard",
   "spotify": "4kflIGfjdZJW4ot2ioixTB"
  },
+ "Someone You Loved|Lewis Capaldi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7qEHsqek33rTcFNT9PFqLf"
+ },
+ "Something Just Like This|The Chainsmokers & Coldplay": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6RUKPb4LETWmmr3iAEQktW"
+ },
+ "Something in the Orange|Zach Bryan": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3WMj8moIAXJhHsyLaqIIHI"
+ },
+ "Something|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0pNeVovbiZHkulpGeOx1Gj"
+ },
  "Son of a Preacher Man|Dusty Springfield": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2535,6 +4195,16 @@
   "source": "billboard",
   "spotify": "09CtPGIpYB4BrO8qb1RGsF"
  },
+ "Soul Man|Sam & Dave": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4eGHlplaq1ME8oetnTuFFf"
+ },
+ "Southern Nights|Glen Campbell": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7kv7zBjMtVf0eIJle2VZxn"
+ },
  "Space Oddity|David Bowie": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2545,10 +4215,20 @@
   "source": "listenbrainz",
   "spotify": "40fD7ct05FvQHLdQTgJelG"
  },
+ "Stagger Lee|Lloyd Price": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4MUGG9mgDUP8dlaS3AAeg0"
+ },
  "Stairway to Heaven|Led Zeppelin": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "5CQ30WqJwcep0pYcV4AMNc"
+ },
+ "Stand By Your Man|Tammy Wynette": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5QIgJuqS8YPZXqceBetpiB"
  },
  "Stand by Me|Ben E. King": {
   "chartYear": 1961,
@@ -2588,6 +4268,11 @@
   "source": "billboard",
   "spotify": "5cP52DlDN9yryuZVQDg3iq"
  },
+ "Stick Season|Noah Kahan": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0GNVXNz7Jkicfk2mp5OyG5"
+ },
  "Stop! In the Name of Love|The Supremes": {
   "chartYear": 1965,
   "checked": "2026-10-22",
@@ -2606,6 +4291,11 @@
   "source": "billboard",
   "spotify": "4NGvnNk7eUUYN4U52BuDfV"
  },
+ "Strawberry Wine|Deana Carter": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5Pgwi0iizu96RHxJ4xL3SH"
+ },
  "Stressed Out|Twenty One Pilots": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2617,11 +4307,31 @@
   "source": "billboard",
   "spotify": "6C7RJEIUDqKkJRZVWdkfkH"
  },
+ "Suavemente|Elvis Crespo": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7JIjUx3GsL0upxmNJacmtz"
+ },
+ "Sucker|Jonas Brothers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "22vgEDb5hykfaTwLuskFGD"
+ },
  "Sugar, Sugar|The Archies": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "1X4k8qzCxaF0Lx9oM3hff9",
   "wikidataYear": null
+ },
+ "Sugar|Maroon 5": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2iuZJX9X9P0GKaE93xcPjk"
+ },
+ "Suge|DaBaby": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2gwkD6igEhQbDQegRCcdoB"
  },
  "Sultans of Swing|Dire Straits": {
   "chartYear": 1979,
@@ -2629,15 +4339,35 @@
   "source": "billboard",
   "spotify": "6cr6UDpkjEaMQ80OjWqEBQ"
  },
+ "Summer Of '69|Bryan Adams": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0GONea6G2XdnHWjNZd6zt3"
+ },
  "Summertime Blues|Eddie Cochran": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "3oAWTk92mZBxKBOKf8mR5v"
  },
+ "Summer|Calvin Harris": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6YUTL4dYpB9xZO5qExPf05"
+ },
  "Sunflower|Post Malone": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "3KkXRkHbMCARz0aVfEt68P"
+ },
+ "Sunny Came Home|Shawn Colvin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4mOxpj82q6n3EO7HBZCelX"
+ },
+ "Sunshine Of Your Love|Cream": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6FRwDxXsvSasw0y2eDArsz"
  },
  "Super Freak|Rick James": {
   "checked": "2026-10-22",
@@ -2655,6 +4385,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7sVxvaLH9Bx9YZyBjdRpdQ"
+ },
+ "Suspicious Minds|Elvis Presley": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1H5IfYyIIAlgDX8zguUzns"
  },
  "Sweet Caroline|Neil Diamond": {
   "chartYear": 1969,
@@ -2679,6 +4414,11 @@
   "source": "tidytuesday",
   "spotify": "7e89621JPkKaeDSTQ3avtg"
  },
+ "Sweet Nothin's|Brenda Lee": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4ZiDhG5Ift5I6reAEOBBec"
+ },
  "Sympathy for the Devil|The Rolling Stones": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -2694,6 +4434,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1tVzVPIcCFz5QUMGLPHJEc"
+ },
+ "Take A Bow|Rihanna": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3goSVuTt3fDYDP6kRnFwuL"
  },
  "Take It Easy|Eagles": {
   "checked": "2026-10-22",
@@ -2717,11 +4462,56 @@
   "source": "billboard",
   "spotify": "7J4gq1xNP3IsG6lDk0eSa7"
  },
+ "Take My Breath Away|Berlin": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "15MJ5NThPjj6xhPcts8MiY"
+ },
+ "Take On Me|a-ha": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2WfaOiMkCvy7F5fcp2zZ8L"
+ },
+ "Taki Taki|DJ Snake": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4w8niZpiMy6qz1mntFA5uM"
+ },
+ "Talk|Khalid": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6TqXcAFInzjp0bODyvrWEq"
+ },
+ "Taste|Sabrina Carpenter": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5G2f63n7IPVPPjfNIGih7Q"
+ },
+ "Tears In Heaven|Eric Clapton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "612VcBshQcy4mpB2utGc3H"
+ },
+ "Tears On My Pillow|Little Anthony & The Imperials": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "07ePHsQ0SopWrnCbNjNC2D"
+ },
  "Teenage Dream|Katy Perry": {
   "chartYear": 2010,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5jzKL4BDMClWqRguW5qZvh"
+ },
+ "Temperature|Sean Paul": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0k2GOhqsrxDTAbFFSdNJjT"
+ },
+ "Tennessee Whiskey|Chris Stapleton": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3fqwjXwUGN6vbzIwvyFMhx"
  },
  "Tequila|The Champs": {
   "checked": "2026-10-22",
@@ -2734,6 +4524,46 @@
   "source": "listenbrainz",
   "spotify": "71fdocVjG8vHUovSdEpdpb"
  },
+ "That's Life|Frank Sinatra": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4FmCUATNIarCQh72JYdvnm"
+ },
+ "That's So True|Gracie Abrams": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7ne4VBA60CxGM75vw0EYad"
+ },
+ "That's What I Like|Bruno Mars": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0KKkJNfGyhkQ5aFogxQAPU"
+ },
+ "That's What I Want|Lil Nas X": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "0e8nrvls4Qqv5Rfa2UhqmO"
+ },
+ "The Battle Of New Orleans|Johnny Horton": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0dwpdcQkeZqpuoAPYD49N3"
+ },
+ "The Box|Roddy Ricch": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0nbXyq5TXYPCO7pr3N8S4I"
+ },
+ "The Boy Is Mine|Brandy & Monica": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6sHsXIJoEN5JpdkGMQDJxt"
+ },
+ "The Boys Of Summer|Don Henley": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4gvea7UlDkAvsJBPZAd4oB"
+ },
  "The Fate of Ophelia|Taylor Swift": {
   "checked": "2026-10-22",
   "source": "wikidata",
@@ -2745,11 +4575,46 @@
   "source": "tidytuesday",
   "spotify": "3MrRksHupTVEQ7YbA0FsZK"
  },
+ "The Gambler|Kenny Rogers": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "5KqldkCunQ2rWxruMEtGh0"
+ },
+ "The Hills|The Weeknd": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7fBv7CLKzipRk6EC6TWHOB"
+ },
  "The House of the Rising Sun|The Animals": {
   "chartYear": 1964,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3XC7Jd6SfrQYKZJ6inyRHK"
+ },
+ "The Lady In Red|Chris de Burgh": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1GeNWyZtCHbcp3ZWp8GTOO"
+ },
+ "The Letter|The Box Tops": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6RJK553YhstRzyKA4mug09"
+ },
+ "The Lion Sleeps Tonight|The Tokens": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2F4FNcz68howQWD4zaGJSi"
+ },
+ "The Look|Roxette": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0ZfM5XfJTtFPhOxAERRnNY"
+ },
+ "The Middle|Jimmy Eat World": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6GG73Jik4jUlQCkKg9JuGO"
  },
  "The Power of Love|Huey Lewis & The News": {
   "chartYear": 1985,
@@ -2763,11 +4628,21 @@
   "source": "billboard",
   "spotify": "1MYlx4dBtiyjn7K8YSyfzT"
  },
+ "The Reason|Hoobastank": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "77loZpT5Y5PRP1S451P9Yz"
+ },
  "The Sign|Ace of Base": {
   "chartYear": 1994,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0hrBpAOgrt8RXigk83LLNE"
+ },
+ "The Sound Of Silence|Simon & Garfunkel": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5y788ya4NvwhBznoDIcXwK"
  },
  "The Twist|Chubby Checker": {
   "chartYear": 1960,
@@ -2775,17 +4650,57 @@
   "source": "billboard",
   "spotify": "0M5EaPIXN3FneJ7exwpYNM"
  },
+ "The Way I Are|Timbaland": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2bLqfJjuC5syrsgDsZfGmn"
+ },
+ "The Way You Make Me Feel|Michael Jackson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0sKlV58cODrjxGFOyf9IXY"
+ },
+ "There Goes My Baby|The Drifters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5y2m5EePLwcTAUa3iXxztB"
+ },
+ "Therefore I Am|Billie Eilish": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "54bFM56PmE4YLRnqpW6Tha"
+ },
  "These Boots Are Made for Walkin'|Nancy Sinatra": {
   "chartYear": 1966,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4j2W1eM03mz5MVN5LvR7VH"
  },
+ "These Dreams|Heart": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "22wWxHGHRH8gZXNDXRgSqY"
+ },
  "Thinking Out Loud|Ed Sheeran": {
   "chartYear": 2015,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "34gCuhDGsG4bRPIf9bb02f"
+ },
+ "This Is How We Do It|Montell Jordan": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6uQKuonTU8VKBz5SHZuQXD"
+ },
+ "This Is What You Came For|Calvin Harris": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0azC730Exh71aQlOt9Zj3y"
+ },
+ "This Love|Maroon 5": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6ECp64rv50XVz93WvxXMGF"
  },
  "Thrift Shop|Macklemore & Ryan Lewis": {
   "chartYear": 2013,
@@ -2799,11 +4714,36 @@
   "source": "billboard",
   "spotify": "20efeySIfZoiSaISGLBbNs"
  },
+ "Thunder|Imagine Dragons": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1zB4vmk8tFRmM9UULNzbLB"
+ },
  "TiK ToK|Kesha": {
   "chartYear": 2010,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "4srpHYFHKjVGRDNHqRpWxi"
+ },
+ "Ticket To Ride|The Beatles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7CZiDzGVjUssMSOXrDNYHL"
+ },
+ "Time After Time|Cyndi Lauper": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1Jj6MF0xDOMA3Ut2Z368Bx"
+ },
+ "Time Of The Season|The Zombies": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5AJrhrwz4oSZX2PwwV4qrN"
+ },
+ "Timeless|The Weeknd": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2Kbc5HFurzJ33w6y0PAuIM"
  },
  "Tiny Dancer|Elton John": {
   "checked": "2026-10-22",
@@ -2821,10 +4761,35 @@
   "source": "listenbrainz",
   "spotify": "1IHWl5LamUGEuP4ozKQSXZ"
  },
+ "To Be With You|Mr. Big": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Mmt6Xk0H6VR92PEp6x3hP"
+ },
+ "Together Again|Janet Jackson": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1GrikfH0jDejDvrxo84n4P"
+ },
+ "Tom Dooley|The Kingston Trio": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2qLxtO0iaFGI9x19vU3bDI"
+ },
+ "Too Close|Next": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5IFCyWplye09HytIP80RCF"
+ },
  "Too Sweet|Hozier": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "4IadxL6BUymXlh8RCJJu7T"
+ },
+ "Toosie Slide|Drake": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "127QTOFJsJQp5LbJbu3A1y"
  },
  "Torn|Natalie Imbruglia": {
   "checked": "2026-10-22",
@@ -2836,6 +4801,11 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5prTs2HAw2G4idHZyeFp8o"
+ },
+ "Touch Me|The Doors": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4BVE5tIIpYabZcYCbephNW"
  },
  "Toxic|Britney Spears": {
   "chartYear": 2004,
@@ -2865,6 +4835,11 @@
   "source": "tidytuesday",
   "spotify": "5PHGTeEdFxTEb4hepxug86"
  },
+ "Tusa|Karol G": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7k4t7uLgtOxPwTpFmtJNTY"
+ },
  "Tutti Frutti|Little Richard": {
   "checked": "2026-10-22",
   "source": "listenbrainz",
@@ -2876,11 +4851,26 @@
   "source": "billboard",
   "spotify": "4Z1fbYp0HuxLBje4MOZcSD"
  },
+ "Twisted|Keith Sweat": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "69QIVIjPMnI1ABLBqh9P1b"
+ },
  "U Can't Touch This|MC Hammer": {
   "chartYear": 1990,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "1B75hgRqe7A4fwee3g3Wmu"
+ },
+ "U Got It Bad|Usher": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7J41dYQolQJEtj3UmKLu5r"
+ },
+ "U Remind Me|Usher": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2QsZVnbWVSjKMXK6K3uRBL"
  },
  "Umbrella|Rihanna": {
   "chartYear": 2007,
@@ -2899,17 +4889,42 @@
   "source": "tidytuesday",
   "spotify": "2fuCquhmrzHpu5xcA1ci9x"
  },
+ "Under The Boardwalk|The Drifters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "65jrjEhWfAvysKfnojk1i0"
+ },
  "Under the Bridge|Red Hot Chili Peppers": {
   "chartYear": 1992,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3d9DChrdc6BOeFsbrZ3Is0"
  },
+ "Under the Influence|Chris Brown": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4ud5CYIXZekCQSjFCuByXt"
+ },
+ "Unforgettable|French Montana": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3B54sVLJ402zGa6Xm4YGNe"
+ },
  "Unholy|Sam Smith": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "3nqQXoyQOWXiESFLlDF1hG",
   "wikidataYear": 2022
+ },
+ "Unpretty|TLC": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0BUoLE4o9eVahDHvTqak67"
+ },
+ "Unwritten|Natasha Bedingfield": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1D1nixOVWOxvNfWi0UD7VX"
  },
  "Upside Down|Diana Ross": {
   "chartYear": 1980,
@@ -2923,6 +4938,16 @@
   "source": "billboard",
   "spotify": "4rmPQGwcLQjCoFq5NrTA0D"
  },
+ "Uptown Girl|Billy Joel": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5zA8vzDGqPl2AzZkEYQGKh"
+ },
+ "Up|Cardi B": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1XXimziG1uhM0eDNCZCrUl"
+ },
  "Use Somebody|Kings of Leon": {
   "chartYear": 2009,
   "checked": "2026-10-22",
@@ -2933,6 +4958,11 @@
   "checked": "2026-10-22",
   "source": "share-link",
   "spotify": "6kopmMZiyLmw7h66uXcXR7"
+ },
+ "Venus|Frankie Avalon": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0DDkW8j34M5hvxj79uGmK7"
  },
  "Video Killed the Radio Star|The Buggles": {
   "checked": "2026-10-22",
@@ -2962,11 +4992,31 @@
   "source": "share-link",
   "spotify": "4Oun2ylbjFKMPTiaSbbCih"
  },
+ "Wagon Wheel|Darius Rucker": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "3xdjjKMcMOFgo1eQrfbogM"
+ },
+ "Wait for U|Future": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2WUEArGyLZm29UQ1PT7i3F"
+ },
+ "Waka Waka (This Time for Africa)|Shakira": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2Cd9iWfcOpGDHLz6tVA3G4"
+ },
  "Wake Me Up Before You Go-Go|Wham!": {
   "chartYear": 1985,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "5l1RLE94Y7nrowPN5LvAci"
+ },
+ "Wake Me Up When September Ends|Green Day": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ZffCQKLFLUvYM59XKLbVm"
  },
  "Wake Me Up|Avicii": {
   "chartYear": 2013,
@@ -2995,6 +5045,11 @@
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "5p3JunprHCxClJjOmcLV8G"
+ },
+ "Walkin' After Midnight|Patsy Cline": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "7E8nKMtXMqIQbvl1Ta9Ucw"
  },
  "Wannabe|Spice Girls": {
   "chartYear": 1997,
@@ -3029,6 +5084,11 @@
   "source": "listenbrainz",
   "spotify": "5aIVCx5tnk0ntmdiinnYvw"
  },
+ "We Are Family|Sister Sledge": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5IKLwqBQG6KU6MP2zP80Nu"
+ },
  "We Are Young|fun.": {
   "chartYear": 2012,
   "checked": "2026-10-22",
@@ -3039,6 +5099,26 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "3Z2tPWiNiIpg8UMMoowHIk"
+ },
+ "We Belong Together|Mariah Carey": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3LmvfNUQtglbTrydsdIqFU"
+ },
+ "We Built This City|Starship": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6OnfBiiSc9RGKiBKKtZXgQ"
+ },
+ "We Can't Be Friends (Wait for Your Love)|Ariana Grande": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "51ZQ1vr10ffzbwIjDCwqm4"
+ },
+ "We Didn't Start The Fire|Billy Joel": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Cx4yrFaX8CeHwBMReOWXI"
  },
  "We Found Love|Rihanna": {
   "chartYear": 2011,
@@ -3052,11 +5132,31 @@
   "source": "billboard",
   "spotify": "54flyrjcdnQdco7300avMJ"
  },
+ "Weak|SWV": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "71EHOyEOhNx1SzTebRRyng"
+ },
  "Welcome to the Jungle|Guns N' Roses": {
   "chartYear": 1989,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "0eFvoRSTTaR2q8bSWVjwfp"
+ },
+ "What A Diff'rence A Day Makes|Dinah Washington": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "66iKqUazBbTlAEjcZrpDkD"
+ },
+ "What A Fool Believes|The Doobie Brothers": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2yBVeksU2EtrPJbTu4ZslK"
+ },
+ "What Do You Mean?|Justin Bieber": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4B0JvthVoAAuygILe3n4Bs"
  },
  "What Is Love|Haddaway": {
   "chartYear": 1993,
@@ -3068,6 +5168,11 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "7wZa0JXBfFS8W5abYnHWKC"
+ },
+ "What You Know Bout Love|Pop Smoke": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1tkg4EHVoqnhR6iFEXb60y"
  },
  "What a Wonderful World|Louis Armstrong": {
   "checked": "2026-10-22",
@@ -3086,11 +5191,36 @@
   "source": "billboard",
   "spotify": "42PyxnviKRfOa8z39g8aZj"
  },
+ "What's Love Got To Do With It|Tina Turner": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4kOfxxnW1ukZdsNbCKY9br"
+ },
+ "What's Luv?|Fat Joe": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2mKouqwAIdQnMP43zxR89r"
+ },
+ "Whatever You Like|T.I.": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1IAzD1muglOxOcPbUHs70R"
+ },
+ "When A Man Loves A Woman|Percy Sledge": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "51FpzuGkRYXFgsE2zXt9av"
+ },
  "When Doves Cry|Prince": {
   "chartYear": 1984,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "51H2y6YrNNXcy3dfc3qSbA"
+ },
+ "When I Was Your Man|Bruno Mars": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0nJW01T7XtvILxQgC5J7Wh"
  },
  "Whenever, Wherever|Shakira": {
   "chartYear": 2002,
@@ -3110,11 +5240,21 @@
   "source": "billboard",
   "spotify": "3CNqo3gYrfexdrtjFmC9he"
  },
+ "Where Were You (When the World Stopped Turning)|Alan Jackson": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "4aOQG9TYcZOhT3sngkMI9K"
+ },
  "White Rabbit|Jefferson Airplane": {
   "chartYear": 1967,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2VVG5VaJKXrpRhh1PKqm9D"
+ },
+ "White Room|Cream": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3Xls4cNOwy01dtrNXb1inG"
  },
  "Whole Lotta Love|Led Zeppelin": {
   "checked": "2026-10-22",
@@ -3142,10 +5282,35 @@
   "source": "listenbrainz",
   "spotify": "0gljI0CtjpdZK6ecidfxto"
  },
+ "Will You Love Me Tomorrow|The Shirelles": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0bwy3sGHeYwng2Ioicq6wf"
+ },
+ "Willow|Taylor Swift": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0lx2cLdOt3piJbcaXIV74f"
+ },
+ "Wind Of Change|Scorpions": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ovjw5HZZv43SxTwApooCM"
+ },
  "Wish You Were Here|Pink Floyd": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
   "spotify": "6mFkJmJqdDVQ1REhVfGgd1"
+ },
+ "Wishing Well|Juice WRLD": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2U5WueTLIK5WJLD7mvDODv"
+ },
+ "With You|Chris Brown": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5Lgcn7u07bHuqbOtXkN62u"
  },
  "With or Without You|U2": {
   "chartYear": 1987,
@@ -3158,6 +5323,16 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "7lQ8MOhq6IN2w8EYcFNSUk"
+ },
+ "Without You|The Kid LAROI": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "27OeeYzk6klgBh83TSvGMA"
+ },
+ "Womanizer|Britney Spears": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4fixebDZAVToLbUCuEloa2"
  },
  "Wonderful Tonight|Eric Clapton": {
   "checked": "2026-10-22",
@@ -3175,11 +5350,21 @@
   "source": "tidytuesday",
   "spotify": "2Gy7qnDwt8Z3MNxqat4CsK"
  },
+ "Wow.|Post Malone": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7xQAfvXzm3AkraOtGPWIZg"
+ },
  "Y.M.C.A.|Village People": {
   "chartYear": 1979,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3x5sj5JncCFaS5Qux6eKyX"
+ },
+ "Yakety Yak|The Coasters": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "7demHL0GXA6YmTNqw3Btz8"
  },
  "Yeah!|Usher": {
   "chartYear": 2004,
@@ -3204,6 +5389,16 @@
   "spotify": "3iD2CCv5bsJRIaqJRYD0uJ",
   "wikidataYear": null
  },
+ "You And Me|Lifehouse": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0815caqt2Lytro5EIzMufT"
+ },
+ "You Are The Sunshine Of My Life|Stevie Wonder": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0n2pjCIMKwHSXoYfEbYMfX"
+ },
  "You Can Call Me Al|Paul Simon": {
   "checked": "2026-10-22",
   "source": "tidytuesday",
@@ -3214,6 +5409,26 @@
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "3r2yyf4jeSTBmioUJqJM7x"
+ },
+ "You Give Love A Bad Name|Bon Jovi": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0rmGAIH9LNJewFw7nKzZnc"
+ },
+ "You Make Me Wanna...|Usher": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "47TqCCnEliDp8NRDyIQoQq"
+ },
+ "You Make My Dreams|Daryl Hall & John Oates": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "4o6BgsqLIBViaGVbx5rbRk"
+ },
+ "You Need To Calm Down|Taylor Swift": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "6RRNNciQGZEXnqk8SQ9yv5"
  },
  "You Oughta Know|Alanis Morissette": {
   "chartYear": 1996,
@@ -3227,11 +5442,41 @@
   "source": "billboard",
   "spotify": "4hgeUQ9R4GQW5OzQEb7UAD"
  },
+ "You Sexy Thing|Hot Chocolate": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "714hERk9U1W8FMYkoC83CO"
+ },
+ "You Should Be Dancing|Bee Gees": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "2xiOdusRnZezQok1RgLNeS"
+ },
+ "You Should Probably Leave|Chris Stapleton": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2UikqkwBv7aIvlixeVXHWt"
+ },
+ "You're Beautiful|James Blunt": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0vg4WnUWvze6pBOJDTq99k"
+ },
  "You're So Vain|Carly Simon": {
   "chartYear": 1973,
   "checked": "2026-10-22",
   "source": "billboard",
   "spotify": "2DnJjbjNTV9Nd5NOa1KGba"
+ },
+ "You're Still The One|Shania Twain": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "1wb4P4F0sxAQ2KXrRvsx6n"
+ },
+ "You're The One That I Want|John Travolta & Olivia Newton-John": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0B9x2BRHqj3Qer7biM3pU3"
  },
  "You've Got a Friend|James Taylor": {
   "chartYear": 1971,
@@ -3245,11 +5490,21 @@
   "source": "billboard",
   "spotify": "5GMw6X6BbCDGO9gApQYRSa"
  },
+ "Your Power|Billie Eilish": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "5qNh5WtzMbfpSj2jLlBkoD"
+ },
  "Your Song|Elton John": {
   "checked": "2026-10-22",
   "source": "wikidata",
   "spotify": "38zsOOcu31XbbYj9BIPUF1",
   "wikidataYear": 1970
+ },
+ "ZEZE|Kodak Black": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "0FZ4Dmg8jJJAPJnvBIzD9z"
  },
  "Zombie|The Cranberries": {
   "checked": "2026-10-22",
@@ -3265,6 +5520,11 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "4ml4WlnHDEpOK8HRVYTCWf"
+ },
+ "everything i wanted|Billie Eilish": {
+  "checked": "2026-10-25",
+  "source": "billboard-weekly",
+  "spotify": "3ZCTVFBt2Brf31RLEnCkWJ"
  },
  "good 4 u|Olivia Rodrigo": {
   "checked": "2026-10-22",
@@ -3295,5 +5555,10 @@
   "checked": "2026-10-22",
   "source": "listenbrainz",
   "spotify": "5dHTdHgcsg1Y4uWrmDpHjO"
+ },
+ "Échame la Culpa|Luis Fonsi & Demi Lovato": {
+  "checked": "2026-10-25",
+  "source": "listenbrainz",
+  "spotify": "2hl6q70unbviGo3g1R7uFx"
  }
 }

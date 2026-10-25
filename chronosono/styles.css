@@ -256,6 +256,10 @@ input:focus { border-color: var(--mustard); outline: none; box-shadow: 0 0 0 1px
 }
 .dial-under { margin-top: 14px; }
 .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.genres { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip.genre { display: inline-flex; align-items: baseline; gap: 8px; }
+.chip-count { font-family: var(--body); font-weight: 500; font-size: 0.82rem; font-variant-numeric: tabular-nums; opacity: 0.75; }
+.genre-hint { margin-top: 12px; }
 .dial-count { margin-top: 16px; font-size: 0.95rem; }
 .dial-count.warn { color: var(--mustard); }
 

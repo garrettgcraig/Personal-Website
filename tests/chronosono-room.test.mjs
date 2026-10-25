@@ -286,3 +286,39 @@ test("the DJ can switch to a computer, and every phone sees it", async () => {
   await t.act("dj-phone-0002", "join", { role: "dj" });
   assert.equal((await t.view(A)).json.djMode, "phone");
 });
+
+test("genre filter: songs match any chosen genre, and an empty choice means all", () => {
+  const rowsWithGenres = [
+    ["A", "X", 1990, "a".padEnd(22, "x"), ["Rock"]],
+    ["B", "X", 1990, "b".padEnd(22, "x"), ["Pop", "Rock"]],
+    ["C", "X", 1990, "c".padEnd(22, "x"), ["Country"]],
+    ["D", "X", 1990, "d".padEnd(22, "x")],
+  ];
+  const cards = G.toCards(rowsWithGenres);
+  const pick = (genres) => G.filterCards(cards, { yearMin: 1960, yearMax: 2020, genres }).map((c) => c.title);
+  assert.deepEqual(pick([]), ["A", "B", "C", "D"]);
+  assert.deepEqual(pick(["Rock"]), ["A", "B"]);
+  assert.deepEqual(pick(["Country", "Pop"]), ["B", "C"]);
+  assert.deepEqual(G.filterCards(cards, { yearMin: 2000, yearMax: 2020, genres: [] }), []);
+});
+
+test("the room keeps valid genres, drops unknown ones, and deals only those genres", async () => {
+  const rows2 = [];
+  for (let y = 1960; y <= 2020; y++) for (let k = 0; k < 4; k++) rows2.push([`Song ${y}-${k}`, "Artist", y, `${y}${k}`.padEnd(22, "x"), [k % 2 ? "Rock" : "Pop"]]);
+  R.setCatalogForTests(rows2);
+  try {
+    const store = R.memoryStore();
+    const created = await R.handle(store, { method: "POST", path: "rooms", body: { deviceId: A, role: "team", name: "Sharks" } });
+    const code = created.json.code;
+    const act = (config) => R.handle(store, { method: "POST", path: `rooms/${code}/actions`, body: { deviceId: A, type: "config", config } });
+    let v = (await act({ genres: ["Rock", "Polka", "Rock"], yearMin: 1960, yearMax: 2020 })).json;
+    assert.deepEqual(v.config.genres, ["Rock"]);
+    assert.equal(v.songsInRange, 61 * 2);
+    v = (await act({ genres: G.GENRES })).json;
+    assert.deepEqual(v.config.genres, [], "all genres chosen is stored as all");
+    v = (await act({ yearMin: 1970 })).json;
+    assert.deepEqual(v.config.genres, [], "changing the years keeps the genre choice");
+  } finally {
+    R.setCatalogForTests(rows);
+  }
+});
