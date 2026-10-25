@@ -322,3 +322,38 @@ test("the room keeps valid genres, drops unknown ones, and deals only those genr
     R.setCatalogForTests(rows);
   }
 });
+
+test("teams pick their own color, no two teams share one, and every phone sees them", async () => {
+  const store = R.memoryStore();
+  const call = (deviceId, body) => R.handle(store, { method: "POST", path: `rooms/${code}/actions`, body: { deviceId, ...body } });
+  const created = await R.handle(store, { method: "POST", path: "rooms", body: { deviceId: A, role: "team", name: "Sharks", color: "blue" } });
+  const code = created.json.code;
+  assert.deepEqual(created.json.lobbyColors, ["blue"]);
+  // Asking for a taken or unknown color gets the first free one.
+  let v = (await call(B, { type: "join", role: "team", name: "Jets", color: "blue" })).json;
+  assert.deepEqual(v.lobbyColors, ["blue", "red"]);
+  v = (await call("team-c-00001", { type: "join", role: "team", name: "Owls", color: "chartreuse" })).json;
+  assert.deepEqual(v.lobbyColors, ["blue", "red", "green"]);
+  // A team can change to a free color, but not to one another team has.
+  v = (await call(B, { type: "teamColor", color: "purple" })).json;
+  assert.deepEqual(v.lobbyColors, ["blue", "purple", "green"]);
+  assert.equal((await call(B, { type: "teamColor", color: "blue" })).status, 409);
+  await call(DJ, { type: "join", role: "dj" });
+  await call(A, { type: "start" });
+  v = (await R.handle(store, { method: "GET", path: `rooms/${code}`, query: { device: B } })).json;
+  assert.deepEqual(v.game.teams.map((t) => t.color), ["blue", "purple", "green"]);
+  assert.ok(R.TEAM_COLORS.includes("teal"));
+});
+
+test("the DJ and teams learn why a new song was cued", async () => {
+  const t = await setup();
+  await t.act(DJ, "next");
+  assert.equal((await t.view(A)).json.play.reason, "next");
+  const active = (await t.room()).game.turn === 0 ? A : B;
+  await t.act(active, "skip");
+  assert.equal((await t.view(DJ)).json.play.reason, "skip");
+  await t.act(active, "unplayable");
+  assert.equal((await t.view(A)).json.play.reason, "unplayable");
+  await t.act(DJ, "replay");
+  assert.equal((await t.view(A)).json.play.reason, "replay");
+});

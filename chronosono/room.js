@@ -10,6 +10,8 @@ import { SONGS } from "./songs.js";
 
 export const MAX_TEAMS = 4;
 export const CHALLENGE_SECONDS = 15;
+// Each team's phone is tinted with its color so phones are easy to tell apart across a table.
+export const TEAM_COLORS = ["red", "blue", "green", "orange", "purple", "teal"];
 export const ROOM_TTL_MS = 12 * 60 * 60 * 1000;
 const CODE_LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // no I or O, which read like 1 and 0
 const MODES = ["original", "pro", "expert"];
@@ -98,8 +100,9 @@ function requireStage(room, ...stages) {
   if (!stages.includes(room.stage)) throw new GameError("That can't be done right now.", 409);
 }
 
-function cue(room) {
-  room.play = { nonce: room.play.nonce + 1, status: "cued" };
+// reason tells the phones why a new song is waiting: "next", "skip", "unplayable", or "replay".
+function cue(room, reason) {
+  room.play = { nonce: room.play.nonce + 1, status: "cued", reason };
 }
 
 // ---------- Room lifecycle ----------
@@ -123,7 +126,14 @@ export function createRoom(code, hostId, now) {
   };
 }
 
-function join(room, deviceId, { role, name }) {
+// The wanted color when it's known and no other team has it, else the first free one.
+function freeColor(room, wanted, self = -1) {
+  const taken = new Set(room.teams.filter((_, i) => i !== self).map((t) => t.color));
+  if (TEAM_COLORS.includes(wanted) && !taken.has(wanted)) return wanted;
+  return TEAM_COLORS.find((c) => !taken.has(c)) || TEAM_COLORS[0];
+}
+
+function join(room, deviceId, { role, name, color }) {
   const fallback = `Team ${room.teams.length + 1}`;
   if (role === "dj") {
     // A new DJ phone replaces the old one, so a dead phone can be swapped out mid-game.
@@ -145,6 +155,7 @@ function join(room, deviceId, { role, name }) {
   if (mine >= 0) {
     if (sameName >= 0 && sameName !== mine) throw new GameError("Another team already has that name.", 409);
     if (room.stage === "lobby") room.teams[mine].name = wanted;
+    if (color && room.stage === "lobby") room.teams[mine].color = freeColor(room, color, mine);
     return;
   }
   if (sameName >= 0) {
@@ -156,7 +167,7 @@ function join(room, deviceId, { role, name }) {
   }
   if (room.stage !== "lobby") throw new GameError("This game has started. Join as an existing team by typing its name.", 409);
   if (room.teams.length >= MAX_TEAMS) throw new GameError(`A game holds up to ${MAX_TEAMS} teams.`, 409);
-  room.teams.push({ name: wanted, deviceId });
+  room.teams.push({ name: wanted, deviceId, color: freeColor(room, color) });
 }
 
 function start(room, rng) {
@@ -234,7 +245,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       syncStage(room);
       if (room.stage === "over") break;
       room.stage = "place";
-      cue(room);
+      cue(room, "next");
       break;
     }
 
@@ -242,6 +253,14 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       if (deviceId !== room.djId) throw new GameError("Only the DJ phone reports playback.", 403);
       if (action.nonce === room.play.nonce && room.play.status === "cued") room.play.status = "playing";
       break;
+
+    case "teamColor": {
+      const i = requireTeam(room, deviceId);
+      if (!TEAM_COLORS.includes(action.color)) throw new GameError("Pick one of the team colors.");
+      if (room.teams.some((t, j) => j !== i && t.color === action.color)) throw new GameError("Another team has that color.", 409);
+      room.teams[i].color = action.color;
+      break;
+    }
 
     case "djMode":
       if (deviceId !== room.djId) throw new GameError("Only the DJ can change how songs play.", 403);
@@ -253,7 +272,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       // The song didn't start (or stopped). Arm the DJ phone again with the same song.
       if (deviceId !== room.djId) throw new GameError("Only the DJ phone can replay the song.", 403);
       requireStage(room, "place", "challenge");
-      cue(room);
+      cue(room, "replay");
       break;
 
     case "buy":
@@ -270,7 +289,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       if (!G.canSkip(g)) throw new GameError("Skipping costs a token.", 409);
       room.game = G.skip(g, rng);
       syncStage(room);
-      if (room.stage !== "over") cue(room);
+      if (room.stage !== "over") cue(room, "skip");
       break;
 
     case "unplayable":
@@ -278,7 +297,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       requireTeam(room, deviceId);
       room.game = G.replaceUnavailable(g, rng);
       syncStage(room);
-      if (room.stage !== "over") cue(room);
+      if (room.stage !== "over") cue(room, "unplayable");
       break;
 
     case "place":
@@ -401,8 +420,9 @@ export function viewFor(room, deviceId, now) {
     djJoined: !!room.djId,
     djMode: room.djMode || "phone",
     lobbyTeams: room.teams.map((t) => t.name),
+    lobbyColors: room.teams.map((t, i) => t.color || TEAM_COLORS[i % TEAM_COLORS.length]),
     songsInRange: G.filterCards(CARDS, room.config).length,
-    play: { nonce: room.play.nonce, status: room.play.status },
+    play: { nonce: room.play.nonce, status: room.play.status, reason: room.play.reason ?? null },
     spotify: null,
     game: null,
   };
@@ -411,7 +431,7 @@ export function viewFor(room, deviceId, now) {
     view.game = {
       turn: g.turn,
       round: g.round,
-      teams: g.players.map((p) => ({ name: p.name, tokens: p.tokens, cards: p.timeline.map(publicCard) })),
+      teams: g.players.map((p, i) => ({ name: p.name, color: room.teams[i]?.color || TEAM_COLORS[i % TEAM_COLORS.length], tokens: p.tokens, cards: p.timeline.map(publicCard) })),
       placement: g.placement,
       yearGuess: g.yearGuess,
       challenges: g.challenges,
@@ -445,7 +465,7 @@ export async function handle(store, { method, path, query = {}, body = {} }, now
         const code = newCode(rng);
         const room = createRoom(code, deviceId, now);
         if (body.config) room.config = cleanConfig(body.config);
-        applyAction(room, deviceId, { type: "join", role: body.role, name: body.name }, now, rng);
+        applyAction(room, deviceId, { type: "join", role: body.role, name: body.name, color: body.color }, now, rng);
         if (await store.put(code, room, null)) return { status: 201, json: viewFor(room, deviceId, now) };
       }
       throw new GameError("Couldn't create a room. Try again.", 503);
