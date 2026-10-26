@@ -1,0 +1,58 @@
+/* The KnowKi pages on garrettgcraig.com, styled like the app (knowki.app): paper and forest green in light, the app's
+   own dark palette in dark, rounded headings, and cards. The site's dark mode toggle sets body.dark-mode. */
+:root{--bg:#f7f5ed;--card:#fff;--sage:#e3e8d1;--ink:#2e3345;--muted:#5e636f;--line:#d8d8d1;--green:#557636;--green-dark:#3f5a27;--green-ink:#fff;--link:#4a6a2e;
+  --sq-g:#6bb366;--sq-y:#e6bf4d;--sq-o:#eb8c40;--sq-r:#cc5247;--shadow:0 1px 2px #2e33450f,0 6px 20px #2e33450a;
+  --rounded:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color-scheme:light}
+html.dark-mode-preload,html.dark-mode-preload body{background:#141613}
+body.dark-mode{--bg:#141613;--card:#242621;--sage:#2e3829;--ink:#ebedef;--muted:#adb3b8;--line:#3a3d38;--green:#8db06a;--green-dark:#4a6a2e;--green-ink:#141613;--link:#a6c584;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--link);text-underline-offset:2px}a:hover{color:var(--green)}
+p,li{text-wrap:pretty}h1,h2,h3{text-wrap:balance}
+.top,main,.foot{max-width:860px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding-top:16px;padding-bottom:4px}
+h1 b{color:var(--green);font-weight:inherit}
+.home{font-size:15px;color:var(--muted);text-decoration:none}.home:hover{color:var(--green)}
+.hero{display:grid;grid-template-columns:1fr 240px;gap:24px;align-items:center;margin:16px 0 28px}
+.hero img{width:100%;height:auto}
+h1{font:800 clamp(40px,7vw,56px)/1.05 var(--rounded);margin:0 0 12px;letter-spacing:-.01em}
+.lead{font-size:19px;color:var(--muted);margin:0 0 20px}
+h2{font:800 24px/1.25 var(--rounded);margin:0 0 10px}
+h3{font:700 18px/1.35 var(--rounded);margin:0}
+.buttons{display:flex;flex-wrap:wrap;gap:10px;margin:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:var(--sage);color:var(--ink);font:700 15px/1.2 var(--rounded);text-decoration:none}
+.btn:hover{color:var(--ink);border-color:var(--green)}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--green-ink);box-shadow:0 3px 0 var(--green-dark)}
+.btn.primary:hover{color:var(--green-ink);filter:brightness(1.05)}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:0 0 16px;box-shadow:var(--shadow)}
+.card p:last-child,.card ul:last-child{margin-bottom:0}.card p:first-of-type{margin-top:0}
+section{margin:0 0 16px}
+.squares{display:inline-flex;gap:3px;vertical-align:-2px;margin-right:4px}
+.sq{display:inline-block;width:14px;height:14px;border-radius:4px}.sq.g{background:var(--sq-g)}.sq.y{background:var(--sq-y)}.sq.o{background:var(--sq-o)}.sq.r{background:var(--sq-r)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;list-style:none;padding:0;margin:12px 0}.legend li{display:flex;align-items:center;gap:6px}
+.aki{display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:center}.aki img{width:100%;height:auto}
+blockquote{margin:0;font:600 20px/1.45 var(--rounded)}blockquote+p{color:var(--muted)}
+.ways{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 16px}
+.way{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow)}
+.way h3{color:var(--green);margin-bottom:4px}.way p{margin:0;font-size:16px}
+.kin{background:var(--sage);border-color:transparent}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 8px;box-shadow:var(--shadow)}
+.faq summary{cursor:pointer;list-style:none;padding:14px 44px 14px 18px;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";position:absolute;right:20px;top:50%;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg);transition:transform .15s}
+.faq details[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
+.faq details p{margin:0;padding:0 18px 14px;color:var(--muted)}
+.credits ul{padding-left:20px;margin:0 0 12px}.credits li{margin:4px 0}.small{font-size:15px;color:var(--muted)}
+.foot{padding-top:12px;padding-bottom:96px;color:var(--muted);font-size:15px;text-align:center}
+.foot ul{list-style:none;padding:0;margin:0 0 8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px}
+.in-app .web-only{display:none!important}
+/* The site's dark mode toggle, in KnowKi's colors */
+#dark-mode-toggle{position:fixed;bottom:1.25rem;right:1.25rem;z-index:10;width:3rem;height:3rem;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 2px 8px #0002}
+#dark-mode-toggle:hover{border-color:var(--green)}#dark-mode-toggle svg{width:1.3rem;height:1.3rem}
+.dm-toggle-sun{display:none}
+@media (max-width:640px){
+  .hero{grid-template-columns:1fr;gap:4px;margin-top:4px}.hero img{width:160px;order:-1;justify-self:center}
+  .aki{grid-template-columns:1fr}.aki img{width:160px;justify-self:center;order:-1}
+  .ways{grid-template-columns:1fr}.card{padding:18px}.buttons .btn{flex:1 1 calc(50% - 5px)}.buttons .btn.primary{flex-basis:100%}
+}
