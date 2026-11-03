@@ -238,24 +238,59 @@ function stealSetup(target) {
   return G.addChallenge(s, 1, 0); // before 1990: right
 }
 
-test("a steal that reaches the target ends the game at once", () => {
+test("a steal that reaches the target starts the final round instead of ending the game", () => {
   const s = G.reveal(stealSetup(2), { named: false });
-  assert.equal(s.phase, "over");
-  assert.equal(s.winner, 1);
+  assert.equal(s.phase, "reveal");
   assert.equal(s.result.stolenBy, 1);
-  assert.equal(s.result.card.year, 1985);
+  assert.ok(G.isFinalRound(s));
+  // Table 2 still gets its own turn this round.
+  const next = G.nextTurn(s);
+  assert.equal(next.phase, "ready");
+  assert.equal(next.turn, 1);
 });
 
 test("a steal short of the target keeps the game going", () => {
   const s = G.reveal(stealSetup(3), { named: false });
   assert.equal(s.phase, "reveal");
   assert.equal(s.winner, null);
+  assert.ok(!G.isFinalRound(s));
 });
 
-test("the room shows the winner as soon as the winning card is revealed", async () => {
+test("the first team to the target waits for the rest of the round, then the most cards wins", () => {
+  const card = (year, id) => ({ id, title: `Song ${year}`, artist: "Artist", year, spotify: id });
+  let s = G.createGame({ mode: "original", target: 2, startTokens: 2, balance: false, yearMin: 1960, yearMax: 2020 }, ["Sharks", "Jets", "Owls"], [card(1970, "a"), card(1975, "b"), card(1980, "c"), card(1985, "d")], seeded(3));
+  s = { ...s, players: s.players.map((p, i) => ({ ...p, timeline: [card(1990 + i, `p${i}`)] })) };
+  // Sharks place 1960 before 1990: right, and that's their second card.
+  s = G.reveal(G.lockIn(G.place({ ...s, phase: "place", current: card(1960, "x0") }, 0)), { named: false });
+  assert.equal(s.phase, "reveal");
+  s = G.nextTurn(s);
+  assert.equal(s.turn, 1);
+  // Jets miss.
+  s = G.reveal(G.lockIn(G.place({ ...s, phase: "place", current: card(1961, "x1") }, 1)), { named: false });
+  assert.equal(s.phase, "reveal");
+  s = G.nextTurn(s);
+  assert.equal(s.turn, 2);
+  // Owls, last in the order, miss too: the round is done and Sharks win on the reveal.
+  s = G.reveal(G.lockIn(G.place({ ...s, phase: "place", current: card(1962, "x2") }, 1)), { named: false });
+  assert.equal(s.phase, "over");
+  assert.equal(s.winner, 0);
+});
+
+test("two teams level at the target after the final round is a draw", () => {
+  const card = (year, id) => ({ id, title: `Song ${year}`, artist: "Artist", year, spotify: id });
+  let s = G.createGame({ mode: "original", target: 2, startTokens: 2, balance: false, yearMin: 1960, yearMax: 2020 }, ["Sharks", "Jets"], [card(1970, "a"), card(1975, "b"), card(1980, "c")], seeded(3));
+  s = { ...s, players: s.players.map((p, i) => ({ ...p, timeline: [card(1990 + i, `p${i}`)] })) };
+  s = G.nextTurn(G.reveal(G.lockIn(G.place({ ...s, phase: "place", current: card(1960, "x0") }, 0)), { named: false }));
+  s = G.reveal(G.lockIn(G.place({ ...s, phase: "place", current: card(1961, "x1") }, 0)), { named: false });
+  assert.equal(s.phase, "over");
+  assert.equal(s.winner, null);
+});
+
+test("the room shows the winner as soon as the last turn of the final round is revealed", async () => {
   const t = await setup({ target: 5 });
   let guard = 0;
-  // Play until the game ends; it must end on a reveal, not on the DJ's next tap.
+  // Sharks always place right and Jets always miss. Sharks reach the target first; the game ends
+  // on the reveal of Jets' last turn, not on the DJ's next tap.
   while ((await t.room()).stage !== "over" && guard++ < 50) {
     const room = await t.room();
     const active = room.game.turn === 0 ? A : B;
@@ -263,16 +298,21 @@ test("the room shows the winner as soon as the winning card is revealed", async 
     await t.act(DJ, "next");
     const placing = await t.room();
     const tl = placing.game.players[placing.game.turn].timeline;
-    const gap = tl.filter((c) => c.year < placing.game.current.year).length; // always right
-    await t.act(active, "place", { gap });
+    const right = tl.filter((c) => c.year < placing.game.current.year).length;
+    const wrong = [...Array(tl.length + 1).keys()].find((gap) => !G.isCorrect(tl, gap, placing.game.current.year)) ?? right;
+    await t.act(active, "place", { gap: active === A ? right : wrong });
     await t.act(active, "lock");
     if ((await t.room()).stage === "challenge") await t.act(other, "pass");
     await t.act(other, "judge", { named: false });
+    if ((await t.room()).stage !== "over" && active === A && (await t.room()).game.players[0].timeline.length >= 5) {
+      assert.ok((await t.view(B)).json.game.finalRound, "every phone hears it's the final round");
+    }
   }
   const end = (await t.view(A)).json;
   assert.equal(end.stage, "over");
-  assert.ok(end.game.result, "the winning card is still shown");
-  assert.equal(end.game.teams[end.game.winner].cards.length, end.config.target);
+  assert.ok(end.game.result, "the last card is still shown");
+  assert.equal(end.game.winner, 0);
+  assert.equal(end.game.teams[0].cards.length, end.config.target);
 });
 
 test("the DJ can switch to a computer, and every phone sees it", async () => {

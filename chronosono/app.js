@@ -417,11 +417,15 @@ function logoSvg({ animated = true, small = false } = {}) {
   return `<svg class="logo${small ? " small" : ""}" viewBox="0 0 64 64" role="img" aria-label="ChronoSono: a clock running backward, drawn as a record, a cassette, a CD, an iPod, and an app">${body}${record}${cassette}${cd}${ipod}${tile}</svg>`;
 }
 
+// Every render replaces the logo, which would restart its animation. Picking up from the
+// page's own clock keeps the morph running smoothly through the game's frequent re-renders.
+const LOGO_EPOCH = performance.now();
+
 function settleLogos() {
-  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   root.querySelectorAll("svg.logo").forEach((svg) => {
-    svg.pauseAnimations?.();
-    svg.setCurrentTime?.(0);
+    if (still) svg.pauseAnimations?.();
+    svg.setCurrentTime?.(still ? 0 : (performance.now() - LOGO_EPOCH) / 1000);
   });
 }
 
@@ -464,7 +468,7 @@ function roleView() {
   return `
   <div class="home">
     <header class="masthead">
-      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
+      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
       <h1 class="wordmark small-mark" style="margin-top:18px">${creating ? "New game" : `Game ${esc(app.joinCode)}`}</h1>
       <p class="lede">What is this device for?</p>
     </header>
@@ -525,7 +529,7 @@ function lobbyView() {
   const canStart = v.djJoined && v.lobbyTeams.length >= 2;
   return `
   <div class="lobby">
-    <header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a></header>
+    <header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ small: true })}<span class="wordmark small brandname">ChronoSono</span></a></header>
     <div class="lobby-head">
       <div><div class="code-label">Room code</div><div class="code-big">${esc(v.code)}</div></div>
       <div class="actions"><button class="btn quiet" data-action="share" data-link="${esc(link)}">Share invite link</button></div>
@@ -551,7 +555,7 @@ function djLobbyNote() {
 
 function summary(c, n) {
   const genres = c.genres?.length ? `, ${c.genres.join(", ")} only` : "";
-  return `${MODES[c.mode].name}, ${c.yearMin} to ${c.yearMax}${genres} (${plural(n, "song")}), first to ${c.target} cards, ${plural(c.startTokens, "starting token")}.`;
+  return `${MODES[c.mode].name}, ${c.yearMin} to ${c.yearMax}${genres} (${plural(n, "song")}), play to ${c.target} cards, ${plural(c.startTokens, "starting token")}.`;
 }
 
 function settingsView() {
@@ -689,6 +693,21 @@ function scoresView(v) {
       <span class="score-tokens" aria-label="${plural(t.tokens, "token")}">${dots(t.tokens)}</span></div>`
     )
     .join("")}</section>`;
+}
+
+// Once a team reaches the target, the rest of the round plays out so every team gets the same
+// number of turns. Says who reached it and who still gets a turn.
+function finalRoundNote(v) {
+  const g = v.game;
+  if (!g.finalRound) return "";
+  const n = g.teams.length;
+  const target = v.config.target;
+  const reached = g.teams.filter((t) => t.cards.length >= target).map((t) => esc(t.name));
+  const from = v.stage === "result" ? g.turn + 1 : g.turn;
+  const left = g.teams.slice(from, n).map((t) => esc(t.name));
+  const join = (xs) => (xs.length < 3 ? xs.join(" and ") : `${xs.slice(0, -1).join(", ")}, and ${xs.at(-1)}`);
+  const rest = left.length ? ` One last turn ${left.length === 1 ? "for" : "each for"} ${join(left)}, then the most cards wins.` : "";
+  return `<div class="banner warn final-round"><strong>Final round.</strong> ${join(reached)} reached ${target}.${rest}</div>`;
 }
 
 const dots = (n) => Array.from({ length: G.MAX_TOKENS }, (_, i) => `<i class="dot token ${i < n ? "full" : ""}"></i>`).join("");
@@ -863,12 +882,13 @@ function teamView() {
   return `
   <div class="game ${body.includes('class="dock"') ? "docked" : ""}">
     <header class="gamebar">
-      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
+      <a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ small: true })}<span class="wordmark small brandname">ChronoSono</span></a>
       <span class="meta">${esc(v.code)}. Round ${g.round}. ${v.config.yearMin} to ${v.config.yearMax}.</span>
       <span class="spacer"></span>
       ${v.me.isHost ? `<button class="btn quiet small" data-action="end">End game</button>` : ""}
     </header>
     ${scoresView(v)}
+    ${finalRoundNote(v)}
     ${body}
     ${othersView(v)}
   </div>`;
@@ -887,7 +907,7 @@ function othersView(v) {
 function djView() {
   const v = app.view;
   const g = v.game;
-  const header = `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>`;
+  const header = `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>`;
   if (dj.computer) return computerDjView(v, g, header);
   if (!dj.enabled || dj.noSensor) {
     return `${header}<div class="dj">
@@ -920,7 +940,7 @@ function djView() {
   if (v.stage === "ready" || v.stage === "result") {
     const up = esc(g.teams[v.stage === "result" ? (g.turn + 1) % g.teams.length : g.turn].name);
     return `${header}<div class="dj">
-      <p class="up-next">Up next: <strong>${up}</strong></p>
+      <p class="up-next">${g.finalRound ? "Final round. " : ""}Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
       <p class="hint">Tap, then turn the phone face down.</p>
     </div>`;
@@ -969,7 +989,7 @@ function computerDjView(v, g, header) {
   if (v.stage === "ready" || v.stage === "result") {
     const up = esc(g.teams[v.stage === "result" ? (g.turn + 1) % g.teams.length : g.turn].name);
     return `${header}<div class="dj">
-      <p class="up-next">Up next: <strong>${up}</strong></p>
+      <p class="up-next">${g.finalRound ? "Final round. " : ""}Up next: <strong>${up}</strong></p>
       <button class="dj-big" data-action="next"><span>Next song</span></button>
       <p class="hint">${sc ? `The ${SHORTCUT_NAME} Shortcut plays the song in Spotify and hides its window.` : `Turn the screen away from the teams first. The song opens in ${where}, and you press play there.`}</p>
       ${!sc && dj.appLinks ? `<p class="hint">The first time, your browser asks to open Spotify. Choose Open, and tick Always allow if it offers. No Spotify app on this computer? Use a browser tab instead.</p>` : ""}
@@ -1011,7 +1031,8 @@ function overView() {
   const r = g.result;
   // How the last card got there, when that card is what won it.
   let how = esc(g.endReason || "");
-  if (winner && r?.card && (r.outcome === "kept" || r.outcome === "stolen")) {
+  const gainer = r?.outcome === "stolen" ? r.stolenBy : r?.outcome === "kept" ? g.turn : null;
+  if (winner && r?.card && gainer === g.winner) {
     const song = `${esc(r.card.title)} (${r.card.year})`;
     how = r.outcome === "stolen" ? `${esc(winner.name)} stole ${song} for card ${winner.cards.length}.` : `${esc(winner.name)} placed ${song} for card ${winner.cards.length}.`;
   }
@@ -1024,7 +1045,7 @@ function overView() {
     : "";
   return `
   <div class="over">
-    ${isDj ? `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ animated: false, small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>` : ""}
+    ${isDj ? `<header class="gamebar"><a class="brand" href="/chronosono/" aria-label="ChronoSono home">${logoSvg({ small: true })}<span class="wordmark small brandname">ChronoSono</span></a><span class="meta">DJ ${dj.computer ? "computer" : "phone"}, game ${esc(v.code)}</span></header>` : ""}
     <h1 class="wordmark victory-name">${winner ? (mine ? "You win" : `${esc(winner.name)} wins`) : "It's a draw"}</h1>
     <p class="lede">${how}</p>
     ${

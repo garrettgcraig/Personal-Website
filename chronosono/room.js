@@ -365,7 +365,7 @@ export function applyAction(room, deviceId, action, now, rng = Math.random) {
       if (i === g.turn && named) throw new GameError("The other team decides whether you named it.", 403);
       room.game = G.reveal(g, { named });
       room.stage = "result";
-      syncStage(room); // the winning card ends the game right away
+      syncStage(room); // the last turn of the final round ends the game right away
       break;
     }
 
@@ -443,6 +443,7 @@ export function viewFor(room, deviceId, now) {
       canSkip: G.canSkip(g),
       canBuy: G.canBuy(g),
       poolLeft: g.pool.length,
+      finalRound: G.isFinalRound(g),
       winner: g.winner,
       endReason: g.endReason,
       played: room.stage === "over" ? G.playedCards(g).map(publicCard) : [],
