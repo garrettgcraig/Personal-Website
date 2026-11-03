@@ -734,10 +734,13 @@ function railView(v, mode) {
     const mine = marks && g.placement === i;
     const ch = marks ? g.challenges.find((c) => c.gap === i) : null;
     const live = mode === "place" || (mode === "challenge" && !taken.includes(i));
-    let inner = '<span class="gap-label" aria-hidden="true">Slot it here</span>';
+    // Each slot names its years, so it's clear that earlier songs go first and later ones after.
+    // Sideways, the slots are narrow, so "Between" drops out of the middle ones.
+    const label = !tl.length ? "Here" : i === 0 ? `Before ${tl[0].year}` : i === tl.length ? `After ${tl[i - 1].year}` : `Between ${tl[i - 1].year} and ${tl[i].year}`;
+    const shown = label.replace(/^Between /, '<span class="gap-word">Between </span>');
+    let inner = `<span class="gap-label" aria-hidden="true">${shown}</span>`;
     if (mine) inner = '<span class="strip mystery" aria-hidden="true"><span class="strip-year">?</span><span class="strip-title">This song</span><span class="strip-artist">Year hidden until the reveal</span></span>';
     else if (ch) inner = `<span class="claim">${esc(g.teams[ch.player].name)} says here</span>`;
-    const label = i === 0 ? "Before the first card" : i === tl.length ? "After the last card" : `Between ${tl[i - 1].year} and ${tl[i].year}`;
     parts.push(`<button class="gap ${mine ? "placed" : ""} ${ch ? "claimed" : ""} ${live ? "live" : ""}" data-action="gap" data-gap="${i}" ${live ? "" : "disabled"} aria-label="${label}">${inner}</button>`);
     if (i < tl.length) parts.push(strip(tl[i], v.stage === "result" && g.result?.keeps && g.result.card?.id === tl[i].id ? "new" : ""));
   }
