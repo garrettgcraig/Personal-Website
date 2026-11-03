@@ -258,15 +258,28 @@ export function reveal(s, { named = false } = {}) {
     result,
     history: [...next.history, { card, player: s.turn, outcome, stolenBy }],
   };
-  // The game ends the moment a card takes a team to the target, on a keep or a steal.
-  const gainer = keeps ? s.turn : stolenBy;
-  if (gainer !== null && revealed.players[gainer].timeline.length >= s.config.target) {
-    return { ...revealed, phase: "over", winner: gainer, endReason: reachedReason(s) };
+  if (mode === "coop") {
+    if (keeps && revealed.players[0].timeline.length >= s.config.target) return { ...revealed, phase: "over", winner: 0, endReason: COOP_DONE };
+    return revealed;
   }
+  // Once a team reaches the target, the round plays out so every team gets the same number of
+  // turns. When the last team in the order has just played, the game ends on this reveal.
+  if (isFinalRound(revealed) && s.turn === s.players.length - 1) return endByLeader(revealed, finalReason(revealed));
   return revealed;
 }
 
-const reachedReason = (s) => (s.config.mode === "coop" ? "You reached the target together." : `First to ${s.config.target} cards.`);
+const COOP_DONE = "You reached the target together.";
+const finalReason = (s) => {
+  const names = s.players.filter((p) => p.timeline.length >= s.config.target).map((p) => p.name);
+  const who = names.length < 3 ? names.join(" and ") : `${names.slice(0, -1).join(", ")}, and ${names.at(-1)}`;
+  return `${who} reached ${s.config.target}, and every team got ${plural(s.round, "turn")}.`;
+};
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+// True once any team has reached the target and the round is being played out.
+export function isFinalRound(s) {
+  return s.config.mode !== "coop" && s.phase !== "over" && s.players.some((p) => p.timeline.length >= s.config.target);
+}
 
 export function nextTurn(s) {
   if (s.phase !== "reveal") return s;
@@ -277,14 +290,13 @@ function advance(s) {
   const n = s.players.length;
   if (s.config.mode === "coop") {
     const p = s.players[0];
-    if (p.timeline.length >= s.config.target) return { ...s, phase: "over", winner: 0, endReason: reachedReason(s) };
+    if (p.timeline.length >= s.config.target) return { ...s, phase: "over", winner: 0, endReason: COOP_DONE };
     if (s.lives <= 0) return { ...s, phase: "over", winner: null, endReason: "Out of lives." };
     return { ...s, phase: "ready", round: s.round + 1 };
   }
-  // A traded-in card can also reach the target; the game ends right there.
-  const done = s.players.findIndex((p) => p.timeline.length >= s.config.target);
-  if (done >= 0) return { ...s, phase: "over", winner: done, endReason: reachedReason(s) };
   const turn = (s.turn + 1) % n;
+  // The round is over and someone has reached the target (a traded-in card counts too).
+  if (turn === 0 && isFinalRound(s)) return endByLeader(s, finalReason(s));
   const round = turn === 0 ? s.round + 1 : s.round;
   return { ...s, turn, round, phase: "ready" };
 }
