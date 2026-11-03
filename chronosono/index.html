@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>ChronoSono</title>
-  <meta name="description" content="A music timeline party game. One device plays the songs, and each team plays on its own phone.">
-  <meta name="robots" content="noindex, nofollow">
+  <title>ChronoSono: a free Hitster-style music timeline game</title>
+  <meta name="description" content="Play a free music timeline game like Hitster, with no cards to buy and nothing to install. Hear a song, place it by year, and beat the other teams. One device plays the songs, and each team plays on its own phone.">
+  <link rel="canonical" href="https://garrettgcraig.com/chronosono/">
   <meta name="theme-color" content="#121110">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="icon" href="/chronosono/icon.svg" type="image/svg+xml">
@@ -13,8 +13,8 @@
   <link rel="manifest" href="/chronosono/manifest.webmanifest">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ChronoSono">
-  <meta property="og:title" content="ChronoSono">
-  <meta property="og:description" content="Hear a song, place it in time. One device plays the music, and each team plays on its own phone.">
+  <meta property="og:title" content="ChronoSono: a free Hitster-style music timeline game">
+  <meta property="og:description" content="Hear a song, place it in time. A free music timeline party game: one device plays the music, and each team plays on its own phone.">
   <meta property="og:url" content="https://garrettgcraig.com/chronosono/">
   <meta property="og:image" content="https://garrettgcraig.com/chronosono/og.png">
   <meta property="og:image:width" content="1200">
@@ -25,9 +25,41 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=League+Gothic&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/chronosono/styles.css">
+  <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ChronoSono",
+    "url": "https://garrettgcraig.com/chronosono/",
+    "description": "A free Hitster-style music timeline party game. Hear a song, place it on your team's timeline by year. One device plays the songs through Spotify, and each team plays on its own phone.",
+    "applicationCategory": "GameApplication",
+    "genre": [
+      "Party game",
+      "Music trivia"
+    ],
+    "operatingSystem": "Any web browser",
+    "browserRequirements": "Requires JavaScript. The DJ device needs Spotify.",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "image": "https://garrettgcraig.com/chronosono/og.png",
+    "author": {
+      "@type": "Person",
+      "name": "Garrett Craig",
+      "url": "https://garrettgcraig.com/"
+    }
+  }
+  </script>
 </head>
 <body>
-  <main id="app"></main>
+  <main id="app">
+    <h1 class="wordmark brandname">ChronoSono</h1>
+    <p class="lede">A free Hitster-style music timeline game. Hear a song, then slot it into your team's timeline by year. One device plays the music where nobody can see it, and each team plays on its own phone. No cards to buy and nothing to install.</p>
+    <p><a href="/chronosono/about/">How to play</a></p>
+  </main>
   <a id="blind" href="#" aria-label="Play the song">Tap anywhere</a>
   <div id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/chronosono/app.js"></script>
