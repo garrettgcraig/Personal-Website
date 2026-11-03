@@ -575,7 +575,6 @@ input.code-input:focus { box-shadow: 0 0 0 3px var(--mustard); }
   .rail .gap { width: 2px; height: auto; margin: 0; }
   .rail .gap.live, .rail .gap.claimed { width: 52px; height: auto; margin: 0; }
   .rail .gap-label, .rail .claim { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
-  .rail .gap-word { display: none; }
   .rail .gap.placed { width: auto; margin: 0; }
   .rail .gap.placed .strip { width: 150px; height: 100%; }
 

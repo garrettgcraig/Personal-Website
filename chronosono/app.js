@@ -443,7 +443,7 @@ function homeView() {
         <span class="strip-year">1987</span>
         <blockquote>“I <em>know</em> The Time of My Life came out in 1987. At my senior prom, I tried the lift from Dirty Dancing. I did not have the time of my life. Neither did the punch bowl.”</blockquote>
       </figure>
-      <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden.</p>
+      <p class="lede">Hear a song, then slot it into your team's timeline by year. The DJ plays each song where nobody can see it, so the answer stays hidden. A free Hitster-style game: no cards to buy, nothing to install.</p>
       <p class="hint"><a href="/chronosono/about/">How to play</a></p>
     </header>
     ${app.error ? `<p class="error">${esc(app.error)}</p>` : ""}
@@ -735,10 +735,8 @@ function railView(v, mode) {
     const ch = marks ? g.challenges.find((c) => c.gap === i) : null;
     const live = mode === "place" || (mode === "challenge" && !taken.includes(i));
     // Each slot names its years, so it's clear that earlier songs go first and later ones after.
-    // Sideways, the slots are narrow, so "Between" drops out of the middle ones.
-    const label = !tl.length ? "Here" : i === 0 ? `Before ${tl[0].year}` : i === tl.length ? `After ${tl[i - 1].year}` : `Between ${tl[i - 1].year} and ${tl[i].year}`;
-    const shown = label.replace(/^Between /, '<span class="gap-word">Between </span>');
-    let inner = `<span class="gap-label" aria-hidden="true">${shown}</span>`;
+    const label = !tl.length ? "Here" : i === 0 ? `Before ${tl[0].year}` : i === tl.length ? `After ${tl[i - 1].year}` : `${tl[i - 1].year} to ${tl[i].year}`;
+    let inner = `<span class="gap-label" aria-hidden="true">${label}</span>`;
     if (mine) inner = '<span class="strip mystery" aria-hidden="true"><span class="strip-year">?</span><span class="strip-title">This song</span><span class="strip-artist">Year hidden until the reveal</span></span>';
     else if (ch) inner = `<span class="claim">${esc(g.teams[ch.player].name)} says here</span>`;
     parts.push(`<button class="gap ${mine ? "placed" : ""} ${ch ? "claimed" : ""} ${live ? "live" : ""}" data-action="gap" data-gap="${i}" ${live ? "" : "disabled"} aria-label="${label}">${inner}</button>`);
