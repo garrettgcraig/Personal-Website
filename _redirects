@@ -8,6 +8,13 @@
 /localeyes/*   /knowki/:splat   301
 /localeyes     /knowki/         301
 
+# The KnowKi privacy policy and support page moved to the app's own domain. Earlier app builds and the App Store listing link here.
+/knowki/privacy.html   https://knowki.app/privacy/   301!
+# The support page moved too (App Store Support URL).
+/knowki/index.html     https://knowki.app/support/   301!
+/knowki/               https://knowki.app/support/   301!
+/knowki                https://knowki.app/support/   301!
+
 # ChronoSono design notes live beside the game for the design tools; don't serve them.
 /chronosono/.impeccable/*   /chronosono/   404!
 /chronosono/PRODUCT.md      /chronosono/   404!
