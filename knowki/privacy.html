@@ -1,25 +1,25 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 	<head>
 		<title>KnowKi Privacy Policy - Garrett G. Craig</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<meta name="description" content="How the KnowKi iPhone app handles your data." />
-		<link rel="stylesheet" href="../assets/css/main.css" />
-		<link rel="stylesheet" href="../assets/css/darkmode.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="How the KnowKi iPhone app and web app handle your data." />
+		<meta name="theme-color" content="#f7f5ed" />
+		<link rel="stylesheet" href="assets/knowki.css" />
 		<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-kiwi-64.png" /><link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-kiwi-32.png" /><link rel="apple-touch-icon" href="assets/apple-touch-kiwi.png" />
-		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
 		<script src="assets/in-app.js"></script>
-		<style>.in-app .web-only{display:none!important}</style>
 		<script src="../assets/js/darkmode.js"></script>
 		<style>
-			.doc { max-width: 46rem; margin: 0 auto; text-align: left; }
-			.doc h2 { margin-top: 2.5rem; }
-			.doc ul { margin-bottom: 1.5rem; }
-			.doc .updated { font-size: 0.9rem; opacity: 0.75; }
+			.doc h1{font-size:clamp(34px,6vw,46px);margin:16px 0 8px}
+			.doc .updated{margin:0 0 12px}
+			.doc .lead{font-size:18px}
+			.doc .card h2{color:var(--green)}
+			.doc .card ul{padding-left:22px}
+			.doc .card li{margin:6px 0}
 		</style>
 	</head>
-	<body class="is-preload">
+	<body>
 
 		<!-- Dark mode toggle -->
 		<button id="dark-mode-toggle" aria-label="Switch to dark mode">
@@ -27,119 +27,121 @@
 			<span class="dm-toggle-sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg></span>
 		</button>
 
-		<!-- Wrapper -->
-			<div id="wrapper" class="divided">
+		<header class="top">
+			<a class="home" href="index.html">&larr; KnowKi</a>
+		</header>
 
-					<section class="wrapper style1">
-						<div class="inner doc">
-							<h1><strong>KnowKi Privacy Policy</strong></h1>
+		<main class="doc">
+			<h1>Know<b>Ki</b> Privacy Policy</h1>
+			<p class="small updated">Effective September 25, 2026 &middot; Updated October 25, 2026 for optional accounts and Friends</p>
+			<p class="lead">KnowKi is an iPhone app and a web app (knowki.app) made by Garrett Craig. Accounts are optional, and it has no advertising or analytics SDKs and no tracking. This policy explains exactly what the app and its lesson service handle.</p>
 
-							<p class="updated">Effective September 25, 2026 &middot; Updated October 25, 2026 for optional accounts and Friends</p>
-							<p>KnowKi is an iPhone app and a web app (knowki.app) made by Garrett Craig. Accounts are optional, and it has no advertising or analytics SDKs and no tracking. This policy explains exactly what the app and its lesson service handle.</p>
-
-							<h2>On your phone</h2>
-							<p>Unless you sign in (below), your progress stays on your device: which species you've practiced, your answers and review schedule, your Fieldbook, your settings, and your chosen place. You can delete it any time in Settings &rarr; <strong>Delete local progress</strong>, or by deleting the app. iOS device backups may include it, following your iOS settings.</p>
-
-							<h2>Sent to the KnowKi lesson service</h2>
-							<p>To build a lesson, the app sends the following to the KnowKi lesson service at api.garrettgcraig.com:</p>
-							<ul>
-								<li>the center of your chosen place, rounded to about 1&nbsp;km for searched places or about 11&nbsp;km for approximate location, and your search radius;</li>
-								<li>the species group and whether you chose native or introduced species;</li>
-								<li>which species are due for review and which of their photos you saw recently, so lessons can repeat the right species with new photos;</li>
-								<li>your answers and requests for a different photo;</li>
-								<li>on a trip, the country, national park or Best Place you chose (its iNaturalist places) instead of a center and radius;</li>
-								<li>when you open a species page, a Meet card or the Daily results, those species, to fetch a sample of where they are recorded and a short introduction from Wikipedia;</li>
-								<li>for the daily game, the edition (Neighborhood, Country or World), today's date, each answer or running out of time, and whether you swapped the photo. The Neighborhood and Country dailies also send your home place's center, rounded as above, and a shared Neighborhood link sends the area it came from. The service finds the country and names each neighborhood area (about 15 miles across) from OpenStreetMap data, through Photon and the Overpass API; those services see only the area, never you. A shared Neighborhood result names the sharer's home town, and its link identifies their area to about 15 miles;</li>
-								<li>to practice Fieldbook species, those species and which of their photos you saw recently;</li>
-								<li>once you have 10 kin, those species and your place (as above), to show which are most observed nearby this month;</li>
-								<li>if you connect your iNaturalist username, that username and your Fieldbook's species, to check which you've observed. While you type a username, what you type is sent for suggestions.</li>
-							</ul>
-							<p>Your daily scores and shared results stay on your phone unless you sign in (below) or share them with Friends. Sharing a result uses the iOS share sheet; nothing is posted for you.</p>
-							<p>None of this includes your name, a device or advertising identifier, or your precise location, and lessons never include your account. The service does not log IP addresses, answers or locations.</p>
-							<p>To improve lessons, the service keeps anonymous daily totals: how many lessons were started and finished in each group, how many answers reached each question and how many were correct, how long finished lessons took (only in ranges such as 2&ndash;3 minutes), how often photos were swapped, and for the daily game how many were opened and how many answers in each round were right, wrong or out of time. To count roughly how many people play each day, the app marks its own first play of the day (and its first play ever) on one request, and the service adds one to that day's total for iPhone or web; nothing identifies the device. These totals contain no identifier, place or individual answer, so they cannot be traced to you. The timing for a single lesson is deleted with the lesson after 24 hours. To limit abuse it keeps short-lived request counts in memory under a one-way hashed form of your network address; these are never written to disk. Lesson questions and area snapshots are deleted after 24 hours.</p>
-							<p>An iNaturalist username, what you type while searching for one, and what that account has observed are used only to answer that request: the service never keeps, stores or logs them. KnowKi reads only public observations and never signs in or posts for you. Your username and finds are also stored on your phone; Settings &rarr; iNaturalist &rarr; <strong>Disconnect</strong> removes them.</p>
-							<p>To answer a lesson request, the service asks iNaturalist for species recorded in the rounded area or park. Those requests come from the service, not your phone, and contain no information about you.</p>
-							<p>The service runs on <a href="https://fly.io/legal/privacy-policy">Fly.io</a>, which carries its network traffic under its own privacy policy.</p>
-
-							<h2>KnowKi on the web</h2>
-							<p>The web app works like the iPhone app and sends the lesson service the same kinds of information listed above. The differences:</p>
-							<ul>
-								<li>Your progress, settings and any connected iNaturalist username are saved in your browser's local storage on that device. They sync with the iPhone app and other browsers only if you sign in (below), or once if you move them with a code. Settings &rarr; Delete local progress, or clearing this site's data in your browser, removes them.</li>
-								<li>Your browser contacts the lesson service at api.garrettgcraig.com directly, so the service sees your network address the same way it does for the iPhone app, and handles it the same way.</li>
-								<li>Place search works as in the iPhone app (below), without the Apple Maps fallback.</li>
-								<li><em>Use approximate location</em> asks your browser for your location only when you tap it, and rounds it to about 11&nbsp;km before it is used or sent.</li>
-								<li>Maps show satellite imagery from Esri, loaded by your browser. Esri sees only the map area being shown, not your place or who you are.</li>
-								<li>The site is hosted on Netlify, which serves its pages under its own privacy policy. The web app uses no cookies, analytics or advertising.</li>
-							</ul>
-							<h2>Your account (optional)</h2>
-<p>You can sign in with Apple in Settings &rarr; <strong>Your account</strong>, on the iPhone app or the web, to keep one copy of your progress on all your devices. KnowKi asks Apple for no name or email address. Apple gives KnowKi a code that identifies you to this app only, and the lesson service stores it only in scrambled (one-way hashed) form, as it does each device's sign-in.</p>
-<p>While you're signed in, the lesson service keeps one copy of your progress so your devices can share it: your Fieldbook (each species, one photo of it, and how well you know it), your path progress, your trail and its goal, your favorites, your daily results, your milestones, your Field Bingo card, and your iNaturalist username if you've connected one. It never includes your place or your location. Each signed-in device sends its progress after you play and when you open it, and receives the others'. Apple handles the sign-in under its own privacy policy.</p>
-<p><strong>Signing out</strong> stops syncing on that device; its progress stays on it. <strong>Delete account</strong> (Settings &rarr; Your account) deletes your account and the copy of your progress on the lesson service right away, signs out every device, removes you from Friends, and asks Apple to revoke KnowKi's sign-in. Each device keeps its own progress until you delete that too. The service's storage is backed up by its host for a few days, after which deleted accounts are gone from backups as well.</p>
-
-<h2>Friends (optional)</h2>
-<p>If you're signed in, you can turn on Friends in Play. You pick a generated nature name (such as &ldquo;Quiet Heron&rdquo;); you can't type one, and nothing else about you is shown. You become friends only by sharing your invite link with someone who accepts it, and the friendship works both ways.</p>
-<p>Your friends see your nature name, how many species you've met and know as kin (overall and by group), your current and longest trail, which milestones you've earned, and your daily scores from the past week (points per round, never the species). They never see your species, photos, answers, places, favorites, iNaturalist username, or account. You can remove a friend, make a new invite link (the old one stops working), or turn Friends off, which removes your name and every friendship.</p>
-
-<h2>Moving your progress</h2>
-							<p>Settings &rarr; <strong>Move your progress</strong> copies your progress to another phone or browser without an account. It carries your Fieldbook (each species, one photo of it and how well you know it), your practice trail, your favorites and your lesson count. Your device encrypts all of this before sending it, with a key made from the last eight characters of a one-time code, and those characters never leave your devices. The lesson service stores only the encrypted copy, under the code's first four characters, so it cannot read what you sent. The copy is deleted as soon as your other device picks it up, or after 24 hours if it never does. Nothing that identifies you is attached.</p>
-
-							<h2>Feedback</h2>
-							<p>If you use <strong>Send feedback</strong> in Settings, KnowKi sends what you type, your email address if you choose to add one, and the app or browser and its version to the lesson service. The service files it as an issue in the developer's private GitHub repository, where only the developer can read it, and keeps no other copy. GitHub stores it under its own privacy policy. To have feedback deleted, email the developer.</p>
-
-							<h2>Location</h2>
-							<p>Location is optional. The app asks for it only when you tap <strong>Use approximate location</strong>. It rounds the result to a coarse center and discards the precise fix, and it never tracks you in the background. You can always choose a place by name instead.</p>
-
-							<h2>Apple services</h2>
-							<p>Searching for a place sends what you type to the lesson service, which looks it up with Photon (an OpenStreetMap search run by komoot) and iNaturalist's place search, as on the web. Those services see the search text from the lesson service, not from you, and the service caches results by search text for up to 30 days, with nothing that identifies you. If the service finds nothing or can't be reached, the app sends the search to Apple Maps instead. The app asks Apple for the nearest town name for the coarse center of your place, and for the state of places saved by earlier versions. Choosing a trip (a country, national park or Best Place) shows Apple Maps satellite imagery zooming in to it. Photo details show the area where the observation was made, rounded to about 1&nbsp;km, and species pages show a sample of where the species is recorded, rounded to about 10&nbsp;km. Map imagery loads from Apple, which sees only the area being shown, not you or your place. Apple handles these under its own privacy policy.</p>
-
-							<h2>Photos</h2>
-							<p>Quiz photos load through the lesson service. Opening a photo full screen requests a larger copy the same way. Your phone keeps recently viewed photos in its cache for up to a day, so they open quickly. Credit and source links open iNaturalist, Wikipedia or Creative Commons in your browser.</p>
-
-							<div class="web-only">
-							<h2>Field guides</h2>
-							<p>The app contains no store or affiliate links. This website has a separate <a href="field-guides.html">field guides page</a> whose book links are Bookshop.org affiliate links: Bookshop.org credits purchases to KnowKi's Nature Books shop, and KnowKi earns a commission. Bookshop.org handles your visit under its own privacy policy.</p>
-
-							<h2>Donations</h2>
-							<p>The iOS app has no donation or payment links. The web app at knowki.app shows an optional <strong>Buy me a coffee</strong> link in its sidebar and Settings. It opens <a href="https://buymeacoffee.com/hommedeterre">Buy Me a Coffee</a> in your browser, which handles any payment under its own privacy policy. KnowKi never learns whether or how much you give, and giving unlocks nothing.</p>
-							</div>
-
-							<h2>Notifications</h2>
-							<p>After your first lesson you can turn on a daily reminder. It is scheduled on your phone; KnowKi has no push notification server.</p>
-
-							<h2>Children</h2>
-							<p>KnowKi is not directed to children under 13 and does not knowingly collect personal information from them. Accounts are optional, and KnowKi collects no names or contact details from anyone; please don't create an account or turn on Friends if you are under 13.</p>
-
-							<h2>Changes</h2>
-							<p>If this policy changes, the effective date above will change, and significant changes will be noted in the app's release notes.</p>
-
-							<h2>Contact</h2>
-							<p>Garrett Craig &middot; <a href="mailto:garrettgcraig@gmail.com?subject=KnowKi%20privacy">garrettgcraig@gmail.com</a> &middot; <a href="index.html">KnowKi support</a></p>
-						</div>
-					</section>
-
-				<!-- Footer -->
-					<footer class="wrapper style1 align-center">
-						<div class="inner">
-							<ul class="icons">
-								<li><a href="https://www.instagram.com/gorths.gorp/" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
-								<li><a href="https://www.linkedin.com/in/garrettgcraig/" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-								<li><a href="https://github.com/garrettgcraig" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="mailto:garrettgcraig@gmail.com" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
-							</ul>
-							<p>&copy; Garrett Craig. All rights reserved.</p>
-						</div>
-					</footer>
-
+			<section class="card">
+				<h2>On your phone</h2>
+				<p>Unless you sign in (below), your progress stays on your device: which species you've practiced, your answers and review schedule, your Fieldbook, your settings, and your chosen place. You can delete it any time in Settings &rarr; <strong>Delete local progress</strong>, or by deleting the app. iOS device backups may include it, following your iOS settings.</p>
+			</section>
+			<section class="card">
+				<h2>Sent to the KnowKi lesson service</h2>
+				<p>To build a lesson, the app sends the following to the KnowKi lesson service at api.garrettgcraig.com:</p>
+				<ul>
+				<li>the center of your chosen place, rounded to about 1&nbsp;km for searched places or about 11&nbsp;km for approximate location, and your search radius;</li>
+				<li>the species group and whether you chose native or introduced species;</li>
+				<li>which species are due for review and which of their photos you saw recently, so lessons can repeat the right species with new photos;</li>
+				<li>your answers and requests for a different photo;</li>
+				<li>on a trip, the country, national park or Best Place you chose (its iNaturalist places) instead of a center and radius;</li>
+				<li>when you open a species page, a Meet card or the Daily results, those species, to fetch a sample of where they are recorded and a short introduction from Wikipedia;</li>
+				<li>for the daily game, the edition (Neighborhood, Country or World), today's date, each answer or running out of time, and whether you swapped the photo. The Neighborhood and Country dailies also send your home place's center, rounded as above, and a shared Neighborhood link sends the area it came from. The service finds the country and names each neighborhood area (about 15 miles across) from OpenStreetMap data, through Photon and the Overpass API; those services see only the area, never you. A shared Neighborhood result names the sharer's home town, and its link identifies their area to about 15 miles;</li>
+				<li>to practice Fieldbook species, those species and which of their photos you saw recently;</li>
+				<li>once you have 10 kin, those species and your place (as above), to show which are most observed nearby this month;</li>
+				<li>if you connect your iNaturalist username, that username and your Fieldbook's species, to check which you've observed. While you type a username, what you type is sent for suggestions.</li>
+				</ul>
+				<p>Your daily scores and shared results stay on your phone unless you sign in (below) or share them with Friends. Sharing a result uses the iOS share sheet; nothing is posted for you.</p>
+				<p>None of this includes your name, a device or advertising identifier, or your precise location, and lessons never include your account. The service does not log IP addresses, answers or locations.</p>
+				<p>To improve lessons, the service keeps anonymous daily totals: how many lessons were started and finished in each group, how many answers reached each question and how many were correct, how long finished lessons took (only in ranges such as 2&ndash;3 minutes), how often photos were swapped, and for the daily game how many were opened and how many answers in each round were right, wrong or out of time. To count roughly how many people play each day, the app marks its own first play of the day (and its first play ever) on one request, and the service adds one to that day's total for iPhone or web; nothing identifies the device. These totals contain no identifier, place or individual answer, so they cannot be traced to you. The timing for a single lesson is deleted with the lesson after 24 hours. To limit abuse it keeps short-lived request counts in memory under a one-way hashed form of your network address; these are never written to disk. Lesson questions and area snapshots are deleted after 24 hours.</p>
+				<p>An iNaturalist username, what you type while searching for one, and what that account has observed are used only to answer that request: the service never keeps, stores or logs them. KnowKi reads only public observations and never signs in or posts for you. Your username and finds are also stored on your phone; Settings &rarr; iNaturalist &rarr; <strong>Disconnect</strong> removes them.</p>
+				<p>To answer a lesson request, the service asks iNaturalist for species recorded in the rounded area or park. Those requests come from the service, not your phone, and contain no information about you.</p>
+				<p>The service runs on <a href="https://fly.io/legal/privacy-policy">Fly.io</a>, which carries its network traffic under its own privacy policy.</p>
+			</section>
+			<section class="card">
+				<h2>KnowKi on the web</h2>
+				<p>The web app works like the iPhone app and sends the lesson service the same kinds of information listed above. The differences:</p>
+				<ul>
+				<li>Your progress, settings and any connected iNaturalist username are saved in your browser's local storage on that device. They sync with the iPhone app and other browsers only if you sign in (below), or once if you move them with a code. Settings &rarr; Delete local progress, or clearing this site's data in your browser, removes them.</li>
+				<li>Your browser contacts the lesson service at api.garrettgcraig.com directly, so the service sees your network address the same way it does for the iPhone app, and handles it the same way.</li>
+				<li>Place search works as in the iPhone app (below), without the Apple Maps fallback.</li>
+				<li><em>Use approximate location</em> asks your browser for your location only when you tap it, and rounds it to about 11&nbsp;km before it is used or sent.</li>
+				<li>Maps show satellite imagery from Esri, loaded by your browser. Esri sees only the map area being shown, not your place or who you are.</li>
+				<li>The site is hosted on Netlify, which serves its pages under its own privacy policy. The web app uses no cookies, analytics or advertising.</li>
+				</ul>
+			</section>
+			<section class="card">
+				<h2>Your account (optional)</h2>
+				<p>You can sign in with Apple in Settings &rarr; <strong>Your account</strong>, on the iPhone app or the web, to keep one copy of your progress on all your devices. KnowKi asks Apple for no name or email address. Apple gives KnowKi a code that identifies you to this app only, and the lesson service stores it only in scrambled (one-way hashed) form, as it does each device's sign-in.</p>
+				<p>While you're signed in, the lesson service keeps one copy of your progress so your devices can share it: your Fieldbook (each species, one photo of it, and how well you know it), your path progress, your trail and its goal, your favorites, your daily results, your milestones, your Field Bingo card, and your iNaturalist username if you've connected one. It never includes your place or your location. Each signed-in device sends its progress after you play and when you open it, and receives the others'. Apple handles the sign-in under its own privacy policy.</p>
+				<p><strong>Signing out</strong> stops syncing on that device; its progress stays on it. <strong>Delete account</strong> (Settings &rarr; Your account) deletes your account and the copy of your progress on the lesson service right away, signs out every device, removes you from Friends, and asks Apple to revoke KnowKi's sign-in. Each device keeps its own progress until you delete that too. The service's storage is backed up by its host for a few days, after which deleted accounts are gone from backups as well.</p>
+			</section>
+			<section class="card">
+				<h2>Friends (optional)</h2>
+				<p>If you're signed in, you can turn on Friends in Play. You pick a generated nature name (such as &ldquo;Quiet Heron&rdquo;); you can't type one, and nothing else about you is shown. You become friends only by sharing your invite link with someone who accepts it, and the friendship works both ways.</p>
+				<p>Your friends see your nature name, how many species you've met and know as kin (overall and by group), your current and longest trail, which milestones you've earned, and your daily scores from the past week (points per round, never the species). They never see your species, photos, answers, places, favorites, iNaturalist username, or account. You can remove a friend, make a new invite link (the old one stops working), or turn Friends off, which removes your name and every friendship.</p>
+			</section>
+			<section class="card">
+				<h2>Moving your progress</h2>
+				<p>Settings &rarr; <strong>Move your progress</strong> copies your progress to another phone or browser without an account. It carries your Fieldbook (each species, one photo of it and how well you know it), your practice trail, your favorites and your lesson count. Your device encrypts all of this before sending it, with a key made from the last eight characters of a one-time code, and those characters never leave your devices. The lesson service stores only the encrypted copy, under the code's first four characters, so it cannot read what you sent. The copy is deleted as soon as your other device picks it up, or after 24 hours if it never does. Nothing that identifies you is attached.</p>
+			</section>
+			<section class="card">
+				<h2>Feedback</h2>
+				<p>If you use <strong>Send feedback</strong> in Settings, KnowKi sends what you type, your email address if you choose to add one, and the app or browser and its version to the lesson service. The service files it as an issue in the developer's private GitHub repository, where only the developer can read it, and keeps no other copy. GitHub stores it under its own privacy policy. To have feedback deleted, email <a href="mailto:knowki.app@gmail.com?subject=KnowKi%20feedback">knowki.app@gmail.com</a>.</p>
+			</section>
+			<section class="card">
+				<h2>Location</h2>
+				<p>Location is optional. The app asks for it only when you tap <strong>Use approximate location</strong>. It rounds the result to a coarse center and discards the precise fix, and it never tracks you in the background. You can always choose a place by name instead.</p>
+			</section>
+			<section class="card">
+				<h2>Apple services</h2>
+				<p>Searching for a place sends what you type to the lesson service, which looks it up with Photon (an OpenStreetMap search run by komoot) and iNaturalist's place search, as on the web. Those services see the search text from the lesson service, not from you, and the service caches results by search text for up to 30 days, with nothing that identifies you. If the service finds nothing or can't be reached, the app sends the search to Apple Maps instead. The app asks Apple for the nearest town name for the coarse center of your place, and for the state of places saved by earlier versions. Choosing a trip (a country, national park or Best Place) shows Apple Maps satellite imagery zooming in to it. Photo details show the area where the observation was made, rounded to about 1&nbsp;km, and species pages show a sample of where the species is recorded, rounded to about 10&nbsp;km. Map imagery loads from Apple, which sees only the area being shown, not you or your place. Apple handles these under its own privacy policy.</p>
+			</section>
+			<section class="card">
+				<h2>Photos</h2>
+				<p>Quiz photos load through the lesson service. Opening a photo full screen requests a larger copy the same way. Your phone keeps recently viewed photos in its cache for up to a day, so they open quickly. Credit and source links open iNaturalist, Wikipedia or Creative Commons in your browser.</p>
+			</section>
+			<div class="web-only">
+			<section class="card">
+				<h2>Field guides</h2>
+				<p>The app contains no store or affiliate links. This website has a separate <a href="field-guides.html">field guides page</a> whose book links are Bookshop.org affiliate links: Bookshop.org credits purchases to KnowKi's Nature Books shop, and KnowKi earns a commission. Bookshop.org handles your visit under its own privacy policy.</p>
+			</section>
+			<section class="card">
+				<h2>Donations</h2>
+				<p>The iOS app has no donation or payment links. The web app at knowki.app shows an optional <strong>Buy me a coffee</strong> link in its sidebar and Settings. It opens <a href="https://buymeacoffee.com/hommedeterre">Buy Me a Coffee</a> in your browser, which handles any payment under its own privacy policy. KnowKi never learns whether or how much you give, and giving unlocks nothing.</p>
+			</section>
 			</div>
+			<section class="card">
+				<h2>Notifications</h2>
+				<p>After your first lesson you can turn on a daily reminder. It is scheduled on your phone; KnowKi has no push notification server.</p>
+			</section>
+			<section class="card">
+				<h2>Children</h2>
+				<p>KnowKi is not directed to children under 13 and does not knowingly collect personal information from them. Accounts are optional, and KnowKi collects no names or contact details from anyone; please don't create an account or turn on Friends if you are under 13.</p>
+			</section>
+			<section class="card">
+				<h2>Changes</h2>
+				<p>If this policy changes, the effective date above will change, and significant changes will be noted in the app's release notes.</p>
+			</section>
+			<section class="card">
+				<h2>Contact</h2>
+				<p>Garrett Craig &middot; <a href="mailto:knowki.app@gmail.com?subject=KnowKi%20privacy">knowki.app@gmail.com</a> &middot; <a href="index.html">KnowKi support</a></p>
+			</section>
+		</main>
 
-		<!-- Scripts -->
-			<script src="../assets/js/jquery.min.js"></script>
-			<script src="../assets/js/jquery.scrollex.min.js"></script>
-			<script src="../assets/js/jquery.scrolly.min.js"></script>
-			<script src="../assets/js/browser.min.js"></script>
-			<script src="../assets/js/breakpoints.min.js"></script>
-			<script src="../assets/js/util.js"></script>
-			<script src="../assets/js/main.js"></script>
+		<footer class="foot">
+			<ul>
+				<li><a href="index.html">KnowKi support</a></li>
+				<li><a href="https://knowki.app">knowki.app</a></li>
+				<li><a href="mailto:knowki.app@gmail.com">knowki.app@gmail.com</a></li>
+				<li><a href="../">garrettgcraig.com</a></li>
+			</ul>
+			<p>&copy; Garrett Craig. All rights reserved.</p>
+		</footer>
 
 	</body>
 </html>
