@@ -1,0 +1,79 @@
+/* Just a Phone pages: the app's Nordic palette (App/Design.swift in the app
+   repo). Warm snow by day, polar night in dark mode. Loaded after main.css
+   and darkmode.css, so selectors are scoped to body.jap to win. */
+body.jap {
+	--canvas: #F3F1EC; --surface: #FFFFFF; --sunken: #EBE8E1;
+	--ink: #1F2A33; --muted: #6C7780; --line: #E2DED6;
+	--accent: #3E6B88; --on-accent: #FFFFFF; --moss: #5D7D62;
+}
+body.jap.dark-mode {
+	--canvas: #12161B; --surface: #1C2229; --sunken: #252C34;
+	--ink: #E8EDF1; --muted: #8F9BA5; --line: #2B333C;
+	--accent: #8DB4CC; --on-accent: #0E1820; --moss: #9CBB9E;
+}
+
+body.jap, body.jap.dark-mode {
+	background-color: var(--canvas) !important;
+	color: var(--ink) !important;
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+body.jap #wrapper > .wrapper,
+body.jap.dark-mode #wrapper > .wrapper {
+	background-color: var(--canvas) !important;
+	color: var(--ink) !important;
+	border-color: var(--line) !important;
+}
+body.jap #wrapper > .wrapper p,
+body.jap.dark-mode #wrapper > .wrapper p,
+body.jap #wrapper li {
+	color: var(--ink) !important;
+	font-family: inherit;
+}
+body.jap h1, body.jap h2, body.jap h3,
+body.jap.dark-mode h1, body.jap.dark-mode h2, body.jap.dark-mode h3,
+body.jap.dark-mode #wrapper > .wrapper h2 {
+	color: var(--ink) !important;
+	font-family: inherit;
+	letter-spacing: -0.01em;
+	text-transform: none;
+}
+body.jap h1, body.jap h1 strong { font-weight: 700; letter-spacing: -0.025em; }
+body.jap h2, body.jap h3 { font-weight: 600; }
+body.jap strong, body.jap b,
+body.jap.dark-mode strong, body.jap.dark-mode b { color: var(--ink) !important; }
+
+body.jap a, body.jap.dark-mode a {
+	color: var(--accent) !important;
+	border-bottom-color: color-mix(in srgb, var(--accent) 35%, transparent) !important;
+}
+body.jap a:hover, body.jap.dark-mode a:hover { color: var(--ink) !important; }
+
+body.jap .doc .lead { color: var(--muted) !important; font-size: 1.15rem; }
+body.jap .doc .updated { color: var(--muted) !important; opacity: 1; }
+body.jap .doc h3 {
+	margin-top: 1.6rem;
+}
+body.jap .doc .card {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 20px;
+	padding: 1.25rem 1.5rem;
+	margin: 1.5rem 0;
+}
+body.jap .doc .card p:last-child { margin-bottom: 0; }
+
+/* Footer icons and text */
+body.jap footer.wrapper,
+body.jap.dark-mode footer.wrapper { background-color: var(--canvas) !important; }
+body.jap footer p, body.jap.dark-mode #wrapper > footer p { color: var(--muted) !important; }
+body.jap .icons .icon:before { color: var(--muted) !important; }
+body.jap .icon.style2 { border-color: var(--line) !important; }
+
+/* Dark mode toggle */
+body.jap #dark-mode-toggle,
+body.jap.dark-mode #dark-mode-toggle {
+	background: var(--surface) !important;
+	border-color: var(--line) !important;
+}
+body.jap #dark-mode-toggle svg,
+body.jap.dark-mode #dark-mode-toggle svg { fill: var(--accent) !important; }
