@@ -16,3 +16,7 @@
 # Tunestamp was renamed to ChronoSono before launch (the name was taken). Keep test links working.
 /tunestamp/*   /chronosono/:splat   301
 /tunestamp     /chronosono/         301
+
+# Just a Phone unlock tags carry /justaphone/unlock/<secret>. The app opens these;
+# anyone else gets a short explainer page.
+/justaphone/unlock/*   /justaphone/unlock.html   200
