@@ -123,7 +123,9 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
  *  rain: [{date, rain_in, src}] covering at least (today - 120 d) .. (today + horizon - 1),
  *        observed before today, forecast from today on.
  *  closedSince: ISO date the mouth last closed.
- *  stage0: {date, ft} latest stage reading (ft NAVD88), on or before today.
+ *  stage0: {date, ft} latest stage reading (ft NAVD88) on or before today, or null.
+ * Breach chance is the unified hazard when a level estimate exists (see
+ * devereux-breach/src/unified.py), otherwise the rain-only logistic model.
  */
 export function forecast({ rain, today, closedSince, stage0, params, showFrom }) {
   const P = rain.map((r) => r.rain_in ?? 0);
@@ -140,21 +142,10 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom })
     rainWy.push((sameWy ? rainWy[n - 1] : 0) + p);
   });
 
-  // water balance from the latest stage reading
-  const wb = params.water_balance;
-  const iStage = dates.indexOf(stage0.date);
-  const stage = new Array(dates.length).fill(null);
-  if (iStage >= 0) {
-    stage[iStage] = stage0.ft;
-    let s = stage0.ft;
-    for (let n = iStage + 1; n < dates.length; n++) {
-      const dc = daysBetween(closedSince, dates[n]) + 1;
-      const inflow = wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
-      const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
-      s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss;
-      stage[n] = s;
-    }
-  }
+  // water balance from the latest stage reading (none -> rain model only)
+  const iStage = stage0 ? dates.indexOf(stage0.date) : -1;
+  const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance)
+    : new Array(dates.length).fill(null);
 
   const L = params.rain_logit;
   const out = [];
@@ -164,9 +155,12 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom })
     const x = { rain_in: P[n], rain_3d: rain3[n], api: api[n], log_dc: Math.log(Math.max(dc, 1)), rain_wy: rainWy[n] };
     const z = L.intercept + L.features.reduce((a, f, k) => a + (L.coef[k] * (x[f] - L.mean[k])) / L.scale[k], 0);
     const pRain = sigmoid(z);
-    const crest = crestFt(dc, params.crest);
-    const pCrest = stage[n] == null ? null : sigmoid((stage[n] - crest) / params.crest.s);
-    const p = Math.max(pRain, pCrest ?? 0);
+    // One hazard: how far the slough sits below the berm crest, plus the day's rain.
+    const U = params.unified;
+    const crest = crestFt(dc, U);
+    const margin = stage[n] == null ? null : stage[n] - crest;
+    const p = margin == null ? pRain
+      : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
     out.push({
       date: d,
       observed: d < today,
@@ -176,11 +170,52 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom })
       days_closed: dc,
       stage_ft: stage[n],
       crest_ft: crest,
+      margin_ft: margin,
       p_rain: pRain,
-      p_crest: pCrest,
+      model: margin == null ? "rain only" : "level + rain",
       p,
       alert: p >= params.thresholds.likely ? "likely" : p >= params.thresholds.watch ? "watch" : "low",
     });
   });
   return out;
+}
+
+/**
+ * Detect mouth openings and closings from the live water-level sensor (hourly, ft).
+ * Validated on Apr 2025 - Nov 2026 against CCBER's log (2025-11-15 open, 2026-02-06
+ * closed, 2026-02-19 open, 2026-03-07 closed; detected within 0-2 days):
+ *  - breach: while closed, the level falls more than 1.5 ft within 6 hours
+ *  - closure: while open (and at least 2 days after opening), the level's range has
+ *    stayed under 0.35 ft for 48 hours (no tide gets in). Closed-mouth daily range is
+ *    normally about 0.02 ft.
+ * hourly: [{t: epoch ms, ft}] sorted by time. Returns [{t, state}].
+ */
+export function detectMouthEvents(hourly, startState) {
+  const H = 3600000;
+  const events = [];
+  let state = startState;
+  let openedAt = null;
+  for (let i = 0; i < hourly.length; i++) {
+    const { t, ft } = hourly[i];
+    if (state === "closed") {
+      let maxPrev = -Infinity;
+      for (let j = i - 1; j >= 0 && t - hourly[j].t <= 6 * H; j--) maxPrev = Math.max(maxPrev, hourly[j].ft);
+      if (maxPrev - ft > 1.5) {
+        // breach time: when the fall began (the last high point)
+        let k = i - 1;
+        while (k > 0 && t - hourly[k - 1].t <= 6 * H && hourly[k - 1].ft >= hourly[k].ft) k--;
+        state = "open"; openedAt = hourly[k].t;
+        events.push({ t: openedAt, state });
+      }
+    } else if (state === "open" && t - openedAt >= 2 * 86400000) {
+      const win = [];
+      for (let j = i; j >= 0 && t - hourly[j].t <= 48 * H; j--) win.push(hourly[j].ft);
+      const spanOk = win.length >= 40;
+      if (spanOk && Math.max(...win) - Math.min(...win) < 0.35) {
+        state = "closed";
+        events.push({ t: t - 48 * H, state });
+      }
+    }
+  }
+  return events;
 }

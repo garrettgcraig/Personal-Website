@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
@@ -14,24 +14,30 @@ test("forecast matches the Python model on a synthetic December storm", () => {
   const days = dateRange("2026-10-01", "2026-12-31");
   const storm = { "2026-12-01": 0.8, "2026-12-02": 2.4, "2026-12-03": 0.6 };
   const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
-  const out = forecast({
-    rain, today: "2026-12-01", closedSince: "2026-03-07",
-    stage0: { date: "2026-11-20", ft: 8.5 }, params,
-  });
+  const args = { rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-20", ft: 8.5 }, params };
+  const out = forecast(args);
+  // [stage ft, breach chance (unified), rain-only chance, crest ft] from src/unified.py
   const expected = {
-    "2026-12-01": [8.754979, 0.004763, 0.000945],
-    "2026-12-02": [10.037122, 0.706495, 0.573928],
-    "2026-12-03": [10.97948, 0.378559, 0.996436],
-    "2026-12-04": [11.195292, 0.093825, 0.998942],
+    "2026-12-01": [8.754979, 0.013737, 0.004763, 9.813183],
+    "2026-12-02": [10.037122, 0.986018, 0.706495, 9.814137],
+    "2026-12-03": [10.97948, 0.988743, 0.378559, 9.815078],
+    "2026-12-04": [11.195292, 0.930788, 0.093825, 9.816004],
   };
-  for (const [date, [stage, pRain, pCrest]] of Object.entries(expected)) {
+  for (const [date, [stage, p, pRain, crest]] of Object.entries(expected)) {
     const r = out.find((x) => x.date === date);
     assert.ok(Math.abs(r.stage_ft - stage) < 1e-4, `${date} stage ${r.stage_ft} vs ${stage}`);
+    assert.ok(Math.abs(r.p - p) < 1e-4, `${date} p ${r.p} vs ${p}`);
     assert.ok(Math.abs(r.p_rain - pRain) < 1e-4, `${date} p_rain ${r.p_rain} vs ${pRain}`);
-    assert.ok(Math.abs(r.p_crest - pCrest) < 1e-4, `${date} p_crest ${r.p_crest} vs ${pCrest}`);
-    assert.equal(r.p, Math.max(r.p_rain, r.p_crest));
+    assert.ok(Math.abs(r.crest_ft - crest) < 1e-4, `${date} crest ${r.crest_ft} vs ${crest}`);
+    assert.equal(r.model, "level + rain");
   }
   assert.equal(out.find((x) => x.date === "2026-12-02").alert, "likely");
+  // no usable reading: fall back to the rain-only model
+  const fb = forecast({ ...args, stage0: null });
+  for (const r of fb) {
+    assert.equal(r.p, r.p_rain);
+    assert.equal(r.model, "rain only");
+  }
 });
 
 test("rain composite rescales KSBA timing to the local CoCoRaHS storm total", () => {
@@ -47,7 +53,7 @@ test("rain composite rescales KSBA timing to the local CoCoRaHS storm total", ()
 });
 
 test("berm crest rebuilds from c0 toward c_inf", () => {
-  const c = params.crest;
+  const c = params.unified;
   assert.ok(Math.abs(crestFt(0, c) - c.c0) < 1e-9);
   assert.ok(crestFt(30, c) < crestFt(120, c));
   assert.ok(c.c_inf - crestFt(1000, c) < 1e-3);
@@ -76,4 +82,20 @@ test("stage outlook: middle line matches the forecast, range brackets it and wid
   assert.ok(w("2026-12-04") > w("2026-12-01") + 0.5, "storm widens the range");
   assert.equal(so.find((x) => x.date === "2026-11-20").phase, "estimated");
   assert.equal(so.find((x) => x.date === "2026-12-01").phase, "forecast");
+});
+
+test("live-sensor detector: breach on a fast drop, closure when the tide stops", () => {
+  const H = 3600000, t0 = Date.UTC(2026, 0, 1);
+  const pts = [];
+  let h = 0;
+  for (; h < 72; h++) pts.push({ t: t0 + h * H, ft: 8 + h * 0.01 });            // closed, rising
+  const peak = pts.at(-1).ft;
+  for (let k = 1; k <= 4; k++, h++) pts.push({ t: t0 + h * H, ft: peak - k * 0.9 }); // breach: drops 3.6 ft
+  for (let k = 0; k < 24 * 5; k++, h++) pts.push({ t: t0 + h * H, ft: 4.5 + 1.2 * Math.sin((2 * Math.PI * k) / 12.42) }); // tidal
+  for (let k = 0; k < 24 * 4; k++, h++) pts.push({ t: t0 + h * H, ft: 5.0 + 0.01 * Math.sin(k) });  // closed again, calm
+  const ev = detectMouthEvents(pts, "closed");
+  assert.deepEqual(ev.map((e) => e.state), ["open", "closed"]);
+  assert.equal(ev[0].t, t0 + 71 * H, "breach dated to the last high point");
+  // a closed, calm slough never triggers
+  assert.deepEqual(detectMouthEvents(pts.slice(0, 72), "closed"), []);
 });
