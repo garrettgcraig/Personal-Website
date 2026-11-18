@@ -96,6 +96,8 @@ addEventListener("resize", () => {
 // ------------------------------------------------------------- slough level time series
 let HISTORY = null; // stage-history.json: re-leveled daily record (static, from the Python project)
 let levelRange = "3m";
+// custom range for the level chart (ISO dates); defaults to the last six months
+let customFrom = null, customTo = null;
 let showRain = false; // rainfall overlay on the level chart (toggle)
 
 function monthTicks(a, b, everyMonths) {
@@ -130,8 +132,14 @@ function levelChartSvg(s, range) {
   const BLV = s.model?.breach_levels;
   const nowX = dayNum(s.today);
   const series = s.stage?.series || [];
-  const end = series.length ? dayNum(series.at(-1).date) : nowX + 9;
-  const start = range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
+  const endAll = series.length ? dayNum(series.at(-1).date) : nowX + 9;
+  let end = endAll;
+  let start = range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
+  if (range === "custom" && customFrom && customTo) {
+    start = Math.max(dayNum("2018-10-01"), dayNum(customFrom));
+    end = Math.min(endAll, dayNum(customTo));
+    if (end - start < 7) end = Math.min(endAll, start + 7);
+  }
   const hist = (HISTORY?.stage || []).map(([d, ft, mx, src]) => ({ x: dayNum(d), ft, src }));
   // loggers + the live sensor: baked-in history, then the API's recent sensor days
   const sensorDays = (s.stage?.sensor_daily || []).map((r) => ({ x: dayNum(r.date), ft: r.ft, src: "L" }));
@@ -171,7 +179,7 @@ function levelChartSvg(s, range) {
     })() : undefined,
     xTicks: span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
     xFmt: (x) => span <= 400 ? shortDay(x) : String(new Date(x * 86400000).getUTCFullYear()),
-    now: nowX,
+    now: nowX >= start && nowX <= end ? nowX : null,
   });
 }
 
@@ -199,8 +207,53 @@ document.addEventListener("click", (e) => {
   if (!b || !window.__devereux) return;
   levelRange = b.dataset.range;
   document.querySelectorAll("[data-range]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  const cr = document.getElementById("custom-range");
+  if (cr) cr.hidden = levelRange !== "custom";
   document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, levelRange);
 });
+document.addEventListener("change", (e) => {
+  if (!e.target.matches?.("#custom-range input") || !window.__devereux) return;
+  const [a, b] = [document.getElementById("range-from").value, document.getElementById("range-to").value];
+  if (!a || !b) return;
+  [customFrom, customTo] = a <= b ? [a, b] : [b, a];
+  document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, "custom");
+});
+const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
+
+// ------------------------------------------------------------- breach likelihood dial
+// Five bands, like a fire-danger sign. The needle follows the highest daily chance in the
+// next 10 days. "Very high" starts at 50%, the same point where alerts go out.
+const BANDS = [
+  { key: "low", label: "Low", min: 0, color: "#4E8F4A", ink: "#fff" },
+  { key: "moderate", label: "Moderate", min: 0.05, color: "#3E78A8", ink: "#fff" },
+  { key: "high", label: "High", min: 0.2, color: "#E2B33C", ink: "#1B2530" },
+  { key: "veryhigh", label: "Very high", min: 0.5, color: "#D9772B", ink: "#fff" },
+  { key: "extreme", label: "Extreme", min: 0.8, color: "#C23B30", ink: "#fff" },
+];
+const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= b.min));
+function dialSvg(p, off) {
+  // band names sit outside the arc, so the needle can sweep across the colored face
+  const cx = 190, cy = 168, R = 122, r = 50, n = BANDS.length;
+  const pt = (rad, a) => [cx + rad * Math.cos(a), cy - rad * Math.sin(a)];
+  const mid = (k) => Math.PI - ((k + 0.5) * Math.PI) / n;
+  const wedge = (i) => {
+    const a0 = Math.PI - (i * Math.PI) / n, a1 = Math.PI - ((i + 1) * Math.PI) / n;
+    const [x0, y0] = pt(R, a0), [x1, y1] = pt(R, a1), [x2, y2] = pt(r, a1), [x3, y3] = pt(r, a0);
+    return `M${x0},${y0} A${R},${R} 0 0 1 ${x1},${y1} L${x2},${y2} A${r},${r} 0 0 0 ${x3},${y3} Z`;
+  };
+  const b = off ? null : bandOf(p), i = b ? BANDS.indexOf(b) : -1;
+  const a = mid(i);
+  const [tx, ty] = pt(R - 10, a), [lx, ly] = pt(8, a + Math.PI / 2), [rx, ry] = pt(8, a - Math.PI / 2);
+  return `<svg class="dial" viewBox="0 0 380 186" role="img" aria-label="${off ? "Breach likelihood dial, off while the mouth is open" : `Breach likelihood: ${b.label}`}">
+    ${BANDS.map((bd, k) => `<path d="${wedge(k)}" fill="${bd.color}" opacity="${off ? 0.3 : k === i ? 1 : 0.72}" stroke="#2A2119" stroke-width="2"/>`).join("")}
+    ${BANDS.map((bd, k) => {
+      const [x, y] = pt(R + 12, mid(k)), c = Math.cos(mid(k));
+      return `<text x="${x}" y="${y + 4}" text-anchor="${Math.abs(c) < 0.2 ? "middle" : c < 0 ? "end" : "start"}" fill="${k === i ? "#F3EBDD" : "#BFAE93"}" font-size="14" font-weight="${k === i ? 700 : 500}">${bd.label}</text>`;
+    }).join("")}
+    ${off ? "" : `<path d="M${lx},${ly} L${tx},${ty} L${rx},${ry} Z" fill="#F3EBDD" stroke="#2A2119" stroke-width="1.5" stroke-linejoin="round"/>`}
+    <circle cx="${cx}" cy="${cy}" r="12" fill="#2A2119" stroke="#E0B656" stroke-width="2.5"/>
+  </svg>`;
+}
 
 // ------------------------------------------------------------- satellite frames
 // The clearest image of each stage of the cycle. Sentinel-2 L2A true color (10 m) for the
@@ -297,11 +350,11 @@ function render(s) {
     width: splitW(), height: 200, yMin: 0, yMax: 1, yFmt: (v) => `${Math.round(v * 100)}%`,
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
-        x, y: Math.max(r.p, 0.004), color: r.alert === "likely" ? COLORS.clay : r.alert === "watch" ? COLORS.ochre : css("--color-accent"),
+        x, y: Math.max(r.p, 0.004), color: bandOf(r.p).color,
         opacity: r.observed ? 0.4 : 1, title: `${day(r.date)}: ${PCT(r.p)}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
-    hlines: [{ y: 0.5, color: COLORS.clay, label: "likely" }, { y: 0.2, color: COLORS.ochre, label: "watch" }],
+    hlines: [{ y: 0.5, color: BANDS[3].color, label: "very high" }, { y: 0.2, color: BANDS[2].color, label: "high" }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
   const rainChart = chart({
@@ -310,6 +363,8 @@ function render(s) {
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
 
+  const lastDay = s.stage?.series?.length ? s.stage.series.at(-1).date : s.today;
+  if (!customFrom) { customFrom = isoDay(dayNum(s.today) - 182); customTo = lastDay; }
   const levelChart = levelChartSvg(s, levelRange);
 
   // --- recent rain (30 days)
@@ -375,7 +430,11 @@ function render(s) {
   <section class="block" id="level">
     <div class="sec-head">
       <h2>Slough water level</h2>
-      <div class="controls" role="group" aria-label="Chart options">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "Since 2018" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" data-rain aria-pressed="${showRain}">Show daily rain</button></div>
+      <div class="controls" role="group" aria-label="Chart options">${["3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" data-rain aria-pressed="${showRain}">Show daily rain</button></div>
+    </div>
+    <div class="custom-range" id="custom-range" ${levelRange === "custom" ? "" : "hidden"}>
+      <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
+      <label>to <input type="date" id="range-to" min="2018-10-01" max="${lastDay}" value="${customTo}" /></label>
     </div>
     ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "where past breaches happened"], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "line"]])}
     <div id="rain-legend">${showRain ? rainLegend() : ""}</div>
@@ -384,13 +443,24 @@ function render(s) {
     <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
   </section>
 
-  ${open ? "" : `
-  <section class="block" id="chance">
-    <h2>Daily breach chance</h2>
-    <p class="intro">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Each day's chance depends on how far the slough sits below the breach level and how much rain falls on the watershed.</p>
+  <section class="block" id="watch">
+    <h2>Breach Watch</h2>
+    <div class="sign">
+      <img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." />
+      <div class="sign-dial">
+        <p class="sign-title">Breach likelihood</p>
+        <p class="sign-sub">${open ? "Mouth open" : "Next 10 days"}</p>
+        ${dialSvg(peak?.p, open || !peak)}
+        <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
+          : !peak ? "No outlook right now."
+          : `<strong>${bandOf(peak.p).label}.</strong> Highest daily chance ${PCT(peak.p)}, ${day(peak.date).replace(/ /g, "\u00a0")}. Today ${PCT(todayRow?.p)}.`}</p>
+      </div>
+    </div>
+    ${open ? "" : `
+    <p class="intro" style="margin-top:var(--space-8)">Each day's chance depends on how far the slough sits below the breach level and how much rain falls on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
     <div class="split">
       <div>
-        ${legend([[css("--color-accent"), "low"], [COLORS.ochre, "watch, 20% or more"], [COLORS.clay, "likely, 50% or more"]])}
+        ${legend(BANDS.map((b, k) => [b.color, `${b.label}${k ? `, ${Math.round(b.min * 100)}% or more` : ""}`]))}
         ${probChart}
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
         ${legend([[css("--color-accent"), "observed"], [COLORS.mist, "forecast (Open-Meteo)"]])}
@@ -398,10 +468,10 @@ function render(s) {
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th>Breach level</th><th>Below it</th><th>Chance</th></tr></thead>
-        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.alert === "likely" ? "likely" : ""}">${PCT(r.p)}</td></tr>`).join("")}</tbody>
+        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.p >= 0.5 ? "likely" : ""}">${PCT(r.p)}</td></tr>`).join("")}</tbody>
       </table></div>
-    </div>
-  </section>`}
+    </div>`}
+  </section>
 
   <section class="block" id="alerts-section" hidden>
     <h2>Get an alert before it breaches</h2>

@@ -130,6 +130,20 @@
 		.warn { margin: 0 0 var(--space-6); font: 0.95rem var(--font-ui); color: var(--color-text); }
 		.warn::before { content: "Note: "; font-weight: 600; }
 
+		/* Breach Watch sign: a routed wooden board, like a fire-danger sign */
+		.sign { --board: #3A2E22; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(16px, 3vw, 40px); align-items: center; max-width: 900px; margin-top: var(--space-6); padding: clamp(18px, 3vw, 32px); background: var(--board); color: #F3EBDD; border-radius: 10px; outline: 2px solid rgba(224, 182, 86, 0.55); outline-offset: -10px; box-shadow: 0 2px 4px rgba(27, 37, 48, 0.18), 0 14px 32px rgba(27, 37, 48, 0.18); }
+		.sign img { width: 100%; height: auto; display: block; }
+		.sign-dial { text-align: center; }
+		.sign-title { font: 700 clamp(1.5rem, 1.6vw + 1rem, 2.1rem)/1.1 var(--font-display); color: #E0B656; margin: 0; letter-spacing: -0.01em; }
+		.sign-sub { font: 500 0.95rem var(--font-ui); color: #D8CBB4; margin: 4px 0 var(--space-3); }
+		.sign .dial { width: 100%; max-width: 430px; height: auto; display: block; margin: 0 auto; font-family: var(--font-ui); }
+		.sign-read { font: 1rem/1.5 var(--font-ui); margin: var(--space-3) auto 0; max-width: 34ch; color: #F3EBDD; }
+		.sign-read strong { color: #E0B656; font-size: 1.15rem; }
+		.custom-range { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: var(--space-3); font: 0.92rem var(--font-ui); color: var(--color-muted); }
+		.custom-range input { font: 0.92rem var(--font-ui); color: var(--color-text); background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 6px 8px; margin-left: 6px; color-scheme: light dark; }
+		.custom-range[hidden] { display: none; }
+		@media (max-width: 640px) { .sign { grid-template-columns: 1fr; } .sign img { max-width: 220px; margin: 0 auto; } }
+
 		/* alerts */
 		.alerts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-6) clamp(24px, 4vw, 56px); margin-top: var(--space-4); }
 		.alerts h3 { font-size: 1.05rem; margin-bottom: 4px; }
@@ -208,7 +222,7 @@
 	<div class="alerts" id="alerts" hidden>
 		<div id="push-box">
 			<h3>On this device</h3>
-			<p class="note">One notification when the 10-day outlook first reaches "likely" (50% or more). Checked every 3 hours. Nothing else.</p>
+			<p class="note">One notification when the Breach Watch dial first reaches "very high" (a 50% chance or more). Checked every 3 hours. Nothing else.</p>
 			<button class="btn" id="push-btn" type="button">Notify me on this device</button>
 			<p class="note" id="push-note"></p>
 		</div>
