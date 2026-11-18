@@ -14,8 +14,10 @@ const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
 
 // ------------------------------------------------------------- tiny SVG charts
 // series: [{type: "bar"|"line"|"dots"|"step", points: [{x: Date|number, y}], color, width, opacity, dash}]
-function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax }) {
-  const W = width, H = height, m = { l: 40, r: 12, t: 10, b: 24 };
+// y2 (optional): a second, right-hand axis for bars that hang down from the top of the
+// plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}.
+function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2 }) {
+  const W = width, H = height, m = { l: 40, r: y2 ? 44 : 12, t: 10, b: 24 };
   const xs = series.flatMap((s) => s.points.map((p) => +p.x));
   const x0 = xMin ?? Math.min(...xs), x1 = xMax ?? Math.max(...xs);
   const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
@@ -51,6 +53,21 @@ function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) =
       g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width || 2}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} opacity="${s.opacity ?? 1}" stroke-linejoin="round"/>`;
     }
   }
+  if (y2) {
+    const plotH = H - m.t - m.b;
+    const Y2 = (v) => m.t + (v / y2.max) * plotH; // 0 at the top, growing downward
+    for (const b of y2.bars) {
+      if (b.x1 < x0 || b.x0 > x1 || !(b.y > 0)) continue;
+      const xa = X(Math.max(b.x0, x0)), xb = X(Math.min(b.x1, x1));
+      g += `<rect x="${xa.toFixed(1)}" y="${m.t}" width="${Math.max(2, xb - xa - 0.6).toFixed(1)}" height="${(Y2(b.y) - m.t).toFixed(1)}" fill="${b.color}" opacity="${b.opacity ?? 0.75}"><title>${esc(b.title || "")}</title></rect>`;
+    }
+    for (let i = 0; i <= 2; i++) {
+      const v = (y2.max * i) / 4; // label the top half, where the bars live
+      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
+    }
+    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
+    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
+  }
   if (now != null) g += `<line x1="${X(now)}" x2="${X(now)}" y1="${m.t}" y2="${H - m.b}" stroke="${css("--color-muted")}" stroke-width="1"/><text x="${X(now) + 4}" y="${m.t + 10}">now</text>`;
   for (const t of xTicks || []) g += `<text x="${X(t)}" y="${H - 6}" text-anchor="middle">${esc(xFmt(t))}</text>`;
   g += `<line class="axis" x1="${m.l}" x2="${W - m.r}" y1="${Y(bot)}" y2="${Y(bot)}"/>`;
@@ -66,6 +83,7 @@ const shortDay = (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), {
 // ------------------------------------------------------------- slough level time series
 let HISTORY = null; // stage-history.json: re-leveled daily record (static, from the Python project)
 let levelRange = "3m";
+let showRain = false; // rainfall overlay on the level chart (toggle)
 
 function monthTicks(a, b, everyMonths) {
   const out = [];
@@ -79,6 +97,30 @@ function monthTicks(a, b, everyMonths) {
     mo += 1;
   }
   return out;
+}
+
+// Daily rain (in) for the level chart: baked-in history (Coal Oil Point gauge, filled from
+// KSBA + CoCoRaHS), then the live feed's last 30 days, then the 10-day forecast.
+function rainBars(s, start, end, span) {
+  const daily = new Map();
+  for (const [d, v] of HISTORY?.rain || []) daily.set(dayNum(d), { y: v, fc: false });
+  for (const r of s.recent?.rain || []) if (r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: false });
+  for (const r of s.outlook || []) if (!r.observed && r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: true });
+  const days = [...daily].filter(([x, v]) => x >= start - 7 && x <= end && v.y > 0).sort((a, b) => a[0] - b[0]);
+  const obsColor = css("--color-accent"), fcColor = COLORS.mist;
+  if (span <= 120) {
+    return days.map(([x, v]) => ({ x0: x - 0.5, x1: x + 0.5, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.6 : 0.75,
+      title: `${shortDay(x)}: ${v.y.toFixed(2)} in${v.fc ? " (forecast)" : ""}` }));
+  }
+  // long views: weekly totals so storms stay readable
+  const weeks = new Map();
+  for (const [x, v] of days) {
+    const w = Math.floor((x - 3) / 7) * 7 + 3; // weeks starting Monday
+    const cur = weeks.get(w) || { y: 0, fc: false };
+    cur.y += v.y; cur.fc ||= v.fc; weeks.set(w, cur);
+  }
+  return [...weeks].map(([w, v]) => ({ x0: w, x1: w + 7, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.6 : 0.75,
+    title: `Week of ${shortDay(w)}: ${v.y.toFixed(2)} in` }));
 }
 
 function levelChartSvg(s, range) {
@@ -117,6 +159,13 @@ function levelChartSvg(s, range) {
       { type: "dots", color: COLORS.ochre, r: span > 400 ? 2.2 : 3.8, points: dots },
     ],
     vlines: breaches.map((x) => ({ x, color: "#E07B39" })),
+    y2: showRain ? (() => {
+      const bars = rainBars(s, start, end, span);
+      const peak = Math.max(0.5, ...bars.filter((b) => b.x1 >= start).map((b) => b.y));
+      const weekly = span > 120;
+      const step = weekly ? 1 : 0.5;
+      return { bars, max: Math.ceil((peak * 1.6) / step) * step, fmt: (v) => (Number.isInteger(v) ? String(v) : v.toFixed(Number.isInteger(v * 10) ? 1 : 2)), label: weekly ? "rain, in/week" : "rain, in/day" };
+    })() : undefined,
     xTicks: span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
     xFmt: (x) => span <= 400 ? shortDay(x) : String(new Date(x * 86400000).getUTCFullYear()),
     now: nowX,
@@ -133,7 +182,16 @@ function levelSummary(s) {
     + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
 }
 
+const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)"], [COLORS.mist, "rain, forecast"]]);
 document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-rain]");
+  if (t && window.__devereux) {
+    showRain = !showRain;
+    t.setAttribute("aria-pressed", String(showRain));
+    document.getElementById("rain-legend").innerHTML = showRain ? rainLegend() : "";
+    document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, levelRange);
+    return;
+  }
   const b = e.target.closest("[data-range]");
   if (!b || !window.__devereux) return;
   levelRange = b.dataset.range;
@@ -292,8 +350,9 @@ function render(s) {
     <h2>Slough water level</h2>
     <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), all re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The shaded band is the range where berms that had been closed for months actually breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimated breach level for the current closure, lower for a young berm. Orange lines mark past breaches. Feet, NAVD88.</p>
     <div class="chart-card">
-      <div class="range-btns" role="group" aria-label="Time range">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "All (2018 on)" }[k]}</button>`).join("")}</div>
+      <div class="range-btns" role="group" aria-label="Time range">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "All (2018 on)" }[k]}</button>`).join("")}<button type="button" class="toggle" data-rain aria-pressed="${showRain}">Rain</button></div>
       ${legend([[css("--color-text"), "logger and live-sensor record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "range of past breaches (mature berm)"], [COLORS.clay, "estimated breach level", true], ["#E07B39", "breach", true]])}
+      <div id="rain-legend">${showRain ? rainLegend() : ""}</div>
       <div id="level-chart">${levelChart}</div>
       ${s.stage?.series?.length ? `<p class="muted small" style="margin:var(--space-2) 0 0">${levelSummary(s)}</p>` : ""}
     </div>
