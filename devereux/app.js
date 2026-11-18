@@ -82,6 +82,7 @@ function monthTicks(a, b, everyMonths) {
 }
 
 function levelChartSvg(s, range) {
+  const BLV = s.model?.breach_levels;
   const nowX = dayNum(s.today);
   const series = s.stage?.series || [];
   const end = series.length ? dayNum(series.at(-1).date) : nowX + 9;
@@ -97,7 +98,8 @@ function levelChartSvg(s, range) {
   const dots = [...manual].map(([x, ft]) => ({ x, y: ft, title: `${shortDay(x)}: ${ft.toFixed(2)} ft` }));
   const vis = (x) => x >= start && x <= end;
   const ys = [...loggers.filter((r) => vis(r.x)).map((r) => r.ft), ...dots.filter((p) => vis(p.x)).map((p) => p.y),
-    ...series.flatMap((r) => [r.lo, r.hi, r.crest_ft]).filter((v) => v != null)];
+    ...series.flatMap((r) => [r.lo, r.hi, r.breach_level_ft]).filter((v) => v != null),
+    ...(BLV ? [BLV.mature_min_ft, BLV.mature_max_ft] : [])];
   const yMin = Math.floor(Math.min(...ys, 4) - 0.3), yMax = Math.ceil(Math.max(...ys, 8) + 0.3);
   const breaches = (HISTORY?.breaches || []).map(dayNum).filter(vis);
   const mid = series.map((r) => ({ x: dayNum(r.date), y: r.ft, phase: r.phase }));
@@ -107,7 +109,9 @@ function levelChartSvg(s, range) {
     series: [
       { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
       { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.map((r) => ({ x: r.x, y: r.ft })) },
-      { type: "line", color: COLORS.clay, width: 1.8, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: s.mouth?.state === "open" ? null : r.crest_ft })) },
+      // observed range of past mature-berm breach peaks, across the whole chart
+      ...(BLV ? [{ type: "band", color: COLORS.clay, opacity: 0.12, points: [{ x: start, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }, { x: end, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }] }] : []),
+      { type: "line", color: COLORS.clay, width: 1.8, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: s.mouth?.state === "open" ? null : r.breach_level_ft })) },
       { type: "line", color: css("--color-accent"), width: 2.5, points: mid.filter((p) => p.phase !== "forecast") },
       { type: "line", color: css("--color-accent"), width: 2.5, dash: "6 4", points: mid.filter((p, i) => p.phase === "forecast" || (mid[i + 1] && mid[i + 1].phase === "forecast")) },
       { type: "dots", color: COLORS.ochre, r: span > 400 ? 2.2 : 3.8, points: dots },
@@ -126,7 +130,7 @@ function levelSummary(s) {
   const r = s.stage.latest_reading;
   return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
     + `By ${day(last.date, { weekday: "short", month: "short", day: "numeric" })} the slough is forecast at about ${last.ft.toFixed(1)} ft `
-    + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.crest_ft != null && s.mouth?.state !== "open" ? `, against a berm crest near ${last.crest_ft.toFixed(1)} ft.` : ".");
+    + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
 }
 
 document.addEventListener("click", (e) => {
@@ -139,13 +143,15 @@ document.addEventListener("click", (e) => {
 
 // ------------------------------------------------------------- render
 function render(s) {
+  const BLV = s.model?.breach_levels;
   const open = s.mouth?.state === "open";
   const todayRow = s.outlook.find((r) => r.date === s.today);
   const ahead = s.outlook.filter((r) => r.date >= s.today);
   const peak = s.peak;
   const level = open || !peak ? "na" : peak.alert;
   const levelLabel = open ? "Mouth open" : peak ? LEVEL_TEXT[peak.alert] : "Unavailable";
-  const stateColor = open ? COLORS.sky : COLORS.sage;
+  // mouth state dot: green = open to the ocean, red = closed behind the berm
+  const stateColor = !s.mouth ? css("--color-muted") : open ? "#2E9E5B" : "#D64541";
 
   let sentence;
   if (!s.mouth) sentence = "The mouth-state record couldn't be loaded, so there is no outlook right now.";
@@ -154,18 +160,21 @@ function render(s) {
   else {
     // Closest the slough is forecast to come to the crest in the next 10 days, after
     // runoff from the whole watershed has drained in (not just on the rain day).
-    const f = (s.stage?.series || []).filter((r) => r.date >= s.today && r.crest_ft != null);
-    const near = f.reduce((m, r) => (m == null || r.crest_ft - r.ft < m.crest_ft - m.ft ? r : m), null);
-    const nearHi = f.reduce((m, r) => Math.min(m, r.crest_ft - r.hi), Infinity);
+    const f = (s.stage?.series || []).filter((r) => r.date >= s.today && r.breach_level_ft != null);
+    const near = f.reduce((m, r) => (m == null || r.breach_level_ft - r.ft < m.breach_level_ft - m.ft ? r : m), null);
+    const nearHi = f.reduce((m, r) => Math.min(m, r.breach_level_ft - r.hi), Infinity);
     sentence = `Highest chance in the next 10 days is ${PCT(peak.p)} on ${day(peak.date)}`
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day.` : ".")
-      + (near ? ` At its highest, around ${day(near.date, { month: "short", day: "numeric" })}, the slough is forecast about ${(near.crest_ft - near.ft).toFixed(1)} ft below the estimated berm crest`
+      + (near ? ` At its highest, around ${day(near.date, { month: "short", day: "numeric" })}, the slough is forecast about ${(near.breach_level_ft - near.ft).toFixed(1)} ft below the level where past breaches happened`
         + (Number.isFinite(nearHi) ? ` (${nearHi > 0 ? `${nearHi.toFixed(1)} ft below` : "at or above it"} if rain runs heavy).` : ".") : "");
   }
 
   const tiles = [
     [s.stage?.today_est_ft != null ? FT(s.stage.today_est_ft, 2) : "n/a", "Slough level today (est., NAVD88)"],
-    [s.stage?.crest_today_ft != null && !open ? FT(s.stage.crest_today_ft) : "n/a", "Estimated berm crest"],
+    [s.stage?.breach_level_today_ft != null && !open ? FT(s.stage.breach_level_today_ft) : "n/a",
+      BLV && s.stage?.breach_level_today_ft >= BLV.mature_median_ft - 1e-6
+        ? `Typical breach level (past ${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)})`
+        : "Breach level, young berm (est.)"],
     s.stage?.sensor_now
       ? [FT(s.stage.sensor_now.ft, 2), `Live sensor, ${new Date(s.stage.sensor_now.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`]
       : [s.stage?.latest_reading ? FT(s.stage.latest_reading.ft, 2) : "n/a", s.stage?.latest_reading ? `Staff gauge, ${day(s.stage.latest_reading.date, { month: "short", day: "numeric" })}` : "Latest staff gauge"],
@@ -180,7 +189,7 @@ function render(s) {
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: Math.max(r.p, 0.004), color: r.alert === "likely" ? COLORS.clay : r.alert === "watch" ? COLORS.ochre : COLORS.sky,
-        opacity: r.observed ? 0.45 : 1, title: `${day(r.date)}: ${PCT(r.p)}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.margin_ft).toFixed(1)} ft ${r.margin_ft < 0 ? "below" : "above"} the crest, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
+        opacity: r.observed ? 0.45 : 1, title: `${day(r.date)}: ${PCT(r.p)}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
     hlines: [{ y: 0.5, color: COLORS.clay, label: "likely" }, { y: 0.2, color: COLORS.ochre, label: "watch" }],
@@ -272,17 +281,17 @@ function render(s) {
       ${rainChart}
     </div>
     <div class="table-scroll"><table class="days">
-      <thead><tr><th>Day</th><th>Rain (in)</th><th>Slough (ft)</th><th>Crest (ft)</th><th>Below crest (ft)</th><th>Chance</th></tr></thead>
-      <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.crest_ft.toFixed(1)}</td><td>${r.margin_ft == null ? "n/a" : (-r.margin_ft).toFixed(2)}</td><td><strong>${PCT(r.p)}</strong></td></tr>`).join("")}</tbody>
+      <thead><tr><th>Day</th><th>Rain (in)</th><th>Slough (ft)</th><th>Breach level (ft)</th><th>Below it (ft)</th><th>Chance</th></tr></thead>
+      <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td><strong>${PCT(r.p)}</strong></td></tr>`).join("")}</tbody>
     </table></div>
   </section>`}
 
   <section class="block">
     <h2>Slough water level</h2>
-    <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), all re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The dashed line is the estimated berm crest for the current closure, and orange lines mark past breaches. Feet, NAVD88.</p>
+    <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), all re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The shaded band is the range where berms that had been closed for months actually breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimated breach level for the current closure, lower for a young berm. Orange lines mark past breaches. Feet, NAVD88.</p>
     <div class="chart-card">
       <div class="range-btns" role="group" aria-label="Time range">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "All (2018 on)" }[k]}</button>`).join("")}</div>
-      ${legend([[css("--color-text"), "logger and live-sensor record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay, "estimated berm crest", true], ["#E07B39", "breach", true]])}
+      ${legend([[css("--color-text"), "logger and live-sensor record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "range of past breaches (mature berm)"], [COLORS.clay, "estimated breach level", true], ["#E07B39", "breach", true]])}
       <div id="level-chart">${levelChart}</div>
       ${s.stage?.series?.length ? `<p class="muted small" style="margin:var(--space-2) 0 0">${levelSummary(s)}</p>` : ""}
     </div>
@@ -324,9 +333,9 @@ function render(s) {
 
   <section class="block prose">
     <h2>How this works</h2>
-    <p>Rain is the only thing that fills the slough, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the berm crest is the slough</strong>, and <strong>how much rain is falling</strong>, which drives the same-day rise that a daily estimate can lag. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down, rolled forward with rain. The berm crest is not measured; it is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months toward about ${s.model.crest.c_inf.toFixed(1)} ft as waves pile sand back up. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
-    <p>Predicting each season with a model trained on the others, and using only the weekly readings this page has, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
-    <p>Limits: the newest slough level is a weekly staff-gauge reading, so the level in between is an estimate (about ±0.4 ft over a storm). Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, which can lag a breach by days.</p>
+    <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the top of the berm is the slough</strong>, and <strong>how much rain is falling on the watershed</strong>, which drives a rise that keeps coming for a day or two as runoff drains in. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.8 ft of slough rise per inch of rain on past storms. The berm's height is not measured. It is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months as waves pile sand back up, but only so far: ${BLV ? `berms that had been closed for months broke between ${BLV.mature_min_ft.toFixed(1)} and ${BLV.mature_max_ft.toFixed(1)} ft (median ${BLV.mature_median_ft.toFixed(1)} ft), and the slough has never been measured above ${BLV.mature_max_ft.toFixed(1)} ft` : "it levels off"}. A newly closed berm is also never lower than the water it was holding back when it closed. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026, using measured water levels from CCBER's loggers and the live sensor. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
+    <p>Predicting each season with a model trained on the others, starting each day from the previous day's measured level as this page does, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
+    <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about ±0.4 ft. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     <p class="small muted">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge) · <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge · <a href="https://www.cocorahs.org/">CoCoRaHS</a> · <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA) · <a href="https://open-meteo.com/">Open-Meteo</a> · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a> · <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a></p>
     <div class="chips">${sources}</div>
     <p class="small muted" style="margin-top:var(--space-2)">Updated ${new Date(s.generated_at).toLocaleString("en-US", { timeZone: tz, dateStyle: "medium", timeStyle: "short" })} Pacific. Model fit ${esc(s.model.exported)}.</p>

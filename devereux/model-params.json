@@ -43,14 +43,14 @@
     "beta": 0.0
   },
   "unified": {
-    "c_inf": 9.87801545564451,
-    "c0": 6.324465374660196,
-    "tau": 67.43432601820237,
-    "b0": -4.715504485917941,
-    "b_margin": 1.8696776056039264,
-    "b_rain": 1.4395806384099195,
-    "b_rain3": 1.9037595559000628,
-    "b_api": -0.31811910981489244
+    "c_inf": 10.315475907845899,
+    "c0": 6.68976210349278,
+    "tau": 44.21544108391354,
+    "b0": -3.651401007958097,
+    "b_margin": 2.0155613796731062,
+    "b_rain": 1.2154164682870925,
+    "b_rain3": 1.5087393770840076,
+    "b_api": 0.1547739050118738
   },
   "api_decay": 0.9,
   "rain": {
@@ -78,9 +78,78 @@
   ],
   "skill": {
     "hits_p50": "10/14",
-    "false_alarm_days_p50": 7,
+    "false_alarm_days_p50": 4,
     "hits_p20": "12/14",
-    "false_alarm_days_p20": 9,
+    "false_alarm_days_p20": 8,
     "seasons": "WY2019-WY2026"
+  },
+  "breach_levels": {
+    "events": [
+      {
+        "date": "2019-01-07",
+        "peak_ft": 9.28,
+        "days_closed": 1,
+        "mature": true
+      },
+      {
+        "date": "2020-03-16",
+        "peak_ft": 10.06,
+        "days_closed": 361,
+        "mature": true
+      },
+      {
+        "date": "2021-01-28",
+        "peak_ft": 9.55,
+        "days_closed": 298,
+        "mature": true
+      },
+      {
+        "date": "2021-12-23",
+        "peak_ft": 9.72,
+        "days_closed": 311,
+        "mature": true
+      },
+      {
+        "date": "2023-02-25",
+        "peak_ft": 8.38,
+        "days_closed": 21,
+        "mature": false
+      },
+      {
+        "date": "2023-03-10",
+        "peak_ft": 6.84,
+        "days_closed": 6,
+        "mature": false
+      },
+      {
+        "date": "2025-02-13",
+        "peak_ft": 10.44,
+        "days_closed": 335,
+        "mature": true
+      },
+      {
+        "date": "2025-03-13",
+        "peak_ft": 6.78,
+        "days_closed": 10,
+        "mature": false
+      },
+      {
+        "date": "2025-11-15",
+        "peak_ft": 9.41,
+        "days_closed": 244,
+        "mature": true
+      },
+      {
+        "date": "2026-02-19",
+        "peak_ft": 7.91,
+        "days_closed": 13,
+        "mature": false
+      }
+    ],
+    "mature_min_ft": 9.28,
+    "mature_max_ft": 10.44,
+    "mature_median_ft": 9.635000000000002,
+    "mature_n": 6,
+    "mature_days": 120
   }
 }

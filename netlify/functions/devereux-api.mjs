@@ -183,12 +183,12 @@ async function waves() {
 // coastalocean.ucdavis.edu. Meters NAVD88; shifted onto the staff-gauge datum the model
 // uses (params.licor_offset_ft, -0.21 ft from overlap with the staff gauge and CCBER loggers).
 const LICOR_URL = "https://www.licor.cloud/api/v2/timeseriesdata";
-async function sensor(days = 120) {
+async function sensor(days = 120, minutes = 60) {
   const DAY = 86400000, end = Date.now(), rows = [];
   for (let t0 = end - days * DAY; t0 < end; t0 += 60 * DAY) {
     const body = {
       channels: [{ channelUUID: "0942b00d-ca65-460d-9b34-8ca6f3912883", channelType: "dataChannel",
-        metricName: "com.onset.sensordata.waterlevel_si", aggregationInterval: { value: 60, unit: "minutes" },
+        metricName: "com.onset.sensordata.waterlevel_si", aggregationInterval: { value: minutes, unit: "minutes" },
         aggregationFunction: "avg", limit: 10000 }],
       time: { absolute: { from: t0, to: Math.min(t0 + 60 * DAY, end) } },
       dashboardUUID: "cd5b1933-9022-44e4-a3c8-f4cfcc2a3433",
@@ -230,7 +230,7 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, coco, sba, cop, om, tide, wave, live] = await Promise.all([
+  const [log, staff, coco, sba, cop, om, tide, wave, live, live5] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cocorahs", () => cocorahs(start, yesterday), blobs, status),
@@ -240,6 +240,8 @@ export async function buildStatus(now = new Date()) {
     withFallback("tides", () => tides(today), blobs, status),
     withFallback("waves", waves, blobs, status),
     withFallback("live_sensor", () => sensor(120), blobs, status),
+    // newest 5-minute readings (the sensor's native interval) for the "now" value
+    sensor(0.25, 5).catch(() => []),
   ]);
 
   // Mouth state: CCBER's log and the site's own event list, plus openings/closings the
@@ -289,16 +291,23 @@ export async function buildStatus(now = new Date()) {
   const stale = latest && daysSince(latest.date, today) > 45;
   const preBreach = latest && lastOpen && latest.date < lastOpen;
   const stage0 = latest && !stale && !preBreach ? latest : null;
+  // crest floor: the highest measured level in the first 3 days after the latest closure
+  let crestFloor = null;
+  if (last && !mouthOpen) {
+    const lv = [...sensorDays, ...readings.map((r) => ({ ...r, src: "staff gauge" }))]
+      .filter((r) => r.date >= last.date && r.date <= addDays(last.date, 2) && r.date < today);
+    if (lv.length) crestFloor = Math.max(...lv.map((r) => r.ft));
+  }
   let outlook = [];
   let stageSeries = [];
   if (last && !mouthOpen) {
-    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: addDays(today, -14) });
+    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
-      const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
-        .map((r) => [r.date, r.crest_ft]));
+      const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
+        .map((r) => [r.date, r.breach_level_ft]));
       stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
-        .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
+        .map((r) => ({ ...r, breach_level_ft: bl[r.date] ?? null }));
       if (daysSince(stage0.date, today) > 21) warnings.push("The latest slough-level reading is more than three weeks old, so the level is less certain.");
     } else {
       warnings.push(preBreach
@@ -325,11 +334,13 @@ export async function buildStatus(now = new Date()) {
       used: Boolean(stage0),
       today_est_ft: todayRow?.stage_ft ?? null,
       crest_today_ft: todayRow?.crest_ft ?? null,
+      breach_level_today_ft: todayRow?.breach_level_ft ?? null,
+      crest_floor_ft: crestFloor,
       readings: readings.slice(-16),
       series: stageSeries,
       sensor_daily: sensorDays,
       sensor_hourly: hourly.filter((h) => h.t >= Date.now() - 7 * 86400000),
-      sensor_now: hourly.at(-1) || null,
+      sensor_now: live5.at(-1) || hourly.at(-1) || null,
       export: staff?.export ?? null,
     } : null,
     outlook,
@@ -340,7 +351,8 @@ export async function buildStatus(now = new Date()) {
       tides: tide,
       waves: wave,
     },
-    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified },
+    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified,
+      breach_levels: params.breach_levels },
     sources: status,
     warnings,
   };

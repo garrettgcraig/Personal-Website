@@ -18,10 +18,10 @@ test("forecast matches the Python model on a synthetic December storm", () => {
   const out = forecast(args);
   // [stage ft, breach chance (unified), rain-only chance, crest ft] from src/unified.py
   const expected = {
-    "2026-12-01": [8.754979, 0.013737, 0.004763, 9.813183],
-    "2026-12-02": [10.037122, 0.986018, 0.706495, 9.814137],
-    "2026-12-03": [10.97948, 0.988743, 0.378559, 9.815078],
-    "2026-12-04": [11.195292, 0.930788, 0.093825, 9.816004],
+    "2026-12-01": [8.754979, 0.011237, 0.004763, 10.307396],
+    "2026-12-02": [10.037122, 0.982559, 0.706495, 10.307577],
+    "2026-12-03": [10.97948, 0.990919, 0.378559, 10.307754],
+    "2026-12-04": [11.195292, 0.958436, 0.093825, 10.307926],
   };
   for (const [date, [stage, p, pRain, crest]] of Object.entries(expected)) {
     const r = out.find((x) => x.date === date);
@@ -32,6 +32,12 @@ test("forecast matches the Python model on a synthetic December storm", () => {
     assert.equal(r.model, "level + rain");
   }
   assert.equal(out.find((x) => x.date === "2026-12-02").alert, "likely");
+  // a fresh berm can't be lower than the water it held back when it closed
+  const fl = forecast({ ...args, closedSince: "2026-11-25", crestFloor: 8.4 });
+  const f1 = fl.find((x) => x.date === "2026-12-01"), f2 = fl.find((x) => x.date === "2026-12-02");
+  assert.equal(f1.crest_ft, 8.4);
+  assert.ok(Math.abs(f1.p - 0.346882) < 1e-4, `floor p ${f1.p}`);
+  assert.ok(Math.abs(f2.p - 0.99962) < 1e-4, `floor p ${f2.p}`);
   // no usable reading: fall back to the rain-only model
   const fb = forecast({ ...args, stage0: null });
   for (const r of fb) {
@@ -98,4 +104,21 @@ test("live-sensor detector: breach on a fast drop, closure when the tide stops",
   assert.equal(ev[0].t, t0 + 71 * H, "breach dated to the last high point");
   // a closed, calm slough never triggers
   assert.deepEqual(detectMouthEvents(pts.slice(0, 72), "closed"), []);
+});
+
+test("displayed breach level: young-berm curve, capped at the median past mature breach", () => {
+  const days = dateRange("2026-10-01", "2026-12-10");
+  const rain = days.map((d) => ({ date: d, rain_in: 0, src: "test" }));
+  const BL = params.breach_levels;
+  const mature = forecast({ rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-30", ft: 6 }, params });
+  for (const r of mature) {
+    assert.ok(Math.abs(r.breach_level_ft - BL.mature_median_ft) < 1e-9, "mature berm uses the observed median");
+    assert.ok(r.crest_ft > r.breach_level_ft, "model crest sits above the observed median");
+    assert.ok(Math.abs(r.below_breach_ft - (r.breach_level_ft - r.stage_ft)) < 1e-9);
+  }
+  const young = forecast({ rain, today: "2026-12-01", closedSince: "2026-11-25", stage0: { date: "2026-11-30", ft: 6 }, params });
+  const y = young.find((r) => r.date === "2026-12-01");
+  assert.equal(y.breach_level_ft, y.crest_ft, "young berm follows the rebuilding curve");
+  assert.ok(y.breach_level_ft < BL.mature_median_ft);
+  assert.ok(BL.mature_min_ft <= BL.mature_median_ft && BL.mature_median_ft <= BL.mature_max_ft);
 });
