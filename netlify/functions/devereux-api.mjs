@@ -304,10 +304,10 @@ export async function buildStatus(now = new Date()) {
     outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
-      const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
-        .map((r) => [r.date, r.crest_ft]));
+      const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
+        .map((r) => [r.date, r.breach_level_ft]));
       stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
-        .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
+        .map((r) => ({ ...r, breach_level_ft: bl[r.date] ?? null }));
       if (daysSince(stage0.date, today) > 21) warnings.push("The latest slough-level reading is more than three weeks old, so the level is less certain.");
     } else {
       warnings.push(preBreach
@@ -334,6 +334,7 @@ export async function buildStatus(now = new Date()) {
       used: Boolean(stage0),
       today_est_ft: todayRow?.stage_ft ?? null,
       crest_today_ft: todayRow?.crest_ft ?? null,
+      breach_level_today_ft: todayRow?.breach_level_ft ?? null,
       crest_floor_ft: crestFloor,
       readings: readings.slice(-16),
       series: stageSeries,
@@ -350,7 +351,8 @@ export async function buildStatus(now = new Date()) {
       tides: tide,
       waves: wave,
     },
-    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified },
+    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified,
+      breach_levels: params.breach_levels },
     sources: status,
     warnings,
   };

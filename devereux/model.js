@@ -161,6 +161,11 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     // a just-closed berm is at least as high as the water it held back when it closed
     const crest = Math.max(crestFt(dc, U), crestFloor ?? -Infinity);
     const margin = stage[n] == null ? null : stage[n] - crest;
+    // Displayed breach level: the young-berm rebuilding curve, capped at the median peak
+    // of past mature-berm breaches (9.3-10.4 ft observed). The model's crest parameter
+    // levels off near the top of that range and is not itself the level breaches happen at.
+    const BL = params.breach_levels;
+    const breachLevel = BL ? Math.min(crest, BL.mature_median_ft) : crest;
     const p = margin == null ? pRain
       : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
     out.push({
@@ -173,6 +178,8 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
       stage_ft: stage[n],
       crest_ft: crest,
       margin_ft: margin,
+      breach_level_ft: breachLevel,
+      below_breach_ft: stage[n] == null ? null : breachLevel - stage[n],
       p_rain: pRain,
       model: margin == null ? "rain only" : "level + rain",
       p,

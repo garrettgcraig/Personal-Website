@@ -82,5 +82,74 @@
     "hits_p20": "12/14",
     "false_alarm_days_p20": 8,
     "seasons": "WY2019-WY2026"
+  },
+  "breach_levels": {
+    "events": [
+      {
+        "date": "2019-01-07",
+        "peak_ft": 9.28,
+        "days_closed": 1,
+        "mature": true
+      },
+      {
+        "date": "2020-03-16",
+        "peak_ft": 10.06,
+        "days_closed": 361,
+        "mature": true
+      },
+      {
+        "date": "2021-01-28",
+        "peak_ft": 9.55,
+        "days_closed": 298,
+        "mature": true
+      },
+      {
+        "date": "2021-12-23",
+        "peak_ft": 9.72,
+        "days_closed": 311,
+        "mature": true
+      },
+      {
+        "date": "2023-02-25",
+        "peak_ft": 8.38,
+        "days_closed": 21,
+        "mature": false
+      },
+      {
+        "date": "2023-03-10",
+        "peak_ft": 6.84,
+        "days_closed": 6,
+        "mature": false
+      },
+      {
+        "date": "2025-02-13",
+        "peak_ft": 10.44,
+        "days_closed": 335,
+        "mature": true
+      },
+      {
+        "date": "2025-03-13",
+        "peak_ft": 6.78,
+        "days_closed": 10,
+        "mature": false
+      },
+      {
+        "date": "2025-11-15",
+        "peak_ft": 9.41,
+        "days_closed": 244,
+        "mature": true
+      },
+      {
+        "date": "2026-02-19",
+        "peak_ft": 7.91,
+        "days_closed": 13,
+        "mature": false
+      }
+    ],
+    "mature_min_ft": 9.28,
+    "mature_max_ft": 10.44,
+    "mature_median_ft": 9.635000000000002,
+    "mature_n": 6,
+    "mature_days": 120
   }
 }

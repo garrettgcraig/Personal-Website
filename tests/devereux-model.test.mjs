@@ -105,3 +105,20 @@ test("live-sensor detector: breach on a fast drop, closure when the tide stops",
   // a closed, calm slough never triggers
   assert.deepEqual(detectMouthEvents(pts.slice(0, 72), "closed"), []);
 });
+
+test("displayed breach level: young-berm curve, capped at the median past mature breach", () => {
+  const days = dateRange("2026-10-01", "2026-12-10");
+  const rain = days.map((d) => ({ date: d, rain_in: 0, src: "test" }));
+  const BL = params.breach_levels;
+  const mature = forecast({ rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-30", ft: 6 }, params });
+  for (const r of mature) {
+    assert.ok(Math.abs(r.breach_level_ft - BL.mature_median_ft) < 1e-9, "mature berm uses the observed median");
+    assert.ok(r.crest_ft > r.breach_level_ft, "model crest sits above the observed median");
+    assert.ok(Math.abs(r.below_breach_ft - (r.breach_level_ft - r.stage_ft)) < 1e-9);
+  }
+  const young = forecast({ rain, today: "2026-12-01", closedSince: "2026-11-25", stage0: { date: "2026-11-30", ft: 6 }, params });
+  const y = young.find((r) => r.date === "2026-12-01");
+  assert.equal(y.breach_level_ft, y.crest_ft, "young berm follows the rebuilding curve");
+  assert.ok(y.breach_level_ft < BL.mature_median_ft);
+  assert.ok(BL.mature_min_ft <= BL.mature_median_ft && BL.mature_median_ft <= BL.mature_max_ft);
+});
