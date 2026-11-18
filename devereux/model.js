@@ -124,10 +124,11 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
  *        observed before today, forecast from today on.
  *  closedSince: ISO date the mouth last closed.
  *  stage0: {date, ft} latest stage reading (ft NAVD88) on or before today, or null.
+ *  crestFloor: highest level (ft) in the first 3 days after the mouth closed, or null.
  * Breach chance is the unified hazard when a level estimate exists (see
  * devereux-breach/src/unified.py), otherwise the rain-only logistic model.
  */
-export function forecast({ rain, today, closedSince, stage0, params, showFrom }) {
+export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null }) {
   const P = rain.map((r) => r.rain_in ?? 0);
   const dates = rain.map((r) => r.date);
   const decay = params.api_decay;
@@ -157,7 +158,8 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom })
     const pRain = sigmoid(z);
     // One hazard: how far the slough sits below the berm crest, plus the day's rain.
     const U = params.unified;
-    const crest = crestFt(dc, U);
+    // a just-closed berm is at least as high as the water it held back when it closed
+    const crest = Math.max(crestFt(dc, U), crestFloor ?? -Infinity);
     const margin = stage[n] == null ? null : stage[n] - crest;
     const p = margin == null ? pRain
       : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);

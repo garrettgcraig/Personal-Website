@@ -18,10 +18,10 @@ test("forecast matches the Python model on a synthetic December storm", () => {
   const out = forecast(args);
   // [stage ft, breach chance (unified), rain-only chance, crest ft] from src/unified.py
   const expected = {
-    "2026-12-01": [8.754979, 0.013737, 0.004763, 9.813183],
-    "2026-12-02": [10.037122, 0.986018, 0.706495, 9.814137],
-    "2026-12-03": [10.97948, 0.988743, 0.378559, 9.815078],
-    "2026-12-04": [11.195292, 0.930788, 0.093825, 9.816004],
+    "2026-12-01": [8.754979, 0.011237, 0.004763, 10.307396],
+    "2026-12-02": [10.037122, 0.982559, 0.706495, 10.307577],
+    "2026-12-03": [10.97948, 0.990919, 0.378559, 10.307754],
+    "2026-12-04": [11.195292, 0.958436, 0.093825, 10.307926],
   };
   for (const [date, [stage, p, pRain, crest]] of Object.entries(expected)) {
     const r = out.find((x) => x.date === date);
@@ -32,6 +32,12 @@ test("forecast matches the Python model on a synthetic December storm", () => {
     assert.equal(r.model, "level + rain");
   }
   assert.equal(out.find((x) => x.date === "2026-12-02").alert, "likely");
+  // a fresh berm can't be lower than the water it held back when it closed
+  const fl = forecast({ ...args, closedSince: "2026-11-25", crestFloor: 8.4 });
+  const f1 = fl.find((x) => x.date === "2026-12-01"), f2 = fl.find((x) => x.date === "2026-12-02");
+  assert.equal(f1.crest_ft, 8.4);
+  assert.ok(Math.abs(f1.p - 0.346882) < 1e-4, `floor p ${f1.p}`);
+  assert.ok(Math.abs(f2.p - 0.99962) < 1e-4, `floor p ${f2.p}`);
   // no usable reading: fall back to the rain-only model
   const fb = forecast({ ...args, stage0: null });
   for (const r of fb) {

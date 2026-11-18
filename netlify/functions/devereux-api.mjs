@@ -289,13 +289,20 @@ export async function buildStatus(now = new Date()) {
   const stale = latest && daysSince(latest.date, today) > 45;
   const preBreach = latest && lastOpen && latest.date < lastOpen;
   const stage0 = latest && !stale && !preBreach ? latest : null;
+  // crest floor: the highest measured level in the first 3 days after the latest closure
+  let crestFloor = null;
+  if (last && !mouthOpen) {
+    const lv = [...sensorDays, ...readings.map((r) => ({ ...r, src: "staff gauge" }))]
+      .filter((r) => r.date >= last.date && r.date <= addDays(last.date, 2) && r.date < today);
+    if (lv.length) crestFloor = Math.max(...lv.map((r) => r.ft));
+  }
   let outlook = [];
   let stageSeries = [];
   if (last && !mouthOpen) {
-    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: addDays(today, -14) });
+    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
-      const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
+      const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
         .map((r) => [r.date, r.crest_ft]));
       stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
         .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
@@ -325,6 +332,7 @@ export async function buildStatus(now = new Date()) {
       used: Boolean(stage0),
       today_est_ft: todayRow?.stage_ft ?? null,
       crest_today_ft: todayRow?.crest_ft ?? null,
+      crest_floor_ft: crestFloor,
       readings: readings.slice(-16),
       series: stageSeries,
       sensor_daily: sensorDays,
