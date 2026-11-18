@@ -7,7 +7,7 @@ import { inflateRawSync } from "node:zlib";
 import { getStore } from "@netlify/blobs";
 import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
-import { addDays, dateRange, forecast, iso, rainComposite, wyStart } from "../../devereux/model.js";
+import { addDays, dateRange, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
@@ -237,9 +237,11 @@ export async function buildStatus(now = new Date()) {
   let stageSeries = [];
   if (last && !mouthOpen && stage0) {
     outlook = forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: addDays(today, -14) });
-    // level/crest from the latest reading on, for the slough-level chart
-    stageSeries = forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
-      .map(({ date, stage_ft, crest_ft }) => ({ date, stage_ft, crest_ft }));
+    // level (with range) and crest from the latest reading on, for the level chart
+    const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
+      .map((r) => [r.date, r.crest_ft]));
+    stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
+      .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
     if (stage0.date < last.date) warnings.push("The latest staff-gauge reading predates the last closure.");
     if (daysSince(stage0.date, today) > 21) warnings.push("The latest staff-gauge reading is more than three weeks old.");
   } else if (last && !mouthOpen) {

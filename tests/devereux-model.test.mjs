@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
@@ -54,6 +54,26 @@ test("berm crest rebuilds from c0 toward c_inf", () => {
 });
 
 test("CSV parser handles quoted commas and BOM headers", () => {
-  const rows = parseCsv('﻿a,b,c\n1,"x, y",3\n');
+  const rows = parseCsv('\uFEFFa,b,c\n1,"x, y",3\n');
   assert.deepEqual(rows, [{ a: "1", b: "x, y", c: "3" }]);
+});
+
+test("stage outlook: middle line matches the forecast, range brackets it and widens with rain", () => {
+  const days = dateRange("2026-10-01", "2026-12-10");
+  const storm = { "2026-11-20": 0.4, "2026-12-02": 2.4, "2026-12-03": 0.6 };
+  const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
+  const args = { rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-15", ft: 6.0 }, params };
+  const so = stageOutlook(args);
+  const fc = forecast({ ...args, showFrom: "2026-11-15" });
+  assert.equal(so[0].phase, "reading");
+  assert.equal(so[0].lo, so[0].hi);
+  for (const r of so) {
+    const f = fc.find((x) => x.date === r.date);
+    assert.ok(Math.abs(r.ft - f.stage_ft) < 1e-9, r.date);
+    assert.ok(r.lo <= r.ft && r.ft <= r.hi, `${r.date} ${r.lo} ${r.ft} ${r.hi}`);
+  }
+  const w = (d) => { const r = so.find((x) => x.date === d); return r.hi - r.lo; };
+  assert.ok(w("2026-12-04") > w("2026-12-01") + 0.5, "storm widens the range");
+  assert.equal(so.find((x) => x.date === "2026-11-20").phase, "estimated");
+  assert.equal(so.find((x) => x.date === "2026-12-01").phase, "forecast");
 });

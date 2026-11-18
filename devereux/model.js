@@ -64,6 +64,60 @@ export function rainComposite(days, { cop = {}, ksba = {}, cocorahs = {} }, para
 
 export const crestFt = (dc, c) => c.c_inf - (c.c_inf - c.c0) * Math.exp(-dc / c.tau);
 
+// Water balance: roll stage forward from a reading through daily rain P (inches).
+function simulateStage(P, dates, i0, ft0, closedSince, wb) {
+  const out = new Array(dates.length).fill(null);
+  out[i0] = ft0;
+  let s = ft0;
+  for (let n = i0 + 1; n < dates.length; n++) {
+    const dc = daysBetween(closedSince, dates[n]) + 1;
+    const inflow = wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
+    const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
+    s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss;
+    out[n] = s;
+  }
+  return out;
+}
+
+/**
+ * Slough level from the latest reading through the forecast horizon, with a range.
+ * The middle line uses observed rain before `today` and forecast rain after. The range
+ * reruns the forecast days with params.rain_scenarios (e.g. half and 1.5x the forecast
+ * rain), then widens each edge by the 80th-percentile model error, which grows with
+ * days since the reading and rain since the reading (params.stage_error_80).
+ * Returns [{date, ft, lo, hi, phase: "reading" | "estimated" | "forecast", rain_in}].
+ */
+export function stageOutlook({ rain, today, closedSince, stage0, params }) {
+  const dates = rain.map((r) => r.date);
+  const i0 = dates.indexOf(stage0.date);
+  if (i0 < 0) return [];
+  const P = rain.map((r) => r.rain_in ?? 0);
+  const scaled = (k) => P.map((p, n) => (dates[n] >= today ? p * k : p));
+  const [kLo, kHi] = params.rain_scenarios;
+  const wb = params.water_balance;
+  const PLo = scaled(kLo), PHi = scaled(kHi);
+  const mid = simulateStage(P, dates, i0, stage0.ft, closedSince, wb);
+  const lo = simulateStage(PLo, dates, i0, stage0.ft, closedSince, wb);
+  const hi = simulateStage(PHi, dates, i0, stage0.ft, closedSince, wb);
+  const e = params.stage_error_80;
+  const out = [];
+  let cumLo = 0, cumHi = 0;
+  for (let n = i0; n < dates.length; n++) {
+    if (n > i0) { cumLo += PLo[n]; cumHi += PHi[n]; }
+    const days = n - i0;
+    const err = (cum) => (days ? e.a + e.per_day * days + e.per_in * cum : 0);
+    out.push({
+      date: dates[n],
+      ft: mid[n],
+      lo: lo[n] - err(cumLo),
+      hi: hi[n] + err(cumHi),
+      phase: n === i0 ? "reading" : dates[n] < today ? "estimated" : "forecast",
+      rain_in: rain[n].rain_in,
+    });
+  }
+  return out;
+}
+
 /**
  * Run the forecast.
  *  rain: [{date, rain_in, src}] covering at least (today - 120 d) .. (today + horizon - 1),

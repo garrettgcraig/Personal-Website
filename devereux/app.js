@@ -14,10 +14,10 @@ const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
 
 // ------------------------------------------------------------- tiny SVG charts
 // series: [{type: "bar"|"line"|"dots"|"step", points: [{x: Date|number, y}], color, width, opacity, dash}]
-function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [] }) {
+function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax }) {
   const W = width, H = height, m = { l: 40, r: 12, t: 10, b: 24 };
   const xs = series.flatMap((s) => s.points.map((p) => +p.x));
-  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const x0 = xMin ?? Math.min(...xs), x1 = xMax ?? Math.max(...xs);
   const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
   const top = yMax ?? Math.max(...ys, yMin + 1e-9) * 1.1;
   const bot = yMin ?? Math.min(...ys);
@@ -33,14 +33,21 @@ function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) =
     g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${yFmt(v)}</text>`;
   }
   for (const h of hlines) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="${h.color}" stroke-dasharray="4 4" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(h.y) - 4}" text-anchor="end" style="fill:${h.color}">${esc(h.label)}</text>`;
+  for (const v of vlines) g += `<line x1="${X(v.x)}" x2="${X(v.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${v.color}" stroke-width="1.5" opacity="0.8"/>${v.label ? `<text x="${X(v.x) + 3}" y="${H - m.b - 4}" style="fill:${v.color}">${esc(v.label)}</text>` : ""}`;
   for (const s of series) {
-    const pts = s.points.filter((p) => p.y != null);
+    const pts = s.points.filter((p) => p.y != null && +p.x >= x0 - 1 && +p.x <= x1 + 1);
+    if (s.type === "band") {
+      const b = s.points.filter((p) => p.lo != null && +p.x >= x0 - 1 && +p.x <= x1 + 1);
+      if (b.length) g += `<path d="${b.map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.hi).toFixed(1)}`).join("")}${b.slice().reverse().map((p) => `L${X(p.x).toFixed(1)},${Y(p.lo).toFixed(1)}`).join("")}Z" fill="${s.color}" opacity="${s.opacity ?? 0.2}" stroke="none"/>`;
+      continue;
+    }
     if (s.type === "bar") {
       for (const p of pts) g += `<rect x="${X(p.x) - barW / 2}" y="${Y(Math.max(p.y, bot))}" width="${barW}" height="${Math.max(0, Y(bot) - Y(Math.max(p.y, bot)))}" fill="${p.color || s.color}" opacity="${p.opacity ?? s.opacity ?? 1}" rx="1.5"><title>${esc(p.title || "")}</title></rect>`;
     } else if (s.type === "dots") {
       for (const p of pts) g += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${s.r || 3.5}" fill="${s.color}"><title>${esc(p.title || "")}</title></circle>`;
     } else {
-      const d = pts.map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
+      // break the line across gaps longer than s.gap (x units)
+      const d = pts.map((p, i) => `${i && !(s.gap && +p.x - +pts[i - 1].x > s.gap) ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
       g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width || 2}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} opacity="${s.opacity ?? 1}" stroke-linejoin="round"/>`;
     }
   }
@@ -55,6 +62,77 @@ const everyN = (arr, n) => arr.filter((_, i) => i % n === 0);
 // evenly spaced day ticks (every `step` days) across [a, b]
 const dayTicks = (a, b, step) => { const out = []; for (let x = Math.ceil(a); x <= b; x += step) out.push(x); return out; };
 const shortDay = (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" });
+
+// ------------------------------------------------------------- slough level time series
+let HISTORY = null; // stage-history.json: re-leveled daily record (static, from the Python project)
+let levelRange = "3m";
+
+function monthTicks(a, b, everyMonths) {
+  const out = [];
+  const d = new Date(a * 86400000);
+  let y = d.getUTCFullYear(), mo = d.getUTCMonth() + 1;
+  for (;;) {
+    if (mo > 11) { y += Math.floor(mo / 12); mo %= 12; }
+    const x = Date.UTC(y, mo, 1) / 86400000 + 0.5;
+    if (x > b) break;
+    if (mo % everyMonths === 0) out.push(x);
+    mo += 1;
+  }
+  return out;
+}
+
+function levelChartSvg(s, range) {
+  const nowX = dayNum(s.today);
+  const series = s.stage?.series || [];
+  const end = series.length ? dayNum(series.at(-1).date) : nowX + 9;
+  const start = range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
+  const hist = (HISTORY?.stage || []).map(([d, ft, mx, src]) => ({ x: dayNum(d), ft, src }));
+  const loggers = hist.filter((r) => "VEP".includes(r.src));
+  // manual readings: history (staff gauge + pier stick) plus anything newer from the live feed
+  const manual = new Map(hist.filter((r) => "SK".includes(r.src)).map((r) => [r.x, r.ft]));
+  for (const r of s.stage?.readings || []) manual.set(dayNum(r.date), r.ft);
+  const dots = [...manual].map(([x, ft]) => ({ x, y: ft, title: `${shortDay(x)}: ${ft.toFixed(2)} ft` }));
+  const vis = (x) => x >= start && x <= end;
+  const ys = [...loggers.filter((r) => vis(r.x)).map((r) => r.ft), ...dots.filter((p) => vis(p.x)).map((p) => p.y),
+    ...series.flatMap((r) => [r.lo, r.hi, r.crest_ft]).filter((v) => v != null)];
+  const yMin = Math.floor(Math.min(...ys, 4) - 0.3), yMax = Math.ceil(Math.max(...ys, 8) + 0.3);
+  const breaches = (HISTORY?.breaches || []).map(dayNum).filter(vis);
+  const mid = series.map((r) => ({ x: dayNum(r.date), y: r.ft, phase: r.phase }));
+  const span = end - start;
+  return chart({
+    height: 260, xMin: start, xMax: end, yMin, yMax, yFmt: (v) => v.toFixed(0),
+    series: [
+      { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
+      { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.map((r) => ({ x: r.x, y: r.ft })) },
+      { type: "line", color: COLORS.clay, width: 1.8, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: s.mouth?.state === "open" ? null : r.crest_ft })) },
+      { type: "line", color: css("--color-accent"), width: 2.5, points: mid.filter((p) => p.phase !== "forecast") },
+      { type: "line", color: css("--color-accent"), width: 2.5, dash: "6 4", points: mid.filter((p, i) => p.phase === "forecast" || (mid[i + 1] && mid[i + 1].phase === "forecast")) },
+      { type: "dots", color: COLORS.ochre, r: span > 400 ? 2.2 : 3.8, points: dots },
+    ],
+    vlines: breaches.map((x) => ({ x, color: "#E07B39" })),
+    xTicks: span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
+    xFmt: (x) => span <= 400 ? shortDay(x) : String(new Date(x * 86400000).getUTCFullYear()),
+    now: nowX,
+  });
+}
+
+function levelSummary(s) {
+  const f = s.stage.series.filter((r) => r.phase === "forecast");
+  const last = f.at(-1);
+  if (!last) return "";
+  const r = s.stage.latest_reading;
+  return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
+    + `By ${day(last.date, { weekday: "short", month: "short", day: "numeric" })} the slough is forecast at about ${last.ft.toFixed(1)} ft `
+    + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.crest_ft != null && s.mouth?.state !== "open" ? `, against a berm crest near ${last.crest_ft.toFixed(1)} ft.` : ".");
+}
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-range]");
+  if (!b || !window.__devereux) return;
+  levelRange = b.dataset.range;
+  document.querySelectorAll("[data-range]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, levelRange);
+});
 
 // ------------------------------------------------------------- render
 function render(s) {
@@ -104,22 +182,7 @@ function render(s) {
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
 
-  // --- slough level chart: staff readings + simulated stage + crest
-  const readings = (s.stage?.readings || []).filter((r) => dayNum(r.date) >= nowX - 75);
-  const series = s.stage?.series || [];
-  const sim = series.filter((r) => r.stage_ft != null);
-  const lx0 = Math.min(...readings.map((r) => dayNum(r.date)), nowX), lx1 = nowX + 9;
-  const levelChart = s.stage ? chart({
-    height: 220, yMin: Math.floor(Math.min(...readings.map((r) => r.ft), ...sim.map((r) => r.stage_ft), 4) - 0.5), yMax: 11, yFmt: (v) => v.toFixed(0),
-    series: [
-      { type: "line", color: COLORS.clay, width: 2, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: open ? null : r.crest_ft })) },
-      { type: "line", color: COLORS.sky, width: 2.5, points: sim.map((r) => ({ x: dayNum(r.date), y: r.stage_ft })) },
-      { type: "line", color: "transparent", points: [{ x: lx0, y: null }, { x: lx1, y: null }] },
-      { type: "dots", color: COLORS.ochre, r: 4.5, points: readings.map((r) => ({ x: dayNum(r.date), y: r.ft, title: `${day(r.date)}: ${r.ft.toFixed(2)} ft (staff gauge)` })) },
-    ],
-    hlines: [],
-    xTicks: dayTicks(lx0, lx1, 14), xFmt: shortDay, now: nowX,
-  }) : `<p class="muted">No staff-gauge readings available.</p>`;
+  const levelChart = levelChartSvg(s, levelRange);
 
   // --- recent rain (30 days)
   const rr = s.recent.rain.map((r) => ({ x: dayNum(r.date), r }));
@@ -197,11 +260,13 @@ function render(s) {
   </section>`}
 
   <section class="block">
-    <h2>Slough level vs. berm crest</h2>
-    <p class="muted small" style="margin-top:0">Gold dots are weekly staff-gauge readings at Venoco Bridge (CCBER). The blue line rolls the latest reading forward with a rain-driven water balance. The dashed line is the estimated berm crest, which rebuilds after each closure toward about ${s.model.crest.c_inf.toFixed(1)} ft. All elevations in feet, NAVD88.</p>
+    <h2>Slough water level</h2>
+    <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers, re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The dashed line is the estimated berm crest for the current closure, and orange lines mark past breaches. Feet, NAVD88.</p>
     <div class="chart-card">
-      ${legend([[COLORS.ochre, "staff gauge"], [COLORS.sky, "estimated level", true], [COLORS.clay, "estimated crest", true]])}
-      ${levelChart}
+      <div class="range-btns" role="group" aria-label="Time range">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "All (2018 on)" }[k]}</button>`).join("")}</div>
+      ${legend([[css("--color-text"), "logger record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay, "estimated berm crest", true], ["#E07B39", "breach", true]])}
+      <div id="level-chart">${levelChart}</div>
+      ${s.stage?.series?.length ? `<p class="muted small" style="margin:var(--space-2) 0 0">${levelSummary(s)}</p>` : ""}
     </div>
   </section>
 
@@ -246,8 +311,9 @@ function render(s) {
 
 async function load() {
   try {
-    const r = await fetch("/devereux/api/status");
+    const [r, h] = await Promise.all([fetch("/devereux/api/status"), fetch("stage-history.json").catch(() => null)]);
     if (!r.ok) throw new Error(r.status);
+    if (h?.ok) HISTORY = await h.json();
     const s = await r.json();
     render(s);
     window.__devereux = s;

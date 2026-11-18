@@ -62,6 +62,15 @@
     "watch": 0.2,
     "likely": 0.5
   },
+  "stage_error_80": {
+    "a": 0.028,
+    "per_day": 0.013,
+    "per_in": 0.229
+  },
+  "rain_scenarios": [
+    0.5,
+    1.5
+  ],
   "skill": {
     "combined_hits_p50": "10/14",
     "combined_false_alarm_days_p50": 4,
