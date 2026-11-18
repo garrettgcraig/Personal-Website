@@ -170,14 +170,16 @@ function render(s) {
   }
 
   const tiles = [
-    [s.stage?.today_est_ft != null ? FT(s.stage.today_est_ft, 2) : "n/a", "Slough level today (est., NAVD88)"],
+    // current level: the live sensor's newest reading; if it is down, today's estimate
+    // rolled forward from the latest staff-gauge reading
+    s.stage?.sensor_now
+      ? [FT(s.stage.sensor_now.ft, 2), `Current slough level (live sensor, ${new Date(s.stage.sensor_now.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })})`]
+      : [s.stage?.today_est_ft != null ? FT(s.stage.today_est_ft, 2) : "n/a",
+        s.stage?.latest_reading ? `Current slough level (est. from staff gauge, ${day(s.stage.latest_reading.date, { month: "short", day: "numeric" })})` : "Current slough level"],
     [s.stage?.breach_level_today_ft != null && !open ? FT(s.stage.breach_level_today_ft) : "n/a",
       BLV && s.stage?.breach_level_today_ft >= BLV.mature_median_ft - 1e-6
         ? `Typical breach level (past ${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)})`
         : "Breach level, young berm (est.)"],
-    s.stage?.sensor_now
-      ? [FT(s.stage.sensor_now.ft, 2), `Live sensor, ${new Date(s.stage.sensor_now.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`]
-      : [s.stage?.latest_reading ? FT(s.stage.latest_reading.ft, 2) : "n/a", s.stage?.latest_reading ? `Staff gauge, ${day(s.stage.latest_reading.date, { month: "short", day: "numeric" })}` : "Latest staff gauge"],
     [`${s.recent.season_rain_in.toFixed(2)} in`, `Rain since Oct 1 (water year ${s.today.slice(0, 4) * 1 + (s.today.slice(5, 7) >= "10" ? 1 : 0)})`],
   ];
 
@@ -272,7 +274,7 @@ function render(s) {
   ${open ? "" : `
   <section class="block">
     <h2>Daily breach chance</h2>
-    <p class="muted small" style="margin-top:0">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Each day's chance depends on how far the slough sits below the berm crest and how much rain falls.</p>
+    <p class="muted small" style="margin-top:0">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Each day's chance depends on how far the slough sits below the top of the berm and how much rain falls on the watershed.</p>
     <div class="chart-card">
       ${legend([[COLORS.sky, "low"], [COLORS.ochre, "watch (20% or more)"], [COLORS.clay, "likely (50% or more)"]])}
       ${probChart}
