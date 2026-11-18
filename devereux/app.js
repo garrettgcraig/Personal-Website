@@ -36,6 +36,22 @@ function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) =
   }
   for (const h of hlines) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="${h.color}" stroke-dasharray="4 4" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(h.y) - 4}" text-anchor="end" style="fill:${h.color}">${esc(h.label)}</text>`;
   for (const v of vlines) g += `<line x1="${X(v.x)}" x2="${X(v.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${v.color}" stroke-width="1.5" opacity="0.8"/>${v.label ? `<text x="${X(v.x) + 3}" y="${H - m.b - 4}" style="fill:${v.color}">${esc(v.label)}</text>` : ""}`;
+  // y2 bars are drawn first so the lines stay on top
+  if (y2) {
+    const plotH = H - m.t - m.b;
+    const Y2 = (v) => m.t + (v / y2.max) * plotH; // 0 at the top, growing downward
+    for (const b of y2.bars) {
+      if (b.x1 < x0 || b.x0 > x1 || !(b.y > 0)) continue;
+      const xa = X(Math.max(b.x0, x0)), xb = X(Math.min(b.x1, x1));
+      g += `<rect x="${xa.toFixed(1)}" y="${m.t}" width="${Math.max(1.5, xb - xa - 0.6).toFixed(1)}" height="${(Y2(b.y) - m.t).toFixed(1)}" fill="${b.color}" opacity="${b.opacity ?? 0.75}"><title>${esc(b.title || "")}</title></rect>`;
+    }
+    for (let i = 0; i <= 2; i++) {
+      const v = (y2.max * i) / 2;
+      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
+    }
+    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
+    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
+  }
   for (const s of series) {
     const pts = s.points.filter((p) => p.y != null && +p.x >= x0 - 1 && +p.x <= x1 + 1);
     if (s.type === "band") {
@@ -52,21 +68,6 @@ function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) =
       const d = pts.map((p, i) => `${i && !(s.gap && +p.x - +pts[i - 1].x > s.gap) ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
       g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width || 2}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} opacity="${s.opacity ?? 1}" stroke-linejoin="round"/>`;
     }
-  }
-  if (y2) {
-    const plotH = H - m.t - m.b;
-    const Y2 = (v) => m.t + (v / y2.max) * plotH; // 0 at the top, growing downward
-    for (const b of y2.bars) {
-      if (b.x1 < x0 || b.x0 > x1 || !(b.y > 0)) continue;
-      const xa = X(Math.max(b.x0, x0)), xb = X(Math.min(b.x1, x1));
-      g += `<rect x="${xa.toFixed(1)}" y="${m.t}" width="${Math.max(2, xb - xa - 0.6).toFixed(1)}" height="${(Y2(b.y) - m.t).toFixed(1)}" fill="${b.color}" opacity="${b.opacity ?? 0.75}"><title>${esc(b.title || "")}</title></rect>`;
-    }
-    for (let i = 0; i <= 2; i++) {
-      const v = (y2.max * i) / 4; // label the top half, where the bars live
-      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
-    }
-    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
-    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
   }
   if (now != null) g += `<line x1="${X(now)}" x2="${X(now)}" y1="${m.t}" y2="${H - m.b}" stroke="${css("--color-muted")}" stroke-width="1"/><text x="${X(now) + 4}" y="${m.t + 10}">now</text>`;
   for (const t of xTicks || []) g += `<text x="${X(t)}" y="${H - 6}" text-anchor="middle">${esc(xFmt(t))}</text>`;
@@ -101,26 +102,16 @@ function monthTicks(a, b, everyMonths) {
 
 // Daily rain (in) for the level chart: baked-in history (Coal Oil Point gauge, filled from
 // KSBA + CoCoRaHS), then the live feed's last 30 days, then the 10-day forecast.
-function rainBars(s, start, end, span) {
+function rainBars(s, start, end) {
   const daily = new Map();
   for (const [d, v] of HISTORY?.rain || []) daily.set(dayNum(d), { y: v, fc: false });
   for (const r of s.recent?.rain || []) if (r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: false });
   for (const r of s.outlook || []) if (!r.observed && r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: true });
   const days = [...daily].filter(([x, v]) => x >= start - 7 && x <= end && v.y > 0).sort((a, b) => a[0] - b[0]);
   const obsColor = css("--color-accent"), fcColor = COLORS.mist;
-  if (span <= 120) {
-    return days.map(([x, v]) => ({ x0: x - 0.5, x1: x + 0.5, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.6 : 0.75,
-      title: `${shortDay(x)}: ${v.y.toFixed(2)} in${v.fc ? " (forecast)" : ""}` }));
-  }
-  // long views: weekly totals so storms stay readable
-  const weeks = new Map();
-  for (const [x, v] of days) {
-    const w = Math.floor((x - 3) / 7) * 7 + 3; // weeks starting Monday
-    const cur = weeks.get(w) || { y: 0, fc: false };
-    cur.y += v.y; cur.fc ||= v.fc; weeks.set(w, cur);
-  }
-  return [...weeks].map(([w, v]) => ({ x0: w, x1: w + 7, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.6 : 0.75,
-    title: `Week of ${shortDay(w)}: ${v.y.toFixed(2)} in` }));
+  // daily in every view, so each bar lines up with the day the slough responds
+  return days.map(([x, v]) => ({ x0: x - 0.5, x1: x + 0.5, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.5 : 0.6,
+    title: `${shortDay(x)}: ${v.y.toFixed(2)} in${v.fc ? " (forecast)" : ""}` }));
 }
 
 function levelChartSvg(s, range) {
@@ -160,11 +151,11 @@ function levelChartSvg(s, range) {
     ],
     vlines: breaches.map((x) => ({ x, color: "#E07B39" })),
     y2: showRain ? (() => {
-      const bars = rainBars(s, start, end, span);
+      const bars = rainBars(s, start, end);
       const peak = Math.max(0.5, ...bars.filter((b) => b.x1 >= start).map((b) => b.y));
-      const weekly = span > 120;
-      const step = weekly ? 1 : 0.5;
-      return { bars, max: Math.ceil((peak * 1.6) / step) * step, fmt: (v) => (Number.isInteger(v) ? String(v) : v.toFixed(Number.isInteger(v * 10) ? 1 : 2)), label: weekly ? "rain, in/week" : "rain, in/day" };
+      // tallest day reaches ~80% of the plot height; round axis max
+      const nice = [0.5, 1, 1.5, 2, 3, 4, 5, 6, 8, 10];
+      return { bars, max: nice.find((n) => n >= peak * 1.25) ?? Math.ceil(peak * 1.25), fmt: (v) => (Number.isInteger(v) ? String(v) : v.toFixed(Number.isInteger(v * 10) ? 1 : 2)), label: "rain, in/day" };
     })() : undefined,
     xTicks: span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
     xFmt: (x) => span <= 400 ? shortDay(x) : String(new Date(x * 86400000).getUTCFullYear()),
