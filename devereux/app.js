@@ -150,7 +150,8 @@ function render(s) {
   const peak = s.peak;
   const level = open || !peak ? "na" : peak.alert;
   const levelLabel = open ? "Mouth open" : peak ? LEVEL_TEXT[peak.alert] : "Unavailable";
-  const stateColor = open ? COLORS.sky : COLORS.sage;
+  // mouth state dot: green = open to the ocean, red = closed behind the berm
+  const stateColor = !s.mouth ? css("--color-muted") : open ? "#2E9E5B" : "#D64541";
 
   let sentence;
   if (!s.mouth) sentence = "The mouth-state record couldn't be loaded, so there is no outlook right now.";
