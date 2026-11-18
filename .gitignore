@@ -10,3 +10,6 @@ __pycache__/
 .env
 .flickr-picks/
 .cache/
+
+# Local Netlify folder
+.netlify
