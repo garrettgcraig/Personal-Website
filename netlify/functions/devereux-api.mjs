@@ -183,12 +183,12 @@ async function waves() {
 // coastalocean.ucdavis.edu. Meters NAVD88; shifted onto the staff-gauge datum the model
 // uses (params.licor_offset_ft, -0.21 ft from overlap with the staff gauge and CCBER loggers).
 const LICOR_URL = "https://www.licor.cloud/api/v2/timeseriesdata";
-async function sensor(days = 120) {
+async function sensor(days = 120, minutes = 60) {
   const DAY = 86400000, end = Date.now(), rows = [];
   for (let t0 = end - days * DAY; t0 < end; t0 += 60 * DAY) {
     const body = {
       channels: [{ channelUUID: "0942b00d-ca65-460d-9b34-8ca6f3912883", channelType: "dataChannel",
-        metricName: "com.onset.sensordata.waterlevel_si", aggregationInterval: { value: 60, unit: "minutes" },
+        metricName: "com.onset.sensordata.waterlevel_si", aggregationInterval: { value: minutes, unit: "minutes" },
         aggregationFunction: "avg", limit: 10000 }],
       time: { absolute: { from: t0, to: Math.min(t0 + 60 * DAY, end) } },
       dashboardUUID: "cd5b1933-9022-44e4-a3c8-f4cfcc2a3433",
@@ -230,7 +230,7 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, coco, sba, cop, om, tide, wave, live] = await Promise.all([
+  const [log, staff, coco, sba, cop, om, tide, wave, live, live5] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cocorahs", () => cocorahs(start, yesterday), blobs, status),
@@ -240,6 +240,8 @@ export async function buildStatus(now = new Date()) {
     withFallback("tides", () => tides(today), blobs, status),
     withFallback("waves", waves, blobs, status),
     withFallback("live_sensor", () => sensor(120), blobs, status),
+    // newest 5-minute readings (the sensor's native interval) for the "now" value
+    sensor(0.25, 5).catch(() => []),
   ]);
 
   // Mouth state: CCBER's log and the site's own event list, plus openings/closings the
@@ -337,7 +339,7 @@ export async function buildStatus(now = new Date()) {
       series: stageSeries,
       sensor_daily: sensorDays,
       sensor_hourly: hourly.filter((h) => h.t >= Date.now() - 7 * 86400000),
-      sensor_now: hourly.at(-1) || null,
+      sensor_now: live5.at(-1) || hourly.at(-1) || null,
       export: staff?.export ?? null,
     } : null,
     outlook,
