@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
@@ -82,4 +82,20 @@ test("stage outlook: middle line matches the forecast, range brackets it and wid
   assert.ok(w("2026-12-04") > w("2026-12-01") + 0.5, "storm widens the range");
   assert.equal(so.find((x) => x.date === "2026-11-20").phase, "estimated");
   assert.equal(so.find((x) => x.date === "2026-12-01").phase, "forecast");
+});
+
+test("live-sensor detector: breach on a fast drop, closure when the tide stops", () => {
+  const H = 3600000, t0 = Date.UTC(2026, 0, 1);
+  const pts = [];
+  let h = 0;
+  for (; h < 72; h++) pts.push({ t: t0 + h * H, ft: 8 + h * 0.01 });            // closed, rising
+  const peak = pts.at(-1).ft;
+  for (let k = 1; k <= 4; k++, h++) pts.push({ t: t0 + h * H, ft: peak - k * 0.9 }); // breach: drops 3.6 ft
+  for (let k = 0; k < 24 * 5; k++, h++) pts.push({ t: t0 + h * H, ft: 4.5 + 1.2 * Math.sin((2 * Math.PI * k) / 12.42) }); // tidal
+  for (let k = 0; k < 24 * 4; k++, h++) pts.push({ t: t0 + h * H, ft: 5.0 + 0.01 * Math.sin(k) });  // closed again, calm
+  const ev = detectMouthEvents(pts, "closed");
+  assert.deepEqual(ev.map((e) => e.state), ["open", "closed"]);
+  assert.equal(ev[0].t, t0 + 71 * H, "breach dated to the last high point");
+  // a closed, calm slough never triggers
+  assert.deepEqual(detectMouthEvents(pts.slice(0, 72), "closed"), []);
 });

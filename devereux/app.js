@@ -87,7 +87,10 @@ function levelChartSvg(s, range) {
   const end = series.length ? dayNum(series.at(-1).date) : nowX + 9;
   const start = range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
   const hist = (HISTORY?.stage || []).map(([d, ft, mx, src]) => ({ x: dayNum(d), ft, src }));
-  const loggers = hist.filter((r) => "VEP".includes(r.src));
+  // loggers + the live sensor: baked-in history, then the API's recent sensor days
+  const sensorDays = (s.stage?.sensor_daily || []).map((r) => ({ x: dayNum(r.date), ft: r.ft, src: "L" }));
+  const histEnd = hist.length ? hist.at(-1).x : -Infinity;
+  const loggers = [...hist.filter((r) => "VEPL".includes(r.src)), ...sensorDays.filter((r) => r.x > histEnd)];
   // manual readings: history (staff gauge + pier stick) plus anything newer from the live feed
   const manual = new Map(hist.filter((r) => "SK".includes(r.src)).map((r) => [r.x, r.ft]));
   for (const r of s.stage?.readings || []) manual.set(dayNum(r.date), r.ft);
@@ -163,7 +166,9 @@ function render(s) {
   const tiles = [
     [s.stage?.today_est_ft != null ? FT(s.stage.today_est_ft, 2) : "n/a", "Slough level today (est., NAVD88)"],
     [s.stage?.crest_today_ft != null && !open ? FT(s.stage.crest_today_ft) : "n/a", "Estimated berm crest"],
-    [s.stage?.latest_reading ? FT(s.stage.latest_reading.ft, 2) : "n/a", s.stage?.latest_reading ? `Staff gauge, ${day(s.stage.latest_reading.date, { month: "short", day: "numeric" })}` : "Latest staff gauge"],
+    s.stage?.sensor_now
+      ? [FT(s.stage.sensor_now.ft, 2), `Live sensor, ${new Date(s.stage.sensor_now.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`]
+      : [s.stage?.latest_reading ? FT(s.stage.latest_reading.ft, 2) : "n/a", s.stage?.latest_reading ? `Staff gauge, ${day(s.stage.latest_reading.date, { month: "short", day: "numeric" })}` : "Latest staff gauge"],
     [`${s.recent.season_rain_in.toFixed(2)} in`, `Rain since Oct 1 (water year ${s.today.slice(0, 4) * 1 + (s.today.slice(5, 7) >= "10" ? 1 : 0)})`],
   ];
 
@@ -224,6 +229,14 @@ function render(s) {
     xTicks: midnights(wv.series.map((p) => localH(p.t))), xFmt: localDayLabel, now: nowH,
   }) : `<p class="muted">Wave data unavailable.</p>`;
 
+  // --- live sensor, hourly, last 7 days
+  const lh = s.stage?.sensor_hourly || [];
+  const liveChart = lh.length ? chart({
+    height: 170, yMin: Math.floor(Math.min(...lh.map((h) => h.ft)) - 0.3), yMax: Math.ceil(Math.max(...lh.map((h) => h.ft)) + 0.3), yFmt: (v) => v.toFixed(1),
+    series: [{ type: "line", color: css("--color-accent"), width: 2.2, points: lh.map((h) => ({ x: localH(new Date(h.t).toISOString()), y: h.ft })) }],
+    xTicks: midnights(lh.map((h) => localH(new Date(h.t).toISOString()))), xFmt: localDayLabel, now: nowH,
+  }) : "";
+
   const sources = Object.entries(s.sources).map(([k, v]) =>
     `<span class="chip ${v.ok ? "" : "bad"}" title="${esc(v.ok ? "updated " + v.at : v.error + (v.stale_from ? ", showing data from " + v.stale_from : ""))}">${esc(k.replace(/_/g, " "))}${v.ok ? "" : v.stale_from ? " (stale)" : " (down)"}</span>`).join("");
 
@@ -266,10 +279,10 @@ function render(s) {
 
   <section class="block">
     <h2>Slough water level</h2>
-    <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers, re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The dashed line is the estimated berm crest for the current closure, and orange lines mark past breaches. Feet, NAVD88.</p>
+    <p class="muted small" style="margin-top:0">The dark line is the daily record from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), all re-leveled to the weekly staff gauge at Venoco Bridge (gold dots). From the latest reading on, the blue line rolls the level forward with a rain-driven water balance: observed rain up to today, then the rain forecast. The shaded range covers half to 1.5 times the forecast rain plus the model's typical error (80% of past cases). The dashed line is the estimated berm crest for the current closure, and orange lines mark past breaches. Feet, NAVD88.</p>
     <div class="chart-card">
       <div class="range-btns" role="group" aria-label="Time range">${["3m", "1y", "all"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "All (2018 on)" }[k]}</button>`).join("")}</div>
-      ${legend([[css("--color-text"), "logger record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay, "estimated berm crest", true], ["#E07B39", "breach", true]])}
+      ${legend([[css("--color-text"), "logger and live-sensor record", true], [COLORS.ochre, "staff gauge / pier stick"], [css("--color-accent"), "estimated and forecast level", true], [css("--color-accent") + "44", "forecast range"], [COLORS.clay, "estimated berm crest", true], ["#E07B39", "breach", true]])}
       <div id="level-chart">${levelChart}</div>
       ${s.stage?.series?.length ? `<p class="muted small" style="margin:var(--space-2) 0 0">${levelSummary(s)}</p>` : ""}
     </div>
@@ -277,6 +290,12 @@ function render(s) {
 
   <section class="block">
     <h2>Recent conditions</h2>
+    ${s.stage?.sensor_hourly?.length ? `<div class="chart-card" style="margin-bottom:var(--space-4)">
+      <h3>Slough level, last 7 days (live sensor, hourly)</h3>
+      ${legend([[css("--color-accent"), "water level, ft NAVD88 (staff-gauge datum)", true]])}
+      ${liveChart}
+      <p class="muted small">From the UC Davis Coastal Oceanography Group / California State Parks sensor (<a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">source</a>). A sudden drop of more than 1.5 ft in a few hours means the berm has breached; the page then marks the mouth open without waiting for CCBER's log.</p>
+    </div>` : ""}
     <div class="grid2">
       <div class="chart-card">
         <h3>Rain, last 30 days</h3>
@@ -305,7 +324,7 @@ function render(s) {
 
   <section class="block prose">
     <h2>How this works</h2>
-    <p>Rain is the only thing that fills the slough, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the berm crest is the slough</strong>, and <strong>how much rain is falling</strong>, which drives the same-day rise that a daily estimate can lag. The slough level comes from the latest weekly staff-gauge reading, rolled forward with rain. The berm crest is not measured; it is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months toward about ${s.model.crest.c_inf.toFixed(1)} ft as waves pile sand back up. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
+    <p>Rain is the only thing that fills the slough, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the berm crest is the slough</strong>, and <strong>how much rain is falling</strong>, which drives the same-day rise that a daily estimate can lag. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down, rolled forward with rain. The berm crest is not measured; it is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months toward about ${s.model.crest.c_inf.toFixed(1)} ft as waves pile sand back up. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
     <p>Predicting each season with a model trained on the others, and using only the weekly readings this page has, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
     <p>Limits: the newest slough level is a weekly staff-gauge reading, so the level in between is an estimate (about ±0.4 ft over a storm). Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, which can lag a breach by days.</p>
     <p class="small muted">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge) · <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge · <a href="https://www.cocorahs.org/">CoCoRaHS</a> · <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA) · <a href="https://open-meteo.com/">Open-Meteo</a> · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a> · <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a></p>

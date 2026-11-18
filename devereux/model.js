@@ -179,3 +179,43 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom })
   });
   return out;
 }
+
+/**
+ * Detect mouth openings and closings from the live water-level sensor (hourly, ft).
+ * Validated on Apr 2025 - Nov 2026 against CCBER's log (2025-11-15 open, 2026-02-06
+ * closed, 2026-02-19 open, 2026-03-07 closed; detected within 0-2 days):
+ *  - breach: while closed, the level falls more than 1.5 ft within 6 hours
+ *  - closure: while open (and at least 2 days after opening), the level's range has
+ *    stayed under 0.35 ft for 48 hours (no tide gets in). Closed-mouth daily range is
+ *    normally about 0.02 ft.
+ * hourly: [{t: epoch ms, ft}] sorted by time. Returns [{t, state}].
+ */
+export function detectMouthEvents(hourly, startState) {
+  const H = 3600000;
+  const events = [];
+  let state = startState;
+  let openedAt = null;
+  for (let i = 0; i < hourly.length; i++) {
+    const { t, ft } = hourly[i];
+    if (state === "closed") {
+      let maxPrev = -Infinity;
+      for (let j = i - 1; j >= 0 && t - hourly[j].t <= 6 * H; j--) maxPrev = Math.max(maxPrev, hourly[j].ft);
+      if (maxPrev - ft > 1.5) {
+        // breach time: when the fall began (the last high point)
+        let k = i - 1;
+        while (k > 0 && t - hourly[k - 1].t <= 6 * H && hourly[k - 1].ft >= hourly[k].ft) k--;
+        state = "open"; openedAt = hourly[k].t;
+        events.push({ t: openedAt, state });
+      }
+    } else if (state === "open" && t - openedAt >= 2 * 86400000) {
+      const win = [];
+      for (let j = i; j >= 0 && t - hourly[j].t <= 48 * H; j--) win.push(hourly[j].ft);
+      const spanOk = win.length >= 40;
+      if (spanOk && Math.max(...win) - Math.min(...win) < 0.35) {
+        state = "closed";
+        events.push({ t: t - 48 * H, state });
+      }
+    }
+  }
+  return events;
+}

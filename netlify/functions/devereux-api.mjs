@@ -7,7 +7,7 @@ import { inflateRawSync } from "node:zlib";
 import { getStore } from "@netlify/blobs";
 import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
-import { addDays, dateRange, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
+import { addDays, dateRange, detectMouthEvents, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
@@ -178,6 +178,33 @@ async function waves() {
   return { station: "NDBC 46218 Harvest", series: rows.filter((r) => Date.parse(r.t) >= cutoff).reverse(), latest: rows[0] || null };
 }
 
+// Real-time water level (UC Davis Coastal Oceanography Group / California State Parks,
+// Onset HOBO RX2100), from the public LI-COR Cloud dashboard embedded on
+// coastalocean.ucdavis.edu. Meters NAVD88; shifted onto the staff-gauge datum the model
+// uses (params.licor_offset_ft, -0.21 ft from overlap with the staff gauge and CCBER loggers).
+const LICOR_URL = "https://www.licor.cloud/api/v2/timeseriesdata";
+async function sensor(days = 120) {
+  const DAY = 86400000, end = Date.now(), rows = [];
+  for (let t0 = end - days * DAY; t0 < end; t0 += 60 * DAY) {
+    const body = {
+      channels: [{ channelUUID: "0942b00d-ca65-460d-9b34-8ca6f3912883", channelType: "dataChannel",
+        metricName: "com.onset.sensordata.waterlevel_si", aggregationInterval: { value: 60, unit: "minutes" },
+        aggregationFunction: "avg", limit: 10000 }],
+      time: { absolute: { from: t0, to: Math.min(t0 + 60 * DAY, end) } },
+      dashboardUUID: "cd5b1933-9022-44e4-a3c8-f4cfcc2a3433",
+    };
+    const r = await fetch(LICOR_URL, { method: "POST", headers: { ...UA, "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body), signal: AbortSignal.timeout(20000) });
+    if (!r.ok) throw new Error(`${r.status} LI-COR`);
+    rows.push(...((await r.json())?.value?.records?.[0]?.datum?.valid || []));
+  }
+  const seen = new Set();
+  return rows.filter(([t]) => !seen.has(t) && seen.add(t)).sort((a, b) => a[0] - b[0])
+    .map(([t, m]) => ({ t, ft: m * 3.28084 + params.licor_offset_ft }));
+}
+
+const pacificDate = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date(ms));
+
 // ---------------------------------------------------------------- assembly
 function store() {
   try { return getStore({ name: "devereux" }); } catch { return null; }
@@ -203,7 +230,7 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, coco, sba, cop, om, tide, wave] = await Promise.all([
+  const [log, staff, coco, sba, cop, om, tide, wave, live] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cocorahs", () => cocorahs(start, yesterday), blobs, status),
@@ -212,11 +239,26 @@ export async function buildStatus(now = new Date()) {
     withFallback("open_meteo", openMeteo, blobs, status),
     withFallback("tides", () => tides(today), blobs, status),
     withFallback("waves", waves, blobs, status),
+    withFallback("live_sensor", () => sensor(120), blobs, status),
   ]);
 
-  // Mouth state: latest event from the CCBER log or the site's own event list.
+  // Mouth state: CCBER's log and the site's own event list, plus openings/closings the
+  // live sensor shows after the last logged event (CCBER's log can lag by days).
   const events = [...(log || []), ...localEvents.events.map((e) => ({ ...e, source: e.source || "site log" }))]
     .sort((a, b) => a.date.localeCompare(b.date));
+  const hourly = live || [];
+  if (hourly.length && events.length) {
+    const firstDay = pacificDate(hourly[0].t);
+    const startState = events.filter((e) => e.date <= firstDay).at(-1)?.state || "closed";
+    const lastLogged = events.at(-1);
+    let state = lastLogged.state;
+    for (const e of detectMouthEvents(hourly, startState)) {
+      const date = pacificDate(e.t);
+      if (date <= lastLogged.date || e.state === state) continue;
+      events.push({ date, state: e.state, source: "live water-level sensor", time: new Date(e.t).toISOString() });
+      state = e.state;
+    }
+  }
   const last = events.at(-1);
   const warnings = [];
   if (!last) warnings.push("No mouth-state record could be loaded.");
@@ -231,7 +273,15 @@ export async function buildStatus(now = new Date()) {
   if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
 
   const readings = staff?.readings || [];
-  const latest = readings.filter((r) => r.date <= today && r.date >= start).at(-1) || null;
+  // Daily means from the live sensor; the latest complete day (>= 12 hourly values)
+  // beats the weekly staff gauge as the starting level.
+  const sensorDaily = {};
+  for (const h of hourly) { const d = pacificDate(h.t); (sensorDaily[d] ||= []).push(h.ft); }
+  const sensorDays = Object.entries(sensorDaily).filter(([d, v]) => d < today && v.length >= 12)
+    .map(([date, v]) => ({ date, ft: v.reduce((a, b) => a + b, 0) / v.length, src: "live sensor" }));
+  const manualLatest = readings.filter((r) => r.date <= today && r.date >= start).at(-1) || null;
+  const sensorLatest = sensorDays.filter((r) => daysSince(r.date, today) <= 3).at(-1) || null;
+  const latest = sensorLatest || (manualLatest && { ...manualLatest, src: "staff gauge" });
   const mouthOpen = last?.state === "open";
   // A reading only counts if no breach happened after it (the slough drains when the
   // mouth opens) and it is at most 45 days old; otherwise use the rain model alone.
@@ -249,11 +299,14 @@ export async function buildStatus(now = new Date()) {
         .map((r) => [r.date, r.crest_ft]));
       stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
         .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
-      if (daysSince(stage0.date, today) > 21) warnings.push("The latest staff-gauge reading is more than three weeks old, so the slough level is less certain.");
+      if (daysSince(stage0.date, today) > 21) warnings.push("The latest slough-level reading is more than three weeks old, so the level is less certain.");
     } else {
       warnings.push(preBreach
-        ? "No staff-gauge reading since the last breach, so the outlook uses rain alone."
-        : "No staff-gauge reading in the last 45 days, so the outlook uses rain alone.");
+        ? "No slough-level reading since the last breach, so the outlook uses rain alone."
+        : "No slough-level reading in the last 45 days, so the outlook uses rain alone.");
+    }
+    if (!sensorLatest && hourly.length === 0) {
+      warnings.push("The live water-level sensor is not reporting; the level comes from the weekly staff gauge.");
     }
   }
   const todayRow = outlook.find((r) => r.date === today) || null;
@@ -274,6 +327,9 @@ export async function buildStatus(now = new Date()) {
       crest_today_ft: todayRow?.crest_ft ?? null,
       readings: readings.slice(-16),
       series: stageSeries,
+      sensor_daily: sensorDays,
+      sensor_hourly: hourly.filter((h) => h.t >= Date.now() - 7 * 86400000),
+      sensor_now: hourly.at(-1) || null,
       export: staff?.export ?? null,
     } : null,
     outlook,

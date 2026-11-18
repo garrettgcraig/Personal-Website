@@ -62,6 +62,7 @@
     }
   },
   "stick_offset_ft": 0.19,
+  "licor_offset_ft": -0.21,
   "thresholds": {
     "watch": 0.2,
     "likely": 0.5
