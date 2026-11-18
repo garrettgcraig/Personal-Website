@@ -203,16 +203,17 @@ document.addEventListener("click", (e) => {
 });
 
 // ------------------------------------------------------------- satellite frames
-// Sentinel-2 L2A true color, 10 m, the clearest scene in each stage of the cycle
-// (scene IDs in the Python project's notes). Levels are the re-leveled daily means.
+// The clearest image of each stage of the cycle. Sentinel-2 L2A true color (10 m) for the
+// stages only a frequent satellite catches; USDA NAIP aerial photos (0.6 m, flown in late spring
+// or summer every two years) where one fits. Levels are the re-leveled daily means.
 const SAT = "media/satellite/";
 const FRAMES = [
-  { key: "dry", label: "Dry", date: "October 4, 2025", text: "Late summer, 4.2 ft. After a rainless summer the slough has shrunk back to its channels, and the north arms are bare mud." },
-  { key: "filling", label: "Filling", date: "October 27, 2025", text: "First storms, 5.4 ft. Early rain pools in the lower slough while the berm holds." },
-  { key: "full", label: "Full", date: "February 6, 2020", text: "Full, 9.2 ft, after 323 days closed. It breached five weeks later. (Every day before the November 2025 breach was cloudy, so this frame comes from 2020.)" },
-  { key: "tidal", label: "Tidal", date: "November 26, 2025", text: "Open, 11 days after the November 15 breach. The slough drains to about 4 ft and rises and falls with the tide." },
-  { key: "reclosed", label: "Just closed", date: "March 11, 2026", text: "Closed again, 4.8 ft. Waves rebuilt the berm five days earlier, ending a three-week open spell." },
-  { key: "now", label: "Latest", date: "November 11, 2026", text: "The most recent clear image, 6.1 ft. Water fills the lower slough; the north arms are still mostly dry." },
+  { key: "dry", label: "Dry", date: "July 13, 2016", src: "NAIP aerial photo, 0.6 m", text: "Midsummer in a drought year. The lower slough has dried to a salt flat, with water left only in the channels. (The north arms look different because they were restored from 2017 to 2019.)" },
+  { key: "filling", label: "Filling", date: "October 27, 2025", src: "Sentinel-2, 10 m", text: "First storms, 5.4 ft. Early rain pools in the lower slough while the berm holds." },
+  { key: "full", label: "Full", date: "February 6, 2020", src: "Sentinel-2, 10 m", text: "Full, 9.2 ft, after 323 days closed. It breached five weeks later. (Every day before the November 2025 breach was cloudy, so this frame comes from 2020.)" },
+  { key: "tidal", label: "Tidal", date: "November 26, 2025", src: "Sentinel-2, 10 m", text: "Open, 11 days after the November 15 breach. The slough drains to about 4 ft and rises and falls with the tide." },
+  { key: "reclosed", label: "Closed again", date: "May 21, 2020", src: "NAIP aerial photo, 0.6 m", text: "Closed again, 6.1 ft. Waves rebuilt the berm about seven weeks earlier, after the March 16 breach, and the lower slough is holding water again." },
+  { key: "now", label: "Latest", date: "November 11, 2026", src: "Sentinel-2, 10 m", text: "The most recent clear image, 6.1 ft. Water fills the lower slough; the north arms are still mostly dry." },
 ];
 let frameIdx = FRAMES.length - 1;
 function setFrame(i) {
@@ -220,13 +221,13 @@ function setFrame(i) {
   document.querySelectorAll(".frames .stage img").forEach((im, k) => im.classList.toggle("on", k === frameIdx));
   document.querySelectorAll(".frames .strip button").forEach((b, k) => b.setAttribute("aria-pressed", String(k === frameIdx)));
   const f = FRAMES[frameIdx], cap = document.getElementById("frame-cap");
-  if (cap) cap.innerHTML = `<span class="when">${esc(f.date)}</span>${esc(f.text)}`;
+  if (cap) cap.innerHTML = `<span class="when">${esc(f.date)} · ${esc(f.src)}</span>${esc(f.text)}`;
 }
 const framesHtml = () => `
   <figure class="frames" aria-label="The slough from orbit through one cycle">
-    <div class="stage">${FRAMES.map((f, k) => `<img src="${SAT}${f.key}.jpg" alt="Satellite view of Devereux Slough, ${esc(f.date)}: ${esc(f.text)}" class="${k === frameIdx ? "on" : ""}" ${k === frameIdx ? "" : `loading="lazy"`} decoding="async" width="1056" height="960" />`).join("")}</div>
+    <div class="stage">${FRAMES.map((f, k) => `<img src="${SAT}${f.key}.jpg" alt="Overhead view of Devereux Slough, ${esc(f.date)}: ${esc(f.text)}" class="${k === frameIdx ? "on" : ""}" ${k === frameIdx ? "" : `loading="lazy"`} decoding="async" width="1056" height="960" />`).join("")}</div>
     <div class="strip" role="group" aria-label="Stages of the cycle">${FRAMES.map((f, k) => `<button type="button" data-frame="${k}" aria-pressed="${k === frameIdx}"><img src="${SAT}${f.key}-thumb.jpg" alt="" loading="lazy" />${esc(f.label)}</button>`).join("")}</div>
-    <figcaption id="frame-cap"><span class="when">${esc(FRAMES[frameIdx].date)}</span>${esc(FRAMES[frameIdx].text)}</figcaption>
+    <figcaption id="frame-cap"><span class="when">${esc(FRAMES[frameIdx].date)} · ${esc(FRAMES[frameIdx].src)}</span>${esc(FRAMES[frameIdx].text)}</figcaption>
   </figure>`;
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-frame]"); if (b) setFrame(Number(b.dataset.frame)); });
 document.addEventListener("keydown", (e) => {
@@ -455,7 +456,7 @@ function render(s) {
       <p>Predicting each season with a model trained on the others, starting each day from the previous day's measured level as this page does, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
-    <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>.<br/>
+    <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
     Live feeds: ${sources}. Updated ${new Date(s.generated_at).toLocaleString("en-US", { timeZone: tz, dateStyle: "medium", timeStyle: "short" })} Pacific. Model fit ${esc(s.model.exported)}.</p>
   </section>`;
   // the alerts form lives outside #app (it keeps its state); slot it in
