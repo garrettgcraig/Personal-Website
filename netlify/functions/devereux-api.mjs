@@ -231,21 +231,30 @@ export async function buildStatus(now = new Date()) {
   if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
 
   const readings = staff?.readings || [];
-  const stage0 = readings.filter((r) => r.date <= today && r.date >= start).at(-1) || null;
+  const latest = readings.filter((r) => r.date <= today && r.date >= start).at(-1) || null;
   const mouthOpen = last?.state === "open";
+  // A reading only counts if no breach happened after it (the slough drains when the
+  // mouth opens) and it is at most 45 days old; otherwise use the rain model alone.
+  const lastOpen = events.filter((e) => e.state === "open").at(-1)?.date;
+  const stale = latest && daysSince(latest.date, today) > 45;
+  const preBreach = latest && lastOpen && latest.date < lastOpen;
+  const stage0 = latest && !stale && !preBreach ? latest : null;
   let outlook = [];
   let stageSeries = [];
-  if (last && !mouthOpen && stage0) {
+  if (last && !mouthOpen) {
     outlook = forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: addDays(today, -14) });
-    // level (with range) and crest from the latest reading on, for the level chart
-    const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
-      .map((r) => [r.date, r.crest_ft]));
-    stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
-      .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
-    if (stage0.date < last.date) warnings.push("The latest staff-gauge reading predates the last closure.");
-    if (daysSince(stage0.date, today) > 21) warnings.push("The latest staff-gauge reading is more than three weeks old.");
-  } else if (last && !mouthOpen) {
-    warnings.push("No staff-gauge reading this water year; the berm-crest model is off.");
+    if (stage0) {
+      // level (with range) and crest from the latest reading on, for the level chart
+      const crest = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, showFrom: stage0.date })
+        .map((r) => [r.date, r.crest_ft]));
+      stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
+        .map((r) => ({ ...r, crest_ft: crest[r.date] ?? null }));
+      if (daysSince(stage0.date, today) > 21) warnings.push("The latest staff-gauge reading is more than three weeks old, so the slough level is less certain.");
+    } else {
+      warnings.push(preBreach
+        ? "No staff-gauge reading since the last breach, so the outlook uses rain alone."
+        : "No staff-gauge reading in the last 45 days, so the outlook uses rain alone.");
+    }
   }
   const todayRow = outlook.find((r) => r.date === today) || null;
   const ahead = outlook.filter((r) => r.date >= today);
@@ -258,8 +267,9 @@ export async function buildStatus(now = new Date()) {
       state: last.state, since: last.date, days: daysSince(last.date, today), source: last.source,
       recent_events: events.slice(-6).reverse(),
     } : null,
-    stage: stage0 ? {
-      latest_reading: stage0,
+    stage: latest ? {
+      latest_reading: latest,
+      used: Boolean(stage0),
       today_est_ft: todayRow?.stage_ft ?? null,
       crest_today_ft: todayRow?.crest_ft ?? null,
       readings: readings.slice(-16),
@@ -274,7 +284,7 @@ export async function buildStatus(now = new Date()) {
       tides: tide,
       waves: wave,
     },
-    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.crest },
+    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified },
     sources: status,
     warnings,
   };

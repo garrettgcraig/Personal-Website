@@ -170,7 +170,7 @@ function render(s) {
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: Math.max(r.p, 0.004), color: r.alert === "likely" ? COLORS.clay : r.alert === "watch" ? COLORS.ochre : COLORS.sky,
-        opacity: r.observed ? 0.45 : 1, title: `${day(r.date)}: ${PCT(r.p)} (rain model ${PCT(r.p_rain)}, berm-crest model ${PCT(r.p_crest)})`,
+        opacity: r.observed ? 0.45 : 1, title: `${day(r.date)}: ${PCT(r.p)}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.margin_ft).toFixed(1)} ft ${r.margin_ft < 0 ? "below" : "above"} the crest, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
     hlines: [{ y: 0.5, color: COLORS.clay, label: "likely" }, { y: 0.2, color: COLORS.ochre, label: "watch" }],
@@ -245,7 +245,7 @@ function render(s) {
   ${open ? "" : `
   <section class="block">
     <h2>Daily breach chance</h2>
-    <p class="muted small" style="margin-top:0">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Each day shows the higher of two models: a rain model and a berm-crest model.</p>
+    <p class="muted small" style="margin-top:0">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Each day's chance depends on how far the slough sits below the berm crest and how much rain falls.</p>
     <div class="chart-card">
       ${legend([[COLORS.sky, "low"], [COLORS.ochre, "watch (20% or more)"], [COLORS.clay, "likely (50% or more)"]])}
       ${probChart}
@@ -254,8 +254,8 @@ function render(s) {
       ${rainChart}
     </div>
     <div class="table-scroll"><table class="days">
-      <thead><tr><th>Day</th><th>Rain (in)</th><th>Slough (ft)</th><th>Crest (ft)</th><th>Rain model</th><th>Crest model</th><th>Chance</th></tr></thead>
-      <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.crest_ft.toFixed(1)}</td><td>${PCT(r.p_rain)}</td><td>${PCT(r.p_crest)}</td><td><strong>${PCT(r.p)}</strong></td></tr>`).join("")}</tbody>
+      <thead><tr><th>Day</th><th>Rain (in)</th><th>Slough (ft)</th><th>Crest (ft)</th><th>Below crest (ft)</th><th>Chance</th></tr></thead>
+      <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.crest_ft.toFixed(1)}</td><td>${r.margin_ft == null ? "n/a" : (-r.margin_ft).toFixed(2)}</td><td><strong>${PCT(r.p)}</strong></td></tr>`).join("")}</tbody>
     </table></div>
   </section>`}
 
@@ -300,8 +300,8 @@ function render(s) {
 
   <section class="block prose">
     <h2>How this works</h2>
-    <p>Two models, trained on CCBER's record of 14 breaches from 2019 to 2026. The <strong>rain model</strong> looks at the day's rain, the last three days, how wet the watershed already is, rain since October 1, and how long the mouth has been closed. It catches breaches driven by big storms. The <strong>berm-crest model</strong> compares the slough level with a berm crest that is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months toward about ${s.model.crest.c_inf.toFixed(1)} ft. It catches breaches when the slough is already nearly full. The page shows the higher of the two.</p>
-    <p>Predicting each season with a model trained on the others, the combined alert flagged ${esc(s.model.skill.combined_hits_p50)} breaches at the 50% level, with ${s.model.skill.combined_false_alarm_days_p50} false-alarm days over eight seasons. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
+    <p>Rain is the only thing that fills the slough, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the berm crest is the slough</strong>, and <strong>how much rain is falling</strong>, which drives the same-day rise that a daily estimate can lag. The slough level comes from the latest weekly staff-gauge reading, rolled forward with rain. The berm crest is not measured; it is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months toward about ${s.model.crest.c_inf.toFixed(1)} ft as waves pile sand back up. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
+    <p>Predicting each season with a model trained on the others, and using only the weekly readings this page has, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
     <p>Limits: the newest slough level is a weekly staff-gauge reading, so the level in between is an estimate (about ±0.4 ft over a storm). Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, which can lag a breach by days.</p>
     <p class="small muted">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge) · <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge · <a href="https://www.cocorahs.org/">CoCoRaHS</a> · <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA) · <a href="https://open-meteo.com/">Open-Meteo</a> · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a> · <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a></p>
     <div class="chips">${sources}</div>
