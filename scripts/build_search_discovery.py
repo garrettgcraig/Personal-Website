@@ -89,6 +89,7 @@ The links below lead to the site's public pages. Trail journals also have plain 
 - [ChronoSono](https://garrettgcraig.com/chronosono/): A free Hitster-style music timeline party game. Each team plays on its own phone.
 - [How to play ChronoSono](https://garrettgcraig.com/chronosono/about/): Rules, setup, and how it compares to Hitster.
 - [Santa Barbara wildlife crossings](https://garrettgcraig.com/wildlife-crossings/): Wildlife crossing priorities along Santa Barbara County's state highways.
+- [Devereux Slough breach outlook](https://garrettgcraig.com/devereux/): Live status of the Devereux Slough mouth at Coal Oil Point Reserve and the chance its sand berm breaches in the next 10 days.
 
 ## Trail journals
 
