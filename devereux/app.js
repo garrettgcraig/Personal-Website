@@ -317,6 +317,7 @@ function render(s) {
   </section>
 
   <section class="tiles">${tiles.map(([v, l]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join("")}</section>
+  <div id="alerts-slot"></div>
 
   ${s.warnings.length ? s.warnings.map((w) => `<div class="warn">${esc(w)}</div>`).join("") + "<br/>" : ""}
 
@@ -383,6 +384,12 @@ function render(s) {
     </div>
   </section>
 
+  <section class="block" id="gallery">
+    <h2>The November 15, 2025 breach</h2>
+    <p class="muted small" style="margin-top:0">A 5-inch storm raised the slough from 5.7 to about 9.4 ft over two and a half days. Late on the afternoon of November 15 water began running over the berm, cut a channel, and by dark the slough was pouring into the ocean; the live sensor shows it dropping almost 5 ft in six hours. Photos and muted video from that afternoon and evening, in order. Tap to enlarge.</p>
+    <div class="gallery">${GALLERY.map((g, i) => `<button type="button" data-gallery="${i}" aria-label="${esc(g.alt)}"><img src="${MEDIA}${g.thumb}" alt="" loading="lazy" decoding="async" />${g.video ? `<span class="play"><span></span></span>` : ""}<span class="badge">${esc(g.time)}${g.video ? ` · ${g.video}` : ""}</span></button>`).join("")}</div>
+  </section>
+
   <section class="block prose">
     <h2>How this works</h2>
     <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the top of the berm is the slough</strong>, and <strong>how much rain is falling on the watershed</strong>, which drives a rise that keeps coming for a day or two as runoff drains in. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.8 ft of slough rise per inch of rain on past storms. The berm's height is not measured. It is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months as waves pile sand back up, but only so far: ${BLV ? `berms that had been closed for months broke between ${BLV.mature_min_ft.toFixed(1)} and ${BLV.mature_max_ft.toFixed(1)} ft (median ${BLV.mature_median_ft.toFixed(1)} ft), and the slough has never been measured above ${BLV.mature_max_ft.toFixed(1)} ft` : "it levels off"}. A newly closed berm is also never lower than the water it was holding back when it closed. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026, using measured water levels from CCBER's loggers and the live sensor. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
@@ -392,6 +399,143 @@ function render(s) {
     <div class="chips">${sources}</div>
     <p class="small muted" style="margin-top:var(--space-2)">Updated ${new Date(s.generated_at).toLocaleString("en-US", { timeZone: tz, dateStyle: "medium", timeStyle: "short" })} Pacific. Model fit ${esc(s.model.exported)}.</p>
   </section>`;
+  // the alerts card lives outside #app (it keeps its state); slot it in after the tiles
+  const card = document.getElementById("alerts"), slot = document.getElementById("alerts-slot");
+  if (card && slot) slot.appendChild(card);
+}
+
+// ------------------------------------------------------------- breach gallery (Nov 15, 2025)
+const MEDIA = "media/breach-2025-11-15/";
+const GALLERY = [
+  { file: "IMG_3006.jpg", thumb: "IMG_3006-thumb.jpg", time: "3:54 PM", alt: "Sands Beach and the dunes above the slough mouth under storm haze, with surf and the Ellwood bluffs beyond.", caption: "3:54 PM. Storm haze over Sands Beach and the dunes above the slough mouth." },
+  { file: "IMG_3007.mp4", thumb: "IMG_3007-poster-thumb.jpg", poster: "IMG_3007-poster.jpg", video: "0:11", time: "3:59 PM", alt: "Video: the sand berm with the brimming slough on one side and the ocean on the other.", caption: "3:59 PM. The berm, with the full slough on the left and the ocean on the right." },
+  { file: "IMG_3008.jpg", thumb: "IMG_3008-thumb.jpg", time: "4:00 PM", alt: "The beach at the mouth strewn with kelp, slough water pooling on the sand, people gathering in the distance.", caption: "4:00 PM. Slough water pooling across the beach as people start to gather." },
+  { file: "IMG_3009.jpg", thumb: "IMG_3009-thumb.jpg", time: "4:00 PM", alt: "Wider view of the kelp-strewn beach and the dunes, with small groups of people near the water.", caption: "4:00 PM. Waiting on the berm." },
+  { file: "GGC_1901.jpg", thumb: "GGC_1901-thumb.jpg", time: "4:11 PM", alt: "Two snowy egrets standing in shallow water at the slough's edge.", caption: "4:11 PM. Snowy egrets working the edge of the swollen slough." },
+  { file: "GGC_1910.jpg", thumb: "GGC_1910-thumb.jpg", time: "4:15 PM", alt: "A small pale sandpiper, likely a sanderling, probing wet sand and pebbles.", caption: "4:15 PM. A small sandpiper (likely a sanderling) feeding in the wet sand." },
+  { file: "GGC_1911.jpg", thumb: "GGC_1911-thumb.jpg", time: "4:15 PM", alt: "Close view of the same sandpiper with its bill in the sand.", caption: "4:15 PM. The same bird, head down." },
+  { file: "IMG_3012.jpg", thumb: "IMG_3012-thumb.jpg", time: "4:36 PM", alt: "Four people in rain jackets standing on the berm beside a thin channel of water running toward the ocean.", caption: "4:36 PM. The first trickle cuts across the berm." },
+  { file: "IMG_1627.mp4", thumb: "IMG_1627-poster-thumb.jpg", poster: "IMG_1627-poster.jpg", video: "0:33", time: "4:43 PM", alt: "Video: water spreading in a sheet across the beach toward the surf while two people watch.", caption: "4:43 PM. Slough water sheeting across the beach to the surf." },
+  { file: "IMG_3013.mp4", thumb: "IMG_3013-poster-thumb.jpg", poster: "IMG_3013-poster.jpg", video: "1:05", time: "4:43 PM", alt: "Video: a shallow stream crossing the wide beach, with people standing along it.", caption: "4:43 PM. The outflow finds its path across the sand." },
+  { file: "IMG_1631.jpg", thumb: "IMG_1631-thumb.jpg", time: "5:11 PM", alt: "A group of people on the berm at dusk beside the widening channel.", caption: "5:11 PM. Dusk, and the channel is widening." },
+  { file: "IMG_3015.jpg", thumb: "IMG_3015-thumb.jpg", time: "5:28 PM", alt: "Silhouettes of three people watching dark water rush past against a fading sky.", caption: "5:28 PM. Watching the slough drain in the last light." },
+  { file: "IMG_3019.mp4", thumb: "IMG_3019-poster-thumb.jpg", poster: "IMG_3019-poster.jpg", video: "0:14", time: "5:41 PM", alt: "Video after dark: fast, churning water rushing through the breach channel.", caption: "5:41 PM. Full flow through the breach after dark." },
+  { file: "IMG_3022.jpg", thumb: "IMG_3022-thumb.jpg", time: "5:45 PM", alt: "Two people silhouetted on the bank of a deep channel cut through the berm, water pouring out under a glowing overcast sky.", caption: "5:45 PM. The channel cut through the berm." },
+  { file: "IMG_2389.mp4", thumb: "IMG_2389-poster-thumb.jpg", poster: "IMG_2389-poster.jpg", video: "0:15", time: "6:04 PM", alt: "Video at night: standing waves in the breach channel as the slough empties into the ocean.", caption: "6:04 PM. Standing waves as the slough empties into the sea." },
+];
+
+let lbIndex = 0;
+function showLightbox(i) {
+  const dlg = document.getElementById("lightbox");
+  lbIndex = (i + GALLERY.length) % GALLERY.length;
+  const g = GALLERY[lbIndex];
+  const media = document.getElementById("lb-media");
+  media.querySelector("video")?.pause();
+  media.innerHTML = g.video
+    ? `<video src="${MEDIA}${g.file}" poster="${MEDIA}${g.poster}" controls muted playsinline autoplay preload="metadata" aria-label="${esc(g.alt)}"></video>`
+    : `<img src="${MEDIA}${g.file}" alt="${esc(g.alt)}" />`;
+  document.getElementById("lb-caption").textContent = `${g.caption} (${lbIndex + 1} of ${GALLERY.length})`;
+  if (!dlg.open) dlg.showModal();
+}
+function initGallery() {
+  const dlg = document.getElementById("lightbox");
+  document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-gallery]");
+    if (t) showLightbox(Number(t.dataset.gallery));
+  });
+  document.getElementById("lb-prev").onclick = () => showLightbox(lbIndex - 1);
+  document.getElementById("lb-next").onclick = () => showLightbox(lbIndex + 1);
+  document.getElementById("lb-close").onclick = () => dlg.close();
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); }); // click on backdrop
+  dlg.addEventListener("close", () => { document.getElementById("lb-media").innerHTML = ""; });
+  dlg.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") showLightbox(lbIndex - 1);
+    if (e.key === "ArrowRight") showLightbox(lbIndex + 1);
+  });
+}
+
+// ------------------------------------------------------------- breach alerts (push + email)
+const b64ToBytes = (b64) => {
+  const s = atob((b64 + "=".repeat((4 - (b64.length % 4)) % 4)).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(s, (c) => c.charCodeAt(0));
+};
+const post = (path, body) => fetch(`/devereux/api/alerts/${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+  .then(async (r) => ({ ok: r.ok, ...(await r.json().catch(() => ({}))) }));
+
+async function initAlerts() {
+  const card = document.getElementById("alerts");
+  let cfg;
+  try { cfg = await fetch("/devereux/api/alerts/config").then((r) => r.json()); } catch { return; }
+  if (!cfg.push?.enabled && !cfg.email?.enabled) return; // nothing set up yet
+  card.hidden = false;
+
+  // banner after confirming/unsubscribing by email link
+  const q = new URLSearchParams(location.search).get("alerts");
+  const emailNote = document.getElementById("email-note");
+  if (q) {
+    emailNote.textContent = { confirmed: "You're signed up. You'll get an email when a breach becomes likely.", unsubscribed: "You're unsubscribed. No more emails.", invalid: "That link didn't work. Try signing up again." }[q] || "";
+    emailNote.className = `note ${q === "invalid" ? "err" : "ok"}`;
+  }
+
+  // email
+  const form = document.getElementById("email-form");
+  if (!cfg.email?.enabled) document.getElementById("email-box").hidden = true;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const btn = form.querySelector("button");
+    btn.disabled = true;
+    const r = await post("email", { email: fd.get("email"), website: fd.get("website") });
+    btn.disabled = false;
+    emailNote.textContent = r.ok ? "Check your inbox for a confirmation link." : r.error || "Something went wrong. Try again.";
+    emailNote.className = `note ${r.ok ? "ok" : "err"}`;
+    if (r.ok) form.reset();
+  });
+
+  // push
+  const pbtn = document.getElementById("push-btn"), pnote = document.getElementById("push-note");
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (!cfg.push?.enabled) { document.getElementById("push-box").hidden = true; return; }
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    pbtn.hidden = true;
+    pnote.textContent = isIOS && !standalone
+      ? "On iPhone: tap Share, then Add to Home Screen, open the page from there, and tap Notify me."
+      : "This browser doesn't support notifications. Use email instead.";
+    return;
+  }
+  const reg = await navigator.serviceWorker.register("/devereux/sw.js", { scope: "/devereux/" });
+  if (Notification.permission === "denied") {
+    pnote.textContent = "Notifications are blocked for this site. Allow them in your browser's site settings, or use email.";
+    pnote.className = "note err";
+  }
+  const setState = (sub) => {
+    pbtn.textContent = sub ? "Turn off notifications" : "Notify me on this device";
+    pbtn.className = sub ? "btn secondary" : "btn";
+    pnote.textContent = sub ? "Notifications are on for this device." : "";
+    pnote.className = "note ok";
+  };
+  setState(await reg.pushManager.getSubscription());
+  pbtn.addEventListener("click", async () => {
+    pbtn.disabled = true;
+    try {
+      const cur = await reg.pushManager.getSubscription();
+      if (cur) {
+        await post("push/unsubscribe", { endpoint: cur.endpoint });
+        await cur.unsubscribe();
+        setState(null);
+      } else {
+        if ((await Notification.requestPermission()) !== "granted") throw new Error("Notifications are blocked for this site in your browser settings.");
+        const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(cfg.push.publicKey) });
+        const r = await post("push", { subscription: sub.toJSON() });
+        if (!r.ok) { await sub.unsubscribe(); throw new Error(r.error || "Couldn't save the subscription."); }
+        setState(sub);
+      }
+    } catch (e) {
+      pnote.textContent = e.message; pnote.className = "note err";
+    }
+    pbtn.disabled = false;
+  });
 }
 
 async function load() {
@@ -402,6 +546,7 @@ async function load() {
     const s = await r.json();
     render(s);
     window.__devereux = s;
+    if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); initGallery(); }
   } catch (e) {
     app.innerHTML = `<div class="loading">Couldn't load the slough data (${esc(e.message)}). Try again in a minute.</div>`;
   }

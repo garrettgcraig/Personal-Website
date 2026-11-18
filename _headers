@@ -66,3 +66,11 @@
   Link: <https://garrettgcraig.com/trail-smokies-2020>; rel="canonical"
 
 # END GENERATED TRAIL MARKDOWN HEADERS
+
+# Devereux breach gallery: files never change once published
+/devereux/media/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Devereux service worker must be revalidated so alert fixes reach browsers
+/devereux/sw.js
+  Cache-Control: no-cache
