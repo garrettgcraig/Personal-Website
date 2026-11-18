@@ -149,10 +149,15 @@ function render(s) {
   else if (open) sentence = `The berm is open and the slough is tidal. This page forecasts breaches of a closed berm, so there is no outlook until the mouth closes again.`;
   else if (!peak) sentence = "There is no recent slough-level reading this water year, so the outlook is off.";
   else {
-    const h = s.stage?.crest_today_ft != null && s.stage?.today_est_ft != null ? s.stage.crest_today_ft - s.stage.today_est_ft : null;
+    // Closest the slough is forecast to come to the crest in the next 10 days, after
+    // runoff from the whole watershed has drained in (not just on the rain day).
+    const f = (s.stage?.series || []).filter((r) => r.date >= s.today && r.crest_ft != null);
+    const near = f.reduce((m, r) => (m == null || r.crest_ft - r.ft < m.crest_ft - m.ft ? r : m), null);
+    const nearHi = f.reduce((m, r) => Math.min(m, r.crest_ft - r.hi), Infinity);
     sentence = `Highest chance in the next 10 days is ${PCT(peak.p)} on ${day(peak.date)}`
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day.` : ".")
-      + (h != null ? ` The slough sits about ${h.toFixed(1)} ft below the estimated berm crest.` : "");
+      + (near ? ` At its highest, around ${day(near.date, { month: "short", day: "numeric" })}, the slough is forecast about ${(near.crest_ft - near.ft).toFixed(1)} ft below the estimated berm crest`
+        + (Number.isFinite(nearHi) ? ` (${nearHi > 0 ? `${nearHi.toFixed(1)} ft below` : "at or above it"} if rain runs heavy).` : ".") : "");
   }
 
   const tiles = [
