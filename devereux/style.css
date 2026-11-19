@@ -170,6 +170,16 @@ dialog.lightbox::backdrop { background: rgba(0, 0, 0, 0.82); }
 
 footer { border-top: 1px solid var(--color-border); padding: var(--space-8) 0 var(--space-12); font: 0.88rem var(--font-ui); color: var(--color-muted); }
 .loading { padding: var(--space-16) 0; font-family: var(--font-ui); color: var(--color-muted); }
+[hidden] { display: none !important; }
+.loading-status { font: 600 1rem var(--font-ui); color: var(--color-muted); margin: 0 0 var(--space-4); }
+.sk-line, .sk-readings span, .sk-chart { display: block; border-radius: var(--radius-sm, 6px); background: var(--color-border); animation: sk-pulse 1.4s ease-in-out infinite; }
+.sk-line { height: 1.1rem; margin: 0 0 12px; }
+.sk-readings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: var(--space-6); }
+.sk-readings span { height: 3.2rem; }
+.sk-chart { height: clamp(260px, 38vw, 420px); margin-top: var(--space-4); }
+.sk-dial { color: rgba(243, 235, 221, 0.18); animation: sk-pulse 1.4s ease-in-out infinite; }
+@keyframes sk-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .sk-line, .sk-readings span, .sk-chart, .sk-dial { animation: none; } }
 
 @media (max-width: 900px) {
 	.head { grid-template-columns: 1fr; }
