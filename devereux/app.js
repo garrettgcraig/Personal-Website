@@ -280,16 +280,16 @@ const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 // ------------------------------------------------------------- breach likelihood dial
 // Breach Watch levels, like a fire-danger sign. The model's daily score ranks risk but isn't
 // a calibrated chance (ten recorded breaches), so the page shows levels whose lower bounds
-// come from the held-out record (model-params.json "levels"). Alerts go out at Watch.
+// come from the held-out record (model-params.json "levels"). Alerts go out at Possible.
 // a breach is the good news here, so the scale runs red (no chance) to green (imminent)
 const LEVEL_STYLE = { low: { color: "#C23B30", ink: "#fff" }, watch: { color: "#D9772B", ink: "#fff" },
   warning: { color: "#E2B33C", ink: "#1B2530" }, likely: { color: "#4E8F4A", ink: "#fff" } };
-let BANDS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Watch", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }]
+let BANDS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Possible", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }]
   .map((l) => ({ ...l, ...LEVEL_STYLE[l.key] }));
 // names live here, by key, so a cached status from before a rename can't bring old names back
-const LEVEL_NAME = { low: "No Chance", watch: "Watch", warning: "Likely", likely: "Imminent" };
+const LEVEL_NAME = { low: "No Chance", watch: "Possible", warning: "Likely", likely: "Imminent" };
 // the sign's headline for each level: [big line, line under it]
-const SIGN = { low: ["No Chance", "of Breach"], watch: ["Watch out,", "a breach could happen"],
+const SIGN = { low: ["No Chance", "of Breach"], watch: ["Possible", "Breach"],
   warning: ["Likely", "to Breach"], likely: ["Imminent", "Breach"] };
 const setBands = (levels) => { if (levels?.length) BANDS = levels.map((l) => ({ ...l, label: LEVEL_NAME[l.key] ?? l.label, ...(LEVEL_STYLE[l.key] || LEVEL_STYLE.low) })); };
 const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= b.min) ?? BANDS[0]);
@@ -354,7 +354,7 @@ function render(s) {
   const win = !open && lvLo != null && s.stage?.sensor_hourly?.length
     ? breachWindow({ hourly: s.stage.sensor_hourly.map((h) => ({ t: Date.parse(h.t), ft: h.ft })), lo: lvLo, hi: lvHi, nowMs: Date.now() }) : null;
   const when = (ms) => new Date(ms).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" }).replace(/ /g, "\u00a0");
-  const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch, next 48 hours: ${SIGN[band48.key].join(" ")}.`;
+  const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch: ${SIGN[band48.key].join(" ")} in the next 48 hours.`;
   let windowLine = "";
   if (win?.state === "within") windowLine = `The slough is already at <span class="num">${win.cur.toFixed(2)}&nbsp;ft</span>, within the range where past breaches happened. A breach could come at any time.`;
   else if (win?.state === "rising") windowLine = `Rising <span class="num">${win.slope.toFixed(2)}&nbsp;ft</span> an hour. At that rate it reaches breach levels (${lvLo.toFixed(1)} to ${lvHi.toFixed(1)} ft) between <strong>${when(win.start)}</strong> and <strong>${when(win.end)}</strong>. More rain would bring that sooner.`;
@@ -479,7 +479,7 @@ function render(s) {
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
       <div class="sign-dial">
         <p class="sign-title">${!open && peak && band48 ? `<strong class="sign-level">${SIGN[band48.key][0]}</strong> ${SIGN[band48.key][1]}` : "Breach likelihood"}</p>
-        <p class="sign-sub">${open ? "Mouth open" : "Next 48 hours"}</p>
+        <p class="sign-sub">${open ? "Mouth open" : "in the next 48 hours"}</p>
         ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
@@ -576,7 +576,7 @@ function render(s) {
     <div class="prose">
       <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.7 ft of rise per inch of rain on past storms, a little less when the slough is already full.</p>
       <p>Each day gets a score from a logistic model of four things: <strong>rain that day</strong>, <strong>rain the day before</strong>, <strong>how far below the top of the berm the slough sits</strong>, and <strong>how far below its highest level since the mouth closed</strong>. Breaches come when a slough near the top of its berm is still climbing in a storm; one that has already peaked and is draining back is much less likely to break. The berm's height isn't measured. The model estimates it as low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilding over a couple of months as waves pile sand back up, levelling off near ${s.model.crest.c_inf.toFixed(1)} ft. A newly closed berm is never lower than the water it held back in its first three days. That is why a young berm can break at a much lower level than a mature one. The model was the leader of a search over thousands of combinations of rain, level and berm inputs, scored on the seasons with a measured water level. With no usable level reading, the page falls back to a rain-only model.</p>
-      <p>The score ranks risk well but, with ${s.model.levels_record?.breaches ?? 16} recorded breaches, isn't a dependable percentage, so the page reports levels. Their cutoffs come from predicting each season with a model trained only on the others: ${BANDS.filter((b) => b.key !== "low").map((b) => `${b.label}, reached before ${b.caught} of ${s.model.levels_record?.breaches ?? 16} breaches, with ${b.false_alarm_episodes ? `${b.false_alarm_episodes} false-alarm episode${b.false_alarm_episodes > 1 ? "s" : ""}` : "no false alarms"}`).join("; ")}. Alerts go out at Watch. A breach counts as flagged if the level was reached that day or the day before, since a storm that runs past midnight spans two calendar days. Tides and waves are shown for context; they don't drive breaches here.</p>
+      <p>The score ranks risk well but, with ${s.model.levels_record?.breaches ?? 16} recorded breaches, isn't a dependable percentage, so the page reports levels. Their cutoffs come from predicting each season with a model trained only on the others: ${BANDS.filter((b) => b.key !== "low").map((b) => `${b.label}, reached before ${b.caught} of ${s.model.levels_record?.breaches ?? 16} breaches, with ${b.false_alarm_episodes ? `${b.false_alarm_episodes} false-alarm episode${b.false_alarm_episodes > 1 ? "s" : ""}` : "no false alarms"}`).join("; ")}. Alerts go out at Possible. A breach counts as flagged if the level was reached that day or the day before, since a storm that runs past midnight spans two calendar days. Tides and waves are shown for context; they don't drive breaches here.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
     <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://cdip.ucsd.edu/m/products/?stn=107p1">CDIP 107 Goleta Point</a> and NDBC buoys <a href="https://www.ndbc.noaa.gov/station_page.php?station=46053">46053</a> and <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
@@ -613,7 +613,7 @@ async function initAlerts() {
   const q = new URLSearchParams(location.search).get("alerts");
   const emailNote = document.getElementById("email-note");
   if (q) {
-    emailNote.textContent = { confirmed: "You're signed up. You'll get an email when the Breach Watch reaches Watch.", unsubscribed: "You're unsubscribed. No more emails.", invalid: "That link didn't work. Try signing up again." }[q] || "";
+    emailNote.textContent = { confirmed: "You're signed up. You'll get an email when the Breach Watch reaches Possible.", unsubscribed: "You're unsubscribed. No more emails.", invalid: "That link didn't work. Try signing up again." }[q] || "";
     emailNote.className = `note ${q === "invalid" ? "err" : "ok"}`;
   }
 
