@@ -281,9 +281,10 @@ const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 // Breach Watch levels, like a fire-danger sign. The model's daily score ranks risk but isn't
 // a calibrated chance (ten recorded breaches), so the page shows levels whose lower bounds
 // come from the held-out record (model-params.json "levels"). Alerts go out at Watch.
-const LEVEL_STYLE = { low: { color: "#4E8F4A", ink: "#fff" }, watch: { color: "#E2B33C", ink: "#1B2530" },
-  warning: { color: "#D9772B", ink: "#fff" }, likely: { color: "#C23B30", ink: "#fff" } };
-let BANDS = [{ key: "low", label: "Low", min: 0 }, { key: "watch", label: "Watch", min: 0.02 }, { key: "warning", label: "Warning", min: 0.2 }, { key: "likely", label: "Likely", min: 0.5 }]
+// a breach is the good news here, so the scale runs red (no chance) to green (imminent)
+const LEVEL_STYLE = { low: { color: "#C23B30", ink: "#fff" }, watch: { color: "#D9772B", ink: "#fff" },
+  warning: { color: "#E2B33C", ink: "#1B2530" }, likely: { color: "#4E8F4A", ink: "#fff" } };
+let BANDS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Watch", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }]
   .map((l) => ({ ...l, ...LEVEL_STYLE[l.key] }));
 const setBands = (levels) => { if (levels?.length) BANDS = levels.map((l) => ({ ...l, ...(LEVEL_STYLE[l.key] || LEVEL_STYLE.low) })); };
 const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= b.min) ?? BANDS[0]);
@@ -308,7 +309,7 @@ function dialSvg(p, off) {
   const b = off ? null : bandOf(p), i = b ? BANDS.indexOf(b) : -1;
   const a = mid(i);
   const [tx, ty] = pt(R - 10, a), [lx, ly] = pt(8, a + Math.PI / 2), [rx, ry] = pt(8, a - Math.PI / 2);
-  return `<svg class="dial" viewBox="0 0 380 186" role="img" aria-label="${off ? "Breach likelihood dial, off while the mouth is open" : `Breach likelihood: ${b.label}`}">
+  return `<svg class="dial" viewBox="-30 0 440 186" role="img" aria-label="${off ? "Breach likelihood dial, off while the mouth is open" : `Breach likelihood: ${b.label}`}">
     ${BANDS.map((bd, k) => `<path d="${wedge(k)}" fill="${bd.color}" opacity="${off ? 0.3 : k === i ? 1 : 0.72}" stroke="#2A2119" stroke-width="2"/>`).join("")}
     ${BANDS.map((bd, k) => {
       const [x, y] = pt(R + 12, mid(k)), c = Math.cos(mid(k));
