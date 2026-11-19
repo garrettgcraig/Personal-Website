@@ -132,7 +132,9 @@
 
 		/* Breach Watch sign: a routed wooden board, like a fire-danger sign */
 		.sign { --board: #3A2E22; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(16px, 3vw, 40px); align-items: center; max-width: 900px; margin-top: var(--space-6); padding: clamp(18px, 3vw, 32px); background: var(--board); color: #F3EBDD; border-radius: 10px; outline: 2px solid rgba(224, 182, 86, 0.55); outline-offset: -10px; box-shadow: 0 2px 4px rgba(27, 37, 48, 0.18), 0 14px 32px rgba(27, 37, 48, 0.18); }
+		.sign .crow { margin: 0; text-align: center; }
 		.sign img { width: 100%; height: auto; display: block; }
+		.sign .crow figcaption { font: italic 600 clamp(1rem, 0.6vw + 0.85rem, 1.25rem)/1.3 var(--font-body); color: #E0B656; margin-top: var(--space-2); }
 		.sign-dial { text-align: center; }
 		.sign-title { font: 700 clamp(1.5rem, 1.6vw + 1rem, 2.1rem)/1.1 var(--font-display); color: #E0B656; margin: 0; letter-spacing: -0.01em; }
 		.sign-sub { font: 500 0.95rem var(--font-ui); color: #D8CBB4; margin: 4px 0 var(--space-3); }

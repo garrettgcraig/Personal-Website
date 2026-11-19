@@ -23,8 +23,8 @@ test("forecast: level from the water balance, chance from Breach Watch, rain-onl
   const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
   const args = { rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-20", ft: 8.5 }, params };
   const out = forecast(args);
-  // stage from src/unified.py's water balance on the same inputs
-  const stage = { "2026-12-01": 8.754979, "2026-12-02": 10.037122, "2026-12-03": 10.97948, "2026-12-04": 11.195292 };
+  // stage from WaterBalance.run_from (src/model.py) on the same inputs
+  const stage = { "2026-12-01": 8.791073, "2026-12-02": 10.248057, "2026-12-03": 11.305315, "2026-12-04": 11.537135 };
   const wy = { "2026-12-01": 0.8, "2026-12-02": 3.2, "2026-12-03": 3.8, "2026-12-04": 3.8 };
   for (const [date, ft] of Object.entries(stage)) {
     const r = out.find((x) => x.date === date);

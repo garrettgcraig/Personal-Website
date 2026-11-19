@@ -290,7 +290,9 @@ export async function buildStatus(now = new Date()) {
   const lastOpen = events.filter((e) => e.state === "open").at(-1)?.date;
   const stale = latest && daysSince(latest.date, today) > 45;
   const preBreach = latest && lastOpen && latest.date < lastOpen;
-  const stage0 = latest && !stale && !preBreach ? latest : null;
+  // a reading from before the berm closed is tidal and doesn't carry into the closure
+  const preClosure = latest && last && !mouthOpen && latest.date < last.date;
+  const stage0 = latest && !stale && !preBreach && !preClosure ? latest : null;
   // crest floor: the highest measured level in the first 3 days after the latest closure
   let crestFloor = null;
   if (last && !mouthOpen) {
@@ -311,8 +313,8 @@ export async function buildStatus(now = new Date()) {
         .map((r) => ({ ...r, breach_level_ft: bl[r.date] ?? null }));
       if (daysSince(stage0.date, today) > 21) warnings.push("The latest slough-level reading is more than three weeks old, so the level is less certain.");
     } else {
-      warnings.push(preBreach
-        ? "No slough-level reading since the last breach, so the outlook uses rain alone."
+      warnings.push(preBreach || preClosure
+        ? "No slough-level reading since the mouth closed, so the outlook uses rain alone."
         : "No slough-level reading in the last 45 days, so the outlook uses rain alone.");
     }
     if (!sensorLatest && hourly.length === 0) {
