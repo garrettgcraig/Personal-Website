@@ -72,18 +72,28 @@ export const crestFt = (dc, c) => c.c_inf - (c.c_inf - c.c0) * Math.exp(-dc / c.
 function simulateStage(P, dates, i0, ft0, closedSince, wb, rest = null) {
   const out = new Array(dates.length).fill(null);
   let s = ft0;
+  // wb.carry: the slough answers rain within hours (rise starts 3-4 h after rain begins, and
+  // after the rain stops it gains only about a fifth more, within 6-8 h; devereux-breach
+  // results/storm_response.csv, 49 storms). So the day's total response (a0 + a1 + a2) lands on
+  // the rain day, with only wb.carry of it on the next day. The fitted lags describe daily
+  // means, which trail the level itself. Without wb.carry the fitted daily-mean form is used.
+  const sameDay = wb.carry != null, c = wb.carry ?? 0, A = wb.a0 + wb.a1 + wb.a2;
   if (rest) {
     const n = i0, dc = daysBetween(closedSince, dates[n]) + 1;
     const share = P[n] > 0 ? Math.min(1, rest.rain_in / P[n]) : 0;
-    const inflow = (wb.a0 * P[n] + wb.b * Math.max(P[n] - wb.ia, 0)) * share
-      + (wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0)) * rest.frac;
+    const inflow = sameDay
+      ? ((1 - c) * A * P[n] + wb.b * Math.max(P[n] - wb.ia, 0)) * share + c * A * (P[n - 1] || 0) * rest.frac
+      : (wb.a0 * P[n] + wb.b * Math.max(P[n] - wb.ia, 0)) * share
+        + (wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0)) * rest.frac;
     const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
     s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss * rest.frac;
   }
   out[i0] = s;
   for (let n = i0 + 1; n < dates.length; n++) {
     const dc = daysBetween(closedSince, dates[n]) + 1;
-    const inflow = wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
+    const inflow = sameDay
+      ? (1 - c) * A * P[n] + c * A * (P[n - 1] || 0) + wb.b * Math.max(P[n] - wb.ia, 0)
+      : wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
     const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
     s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss;
     out[n] = s;
@@ -178,6 +188,11 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
   const iStage = stage0 ? dates.indexOf(stage0.date) : -1;
   const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance, stage0.rest || null)
     : new Array(dates.length).fill(null);
+  // The score's level inputs use the daily-mean form the model was fit on (stage = yesterday's
+  // mean rolled forward); the shown level uses the same-day response (wb.carry).
+  const wbFit = { ...params.water_balance, carry: undefined };
+  const sStage = params.water_balance.carry == null || iStage < 0 ? stage
+    : simulateStage(P, dates, iStage, stage0.ft, closedSince, wbFit, stage0.rest || null);
 
   const L = params.rain_logit;
   const B = params.best;
@@ -189,7 +204,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
   dates.forEach((d, n) => {
     maxBefore.push(run);
     if (d < closedSince) return;
-    const v = measured.has(d) ? measured.get(d) : (iStage >= 0 && n >= iStage ? stage[n] : null);
+    const v = measured.has(d) ? measured.get(d) : (iStage >= 0 && n >= iStage ? sStage[n] : null);
     if (v != null) run = Math.max(run, v);
   });
   const out = [];
@@ -203,15 +218,15 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     const U = B?.crest || params.unified;
     // a just-closed berm is at least as high as the water it held back when it closed
     const crest = Math.max(crestFt(dc, U), crestFloor ?? -Infinity);
-    const margin = stage[n] == null ? null : stage[n] - crest;
+    const margin = sStage[n] == null ? null : sStage[n] - crest;
     // Displayed breach level: the young-berm rebuilding curve, capped at the median peak
     // of past mature-berm breaches (9.3-10.4 ft observed). The model's crest parameter
     // levels off near the top of that range and is not itself the level breaches happen at.
     const BL = params.breach_levels;
     const breachLevel = BL ? Math.min(crest, BL.mature_median_ft) : crest;
     // first closed day (or no earlier level): the max is the day's own level
-    const maxlvl = margin == null ? null : Number.isFinite(maxBefore[n]) ? maxBefore[n] : stage[n];
-    const marginMax = margin == null ? null : stage[n] - maxlvl;
+    const maxlvl = margin == null ? null : Number.isFinite(maxBefore[n]) ? maxBefore[n] : sStage[n];
+    const marginMax = margin == null ? null : sStage[n] - maxlvl;
     const p = margin == null ? pRain
       : B ? bestScore({ rain_in: P[n], rain_prev: P[n - 1] || 0, margin, margin_max: marginMax }, B)
       : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
@@ -224,6 +239,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
       api: api[n],
       days_closed: dc,
       stage_ft: stage[n],
+      model_stage_ft: sStage[n],
       crest_ft: crest,
       margin_ft: margin,
       max_level_ft: margin == null ? null : maxlvl,

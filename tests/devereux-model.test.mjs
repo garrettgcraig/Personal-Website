@@ -10,7 +10,7 @@ import { parseCsv, restOfToday, parseUscrnHourly } from "../netlify/functions/de
 
 const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 // the earlier crest-curve hazard, still the fallback when params.best is absent
-const params = { ...live, best: undefined };
+const params = { ...live, best: undefined, water_balance: { ...live.water_balance, carry: undefined } };
 const spec = JSON.parse(readFileSync(new URL("./fixtures/devereux-best-model.json", import.meta.url)));
 
 test("site model reproduces the Python check cases (best_margin_max.json)", () => {
@@ -30,12 +30,12 @@ test("site model: highest level since closure comes from measured days, then the
   const out = forecast({ rain, today: "2026-12-01", closedSince: "2026-11-15", stage0: { date: "2026-11-30", ft: 7.3 }, params: live, levelHistory, showFrom: "2026-11-15" });
   const d1 = out.find((r) => r.date === "2026-12-01");
   assert.equal(d1.max_level_ft, 7.9);
-  assert.ok(Math.abs(d1.margin_max_ft - (d1.stage_ft - 7.9)) < 1e-9);
+  assert.ok(Math.abs(d1.margin_max_ft - (d1.model_stage_ft - 7.9)) < 1e-9);
   const first = out.find((r) => r.date === "2026-11-15");
   assert.ok(first.margin_max_ft === null || first.margin_max_ft === 0);
   // after the storm lifts the simulated level past 7.9, the next day's max follows it
   const d3 = out.find((r) => r.date === "2026-12-03"), d2 = out.find((r) => r.date === "2026-12-02");
-  if (d2.stage_ft > 7.9) assert.ok(Math.abs(d3.max_level_ft - d2.stage_ft) < 1e-9);
+  if (d2.model_stage_ft > 7.9) assert.ok(Math.abs(d3.max_level_ft - d2.model_stage_ft) < 1e-9);
   assert.ok(d2.p > d1.p, "storm day scores higher");
 });
 
@@ -218,4 +218,14 @@ test("Coal Oil Point hourly feed sums rain by local standard day and skips missi
   assert.ok(Math.abs(r.daily["2026-11-19"] - 16.4 / 25.4) < 1e-9);
   assert.equal(r.hours["2026-11-19"], 2);
   assert.equal(r.lastMs, Date.UTC(2026, 10, 19, 10, 0));
+});
+
+test("same-day response: a storm's rise lands on the rain day, a small carryover the next", () => {
+  const days = dateRange("2026-10-01", "2026-12-10");
+  const rain = days.map((d) => ({ date: d, rain_in: d === "2026-12-02" ? 1.2 : 0, src: "test" }));
+  const out = forecast({ rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-12-01", ft: 8 }, params: live });
+  const at = (d) => out.find((r) => r.date === d).stage_ft;
+  const rainDay = at("2026-12-02") - at("2026-12-01"), next = at("2026-12-03") - at("2026-12-02");
+  assert.ok(rainDay > 0.4, `rain-day rise ${rainDay}`);
+  assert.ok(next < rainDay * 0.25, `next-day gain ${next} vs ${rainDay}`);
 });
