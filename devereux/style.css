@@ -192,3 +192,21 @@ footer { border-top: 1px solid var(--color-border); padding: var(--space-8) 0 va
 .tabs a[aria-current="page"] { color: var(--color-text); border-bottom-color: var(--color-accent); }
 header.top .wrap { gap: 24px; }
 .tabs { margin-left: clamp(0px, 3vw, 32px); }
+
+/* events: breaches, closures, overtopping */
+#events h3 { font: 600 1.05rem var(--font-ui); margin: var(--space-8) 0 var(--space-2); }
+.ev-examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) 40px; }
+.ev-example { margin: 0; }
+.ev-example figcaption { font: 0.92rem/1.5 var(--font-ui); color: var(--color-text); margin-top: var(--space-2); }
+.ev-table-wrap { overflow-x: auto; margin-top: var(--space-3); }
+.ev-table td, .ev-table th { text-align: left !important; }
+.ev-table td.ev-note { white-space: normal; color: var(--color-muted); min-width: 260px; }
+.ev-tag { font-weight: 600; }
+.ev-tag.ev-breach { color: var(--breach); }
+.ev-tag.ev-closure { color: var(--color-muted); }
+.ev-tag.ev-overtopping { color: #2D5A7B; } body.dark-mode .ev-tag.ev-overtopping { color: #7FA3BD; }
+.ev-prov { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-muted); border: 1px solid var(--color-border); border-radius: 3px; padding: 0 4px; }
+@media (max-width: 900px) { .ev-examples { grid-template-columns: 1fr; } }
+.ev-more { all: unset; cursor: pointer; font: 500 0.92rem var(--font-ui); color: var(--color-accent); margin-top: var(--space-3); }
+.ev-more:hover { text-decoration: underline; }
+.ev-more[hidden] { display: none; }

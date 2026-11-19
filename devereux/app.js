@@ -241,7 +241,7 @@ function levelChartSvg(s, range) {
   if (end - start <= 400) ys.push(...subPts.filter((p) => vis(p.x)).map((p) => p.y));
   ys.push(...tide.ys);
   const yMin = Math.floor(Math.min(...ys, 4) - 0.3), yMax = Math.ceil(Math.max(...ys, 8) + 0.3);
-  const breaches = (HISTORY?.breaches || []).map(dayNum).filter(vis);
+  const breaches = (EVENTS ? EVENTS.events.filter((e) => e.type === "breach").map((e) => e.start.slice(0, 10)) : HISTORY?.breaches || []).map(dayNum).filter(vis);
   const mid = series.map((r) => ({ x: dayNum(r.date), y: r.ft, phase: r.phase }));
   const span = end - start;
   return chart({
@@ -294,6 +294,83 @@ function levelSpan() {
   if (levelRange === "custom" && customFrom && customTo) return dayNum(customTo) - dayNum(customFrom);
   return 3000;
 }
+// ------------------------------------------------------------- events: breaches, closures, overtopping
+let EVENTS = null; // events.json, from the Python project (scripts/build_devereux_events.py)
+let evFilter = "all";
+let evAll = false; // show every row (else the newest 12)
+const EV_FILTERS = { all: "All", breach: "Breaches", closure: "Closures", overtopping: "Overtopping", summer: "Summer overtopping" };
+const evDate = (iso) => new Date(iso + ":00Z").toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" });
+const evTime = (iso) => new Date(iso + ":00Z").toLocaleTimeString("en-US", { timeZone: "UTC", hour: "numeric", minute: "2-digit" });
+const ft2 = (v) => (v == null ? "" : `${v.toFixed(1)} ft`);
+
+function eventRows() {
+  const ev = (EVENTS?.events || []).filter((e) => evFilter === "all" || (evFilter === "summer" ? e.type === "overtopping" && e.summer : e.type === evFilter));
+  const rows = ev.slice().reverse();
+  const more = document.getElementById("ev-more");
+  if (more) { more.hidden = evAll || rows.length <= 12; more.textContent = `Show all ${rows.length}`; }
+  return rows.slice(0, evAll ? undefined : 12).map((e) => {
+    const sameDay = e.start.slice(0, 10) === e.end.slice(0, 10);
+    const when = e.type === "overtopping" && !sameDay ? `${evDate(e.start)} to ${evDate(e.end).replace(/, \d{4}$/, "")}` : evDate(e.start);
+    const what = { breach: "Breach", closure: "Closure", overtopping: e.summer ? "Overtopping (summer)" : "Overtopping" }[e.type];
+    const detail = e.type === "breach" ? (e.peak_level_ft != null ? `peaked at ${ft2(e.peak_level_ft)}` : "no hourly level record")
+      : e.type === "closure" ? `level ${ft2(e.peak_level_ft)}`
+      : `+${(e.total_rise_ft ?? 0).toFixed(2)} ft; tide ${ft2(e.tide_high_ft)}${e.surge_ft != null ? `, ${e.surge_ft >= 0 ? "+" : ""}${e.surge_ft.toFixed(1)} ft vs predicted` : ""}`;
+    return `<tr class="ev-${e.type}"><td>${esc(when)}</td><td><span class="ev-tag ev-${e.type}">${esc(what)}</span>${e.provisional ? ` <span class="ev-prov" title="Found in or moved by the level record; awaiting review">provisional</span>` : ""}</td><td>${esc(detail)}</td><td class="ev-note">${esc(e.note)}</td></tr>`;
+  }).join("");
+}
+
+function exampleChart(x) {
+  const H = (iso) => Date.parse(iso + ":00Z") / 3600000; // local clock hours
+  const pts = x.hourly.map(([t, lv, o, p]) => ({ h: H(t), lv, o, p }));
+  const ys = pts.flatMap((q) => [q.lv, q.o]).filter((v) => v != null);
+  const xs = pts.map((q) => q.h);
+  const mids = []; for (let h = Math.ceil(xs[0] / 24) * 24; h <= xs.at(-1); h += 24) mids.push(h);
+  return chart({
+    width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190,
+    yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0),
+    bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
+    series: [
+      { type: "line", color: COLORS.mist, width: 1.2, dash: "3 3", points: pts.map((q) => ({ x: q.h, y: q.p })) },
+      { type: "line", color: COLORS.sky, width: 1.4, opacity: 0.8, points: pts.map((q) => ({ x: q.h, y: q.o })) },
+      { type: "line", color: css("--color-text"), width: 2.2, points: pts.map((q) => ({ x: q.h, y: q.lv })) },
+    ],
+    xTicks: mids, xFmt: (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" }),
+  });
+}
+
+function eventsHtml() {
+  if (!EVENTS) return "";
+  const ev = EVENTS.events;
+  const n = (f) => ev.filter(f).length;
+  const nb = n((e) => e.type === "breach"), nc = n((e) => e.type === "closure"), no = n((e) => e.type === "overtopping"), ns = n((e) => e.type === "overtopping" && e.summer);
+  const np = n((e) => e.provisional);
+  return `
+  <section class="block" id="events">
+    <h2>Breaches, closures and overtopping</h2>
+    <p class="intro">Every mouth event since 2017: ${nb} breaches, ${nc} closures, and ${no} times the closed slough stepped up at high tide with no rain to explain it (${ns} of them between May and October). When the berm is closed, the biggest high tides, and the waves running up the beach on top of them, can wash over it and add water. ${np ? `${np} events come from the level record rather than CCBER's mouth log and are marked provisional until they're reviewed.` : ""}</p>
+    <h3>Overtopping, up close</h3>
+    ${legend([[css("--color-text"), "slough level", "line"], [COLORS.sky, "tide, observed (NOAA Santa Barbara)", "line"], [COLORS.mist, "tide, predicted", "dash"], [COLORS.ochre + "44", "overtopping event"]])}
+    <div class="ev-examples">${EVENTS.examples.map((x) => `
+      <figure class="ev-example">
+        ${exampleChart(x)}
+        <figcaption><strong>${esc(x.title)}.</strong> ${esc(x.text)}</figcaption>
+      </figure>`).join("")}</div>
+    <p class="note">Hourly slough level and NOAA 9411340 tide, both in ft NAVD88 on the same axis, Pacific time. Tide and surge are shown for context; the breach model doesn't use them.</p>
+    <h3>All events</h3>
+    <div class="controls" role="group" aria-label="Event filter">${Object.entries(EV_FILTERS).map(([k, l]) => `<button type="button" data-evf="${k}" aria-pressed="${k === evFilter}">${l}</button>`).join("")}</div>
+    <div class="ev-table-wrap"><table class="days ev-table"><thead><tr><th>When</th><th>Event</th><th>Details</th><th>Note</th></tr></thead><tbody id="ev-rows">${eventRows()}</tbody></table></div>
+    <p><button type="button" class="ev-more" id="ev-more" data-evmore>Show all</button></p>
+  </section>`;
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-evmore]")) { evAll = true; document.getElementById("ev-rows").innerHTML = eventRows(); return; }
+  const b = e.target.closest("[data-evf]");
+  if (!b) return;
+  evFilter = b.dataset.evf;
+  document.querySelectorAll("[data-evf]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  document.getElementById("ev-rows").innerHTML = eventRows();
+});
+
 function liveNote(s) {
   const n = s.stage?.sensor_now;
   if (!n) return "";
@@ -627,6 +704,8 @@ function render(s) {
     <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
   </section>
 
+  ${eventsHtml()}
+
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
@@ -852,11 +931,13 @@ async function load() {
     const [r, h] = await Promise.all([fetch("/devereux/api/status"), fetch("stage-history.json").catch(() => null)]);
     if (!r.ok) throw new Error(r.status);
     if (h?.ok) HISTORY = await h.json();
+    if (!EVENTS) EVENTS = await fetch("events.json").then((x) => (x.ok ? x.json() : null)).catch(() => null);
     const s = await r.json();
     // keep the newer of the status's latest reading and the last live poll
     if (LIVE.length && s.stage && LIVE.at(-1).t > (s.stage.sensor_now?.t ?? 0)) s.stage.sensor_now = LIVE.at(-1);
     window.__devereux = s;
     render(s);
+    if (document.getElementById("ev-rows")) document.getElementById("ev-rows").innerHTML = eventRows();
     if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); initGallery(); }
   } catch (e) {
     app.innerHTML = `<div class="loading">Couldn't load the slough data (${esc(e.message)}). Try again in a minute.</div>`;
