@@ -192,10 +192,10 @@ function levelSummary(s) {
     + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
 }
 
-const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)"], [COLORS.mist, "rain, forecast"]]);
+const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)", "hang", 0.6], [COLORS.mist, "rain, forecast", "hang", 0.5]]);
 const tideLegend = () => (levelSpan() <= 120
   ? legend([[COLORS.sky, "tide, observed (NOAA Santa Barbara, same axis)", "line"], [COLORS.mist, "tide, predicted where observed is missing", "dash"]])
-  : legend([[COLORS.sky + "55", "daily tide range, high to low (NOAA Santa Barbara, same axis)"]]));
+  : legend([[COLORS.sky, "daily tide range, high to low (NOAA Santa Barbara, same axis)", "band", 0.3]]));
 // span in days of the level chart's current view
 function levelSpan() {
   if (levelRange === "1w") return 17;
@@ -508,7 +508,7 @@ function render(s) {
       <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
       <label>to <input type="date" id="range-to" min="2018-10-01" max="${lastDay}" value="${customTo}" /></label>
     </div>
-    ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "where past breaches happened"], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "line"]])}
+    ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings", "dot"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent"), "forecast range", "band", 0.3], [COLORS.clay, "where past breaches happened", "band", 0.22], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "vline"]])}
     <div id="rain-legend">${showRain ? rainLegend() : ""}</div>
     <div id="tide-legend">${showTide && TIDES ? tideLegend() : ""}</div>
     <div id="level-chart">${levelChart}</div>
@@ -523,10 +523,10 @@ function render(s) {
     <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. The slough rises within hours of heavy rain and levels off within about 6 to 8 hours after the rain stops. Scores are by calendar day, so a storm that runs past midnight can score highest the day after its rain day, since the model counts the previous day's rain and the highest level reached through the day before. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
     <div class="split">
       <div>
-        ${legend(BANDS.map((b) => [b.color, b.label]))}
+        ${legend(BANDS.map((b) => [b.color, b.label, "bar"]))}
         ${probChart}
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
-        ${legend([[css("--color-accent"), "observed"], [COLORS.mist, "forecast (Open-Meteo, watershed average)"]])}
+        ${legend([[css("--color-accent"), "observed", "bar"], [COLORS.mist, "forecast (Open-Meteo, watershed average)", "bar"]])}
         ${rainChart}
       </div>
       <div class="table-scroll"><table class="days">
@@ -547,7 +547,7 @@ function render(s) {
       </div>` : ""}
       <div>
         <h3>Rain, last 30 days</h3>
-        ${legend([[COLORS.sage, "Coal Oil Point gauge"], [css("--color-accent"), "airport and local CoCoRaHS gauges"]])}
+        ${legend([[COLORS.sage, "Coal Oil Point gauge", "bar"], [css("--color-accent"), "airport and local CoCoRaHS gauges", "bar"]])}
         ${recentRain}
         <p class="note">Water year to date: <span class="num">${s.recent.season_rain_in.toFixed(2)} in</span></p>
       </div>
@@ -564,7 +564,7 @@ function render(s) {
       </div>
       <div>
         <h3>Waves, ${esc(wv?.station || "nearest buoy")}</h3>
-        ${legend([[COLORS.mesa, "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)"]])}
+        ${legend([[COLORS.mesa, "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)", "dot"]])}
         ${waveChart}
         ${wv?.latest ? `<p class="note">Latest <span class="num">${wv.latest.hs_ft.toFixed(1)} ft</span> at <span class="num">${wv.latest.period_s ?? "?"} s</span> from <span class="num">${wv.latest.dir_deg ?? "?"}°</span>, ${new Date(wv.latest.t).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" })}.</p>` : ""}
       </div>
