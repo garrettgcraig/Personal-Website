@@ -216,7 +216,7 @@ footer { border-top: 1px solid var(--color-border); padding: var(--space-8) 0 va
 .tabs a[aria-current="page"] { color: var(--color-text); border-bottom-color: var(--color-accent); }
 header.top .wrap { gap: 24px; }
 .tabs { margin-left: clamp(0px, 2vw, 24px); }
-@media (max-width: 720px) {
+@media (max-width: 860px) {
 	header.top .wrap { flex-wrap: wrap; height: auto; row-gap: 0; padding-top: 10px; }
 	.tabs { order: 3; width: 100%; margin-left: 0; gap: 22px; }
 	.tabs a { padding: 10px 0 9px; }
@@ -272,6 +272,7 @@ ol.stages .when { font-size: 0.85rem; color: var(--color-muted); margin-left: 6p
 ol.stages .txt { display: block; margin-top: 2px; }
 @media (max-width: 900px) { .sat-split { grid-template-columns: 1fr; } .sat-split .frames { max-width: 560px; } ol.stages .txt { display: none; } ol.stages button[aria-pressed="true"] .txt { display: block; } }
 .alert-btn .sm { display: none; }
-@media (max-width: 480px) { .alert-btn .lg { display: none; } .alert-btn .sm { display: inline; } .site-title { font-size: 0.98rem; } header.top .wrap { gap: 10px; } }
+@media (max-width: 640px) { .alert-btn .lg { display: none; } .alert-btn .sm { display: inline; } .site-title { font-size: 0.98rem; } header.top .wrap { gap: 10px; } }
 .tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
 html.dark-mode-preload { background: #121A21; color-scheme: dark; }
+@media (max-width: 360px) { .site-title { white-space: normal; } .tabs { gap: 16px; } }
