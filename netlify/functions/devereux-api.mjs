@@ -183,7 +183,7 @@ async function waves() {
 // coastalocean.ucdavis.edu. Meters NAVD88; shifted onto the staff-gauge datum the model
 // uses (params.licor_offset_ft, -0.21 ft from overlap with the staff gauge and CCBER loggers).
 const LICOR_URL = "https://www.licor.cloud/api/v2/timeseriesdata";
-async function sensor(days = 120, minutes = 60) {
+export async function sensor(days = 120, minutes = 60) {
   const DAY = 86400000, end = Date.now(), rows = [];
   for (let t0 = end - days * DAY; t0 < end; t0 += 60 * DAY) {
     const body = {

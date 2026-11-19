@@ -112,6 +112,69 @@ let levelRange = "3m";
 // custom range for the level chart (ISO dates); defaults to the last six months
 let customFrom = null, customTo = null;
 let showRain = false; // rainfall overlay on the level chart (toggle)
+let showTide = false; // tide overlay on the level chart, same axis as the slough (toggle)
+let LIVE = []; // newest 5-minute sensor readings from /devereux/api/live: [{t (ms), ft}]
+let TIDES = null; // tide-history.json, decoded: {x: Float64Array (chart days), obs, pred}; loaded on first toggle
+
+// tide-history.json: hourly NOAA 9411340 Santa Barbara water level, ft NAVD88 (the slough's
+// datum), from the Python project. Values are hundredths of a foot; null where missing.
+// x is in the level chart's units (days since epoch, local day d spans d to d+1), on Pacific
+// standard time, so it can sit an hour off in summer.
+async function loadTides() {
+  if (TIDES) return TIDES;
+  const r = await fetch("tide-history.json");
+  if (!r.ok) throw new Error(r.status);
+  const j = await r.json();
+  const x0 = Date.parse(j.start_utc) / 86400000 - 8 / 24;
+  const n = j.observed.length;
+  const x = new Float64Array(n);
+  for (let i = 0; i < n; i++) x[i] = x0 + (i * j.step_h) / 24;
+  const dec = (a) => a.map((v) => (v == null ? null : v / 100));
+  TIDES = { x, obs: dec(j.observed), pred: dec(j.predicted || []), exported: j.exported };
+  return TIDES;
+}
+
+// Tide series for the level chart over [start, end]. Up to four months: the hourly curve,
+// observed where NOAA has it, predicted in the gaps, then the live feed's last 72 hours.
+// Longer: each day's high and low tide as a band.
+function tideSeries(s, start, end) {
+  const T = TIDES;
+  if (!T) return { series: [], ys: [] };
+  const live = s.recent?.tides;
+  const lx = (t) => Date.parse(t.replace(" ", "T") + "Z") / 86400000; // NOAA local clock time
+  const lastFile = T.x.length ? T.x[T.x.length - 1] : -Infinity;
+  const obs = [], pred = [];
+  for (let i = 0; i < T.x.length; i++) {
+    const x = T.x[i];
+    if (x < start - 1 || x > end + 1) continue;
+    const o = T.obs[i], p = T.pred[i];
+    obs.push({ x, y: o });
+    pred.push({ x, y: o == null ? p ?? null : null });
+  }
+  for (const p of live?.observed || []) { const x = lx(p.t); if (x > lastFile && x >= start - 1 && x <= end + 1) obs.push({ x, y: p.ft }); }
+  for (const p of live?.predicted || []) { const x = lx(p.t); if (x > lastFile && x >= start - 1 && x <= end + 1 && !obs.some((o) => Math.abs(o.x - x) < 0.02)) pred.push({ x, y: p.ft }); }
+  obs.sort((a, b) => a.x - b.x); pred.sort((a, b) => a.x - b.x);
+  const ys = [...obs, ...pred].map((p) => p.y).filter((v) => v != null);
+  if (end - start <= 120) {
+    return { ys, series: [
+      { type: "line", color: COLORS.mist, width: 1.1, dash: "3 3", opacity: 0.9, gap: 0.05, points: pred },
+      { type: "line", color: COLORS.sky, width: 1, opacity: 0.6, gap: 0.05, points: obs },
+    ] };
+  }
+  // daily high/low envelope, observed where at least 18 of 24 hours exist, else predicted
+  const days = new Map();
+  for (const [arr, k] of [[obs, "o"], [pred, "p"]]) for (const p of arr) {
+    if (p.y == null) continue;
+    const d = Math.floor(p.x);
+    const r = days.get(d) || { o: [], p: [] };
+    r[k].push(p.y); days.set(d, r);
+  }
+  const band = [...days].sort((a, b) => a[0] - b[0]).map(([d, r]) => {
+    const v = r.o.length >= 18 ? r.o : r.o.concat(r.p);
+    return { x: d + 0.5, lo: Math.min(...v), hi: Math.max(...v) };
+  });
+  return { ys, series: [{ type: "band", color: COLORS.sky, opacity: 0.14, points: band }] };
+}
 
 function monthTicks(a, b, everyMonths) {
   const out = [];
@@ -166,6 +229,17 @@ function levelChartSvg(s, range) {
   const ys = [...loggers.filter((r) => vis(r.x)).map((r) => r.ft), ...dots.filter((p) => vis(p.x)).map((p) => p.y),
     ...series.flatMap((r) => [r.lo, r.hi, r.breach_level_ft]).filter((v) => v != null),
     ...(BLV ? [BLV.mature_min_ft, BLV.mature_max_ft] : [])];
+  const tide = showTide ? tideSeries(s, start, end) : { series: [], ys: [] };
+  // real time: the sensor's hourly averages (last 7 days) and newest 5-minute readings,
+  // drawn over the daily means so the right end of the chart moves through the day
+  const toX = (ms) => ms / 86400000 - 8 / 24; // Pacific standard time, as for the tides
+  const sub = new Map();
+  for (const h of s.stage?.sensor_hourly || []) sub.set(h.t, h.ft);
+  for (const h of LIVE) sub.set(h.t, h.ft);
+  const subPts = [...sub].sort((a, b) => a[0] - b[0]).map(([t, ft]) => ({ x: toX(t), y: ft }));
+  const latest = subPts.at(-1);
+  if (end - start <= 400) ys.push(...subPts.filter((p) => vis(p.x)).map((p) => p.y));
+  ys.push(...tide.ys);
   const yMin = Math.floor(Math.min(...ys, 4) - 0.3), yMax = Math.ceil(Math.max(...ys, 8) + 0.3);
   const breaches = (HISTORY?.breaches || []).map(dayNum).filter(vis);
   const mid = series.map((r) => ({ x: dayNum(r.date), y: r.ft, phase: r.phase }));
@@ -173,6 +247,7 @@ function levelChartSvg(s, range) {
   return chart({
     width: fullW(), height: wide() ? 340 : 260, xMin: start, xMax: end, yMin, yMax, yFmt: (v) => v.toFixed(0),
     series: [
+      ...tide.series,
       { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
       { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.map((r) => ({ x: r.x, y: r.ft })) },
       // observed range of past mature-berm breach peaks, across the whole chart
@@ -181,6 +256,8 @@ function levelChartSvg(s, range) {
       { type: "line", color: css("--color-accent"), width: 2.5, points: mid.filter((p) => p.phase !== "forecast") },
       { type: "line", color: css("--color-accent"), width: 2.5, dash: "6 4", points: mid.filter((p, i) => p.phase === "forecast" || (mid[i + 1] && mid[i + 1].phase === "forecast")) },
       { type: "dots", color: COLORS.ochre, r: span > 400 ? 2.2 : 3.8, points: dots },
+      ...(span <= 400 ? [{ type: "line", color: css("--color-text"), width: span > 120 ? 1 : 1.3, opacity: 0.85, gap: 0.25, points: subPts }] : []),
+      ...(latest ? [{ type: "dots", color: css("--color-accent"), r: 4.5, points: [{ x: latest.x, y: latest.y, title: `latest reading ${latest.y.toFixed(2)} ft` }] }] : []),
     ],
     vlines: breaches.map((x) => ({ x, color: css("--breach") })),
     y2: showRain ? (() => {
@@ -207,7 +284,61 @@ function levelSummary(s) {
 }
 
 const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)"], [COLORS.mist, "rain, forecast"]]);
-document.addEventListener("click", (e) => {
+const tideLegend = () => (levelSpan() <= 120
+  ? legend([[COLORS.sky, "tide, observed (NOAA Santa Barbara, same axis)", "line"], [COLORS.mist, "tide, predicted where observed is missing", "dash"]])
+  : legend([[COLORS.sky + "55", "daily tide range, high to low (NOAA Santa Barbara, same axis)"]]));
+// span in days of the level chart's current view
+function levelSpan() {
+  if (levelRange === "3m") return 90;
+  if (levelRange === "1y") return 365;
+  if (levelRange === "custom" && customFrom && customTo) return dayNum(customTo) - dayNum(customFrom);
+  return 3000;
+}
+function liveNote(s) {
+  const n = s.stage?.sensor_now;
+  if (!n) return "";
+  const when = new Date(n.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  return `Live sensor: ${n.ft.toFixed(2)} ft at ${when}. The chart's right end follows the sensor and refreshes every 5 minutes while this page is open.`;
+}
+// Poll the live sensor every 5 minutes while the page is visible; rebuild the whole page
+// from the status API every 30 minutes so the forecast and Breach Watch keep up too.
+async function pollLive() {
+  const s = window.__devereux;
+  if (!s || document.hidden) return;
+  try {
+    const r = await fetch("/devereux/api/live", { cache: "no-store" });
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j.readings?.length) return;
+    LIVE = j.readings;
+    if (s.stage) s.stage.sensor_now = j.now;
+    const ln = document.getElementById("live-note");
+    if (ln) ln.textContent = liveNote(s);
+    if (document.getElementById("level-chart")) redrawLevel();
+  } catch { /* keep the last readings */ }
+}
+setInterval(pollLive, 5 * 60000);
+setInterval(() => { if (!document.hidden) load(); }, 30 * 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) pollLive(); });
+
+function redrawLevel() {
+  const s = window.__devereux;
+  document.getElementById("tide-legend").innerHTML = showTide && TIDES ? tideLegend() : "";
+  document.getElementById("level-chart").innerHTML = levelChartSvg(s, levelRange);
+}
+document.addEventListener("click", async (e) => {
+  const tt = e.target.closest("[data-tide]");
+  if (tt && window.__devereux) {
+    showTide = !showTide;
+    tt.setAttribute("aria-pressed", String(showTide));
+    if (showTide && !TIDES) {
+      tt.disabled = true;
+      try { await loadTides(); } catch { showTide = false; tt.setAttribute("aria-pressed", "false"); document.getElementById("tide-legend").innerHTML = `<p class="muted">Tide history unavailable.</p>`; tt.disabled = false; return; }
+      tt.disabled = false;
+    }
+    redrawLevel();
+    return;
+  }
   const t = e.target.closest("[data-rain]");
   if (t && window.__devereux) {
     showRain = !showRain;
@@ -222,14 +353,14 @@ document.addEventListener("click", (e) => {
   document.querySelectorAll("[data-range]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   const cr = document.getElementById("custom-range");
   if (cr) cr.hidden = levelRange !== "custom";
-  document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, levelRange);
+  redrawLevel();
 });
 document.addEventListener("change", (e) => {
   if (!e.target.matches?.("#custom-range input") || !window.__devereux) return;
   const [a, b] = [document.getElementById("range-from").value, document.getElementById("range-to").value];
   if (!a || !b) return;
   [customFrom, customTo] = a <= b ? [a, b] : [b, a];
-  document.getElementById("level-chart").innerHTML = levelChartSvg(window.__devereux, "custom");
+  redrawLevel();
 });
 const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 
@@ -460,29 +591,7 @@ function render(s) {
       ${lead ? `<p class="outlook">${lead}</p>` : ""}
       <dl class="readings">${readings.map(([l, v, n]) => `<dt>${esc(l)}</dt><dd>${esc(v)}${n ? `<small>${esc(n)}</small>` : ""}</dd>`).join("")}</dl>
     </div>
-    ${framesHtml()}
-  </section>
-
-  ${s.warnings.length ? s.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join("") : ""}
-
-  <section class="block" id="level">
-    <div class="sec-head">
-      <h2>Slough water level</h2>
-      <div class="controls" role="group" aria-label="Chart options">${["3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" data-rain aria-pressed="${showRain}">Show daily rain</button></div>
-    </div>
-    <div class="custom-range" id="custom-range" ${levelRange === "custom" ? "" : "hidden"}>
-      <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
-      <label>to <input type="date" id="range-to" min="2018-10-01" max="${lastDay}" value="${customTo}" /></label>
-    </div>
-    ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "where past breaches happened"], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "line"]])}
-    <div id="rain-legend">${showRain ? rainLegend() : ""}</div>
-    <div id="level-chart">${levelChart}</div>
-    ${s.stage?.series?.length ? `<p class="after">${levelSummary(s)}</p>` : ""}
-    <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
-  </section>
-
-  <section class="block" id="watch">
-    <h2>Breach Watch</h2>
+    <div class="head-sign">
     <div class="sign">
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
       <div class="sign-dial">
@@ -494,6 +603,31 @@ function render(s) {
           : `<strong>${band48.label}</strong> for the next 48 hours. Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.`}</p>
       </div>
     </div>
+    </div>
+  </section>
+
+  ${s.warnings.length ? s.warnings.map((w) => `<p class="warn">${esc(w)}</p>`).join("") : ""}
+
+  <section class="block" id="level">
+    <div class="sec-head">
+      <h2>Slough water level</h2>
+      <div class="controls" role="group" aria-label="Chart options">${["3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" data-rain aria-pressed="${showRain}">Show daily rain</button><button type="button" data-tide aria-pressed="${showTide}">Show tide</button></div>
+    </div>
+    <div class="custom-range" id="custom-range" ${levelRange === "custom" ? "" : "hidden"}>
+      <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
+      <label>to <input type="date" id="range-to" min="2018-10-01" max="${lastDay}" value="${customTo}" /></label>
+    </div>
+    ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent") + "44", "forecast range"], [COLORS.clay + "33", "where past breaches happened"], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "line"]])}
+    <div id="rain-legend">${showRain ? rainLegend() : ""}</div>
+    <div id="tide-legend">${showTide && TIDES ? tideLegend() : ""}</div>
+    <div id="level-chart">${levelChart}</div>
+    <p class="note" id="live-note">${liveNote(s)}</p>
+    ${s.stage?.series?.length ? `<p class="after">${levelSummary(s)}</p>` : ""}
+    <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
+  </section>
+
+  <section class="block" id="watch">
+    <h2>Breach Watch</h2>
     ${open ? "" : `
     <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
     <div class="split">
@@ -548,6 +682,11 @@ function render(s) {
         ${wv?.latest ? `<p class="note">Latest <span class="num">${wv.latest.hs_ft.toFixed(1)} ft</span> at <span class="num">${wv.latest.period_s ?? "?"} s</span> from <span class="num">${wv.latest.dir_deg ?? "?"}°</span>, ${new Date(wv.latest.t).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" })}.</p>` : ""}
       </div>
     </div>
+  </section>
+
+  <section class="block" id="satellite">
+    <h2>The mouth from space</h2>
+    ${framesHtml()}
   </section>
 
   <section class="block" id="gallery">
@@ -713,13 +852,15 @@ async function load() {
     if (!r.ok) throw new Error(r.status);
     if (h?.ok) HISTORY = await h.json();
     const s = await r.json();
-    render(s);
+    // keep the newer of the status's latest reading and the last live poll
+    if (LIVE.length && s.stage && LIVE.at(-1).t > (s.stage.sensor_now?.t ?? 0)) s.stage.sensor_now = LIVE.at(-1);
     window.__devereux = s;
+    render(s);
     if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); initGallery(); }
   } catch (e) {
     app.innerHTML = `<div class="loading">Couldn't load the slough data (${esc(e.message)}). Try again in a minute.</div>`;
   }
 }
-load();
+load().then(pollLive);
 // re-render charts on theme change so axis colors follow
 new MutationObserver(() => window.__devereux && render(window.__devereux)).observe(document.body, { attributes: true, attributeFilter: ["class"] });

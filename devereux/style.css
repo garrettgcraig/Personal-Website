@@ -122,6 +122,9 @@ ul.plain li .num { font-size: 0.86rem; }
 .custom-range input { font: 0.92rem var(--font-ui); color: var(--color-text); background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 6px 8px; margin-left: 6px; color-scheme: light dark; }
 .custom-range[hidden] { display: none; }
 @media (max-width: 640px) { .sign { grid-template-columns: 1fr; } .sign img { max-width: 220px; margin: 0 auto; } }
+.head-sign .sign { margin-top: 0; }
+@media (min-width: 641px) { .head-sign .sign { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 12px; } }
+.head-sign .sign .crow figcaption { font-size: 0.95rem; }
 
 /* alerts */
 .alerts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-6) clamp(24px, 4vw, 56px); margin-top: var(--space-4); }
@@ -169,6 +172,7 @@ footer { border-top: 1px solid var(--color-border); padding: var(--space-8) 0 va
 
 @media (max-width: 900px) {
 	.head { grid-template-columns: 1fr; }
+	.head-sign { order: -1; max-width: 560px; }
 	.frames { max-width: 560px; }
 	.split, .panels, .alerts { grid-template-columns: 1fr; }
 }
