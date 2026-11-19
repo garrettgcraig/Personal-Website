@@ -22,7 +22,7 @@ function eventRows() {
   return rows.slice(0, evAll ? undefined : 12).map((e) => {
     const sameDay = e.start.slice(0, 10) === e.end.slice(0, 10);
     const when = e.type === "overtopping" && !sameDay ? `${evDate(e.start)} to ${evDate(e.end).replace(/, \d{4}$/, "")}` : evDate(e.start);
-    const what = { breach: e.cat === "first" ? "Season's first breach" : "Later breach", closure: "Closure", overtopping: e.summer ? "Overtopping (summer)" : "Overtopping" }[e.type];
+    const what = { breach: e.cat === "first" ? "Season's first breach" : "Later breach", closure: "Closure", overtopping: e.summer ? "Overtopping (summer)" : "Overtopping", pulse: "Tide pulse" }[e.type] ?? e.type;
     const detail = e.type === "breach" ? (e.peak_level_ft != null ? `peaked at ${ft2(e.peak_level_ft)}` : "no hourly level record") + (e.closedDays != null ? `, after ${e.closedDays} days closed` : "")
       : e.type === "closure" ? `level ${ft2(e.peak_level_ft)}`
       : `+${(e.total_rise_ft ?? 0).toFixed(2)} ft; tide ${ft2(e.tide_high_ft)}${e.surge_ft != null ? `, ${e.surge_ft >= 0 ? "+" : ""}${e.surge_ft.toFixed(1)} ft vs predicted` : ""}`;

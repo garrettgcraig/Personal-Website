@@ -19,7 +19,8 @@ a:hover { text-decoration-thickness: 2px; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
 .mono, .num { font-family: var(--font-ui); font-variant-numeric: tabular-nums lining-nums; }
 
-header.top { border-bottom: 1px solid var(--color-border); }
+header.top { border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 20; background: var(--color-bg); }
+html { scroll-padding-top: 72px; }
 header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; font-family: var(--font-ui); }
 .site-title { font: 700 1.08rem/1.15 var(--font-display); color: var(--color-text); text-decoration: none; letter-spacing: -0.01em; white-space: nowrap; }
 .site-title span { color: var(--color-accent); }
