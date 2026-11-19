@@ -288,6 +288,9 @@ let BANDS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: 
   .map((l) => ({ ...l, ...LEVEL_STYLE[l.key] }));
 // names live here, by key, so a cached status from before a rename can't bring old names back
 const LEVEL_NAME = { low: "No Chance", watch: "Watch", warning: "Likely", likely: "Imminent" };
+// the sign's headline for each level: [big line, line under it]
+const SIGN = { low: ["No Chance", "of Breach"], watch: ["Watch out,", "a breach could happen"],
+  warning: ["Likely", "to Breach"], likely: ["Imminent", "Breach"] };
 const setBands = (levels) => { if (levels?.length) BANDS = levels.map((l) => ({ ...l, label: LEVEL_NAME[l.key] ?? l.label, ...(LEVEL_STYLE[l.key] || LEVEL_STYLE.low) })); };
 const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= b.min) ?? BANDS[0]);
 // What each level has meant on the record
@@ -351,7 +354,7 @@ function render(s) {
   const win = !open && lvLo != null && s.stage?.sensor_hourly?.length
     ? breachWindow({ hourly: s.stage.sensor_hourly.map((h) => ({ t: Date.parse(h.t), ft: h.ft })), lo: lvLo, hi: lvHi, nowMs: Date.now() }) : null;
   const when = (ms) => new Date(ms).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" }).replace(/ /g, "\u00a0");
-  const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch: ${band48.label.toLowerCase()}.`;
+  const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch, next 48 hours: ${SIGN[band48.key].join(" ")}.`;
   let windowLine = "";
   if (win?.state === "within") windowLine = `The slough is already at <span class="num">${win.cur.toFixed(2)}&nbsp;ft</span>, within the range where past breaches happened. A breach could come at any time.`;
   else if (win?.state === "rising") windowLine = `Rising <span class="num">${win.slope.toFixed(2)}&nbsp;ft</span> an hour. At that rate it reaches breach levels (${lvLo.toFixed(1)} to ${lvHi.toFixed(1)} ft) between <strong>${when(win.start)}</strong> and <strong>${when(win.end)}</strong>. More rain would bring that sooner.`;
@@ -475,12 +478,13 @@ function render(s) {
     <div class="sign">
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
       <div class="sign-dial">
-        <p class="sign-title">${!open && peak && band48 ? `<strong class="sign-level">${band48.label}</strong> ` : ""}Breach likelihood</p>
+        <p class="sign-title">${!open && peak && band48 ? `<strong class="sign-level">${SIGN[band48.key][0]}</strong> ${SIGN[band48.key][1]}` : "Breach likelihood"}</p>
         <p class="sign-sub">${open ? "Mouth open" : "Next 48 hours"}</p>
         ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
-          : `Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.${heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : ""}`}</p>
+          : (bandOf(peak.p).key === "low" ? "Next 10 days: no chance of breach." : `Next 10 days peak: <strong>${bandOf(peak.p).label}</strong>, ${day(peak.date).replace(/ /g, "\u00a0")}.`)
+            + (heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : "")}</p>
       </div>
     </div>
     </div>
