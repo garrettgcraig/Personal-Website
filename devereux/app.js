@@ -509,7 +509,7 @@ function render(s) {
     <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
     <div class="split">
       <div>
-        ${legend(BANDS.map((b) => [b.color, b.key === "low" ? b.label : `${b.label}: ${b.caught} of ${s.model?.levels_record?.breaches ?? 10} breaches reached it`]))}
+        ${legend(BANDS.map((b) => [b.color, b.label]))}
         ${probChart}
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
         ${legend([[css("--color-accent"), "observed"], [COLORS.mist, "forecast (Open-Meteo)"]])}
