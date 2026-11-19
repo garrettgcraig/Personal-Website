@@ -154,7 +154,7 @@ function levelChartSvg(s, range) {
   const mid = series.map((r) => ({ x: dayNum(r.date), y: r.ft, phase: r.phase }));
   const span = end - start;
   return chart({
-    width: fullW(), height: wide() ? 340 : 260, xMin: start, xMax: end, yMin, yMax, yFmt: (v) => v.toFixed(0),
+    width: fullW(), height: wide() ? 340 : 260, xMin: start, xMax: end, yMin, yMax, yFmt: (v) => v.toFixed(0), yLabel: "water level, ft NAVD88",
     series: [
       ...tide.series,
       { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
@@ -391,7 +391,7 @@ function render(s) {
   const nowX = dayNum(s.today);
   const pts = s.outlook.map((r) => ({ x: dayNum(r.date), r }));
   const probChart = chart({
-    width: splitW(), height: 200, left: 70, yMin: 0, yMax: BANDS.length, yFmt: (v) => (v >= 1 ? BANDS[Math.round(v) - 1]?.label ?? "" : ""),
+    width: splitW(), height: 200, left: 70, yLabel: "level", yMin: 0, yMax: BANDS.length, yFmt: (v) => (v >= 1 ? BANDS[Math.round(v) - 1]?.label ?? "" : ""),
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: BANDS.indexOf(bandOf(r.p)) + 1, color: bandOf(r.p).color,
@@ -401,7 +401,7 @@ function render(s) {
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
   const rainChart = chart({
-    width: splitW(), height: 120, left: 70, yMin: 0, yFmt: (v) => v.toFixed(1),
+    width: splitW(), height: 120, left: 70, yLabel: "rain, in", yMin: 0, yFmt: (v) => v.toFixed(1),
     series: [{ type: "bar", points: pts.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.observed ? css("--color-accent") : COLORS.mist, title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.rain_src})` })) }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
@@ -413,7 +413,7 @@ function render(s) {
   // --- recent rain (30 days)
   const rr = s.recent.rain.map((r) => ({ x: dayNum(r.date), r }));
   const recentRain = chart({
-    width: panelW(), height: 180, yMin: 0, yFmt: (v) => v.toFixed(1),
+    width: panelW(), height: 180, yMin: 0, yFmt: (v) => v.toFixed(1), yLabel: "rain, in/day",
     series: [{ type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.src.startsWith("Coal") ? COLORS.sage : css("--color-accent"), title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.src})` })) }],
     xTicks: everyN(rr.map((p) => p.x), 7), xFmt: shortDay,
   });
@@ -435,7 +435,7 @@ function render(s) {
   const tWin = (p) => Math.abs(tParse(p.t) - nowH) <= 72;
   const tPred = (td?.predicted || []).filter(tWin);
   const tideChart = td ? chart({
-    width: panelW(), height: 190, yMin: -2, yMax: 8, yFmt: (v) => v.toFixed(0),
+    width: panelW(), height: 190, yMin: -2, yMax: 8, yFmt: (v) => v.toFixed(0), yLabel: "tide, ft NAVD88",
     series: [
       { type: "line", color: COLORS.mist, width: 2, points: tPred.map((p) => ({ x: tParse(p.t), y: p.ft })) },
       { type: "line", color: css("--color-accent"), width: 2.2, points: td.observed.filter(tWin).map((p) => ({ x: tParse(p.t), y: p.ft })) },
@@ -447,7 +447,7 @@ function render(s) {
   // --- waves
   const wv = s.recent.waves;
   const waveChart = wv?.series?.length ? chart({
-    width: panelW(), height: 190, yMin: 0, yFmt: (v) => v.toFixed(0),
+    width: panelW(), height: 190, yMin: 0, yFmt: (v) => v.toFixed(0), yLabel: "wave height, ft",
     series: [{ type: "line", color: COLORS.mesa, width: 2.2, points: wv.series.map((p) => ({ x: localH(p.t), y: p.hs_ft })) }],
     y2: (() => {
       const ps = wv.series.map((p) => p.period_s).filter((v) => v != null);
@@ -460,7 +460,7 @@ function render(s) {
   // --- live sensor, hourly, last 7 days
   const lh = s.stage?.sensor_hourly || [];
   const liveChart = lh.length ? chart({
-    width: fullW(), height: 170, yMin: Math.floor(Math.min(...lh.map((h) => h.ft)) - 0.3), yMax: Math.ceil(Math.max(...lh.map((h) => h.ft)) + 0.3), yFmt: (v) => v.toFixed(1),
+    width: fullW(), height: 170, yLabel: "water level, ft NAVD88", yMin: Math.floor(Math.min(...lh.map((h) => h.ft)) - 0.3), yMax: Math.ceil(Math.max(...lh.map((h) => h.ft)) + 0.3), yFmt: (v) => v.toFixed(1),
     series: [{ type: "line", color: css("--color-accent"), width: 2, points: lh.map((h) => ({ x: localH(new Date(h.t).toISOString()), y: h.ft })) }],
     xTicks: midnights(lh.map((h) => localH(new Date(h.t).toISOString()))), xFmt: localDayLabel, now: nowH,
   }) : "";
@@ -559,7 +559,7 @@ function render(s) {
         <p class="note">NOAA station 9411340.</p>
       </div>
       <div>
-        <h3>Waves, ${esc(wv?.station || "Harvest buoy")}</h3>
+        <h3>Waves, ${esc(wv?.station || "nearest buoy")}</h3>
         ${legend([[COLORS.mesa, "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)"]])}
         ${waveChart}
         ${wv?.latest ? `<p class="note">Latest <span class="num">${wv.latest.hs_ft.toFixed(1)} ft</span> at <span class="num">${wv.latest.period_s ?? "?"} s</span> from <span class="num">${wv.latest.dir_deg ?? "?"}°</span>, ${new Date(wv.latest.t).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" })}.</p>` : ""}
@@ -572,7 +572,7 @@ function render(s) {
     <div class="prose">
       <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.7 ft of rise per inch of rain on past storms, a little less when the slough is already full.</p>
       <p>Each day gets a score from a logistic model of four things: <strong>rain that day</strong>, <strong>rain the day before</strong>, <strong>how far below the top of the berm the slough sits</strong>, and <strong>how far below its highest level since the mouth closed</strong>. Breaches come when a slough near the top of its berm is still climbing in a storm; one that has already peaked and is draining back is much less likely to break. The berm's height isn't measured. The model estimates it as low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilding over a couple of months as waves pile sand back up, levelling off near ${s.model.crest.c_inf.toFixed(1)} ft. A newly closed berm is never lower than the water it held back in its first three days. That is why a young berm can break at a much lower level than a mature one. The model was the leader of a search over thousands of combinations of rain, level and berm inputs, scored on the seasons with a measured water level. With no usable level reading, the page falls back to a rain-only model.</p>
-      <p>The score ranks risk well but, with ${s.model.levels_record?.breaches ?? 16} recorded breaches, isn't a dependable percentage, so the page reports levels. Their cutoffs come from predicting each season with a model trained only on the others: ${BANDS.filter((b) => b.key !== "low").map((b) => `${b.label}, reached before ${b.caught} of ${s.model.levels_record?.breaches ?? 16} breaches, with ${b.false_alarm_episodes ? `${b.false_alarm_episodes} false-alarm episode${b.false_alarm_episodes > 1 ? "s" : ""}` : "no false alarms"}`).join("; ")}. Alerts go out at Watch. A breach counts as flagged if the level was reached that day or the day before, since runoff can take a day to arrive. Tides and waves are shown for context; they don't drive breaches here.</p>
+      <p>The score ranks risk well but, with ${s.model.levels_record?.breaches ?? 16} recorded breaches, isn't a dependable percentage, so the page reports levels. Their cutoffs come from predicting each season with a model trained only on the others: ${BANDS.filter((b) => b.key !== "low").map((b) => `${b.label}, reached before ${b.caught} of ${s.model.levels_record?.breaches ?? 16} breaches, with ${b.false_alarm_episodes ? `${b.false_alarm_episodes} false-alarm episode${b.false_alarm_episodes > 1 ? "s" : ""}` : "no false alarms"}`).join("; ")}. Alerts go out at Watch. A breach counts as flagged if the level was reached that day or the day before, since a storm that runs past midnight spans two calendar days. Tides and waves are shown for context; they don't drive breaches here.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
     <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://cdip.ucsd.edu/m/products/?stn=107p1">CDIP 107 Goleta Point</a> and NDBC buoys <a href="https://www.ndbc.noaa.gov/station_page.php?station=46053">46053</a> and <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>

@@ -38,7 +38,7 @@ function exampleChart(x) {
   const mids = []; for (let h = Math.ceil(xs[0] / 24) * 24; h <= xs.at(-1); h += 24) mids.push(h);
   return chart({
     width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190,
-    yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0),
+    yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0), yLabel: "water level, ft NAVD88",
     bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
     series: [
       { type: "line", color: COLORS.mist, width: 1.2, dash: "3 3", points: pts.map((q) => ({ x: q.h, y: q.p })) },
