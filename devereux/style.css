@@ -103,7 +103,7 @@ table.days th { font-weight: 500; color: var(--color-muted); text-align: right; 
 table.days td { text-align: right; padding: 7px 8px; border-top: 1px solid var(--color-border); white-space: nowrap; font-variant-numeric: tabular-nums lining-nums; font-size: 0.88rem; }
 table.days th:first-child, table.days td:first-child { text-align: left; font-family: var(--font-ui); padding-left: 0; }
 table.days tr.today td { font-weight: 600; }
-table.days td.likely { color: var(--gc-clay); } body.dark-mode table.days td.likely { color: #E58A6A; }
+table.days td.likely { color: #3E7A3A; font-weight: 600; } body.dark-mode table.days td.likely { color: #8CCB86; }
 .table-scroll { overflow-x: auto; }
 
 .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(32px, 4vw, 56px) clamp(24px, 4vw, 56px); margin-top: var(--space-6); }

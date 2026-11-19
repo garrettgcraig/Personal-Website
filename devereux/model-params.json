@@ -55,7 +55,7 @@
  "levels": [
   {
    "key": "low",
-   "label": "Low",
+   "label": "No Chance",
    "min": 0.0,
    "caught": null,
    "false_alarm_days": null,
@@ -71,7 +71,7 @@
   },
   {
    "key": "warning",
-   "label": "Warning",
+   "label": "Likely",
    "min": 0.2,
    "caught": 15,
    "false_alarm_days": 8,
@@ -79,7 +79,7 @@
   },
   {
    "key": "likely",
-   "label": "Likely",
+   "label": "Imminent",
    "min": 0.5,
    "caught": 13,
    "false_alarm_days": 8,

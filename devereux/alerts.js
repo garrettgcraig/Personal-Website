@@ -39,7 +39,7 @@ function niceDay(iso) {
   return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "short", day: "numeric" });
 }
 
-const LEVELS = [{ key: "low", label: "Low", min: 0 }, { key: "watch", label: "Watch", min: 0.02 }, { key: "warning", label: "Warning", min: 0.2 }, { key: "likely", label: "Likely", min: 0.5 }];
+const LEVELS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Watch", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }];
 
 /** Text for push and email. Levels, not percentages: the score ranks risk but isn't a calibrated chance. */
 export function alertMessage(status) {

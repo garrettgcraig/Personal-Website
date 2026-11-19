@@ -33,7 +33,7 @@ const NAMES = { rain_in: "rain that day", rain_prev: "rain the day before", rain
   margin: "level minus berm crest", margin_max: "level minus its highest since closure", maxlvl: "highest level since closure", crest: "berm crest",
   rain_2d: "rain, last 2 days", trail24: "rain, last 24 hours", trail48: "rain, last 48 hours", peak24: "wettest 24 hours of the day" };
 const nice = (m) => m.split(" + ").map((t) => NAMES[t] || t).join(" + ").replace(/^./, (c) => c.toUpperCase());
-const LEVEL_COLOR = { low: "#4E8F4A", watch: "#E2B33C", warning: "#D9772B", likely: "#C23B30" };
+const LEVEL_COLOR = { low: "#C23B30", watch: "#D9772B", warning: "#E2B33C", likely: "#4E8F4A" };
 // Scores span 0.0001 to 1, and the level cutoffs sit at a few percent, so plots use a log scale.
 const LO = 1e-4, lg = (v) => Math.log10(Math.max(LO, v));
 const logTicks = [1e-4, 1e-3, 1e-2, 1e-1, 1];
