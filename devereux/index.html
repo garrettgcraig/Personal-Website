@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Devereux Slough Breach Outlook - Garrett G. Craig</title>
+	<title>Devereux Slough Breach Watch</title>
 	<meta name="description" content="Live status of the Devereux Slough mouth at Coal Oil Point Reserve, Goleta, CA, and the chance the sand berm breaches over the next 10 days." />
 	<link rel="canonical" href="https://garrettgcraig.com/devereux/" />
 	<meta property="og:type" content="website" />
@@ -16,7 +16,7 @@
 	<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
 	<link rel="manifest" href="manifest.webmanifest" />
 	<link rel="apple-touch-icon" href="apple-touch-icon.png" />
-	<link rel="preload" as="image" href="media/satellite/now.jpg" />
+	<link rel="preload" as="image" href="media/crow/devereux-crow.webp" />
 	<meta name="theme-color" content="#121A21" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-title" content="Devereux" />
@@ -26,27 +26,18 @@
 <body>
 	<header class="top">
 		<div class="wrap">
-			<a class="brand" href="/" aria-label="Garrett G. Craig, home">
-				<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-				Garrett G. Craig
-			</a>
-			<nav class="tabs" aria-label="Devereux pages"><a href="/devereux/" aria-current="page">Breach Watch</a><a href="/devereux/model/">Model</a></nav>
-			<span class="place">Devereux Slough, Coal Oil Point Reserve, Goleta</span>
-			<button class="dm" id="dark-mode-toggle" type="button" aria-label="Switch to dark mode">Theme</button>
+			<a class="site-title" href="/devereux/">Devereux Slough <span>Breach Watch</span></a>
+			<nav class="tabs" aria-label="Devereux pages"><a href="/devereux/" aria-current="page">Outlook</a><a href="/devereux/history/">History</a><a href="/devereux/model/">Model</a></nav>
+			<div class="top-actions">
+				<a class="alert-btn" href="/devereux/#alerts" data-alerts-open><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="lg">Get alerts</span><span class="sm">Alerts</span></a>
+				<button class="dm" id="dark-mode-toggle" type="button" aria-label="Switch to dark mode"><svg class="dm-toggle-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="dm-toggle-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+			</div>
 		</div>
 	</header>
 
 	<main class="wrap" id="app">
 		<div class="skeleton" id="loading" aria-busy="true">
 			<section class="head">
-				<div>
-					<p class="loading-status" role="status">Checking the slough...</p>
-					<span class="sk-line" style="width: 92%"></span>
-					<span class="sk-line" style="width: 78%"></span>
-					<span class="sk-line" style="width: 85%"></span>
-					<span class="sk-line" style="width: 60%"></span>
-					<div class="sk-readings"><span></span><span></span><span></span><span></span></div>
-				</div>
 				<div class="head-sign">
 					<div class="sign">
 						<figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="" /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
@@ -57,6 +48,14 @@
 						</div>
 					</div>
 				</div>
+				<div>
+					<p class="loading-status" role="status">Checking the slough...</p>
+					<span class="sk-line" style="width: 92%"></span>
+					<span class="sk-line" style="width: 78%"></span>
+					<span class="sk-line" style="width: 85%"></span>
+					<span class="sk-line" style="width: 60%"></span>
+					<div class="sk-readings"><span></span><span></span><span></span><span></span></div>
+				</div>
 			</section>
 			<section class="block">
 				<h2>Slough water level</h2>
@@ -65,7 +64,10 @@
 		</div>
 	</main>
 
-	<!-- Persistent widgets (kept outside #app, which re-renders); app.js moves them into place. -->
+	<!-- Breach alerts, opened from "Get alerts" in the header. Kept outside #app, which re-renders. -->
+	<dialog class="alerts-dialog" id="alerts-dialog" aria-labelledby="alerts-title">
+	<div class="alerts-head"><h2 id="alerts-title">Get an alert before it breaches</h2><button type="button" class="dlg-close" data-alerts-close aria-label="Close">&times;</button></div>
+	<p class="note" id="alerts-off">Alerts aren't available right now.</p>
 	<div class="alerts" id="alerts" hidden>
 		<div id="push-box">
 			<h3>On this device</h3>
@@ -83,15 +85,6 @@
 			<p class="note" id="email-note">We'll send a confirmation link first. Every alert has an unsubscribe link.</p>
 		</div>
 	</div>
-
-	<dialog class="lightbox" id="lightbox" aria-label="Photo and video viewer">
-		<div class="media" id="lb-media"></div>
-		<div class="bar">
-			<button type="button" id="lb-prev">Previous</button>
-			<p id="lb-caption"></p>
-			<button type="button" id="lb-next">Next</button>
-			<button type="button" id="lb-close">Close</button>
-		</div>
 	</dialog>
 
 	<footer>

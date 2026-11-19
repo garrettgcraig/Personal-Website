@@ -352,6 +352,18 @@ export async function buildStatus(now = new Date()) {
   const todayRow = outlook.find((r) => r.date === today) || null;
   const ahead = outlook.filter((r) => r.date >= today);
   const peak = ahead.reduce((m, r) => (r.p > (m?.p ?? -1) ? r : m), null);
+  // Same score if forecast rain runs heavy (the top rain scenario behind the level chart's
+  // range, 1.5x). Shown beside the dial; alerts and the headline level stay on the central
+  // forecast, which is what the levels were tested on.
+  let peakHeavy = null;
+  if (last && !mouthOpen && stage0) {
+    const k = params.rain_scenarios?.[1] ?? 1.5;
+    const rainHi = rain.map((r) => (r.date >= today && r.rain_in != null ? { ...r, rain_in: r.rain_in * k } : r));
+    const s0 = stage0.rest ? { ...stage0, rest: { ...stage0.rest, rain_in: stage0.rest.rain_in * k } } : stage0;
+    peakHeavy = forecast({ rain: rainHi, today, closedSince: last.date, stage0: s0, params, crestFloor, showFrom: today })
+      .reduce((m, r) => (r.p > (m?.p ?? -1) ? r : m), null);
+    if (peakHeavy) peakHeavy = { date: peakHeavy.date, p: peakHeavy.p, stage_ft: peakHeavy.stage_ft, rain_in: peakHeavy.rain_in, scale: k };
+  }
 
   return {
     generated_at: now.toISOString(),
@@ -376,6 +388,7 @@ export async function buildStatus(now = new Date()) {
     } : null,
     outlook,
     peak,
+    peak_heavy: peakHeavy,
     recent: {
       rain: rain.filter((r) => r.date >= addDays(today, -30) && r.date < today),
       season_rain_in: rain.filter((r) => r.date >= wyStart(today) && r.date < today).reduce((a, r) => a + (r.rain_in || 0), 0),
