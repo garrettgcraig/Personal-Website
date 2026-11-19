@@ -18,9 +18,8 @@
 	<meta name="theme-color" content="#121A21" />
 	<script src="/assets/js/darkmode.js"></script>
 	<style>
-		.page-head { padding: clamp(40px, 6vw, 72px) 0 clamp(24px, 3vw, 40px); max-width: 860px; }
+		.page-head { padding: clamp(40px, 6vw, 72px) 0 clamp(24px, 3vw, 40px); }
 		.page-head h1 { font-size: clamp(2.2rem, 3vw + 1rem, 3.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
-		.page-head .lead { max-width: 60ch; }
 		table.stats { width: 100%; border-collapse: collapse; font: 0.92rem var(--font-ui); font-variant-numeric: tabular-nums lining-nums; margin-top: var(--space-3); }
 		table.stats th { font-weight: 500; color: var(--color-muted); text-align: right; padding: 0 10px 8px; white-space: nowrap; }
 		table.stats td { text-align: right; padding: 8px 10px; border-top: 1px solid var(--color-border); }
@@ -33,19 +32,18 @@
 		.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: 0; }
 		.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); margin-top: var(--space-4); }
 		@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
-		.prose p { max-width: 72ch; }
 	</style>
 </head>
 <body>
+	<script>if (document.documentElement.classList.contains("dark-mode-preload")) document.body.classList.add("dark-mode");</script>
 	<header class="top">
 		<div class="wrap">
-			<a class="brand" href="/" aria-label="Garrett G. Craig, home">
-				<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-				Garrett G. Craig
-			</a>
-			<nav class="tabs" aria-label="Devereux pages"><a href="/devereux/">Breach Watch</a><a href="/devereux/model/" aria-current="page">Model</a></nav>
-			<span class="place">Devereux Slough, Coal Oil Point Reserve, Goleta</span>
-			<button class="dm" id="dark-mode-toggle" type="button" aria-label="Switch to dark mode">Theme</button>
+			<a class="site-title" href="/devereux/">Devereux Slough <span>Breach Watch</span></a>
+			<nav class="tabs" aria-label="Devereux pages"><a href="/devereux/">Outlook</a><a href="/devereux/history/">History</a><a href="/devereux/model/" aria-current="page">Model</a></nav>
+			<div class="top-actions">
+				<a class="alert-btn" href="/devereux/#alerts" data-alerts-open><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="lg">Get alerts</span><span class="sm">Alerts</span></a>
+				<button class="dm" id="dark-mode-toggle" type="button" aria-label="Switch to dark mode"><svg class="dm-toggle-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="dm-toggle-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+			</div>
 		</div>
 	</header>
 

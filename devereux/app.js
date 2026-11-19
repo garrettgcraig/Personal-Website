@@ -2,105 +2,14 @@
 // netlify/functions/devereux-api.mjs) and draws everything with inline SVG.
 
 import { breachWindow } from "./model.js";
+import { esc, tz, day, COLORS, css, chart, legend, dayNum, everyN, dayTicks, shortDay, fullW, wide } from "./shared.js";
 
 const app = document.getElementById("app");
-const FT = (v, d = 1) => (v == null ? "n/a" : `${v.toFixed(d)} ft`);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const tz = "America/Los_Angeles";
-const day = (iso, opts = { weekday: "short", month: "short", day: "numeric" }) =>
-  new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", opts);
-const COLORS = { sky: "#2D5A7B", ochre: "#D3A43B", sage: "#5E6E3A", clay: "#A65A3C", mesa: "#6B4A73", mist: "#7FA3BD" };
-const LEVEL_TEXT = { low: "Low", watch: "Watch", likely: "Likely" };
-const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
-
-// ------------------------------------------------------------- tiny SVG charts
-// series: [{type: "bar"|"line"|"dots"|"step", points: [{x: Date|number, y}], color, width, opacity, dash}]
-// y2 (optional): a second, right-hand axis, either bars that hang down from the top of the
-// plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}, or dots on a
-// normal axis: {dots: [{x, y, title}], min, max, fmt, label, color}.
-function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2 }) {
-  const W = width, H = height, m = { l: 40, r: y2 ? 44 : 12, t: 10, b: 24 };
-  const xs = series.flatMap((s) => s.points.map((p) => +p.x));
-  const x0 = xMin ?? Math.min(...xs), x1 = xMax ?? Math.max(...xs);
-  const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
-  const top = yMax ?? Math.max(...ys, yMin + 1e-9) * 1.1;
-  const bot = yMin ?? Math.min(...ys);
-  const nBars = new Set(series.filter((s) => s.type === "bar").flatMap((s) => s.points.map((p) => +p.x))).size;
-  const barW = nBars ? Math.max(2, ((W - m.l - m.r) / nBars) * 0.7) : 0;
-  const X = (v) => m.l + ((+v - x0) / Math.max(1, x1 - x0)) * (W - m.l - m.r - barW) + barW / 2;
-  const Y = (v) => m.t + (1 - (v - bot) / Math.max(1e-9, top - bot)) * (H - m.t - m.b);
-  let g = "";
-  for (const b of bands) g += `<rect x="${X(b.x0)}" y="${m.t}" width="${Math.max(0, X(b.x1) - X(b.x0))}" height="${H - m.t - m.b}" fill="${b.color}" opacity="${b.opacity ?? 0.12}"/>`;
-  const ticks = 4;
-  for (let i = 0; i <= ticks; i++) {
-    const v = bot + ((top - bot) * i) / ticks;
-    g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${yFmt(v)}</text>`;
-  }
-  for (const h of hlines) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="${h.color}" stroke-dasharray="4 4" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(h.y) - 4}" text-anchor="end" style="fill:${h.color}">${esc(h.label)}</text>`;
-  for (const v of vlines) g += `<line x1="${X(v.x)}" x2="${X(v.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${v.color}" stroke-width="1.5" opacity="0.8"/>${v.label ? `<text x="${X(v.x) + 3}" y="${H - m.b - 4}" style="fill:${v.color}">${esc(v.label)}</text>` : ""}`;
-  // y2 bars are drawn first so the lines stay on top
-  if (y2?.dots) {
-    // right axis for a second measure drawn as dots (bottom-up)
-    const plotH = H - m.t - m.b, lo2 = y2.min ?? 0;
-    const Y2 = (v) => m.t + (1 - (v - lo2) / Math.max(1e-9, y2.max - lo2)) * plotH;
-    for (const p of y2.dots) if (p.y != null && +p.x >= x0 && +p.x <= x1) g += `<circle cx="${X(p.x).toFixed(1)}" cy="${Y2(p.y).toFixed(1)}" r="${y2.r || 2.4}" fill="${y2.color}" opacity="0.85"><title>${esc(p.title || "")}</title></circle>`;
-    for (let i = 0; i <= 2; i++) {
-      const v = lo2 + ((y2.max - lo2) * i) / 2;
-      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
-    }
-    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
-    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
-  } else if (y2) {
-    const plotH = H - m.t - m.b;
-    const Y2 = (v) => m.t + (v / y2.max) * plotH; // 0 at the top, growing downward
-    for (const b of y2.bars) {
-      if (b.x1 < x0 || b.x0 > x1 || !(b.y > 0)) continue;
-      const xa = X(Math.max(b.x0, x0)), xb = X(Math.min(b.x1, x1));
-      g += `<rect x="${xa.toFixed(1)}" y="${m.t}" width="${Math.max(1.5, xb - xa - 0.6).toFixed(1)}" height="${(Y2(b.y) - m.t).toFixed(1)}" fill="${b.color}" opacity="${b.opacity ?? 0.75}"><title>${esc(b.title || "")}</title></rect>`;
-    }
-    for (let i = 0; i <= 2; i++) {
-      const v = (y2.max * i) / 2;
-      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
-    }
-    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
-    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
-  }
-  for (const s of series) {
-    const pts = s.points.filter((p) => p.y != null && +p.x >= x0 - 1 && +p.x <= x1 + 1);
-    if (s.type === "band") {
-      const b = s.points.filter((p) => p.lo != null && +p.x >= x0 - 1 && +p.x <= x1 + 1);
-      if (b.length) g += `<path d="${b.map((p, i) => `${i ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.hi).toFixed(1)}`).join("")}${b.slice().reverse().map((p) => `L${X(p.x).toFixed(1)},${Y(p.lo).toFixed(1)}`).join("")}Z" fill="${s.color}" opacity="${s.opacity ?? 0.2}" stroke="none"/>`;
-      continue;
-    }
-    if (s.type === "bar") {
-      for (const p of pts) g += `<rect x="${X(p.x) - barW / 2}" y="${Y(Math.max(p.y, bot))}" width="${barW}" height="${Math.max(0, Y(bot) - Y(Math.max(p.y, bot)))}" fill="${p.color || s.color}" opacity="${p.opacity ?? s.opacity ?? 1}" rx="1.5"><title>${esc(p.title || "")}</title></rect>`;
-    } else if (s.type === "dots") {
-      for (const p of pts) g += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${s.r || 3.5}" fill="${s.color}"><title>${esc(p.title || "")}</title></circle>`;
-    } else {
-      // break the line across gaps longer than s.gap (x units)
-      const d = pts.map((p, i) => `${i && !(s.gap && +p.x - +pts[i - 1].x > s.gap) ? "L" : "M"}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
-      g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width || 2}" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""} opacity="${s.opacity ?? 1}" stroke-linejoin="round"/>`;
-    }
-  }
-  if (now != null) g += `<line x1="${X(now)}" x2="${X(now)}" y1="${m.t}" y2="${H - m.b}" stroke="${css("--color-muted")}" stroke-width="1"/><text x="${X(now) + 4}" y="${m.t + 10}">now</text>`;
-  for (const t of xTicks || []) g += `<text x="${X(t)}" y="${H - 6}" text-anchor="middle">${esc(xFmt(t))}</text>`;
-  g += `<line class="axis" x1="${m.l}" x2="${W - m.r}" y1="${Y(bot)}" y2="${Y(bot)}"/>`;
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
-}
-// items: [color, label, style] with style "line", "dash" or none (a swatch)
-const legend = (items) => `<div class="legend">${items.map(([c, l, st]) => `<span><i class="${st || ""}" style="background:${c};border-color:${c}"></i>${esc(l)}</span>`).join("")}</div>`;
-const dayNum = (iso) => Date.parse(`${iso}T12:00:00Z`) / 86400000;
-const everyN = (arr, n) => arr.filter((_, i) => i % n === 0);
-// evenly spaced day ticks (every `step` days) across [a, b]
-const dayTicks = (a, b, step) => { const out = []; for (let x = Math.ceil(a); x <= b; x += step) out.push(x); return out; };
-const shortDay = (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" });
-
-// Chart widths follow the layout (viewBox = rendered width), so axis text stays at 11px.
-const fullW = () => Math.max(300, Math.round(app.clientWidth || 1100));
-const wide = () => fullW() > 900;
 const splitW = () => (wide() ? Math.round((fullW() - 56) * 1.2 / 2.2) : fullW());
 const panelW = () => (wide() ? Math.round((fullW() - 56) / 2) : fullW());
 let lastW = 0;
+const ICON_RAIN = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15a4.5 4.5 0 0 1-.4-9 6 6 0 0 1 11.3 1.6A3.7 3.7 0 0 1 17.5 15Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 18l-1 2.5M12.5 18l-1 2.5M17 18l-1 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+const ICON_WAVE = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 14c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 19c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 addEventListener("resize", () => {
   clearTimeout(window.__rz);
   window.__rz = setTimeout(() => { if (window.__devereux && Math.abs(fullW() - lastW) > 40) render(window.__devereux); }, 200);
@@ -210,7 +119,7 @@ function levelChartSvg(s, range) {
   const series = s.stage?.series || [];
   const endAll = series.length ? dayNum(series.at(-1).date) : nowX + 9;
   let end = endAll;
-  let start = range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
+  let start = range === "1w" ? nowX - 7 : range === "3m" ? nowX - 90 : range === "1y" ? nowX - 365 : dayNum("2018-10-01");
   if (range === "custom" && customFrom && customTo) {
     start = Math.max(dayNum("2018-10-01"), dayNum(customFrom));
     end = Math.min(endAll, dayNum(customTo));
@@ -249,7 +158,7 @@ function levelChartSvg(s, range) {
     series: [
       ...tide.series,
       { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
-      { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.map((r) => ({ x: r.x, y: r.ft })) },
+      { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.filter((r) => span > 31 || !subPts.length || r.x + 0.5 < subPts[0].x).map((r) => ({ x: r.x, y: r.ft })) },
       // observed range of past mature-berm breach peaks, across the whole chart
       ...(BLV ? [{ type: "band", color: COLORS.clay, opacity: 0.12, points: [{ x: start, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }, { x: end, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }] }] : []),
       { type: "line", color: COLORS.clay, width: 1.8, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: s.mouth?.state === "open" ? null : r.breach_level_ft })) },
@@ -267,7 +176,7 @@ function levelChartSvg(s, range) {
       const nice = [0.5, 1, 1.5, 2, 3, 4, 5, 6, 8, 10];
       return { bars, max: nice.find((n) => n >= peak * 1.25) ?? Math.ceil(peak * 1.25), fmt: (v) => (Number.isInteger(v) ? String(v) : v.toFixed(Number.isInteger(v * 10) ? 1 : 2)), label: "rain, in/day" };
     })() : undefined,
-    xTicks: span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
+    xTicks: span <= 31 ? dayTicks(start, end, span <= 20 ? 2 : 4) : span <= 120 ? dayTicks(start, end, 14) : span <= 400 ? monthTicks(start, end, 2) : monthTicks(start, end, 12),
     xFmt: (x) => span <= 400 ? shortDay(x) : String(new Date(x * 86400000).getUTCFullYear()),
     now: nowX >= start && nowX <= end ? nowX : null,
   });
@@ -289,87 +198,13 @@ const tideLegend = () => (levelSpan() <= 120
   : legend([[COLORS.sky + "55", "daily tide range, high to low (NOAA Santa Barbara, same axis)"]]));
 // span in days of the level chart's current view
 function levelSpan() {
+  if (levelRange === "1w") return 17;
   if (levelRange === "3m") return 90;
   if (levelRange === "1y") return 365;
   if (levelRange === "custom" && customFrom && customTo) return dayNum(customTo) - dayNum(customFrom);
   return 3000;
 }
-// ------------------------------------------------------------- events: breaches, closures, overtopping
-let EVENTS = null; // events.json, from the Python project (scripts/build_devereux_events.py)
-let evFilter = "all";
-let evAll = false; // show every row (else the newest 12)
-const EV_FILTERS = { all: "All", breach: "Breaches", closure: "Closures", overtopping: "Overtopping", summer: "Summer overtopping" };
-const evDate = (iso) => new Date(iso + ":00Z").toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" });
-const evTime = (iso) => new Date(iso + ":00Z").toLocaleTimeString("en-US", { timeZone: "UTC", hour: "numeric", minute: "2-digit" });
-const ft2 = (v) => (v == null ? "" : `${v.toFixed(1)} ft`);
-
-function eventRows() {
-  const ev = (EVENTS?.events || []).filter((e) => evFilter === "all" || (evFilter === "summer" ? e.type === "overtopping" && e.summer : e.type === evFilter));
-  const rows = ev.slice().reverse();
-  const more = document.getElementById("ev-more");
-  if (more) { more.hidden = evAll || rows.length <= 12; more.textContent = `Show all ${rows.length}`; }
-  return rows.slice(0, evAll ? undefined : 12).map((e) => {
-    const sameDay = e.start.slice(0, 10) === e.end.slice(0, 10);
-    const when = e.type === "overtopping" && !sameDay ? `${evDate(e.start)} to ${evDate(e.end).replace(/, \d{4}$/, "")}` : evDate(e.start);
-    const what = { breach: "Breach", closure: "Closure", overtopping: e.summer ? "Overtopping (summer)" : "Overtopping" }[e.type];
-    const detail = e.type === "breach" ? (e.peak_level_ft != null ? `peaked at ${ft2(e.peak_level_ft)}` : "no hourly level record")
-      : e.type === "closure" ? `level ${ft2(e.peak_level_ft)}`
-      : `+${(e.total_rise_ft ?? 0).toFixed(2)} ft; tide ${ft2(e.tide_high_ft)}${e.surge_ft != null ? `, ${e.surge_ft >= 0 ? "+" : ""}${e.surge_ft.toFixed(1)} ft vs predicted` : ""}`;
-    return `<tr class="ev-${e.type}"><td>${esc(when)}</td><td><span class="ev-tag ev-${e.type}">${esc(what)}</span>${e.provisional ? ` <span class="ev-prov" title="Found in or moved by the level record; awaiting review">provisional</span>` : ""}</td><td>${esc(detail)}</td><td class="ev-note">${esc(e.note)}</td></tr>`;
-  }).join("");
-}
-
-function exampleChart(x) {
-  const H = (iso) => Date.parse(iso + ":00Z") / 3600000; // local clock hours
-  const pts = x.hourly.map(([t, lv, o, p]) => ({ h: H(t), lv, o, p }));
-  const ys = pts.flatMap((q) => [q.lv, q.o]).filter((v) => v != null);
-  const xs = pts.map((q) => q.h);
-  const mids = []; for (let h = Math.ceil(xs[0] / 24) * 24; h <= xs.at(-1); h += 24) mids.push(h);
-  return chart({
-    width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190,
-    yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0),
-    bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
-    series: [
-      { type: "line", color: COLORS.mist, width: 1.2, dash: "3 3", points: pts.map((q) => ({ x: q.h, y: q.p })) },
-      { type: "line", color: COLORS.sky, width: 1.4, opacity: 0.8, points: pts.map((q) => ({ x: q.h, y: q.o })) },
-      { type: "line", color: css("--color-text"), width: 2.2, points: pts.map((q) => ({ x: q.h, y: q.lv })) },
-    ],
-    xTicks: mids, xFmt: (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" }),
-  });
-}
-
-function eventsHtml() {
-  if (!EVENTS) return "";
-  const ev = EVENTS.events;
-  const n = (f) => ev.filter(f).length;
-  const nb = n((e) => e.type === "breach"), nc = n((e) => e.type === "closure"), no = n((e) => e.type === "overtopping"), ns = n((e) => e.type === "overtopping" && e.summer);
-  const np = n((e) => e.provisional);
-  return `
-  <section class="block" id="events">
-    <h2>Breaches, closures and overtopping</h2>
-    <p class="intro">Every mouth event since 2017: ${nb} breaches, ${nc} closures, and ${no} times the closed slough stepped up at high tide with no rain to explain it (${ns} of them between May and October). When the berm is closed, the biggest high tides, and the waves running up the beach on top of them, can wash over it and add water. ${np ? `${np} events come from the level record rather than CCBER's mouth log and are marked provisional until they're reviewed.` : ""}</p>
-    <h3>Overtopping, up close</h3>
-    ${legend([[css("--color-text"), "slough level", "line"], [COLORS.sky, "tide, observed (NOAA Santa Barbara)", "line"], [COLORS.mist, "tide, predicted", "dash"], [COLORS.ochre + "44", "overtopping event"]])}
-    <div class="ev-examples">${EVENTS.examples.map((x) => `
-      <figure class="ev-example">
-        ${exampleChart(x)}
-        <figcaption><strong>${esc(x.title)}.</strong> ${esc(x.text)}</figcaption>
-      </figure>`).join("")}</div>
-    <p class="note">Hourly slough level and NOAA 9411340 tide, both in ft NAVD88 on the same axis, Pacific time. Tide and surge are shown for context; the breach model doesn't use them.</p>
-    <h3>All events</h3>
-    <div class="controls" role="group" aria-label="Event filter">${Object.entries(EV_FILTERS).map(([k, l]) => `<button type="button" data-evf="${k}" aria-pressed="${k === evFilter}">${l}</button>`).join("")}</div>
-    <div class="ev-table-wrap"><table class="days ev-table"><thead><tr><th>When</th><th>Event</th><th>Details</th><th>Note</th></tr></thead><tbody id="ev-rows">${eventRows()}</tbody></table></div>
-    <p><button type="button" class="ev-more" id="ev-more" data-evmore>Show all</button></p>
-  </section>`;
-}
-document.addEventListener("click", (e) => {
-  if (e.target.closest("[data-evmore]")) { evAll = true; document.getElementById("ev-rows").innerHTML = eventRows(); return; }
-  const b = e.target.closest("[data-evf]");
-  if (!b) return;
-  evFilter = b.dataset.evf;
-  document.querySelectorAll("[data-evf]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-  document.getElementById("ev-rows").innerHTML = eventRows();
-});
+let EVENTS = null; // events.json, from the Python project (scripts/build_devereux_events.py); breach marks on the level chart
 
 function liveNote(s) {
   const n = s.stage?.sensor_now;
@@ -455,7 +290,7 @@ const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= 
 // What each level has meant on the record
 function levelMeaning(b, rec) {
   const n = rec?.breaches ?? 10;
-  if (b.key === "low") return "Below the level every recorded breach reached first.";
+  if (b.key === "low") return "That's below the level every recorded breach reached first.";
   const fa = b.false_alarm_episodes ?? 0;
   const tail = fa ? `; it came up ${fa === 1 ? "once" : `${fa} times`} without a breach in ${rec?.seasons?.replace("-", " to ") ?? "eight seasons"}` : ", with no false alarms";
   return b.caught === n ? `Every recorded breach reached ${b.label} first${tail}.` : `${b.caught} of ${n} recorded breaches reached ${b.label}${tail}.`;
@@ -484,43 +319,6 @@ function dialSvg(p, off) {
   </svg>`;
 }
 
-// ------------------------------------------------------------- satellite frames
-// The clearest image of each stage of the cycle. Sentinel-2 L2A true color (10 m) for the
-// stages only a frequent satellite catches; USDA NAIP aerial photos (0.6 m, flown in late spring
-// or summer every two years) where one fits. Levels are the re-leveled daily means.
-const SAT = "media/satellite/";
-const FRAMES = [
-  { key: "dry", label: "Dry", date: "July 13, 2016", src: "NAIP aerial photo, 0.6 m", text: "Midsummer in a drought year. The lower slough has dried to a salt flat, with water left only in the channels. (The north arms look different because they were restored from 2017 to 2019.)" },
-  { key: "filling", label: "Filling", date: "October 27, 2025", src: "Sentinel-2, 10 m", text: "First storms, 5.4 ft. Early rain pools in the lower slough while the berm holds." },
-  { key: "full", label: "Full", date: "February 6, 2020", src: "Sentinel-2, 10 m", text: "Full, 9.2 ft, after 323 days closed. It breached five weeks later. (Every day before the November 2025 breach was cloudy, so this frame comes from 2020.)" },
-  { key: "tidal", label: "Tidal", date: "November 26, 2025", src: "Sentinel-2, 10 m", text: "Open, 11 days after the November 15 breach. The slough drains to about 4 ft and rises and falls with the tide." },
-  { key: "reclosed", label: "Closed again", date: "May 21, 2020", src: "NAIP aerial photo, 0.6 m", text: "Closed again, 6.1 ft. Waves rebuilt the berm about seven weeks earlier, after the March 16 breach, and the lower slough is holding water again." },
-  { key: "now", label: "Latest", date: "November 11, 2026", src: "Sentinel-2, 10 m", text: "The most recent clear image, 6.1 ft. Water fills the lower slough; the north arms are still mostly dry." },
-];
-let frameIdx = FRAMES.length - 1;
-function setFrame(i) {
-  frameIdx = (i + FRAMES.length) % FRAMES.length;
-  document.querySelectorAll(".frames .stage img").forEach((im, k) => im.classList.toggle("on", k === frameIdx));
-  document.querySelectorAll(".frames .strip button").forEach((b, k) => b.setAttribute("aria-pressed", String(k === frameIdx)));
-  const f = FRAMES[frameIdx], cap = document.getElementById("frame-cap");
-  if (cap) cap.innerHTML = `<span class="when">${esc(f.date)} · ${esc(f.src)}</span>${esc(f.text)}`;
-}
-const framesHtml = () => `
-  <figure class="frames" aria-label="The slough from orbit through one cycle">
-    <div class="stage">${FRAMES.map((f, k) => `<img src="${SAT}${f.key}.jpg" alt="Overhead view of Devereux Slough, ${esc(f.date)}: ${esc(f.text)}" class="${k === frameIdx ? "on" : ""}" ${k === frameIdx ? "" : `loading="lazy"`} decoding="async" width="1056" height="960" />`).join("")}</div>
-    <div class="strip" role="group" aria-label="Stages of the cycle">${FRAMES.map((f, k) => `<button type="button" data-frame="${k}" aria-pressed="${k === frameIdx}"><img src="${SAT}${f.key}-thumb.jpg" alt="" loading="lazy" />${esc(f.label)}</button>`).join("")}</div>
-    <figcaption id="frame-cap"><span class="when">${esc(FRAMES[frameIdx].date)} · ${esc(FRAMES[frameIdx].src)}</span>${esc(FRAMES[frameIdx].text)}</figcaption>
-  </figure>`;
-document.addEventListener("click", (e) => { const b = e.target.closest("[data-frame]"); if (b) setFrame(Number(b.dataset.frame)); });
-document.addEventListener("keydown", (e) => {
-  if (!e.target.closest?.(".frames .strip")) return;
-  if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-    e.preventDefault();
-    setFrame(frameIdx + (e.key === "ArrowRight" ? 1 : -1));
-    document.querySelector(`[data-frame="${frameIdx}"]`)?.focus();
-  }
-});
-
 // ------------------------------------------------------------- render
 function render(s) {
   lastW = fullW();
@@ -530,6 +328,8 @@ function render(s) {
   const todayRow = s.outlook.find((r) => r.date === s.today);
   const ahead = s.outlook.filter((r) => r.date >= s.today);
   const peak = s.peak;
+  const heavy = s.peak_heavy;
+  const heavyUp = !open && peak && heavy && BANDS.indexOf(bandOf(heavy.p)) > BANDS.indexOf(bandOf(peak.p));
 
   const nowFt = s.stage?.sensor_now?.ft ?? s.stage?.today_est_ft;
   const nowWhen = s.stage?.sensor_now
@@ -573,6 +373,7 @@ function render(s) {
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day.` : ".")
       + (near ? ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${day(near.date, { month: "short", day: "numeric" })}`
         + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : ".") : "");
+    if (heavyUp) outlook += ` With ${heavy.scale ?? 1.5} times the forecast rain, the outlook would reach <strong>${bandOf(heavy.p).label}</strong> on ${day(heavy.date)}.`;
   }
 
   const wyear = s.today.slice(0, 4) * 1 + (s.today.slice(5, 7) >= "10" ? 1 : 0);
@@ -660,14 +461,6 @@ function render(s) {
 
   app.innerHTML = `
   <section class="head">
-    <div aria-live="polite">
-      <h1 class="sr-only">${headline}</h1>
-      ${p48 != null ? `<p class="lead">Next 48 hours: <strong>${band48.label}</strong>. ${levelMeaning(band48, s.model?.levels_record)}</p>` : ""}
-      ${windowLine ? `<p class="window">${windowLine}</p>` : ""}
-      <p class="outlook">${outlook}</p>
-      ${lead ? `<p class="outlook">${lead}</p>` : ""}
-      <dl class="readings">${readings.map(([l, v, n]) => `<dt>${esc(l)}</dt><dd>${esc(v)}${n ? `<small>${esc(n)}</small>` : ""}</dd>`).join("")}</dl>
-    </div>
     <div class="head-sign">
     <div class="sign">
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
@@ -677,9 +470,16 @@ function render(s) {
         ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
-          : `Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.`}</p>
+          : `Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.${heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : ""}`}</p>
       </div>
     </div>
+    </div>
+    <div class="narrative" aria-live="polite">
+      <h1 class="sr-only">${headline}</h1>
+      <p class="lead">${lead}${p48 != null ? `${lead ? " " : ""}That puts the next 48 hours at <strong>${band48.label}</strong>. ${levelMeaning(band48, s.model?.levels_record)}` : ""}</p>
+      ${windowLine ? `<p class="window">${windowLine}</p>` : ""}
+      <p class="outlook">${outlook}</p>
+      <dl class="readings">${readings.map(([l, v, n]) => `<dt>${esc(l)}</dt><dd>${esc(v)}${n ? `<small>${esc(n)}</small>` : ""}</dd>`).join("")}</dl>
     </div>
   </section>
 
@@ -688,7 +488,7 @@ function render(s) {
   <section class="block" id="level">
     <div class="sec-head">
       <h2>Slough water level</h2>
-      <div class="controls" role="group" aria-label="Chart options">${["3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" data-rain aria-pressed="${showRain}">Show daily rain</button><button type="button" data-tide aria-pressed="${showTide}">Show tide</button></div>
+      <div class="controls" role="group" aria-label="Chart options">${["1w", "3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "1w": "Past week", "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" class="ic" data-rain aria-pressed="${showRain}">${ICON_RAIN}Show daily rain</button><button type="button" class="ic" data-tide aria-pressed="${showTide}">${ICON_WAVE}Show tide</button></div>
     </div>
     <div class="custom-range" id="custom-range" ${levelRange === "custom" ? "" : "hidden"}>
       <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
@@ -702,8 +502,6 @@ function render(s) {
     ${s.stage?.series?.length ? `<p class="after">${levelSummary(s)}</p>` : ""}
     <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
   </section>
-
-  ${eventsHtml()}
 
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
@@ -722,11 +520,6 @@ function render(s) {
         <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.p >= 0.5 ? "likely" : ""}">${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
       </table></div>
     </div>`}
-  </section>
-
-  <section class="block" id="alerts-section" hidden>
-    <h2>Get an alert before it breaches</h2>
-    <div id="alerts-slot"></div>
   </section>
 
   <section class="block" id="conditions">
@@ -763,17 +556,6 @@ function render(s) {
     </div>
   </section>
 
-  <section class="block" id="satellite">
-    <h2>The mouth from space</h2>
-    ${framesHtml()}
-  </section>
-
-  <section class="block" id="gallery">
-    <h2>The November 15, 2025 breach</h2>
-    <p class="intro">A 5-inch storm raised the slough from 5.7 to about 9.4 ft over two and a half days. Late on the afternoon of November 15 water began running over the berm and cut a channel, and by dark the slough was pouring into the ocean; the live sensor shows it dropping almost 5 ft in six hours. Photos and muted video from that afternoon and evening, in order.</p>
-    <div class="gallery">${GALLERY.map((g, i) => `<button type="button" data-gallery="${i}" aria-label="${esc(g.alt)}"><span class="ph"><img src="${MEDIA}${g.thumb}" alt="" loading="lazy" decoding="async" />${g.video ? `<span class="play" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M0 0L10 6L0 12Z"/></svg></span>` : ""}</span>${esc(g.time)}${g.video ? `, video ${g.video}` : ""}</button>`).join("")}</div>
-  </section>
-
   <section class="block" id="how">
     <h2>How this works</h2>
     <div class="prose">
@@ -785,59 +567,6 @@ function render(s) {
     <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
     Live feeds: ${sources}. Updated ${new Date(s.generated_at).toLocaleString("en-US", { timeZone: tz, dateStyle: "medium", timeStyle: "short" })} Pacific. Model fit ${esc(s.model.exported)}.</p>
   </section>`;
-  // the alerts form lives outside #app (it keeps its state); slot it in
-  const card = document.getElementById("alerts"), slot = document.getElementById("alerts-slot");
-  if (card && slot) { slot.appendChild(card); document.getElementById("alerts-section").hidden = card.hidden; }
-}
-
-// ------------------------------------------------------------- breach gallery (Nov 15, 2025)
-const MEDIA = "media/breach-2025-11-15/";
-const GALLERY = [
-  { file: "IMG_3006.jpg", thumb: "IMG_3006-thumb.jpg", time: "3:54 PM", alt: "Sands Beach and the dunes above the slough mouth under storm haze, with surf and the Ellwood bluffs beyond.", caption: "3:54 PM. Storm haze over Sands Beach and the dunes above the slough mouth." },
-  { file: "IMG_3007.mp4", thumb: "IMG_3007-poster-thumb.jpg", poster: "IMG_3007-poster.jpg", video: "0:11", time: "3:59 PM", alt: "Video: the sand berm, with the ocean on the left and the brimming slough on the right.", caption: "3:59 PM. The berm, with the ocean on the left and the full slough on the right." },
-  { file: "IMG_3008.jpg", thumb: "IMG_3008-thumb.jpg", time: "4:00 PM", alt: "The beach at the mouth strewn with kelp, slough water pooling on the sand, people gathering in the distance.", caption: "4:00 PM. Slough water pooling across the beach as people start to gather." },
-  { file: "IMG_3009.jpg", thumb: "IMG_3009-thumb.jpg", time: "4:00 PM", alt: "Wider view of the kelp-strewn beach and the dunes, with small groups of people near the water.", caption: "4:00 PM. Waiting on the berm." },
-  { file: "GGC_1901.jpg", thumb: "GGC_1901-thumb.jpg", time: "4:11 PM", alt: "Two snowy egrets standing in shallow water at the slough's edge.", caption: "4:11 PM. Snowy egrets working the edge of the swollen slough." },
-  { file: "GGC_1910.jpg", thumb: "GGC_1910-thumb.jpg", time: "4:15 PM", alt: "A small pale sandpiper, likely a sanderling, probing wet sand and pebbles.", caption: "4:15 PM. A small sandpiper (likely a sanderling) feeding in the wet sand." },
-  { file: "GGC_1911.jpg", thumb: "GGC_1911-thumb.jpg", time: "4:15 PM", alt: "Close view of the same sandpiper with its bill in the sand.", caption: "4:15 PM. The same bird, head down." },
-  { file: "IMG_3012.jpg", thumb: "IMG_3012-thumb.jpg", time: "4:36 PM", alt: "Four people in rain jackets standing on the berm beside a thin channel of water running toward the ocean.", caption: "4:36 PM. The first trickle cuts across the berm." },
-  { file: "IMG_1627.mp4", thumb: "IMG_1627-poster-thumb.jpg", poster: "IMG_1627-poster.jpg", video: "0:33", time: "4:43 PM", alt: "Video: water spreading in a sheet across the beach toward the surf while two people watch.", caption: "4:43 PM. Slough water sheeting across the beach to the surf." },
-  { file: "IMG_3013.mp4", thumb: "IMG_3013-poster-thumb.jpg", poster: "IMG_3013-poster.jpg", video: "1:05", time: "4:43 PM", alt: "Video: a shallow stream crossing the wide beach, with people standing along it.", caption: "4:43 PM. The outflow finds its path across the sand." },
-  { file: "IMG_1631.jpg", thumb: "IMG_1631-thumb.jpg", time: "5:11 PM", alt: "A group of people on the berm at dusk beside the widening channel.", caption: "5:11 PM. Dusk, and the channel is widening." },
-  { file: "IMG_3015.jpg", thumb: "IMG_3015-thumb.jpg", time: "5:28 PM", alt: "Silhouettes of three people watching dark water rush past against a fading sky.", caption: "5:28 PM. Watching the slough drain in the last light." },
-  { file: "IMG_3019.mp4", thumb: "IMG_3019-poster-thumb.jpg", poster: "IMG_3019-poster.jpg", video: "0:14", time: "5:41 PM", alt: "Video after dark: fast, churning water rushing through the breach channel.", caption: "5:41 PM. Full flow through the breach after dark." },
-  { file: "IMG_3022.jpg", thumb: "IMG_3022-thumb.jpg", time: "5:45 PM", alt: "Two people silhouetted on the bank of a deep channel cut through the berm, water pouring out under a glowing overcast sky.", caption: "5:45 PM. The channel cut through the berm." },
-  { file: "IMG_2389.mp4", thumb: "IMG_2389-poster-thumb.jpg", poster: "IMG_2389-poster.jpg", video: "0:15", time: "6:04 PM", alt: "Video at night: standing waves in the breach channel as the slough empties into the ocean.", caption: "6:04 PM. Standing waves as the slough empties into the sea." },
-];
-
-let lbIndex = 0;
-function showLightbox(i) {
-  const dlg = document.getElementById("lightbox");
-  lbIndex = (i + GALLERY.length) % GALLERY.length;
-  const g = GALLERY[lbIndex];
-  const media = document.getElementById("lb-media");
-  media.querySelector("video")?.pause();
-  media.innerHTML = g.video
-    ? `<video src="${MEDIA}${g.file}" poster="${MEDIA}${g.poster}" controls muted playsinline autoplay preload="metadata" aria-label="${esc(g.alt)}"></video>`
-    : `<img src="${MEDIA}${g.file}" alt="${esc(g.alt)}" />`;
-  document.getElementById("lb-caption").textContent = `${g.caption} (${lbIndex + 1} of ${GALLERY.length})`;
-  if (!dlg.open) dlg.showModal();
-}
-function initGallery() {
-  const dlg = document.getElementById("lightbox");
-  document.addEventListener("click", (e) => {
-    const t = e.target.closest("[data-gallery]");
-    if (t) showLightbox(Number(t.dataset.gallery));
-  });
-  document.getElementById("lb-prev").onclick = () => showLightbox(lbIndex - 1);
-  document.getElementById("lb-next").onclick = () => showLightbox(lbIndex + 1);
-  document.getElementById("lb-close").onclick = () => dlg.close();
-  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); }); // click on backdrop
-  dlg.addEventListener("close", () => { document.getElementById("lb-media").innerHTML = ""; });
-  dlg.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft") showLightbox(lbIndex - 1);
-    if (e.key === "ArrowRight") showLightbox(lbIndex + 1);
-  });
 }
 
 // ------------------------------------------------------------- breach alerts (push + email)
@@ -848,13 +577,22 @@ const b64ToBytes = (b64) => {
 const post = (path, body) => fetch(`/devereux/api/alerts/${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
   .then(async (r) => ({ ok: r.ok, ...(await r.json().catch(() => ({}))) }));
 
+// "Get alerts" in the header opens the alerts dialog (other tabs link to /devereux/#alerts)
+const alertsDlg = document.getElementById("alerts-dialog");
+const openAlerts = () => { if (alertsDlg && !alertsDlg.open) alertsDlg.showModal(); };
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-alerts-open]")) { e.preventDefault(); openAlerts(); }
+  if (e.target.closest("[data-alerts-close]") || e.target === alertsDlg) alertsDlg.close();
+});
+if (location.hash === "#alerts" || new URLSearchParams(location.search).get("alerts")) openAlerts();
+
 async function initAlerts() {
   const card = document.getElementById("alerts");
   let cfg;
   try { cfg = await fetch("/devereux/api/alerts/config").then((r) => r.json()); } catch { return; }
   if (!cfg.push?.enabled && !cfg.email?.enabled) return; // nothing set up yet
   card.hidden = false;
-  const sec = document.getElementById("alerts-section"); if (sec) sec.hidden = false;
+  document.getElementById("alerts-off").hidden = true;
 
   // banner after confirming/unsubscribing by email link
   const q = new URLSearchParams(location.search).get("alerts");
@@ -936,8 +674,7 @@ async function load() {
     if (LIVE.length && s.stage && LIVE.at(-1).t > (s.stage.sensor_now?.t ?? 0)) s.stage.sensor_now = LIVE.at(-1);
     window.__devereux = s;
     render(s);
-    if (document.getElementById("ev-rows")) document.getElementById("ev-rows").innerHTML = eventRows();
-    if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); initGallery(); }
+    if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); }
   } catch (e) {
     app.innerHTML = `<div class="loading">Couldn't load the slough data (${esc(e.message)}). Try again in a minute.</div>`;
   }
