@@ -44,8 +44,8 @@ test("episode ends when the outlook falls well below Watch or the berm breaches,
 });
 
 test("message names the level and says today when the peak is today", () => {
-  assert.match(alertMessage(status(0.7, { date: "2026-11-18" })).title, /Breach Watch: Likely today/);
-  assert.match(alertMessage(status(0.25)).title, /Warning/);
+  assert.match(alertMessage(status(0.7, { date: "2026-11-18" })).title, /Breach Watch: Imminent today/);
+  assert.match(alertMessage(status(0.25)).title, /Likely/);
 });
 
 test("email validation", () => {
