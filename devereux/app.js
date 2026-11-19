@@ -391,7 +391,7 @@ function render(s) {
   const nowX = dayNum(s.today);
   const pts = s.outlook.map((r) => ({ x: dayNum(r.date), r }));
   const probChart = chart({
-    width: splitW(), height: 200, yMin: 0, yMax: BANDS.length, yFmt: (v) => (v >= 1 ? BANDS[Math.round(v) - 1]?.label ?? "" : ""),
+    width: splitW(), height: 200, left: 70, yMin: 0, yMax: BANDS.length, yFmt: (v) => (v >= 1 ? BANDS[Math.round(v) - 1]?.label ?? "" : ""),
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: BANDS.indexOf(bandOf(r.p)) + 1, color: bandOf(r.p).color,
@@ -401,7 +401,7 @@ function render(s) {
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
   const rainChart = chart({
-    width: splitW(), height: 120, yMin: 0, yFmt: (v) => v.toFixed(1),
+    width: splitW(), height: 120, left: 70, yMin: 0, yFmt: (v) => v.toFixed(1),
     series: [{ type: "bar", points: pts.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.observed ? css("--color-accent") : COLORS.mist, title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.rain_src})` })) }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
@@ -419,7 +419,7 @@ function render(s) {
   });
 
   const rainCell = (r) => r.date === s.today && r.so_far_in != null
-    ? `${(r.rain_in ?? 0).toFixed(2)}<br><span class="muted" style="font-size:.85em"><span title="${esc(r.so_far_src || "")}">${r.so_far_in.toFixed(2)} so far${r.so_far_as_of ? ` (to ${new Date(r.so_far_as_of).toLocaleTimeString("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" })})` : ""}</span> + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
+    ? `${(r.rain_in ?? 0).toFixed(2)}<span class="muted sub"><span title="${esc(r.so_far_src || "")}">${r.so_far_in.toFixed(2)} so far${r.so_far_as_of ? ` (to ${new Date(r.so_far_as_of).toLocaleTimeString("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" })})` : ""}</span> + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
     : (r.rain_in ?? 0).toFixed(2);
 
   // --- tides (72 h observed + predicted +/- 3 days)
@@ -516,7 +516,7 @@ function render(s) {
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. The day after heavy rain often scores higher than the rain day itself: runoff keeps raising the slough for a day, and in the record most breaches came the morning after a storm. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label]))}
@@ -526,9 +526,10 @@ function render(s) {
         ${rainChart}
       </div>
       <div class="table-scroll"><table class="days">
-        <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th>Breach level</th><th>Below it</th><th>Level</th></tr></thead>
-        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.p >= 0.5 ? "likely" : ""}">${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
-      </table></div>
+        <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
+        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td title="breach level ${r.breach_level_ft.toFixed(1)} ft">${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="lvl ${r.p >= 0.5 ? "likely" : ""}"><span class="dot" style="background:${bandOf(r.p).color}"></span>${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
+      </table>
+      <p class="note">Breach level: ${ahead[0]?.breach_level_ft?.toFixed(1) ?? "n/a"} ft, the typical level of past breaches (lower for a young berm).</p></div>
     </div>`}
   </section>
 

@@ -13,8 +13,8 @@ export const css = (v) => getComputedStyle(document.body).getPropertyValue(v).tr
 // plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}, or dots on a
 // normal axis: {dots: [{x, y, title}], min, max, fmt, label, color}.
 let clipSeq = 0;
-export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2 }) {
-  const W = width, H = height, m = { l: 40, r: y2 ? 44 : 12, t: 10, b: 24 };
+export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2, left = 40 }) {
+  const W = width, H = height, m = { l: left, r: y2 ? 44 : 12, t: 10, b: 24 };
   const xs = series.flatMap((s) => s.points.map((p) => +p.x));
   const x0 = xMin ?? Math.min(...xs), x1 = xMax ?? Math.max(...xs);
   const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
