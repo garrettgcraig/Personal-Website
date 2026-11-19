@@ -58,6 +58,7 @@ export default async (req) => {
     try {
       await sendConfirmEmail(addr, key, token);
     } catch (e) {
+      console.error("confirmation email failed:", e.message);
       return json({ error: "Couldn't send the confirmation email. Try again later." }, 502);
     }
     return json({ ok: true });

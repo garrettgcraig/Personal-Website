@@ -65,10 +65,22 @@ export function rainComposite(days, { cop = {}, ksba = {}, cocorahs = {} }, para
 export const crestFt = (dc, c) => c.c_inf - (c.c_inf - c.c0) * Math.exp(-dc / c.tau);
 
 // Water balance: roll stage forward from a reading through daily rain P (inches).
-function simulateStage(P, dates, i0, ft0, closedSince, wb) {
+// rest (optional): the starting reading is from partway through day i0. {rain_in: forecast
+// rain still to fall that day, frac: fraction of the day left}. Day i0 then ends at the
+// reading plus the inflow still to come: that share of the day's rain response, and the
+// lagged runoff from the two days before for the rest of the day, less the day's losses.
+function simulateStage(P, dates, i0, ft0, closedSince, wb, rest = null) {
   const out = new Array(dates.length).fill(null);
-  out[i0] = ft0;
   let s = ft0;
+  if (rest) {
+    const n = i0, dc = daysBetween(closedSince, dates[n]) + 1;
+    const share = P[n] > 0 ? Math.min(1, rest.rain_in / P[n]) : 0;
+    const inflow = (wb.a0 * P[n] + wb.b * Math.max(P[n] - wb.ia, 0)) * share
+      + (wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0)) * rest.frac;
+    const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
+    s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss * rest.frac;
+  }
+  out[i0] = s;
   for (let n = i0 + 1; n < dates.length; n++) {
     const dc = daysBetween(closedSince, dates[n]) + 1;
     const inflow = wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
@@ -96,44 +108,49 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
   const [kLo, kHi] = params.rain_scenarios;
   const wb = params.water_balance;
   const PLo = scaled(kLo), PHi = scaled(kHi);
-  const mid = simulateStage(P, dates, i0, stage0.ft, closedSince, wb);
-  const lo = simulateStage(PLo, dates, i0, stage0.ft, closedSince, wb);
-  const hi = simulateStage(PHi, dates, i0, stage0.ft, closedSince, wb);
+  const R = stage0.rest || null;
+  const restK = (k) => (R ? { ...R, rain_in: R.rain_in * k } : null);
+  const mid = simulateStage(P, dates, i0, stage0.ft, closedSince, wb, R);
+  const lo = simulateStage(PLo, dates, i0, stage0.ft, closedSince, wb, restK(kLo));
+  const hi = simulateStage(PHi, dates, i0, stage0.ft, closedSince, wb, restK(kHi));
   const e = params.stage_error_80;
   const out = [];
   let cumLo = 0, cumHi = 0;
   for (let n = i0; n < dates.length; n++) {
     if (n > i0) { cumLo += PLo[n]; cumHi += PHi[n]; }
-    const days = n - i0;
-    const err = (cum) => (days ? e.a + e.per_day * days + e.per_in * cum : 0);
+    const days = n - i0 + (R ? R.frac : 0);
+    const err = (cum) => (days ? e.a + e.per_day * days + e.per_in * (cum + (R ? R.rain_in : 0)) : 0);
     out.push({
       date: dates[n],
       ft: mid[n],
       lo: lo[n] - err(cumLo),
       hi: hi[n] + err(cumHi),
-      phase: n === i0 ? "reading" : dates[n] < today ? "estimated" : "forecast",
+      // a mid-day live reading rolls on to the end of that day, so day i0 is a forecast too
+      phase: n === i0 && !R ? "reading" : dates[n] < today ? "estimated" : "forecast",
       rain_in: rain[n].rain_in,
     });
   }
   return out;
 }
 
+/** The Breach Watch level for a daily model score: the highest level whose lower bound it meets. */
+export const levelOf = (p, levels) => (p == null ? null : [...levels].reverse().find((l) => p >= l.min) ?? levels[0]);
+
 /**
  * Run the forecast.
  *  rain: [{date, rain_in, src}] covering at least (today - 120 d) .. (today + horizon - 1),
  *        observed before today, forecast from today on.
  *  closedSince: ISO date the mouth last closed.
- *  stage0: {date, ft} latest stage reading (ft NAVD88) on or before today, or null.
+ *  stage0: {date, ft, rest?} latest stage reading (ft NAVD88) on or before today, or null.
+ *          rest {rain_in, frac}: for a reading from partway through today, the forecast rain
+ *          still to fall today and the fraction of the day left (see simulateStage).
  *  crestFloor: highest level (ft) in the first 3 days after the mouth closed, or null.
- *  breaches: ISO dates of past breaches (mouth openings), for the season's "later" flag.
- * Breach chance is the Breach Watch logistic model (today's rain, rain since Oct 1, slough
- * level, and whether the mouth already breached this water year; devereux-breach/src/
- * watch_model.py) when a level estimate exists, otherwise the rain-only logistic model.
- * The crest curve (src/unified.py) still sets the displayed breach level.
+ * The daily breach score is the crest-curve hazard (devereux-breach/src/unified.py): how far
+ * the slough sits below a berm crest that rebuilds after each closure, plus rain. It ranks
+ * risk well but isn't a calibrated probability, so the page reports levels (params.levels).
+ * With no level estimate it falls back to the rain-only logistic model.
  */
-export const watchProb = (W, x) => sigmoid(W.intercept + W.features.reduce((a, f, k) => a + W.coef[k] * x[f], 0));
-
-export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null, breaches = [] }) {
+export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null }) {
   const P = rain.map((r) => r.rain_in ?? 0);
   const dates = rain.map((r) => r.date);
   const decay = params.api_decay;
@@ -150,7 +167,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
 
   // water balance from the latest stage reading (none -> rain model only)
   const iStage = stage0 ? dates.indexOf(stage0.date) : -1;
-  const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance)
+  const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance, stage0.rest || null)
     : new Array(dates.length).fill(null);
 
   const L = params.rain_logit;
@@ -171,9 +188,9 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     // levels off near the top of that range and is not itself the level breaches happen at.
     const BL = params.breach_levels;
     const breachLevel = BL ? Math.min(crest, BL.mature_median_ft) : crest;
-    const later = breaches.some((b) => b < d && waterYear(b) === waterYear(d)) ? 1 : 0;
-    const p = stage[n] == null ? pRain
-      : watchProb(params.watch, { rain_in: P[n], rain_wy: rainWy[n], stage: stage[n], later });
+    const p = margin == null ? pRain
+      : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
+    const level = levelOf(p, params.levels);
     out.push({
       date: d,
       observed: d < today,
@@ -187,13 +204,40 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
       breach_level_ft: breachLevel,
       below_breach_ft: stage[n] == null ? null : breachLevel - stage[n],
       p_rain: pRain,
-      later,
-      model: stage[n] == null ? "rain only" : "level + rain",
+      model: margin == null ? "rain only" : "level + rain",
       p,
-      alert: p >= params.thresholds.likely ? "likely" : p >= params.thresholds.watch ? "watch" : "low",
+      level: level.key,
+      alert: level.key,
     });
   });
   return out;
+}
+
+/** Chance of at least one breach over the given days' independent daily chances. */
+export const chanceWithin = (ps) => 1 - ps.reduce((q, p) => q * (1 - (p ?? 0)), 1);
+
+/**
+ * When would the slough reach the levels where breaches happen, at its current rate of rise?
+ * hourly: [{t: epoch ms, ft}] (live sensor), lo/hi: breach-level range (ft), nowMs.
+ * Uses a least-squares slope over the last `fitHours`. Returns
+ *   {cur, slope (ft/h), state: "within" | "rising" | "beyond" | "steady", start, end} with
+ *   start/end in epoch ms (only for "within" and "rising"). Extrapolation only: more rain
+ *   speeds the rise, and the rise slows as storm runoff tapers.
+ */
+export function breachWindow({ hourly, lo, hi, nowMs, horizonH = 48, fitHours = 6 }) {
+  const H = 3600000;
+  const last = hourly.at(-1);
+  if (!last) return null;
+  const pts = hourly.filter((h) => h.t >= last.t - fitHours * H);
+  if (pts.length < 3) return null;
+  const mt = pts.reduce((a, h) => a + h.t, 0) / pts.length, mf = pts.reduce((a, h) => a + h.ft, 0) / pts.length;
+  const slope = (pts.reduce((a, h) => a + (h.t - mt) * (h.ft - mf), 0) / pts.reduce((a, h) => a + (h.t - mt) ** 2, 0)) * H;
+  const cur = last.ft, t0 = Math.max(nowMs, last.t);
+  if (cur >= lo) return { cur, slope, state: "within", start: t0, end: slope > 0.005 && cur < hi ? Math.min(t0 + ((hi - cur) / slope) * H, t0 + horizonH * H) : t0 + horizonH * H };
+  if (!(slope > 0.01)) return { cur, slope, state: "steady" };
+  const start = last.t + ((lo - cur) / slope) * H, end = last.t + ((hi - cur) / slope) * H;
+  if (start > t0 + horizonH * H) return { cur, slope, state: "beyond" };
+  return { cur, slope, state: "rising", start: Math.max(start, t0), end: Math.min(end, t0 + horizonH * H) };
 }
 
 /**
