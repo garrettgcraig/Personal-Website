@@ -1,0 +1,14 @@
+{
+  "name": "Devereux Slough Breach Outlook",
+  "short_name": "Devereux",
+  "description": "Is the Devereux Slough mouth open, and how likely is a breach in the next 10 days?",
+  "start_url": "/devereux/",
+  "scope": "/devereux/",
+  "display": "standalone",
+  "background_color": "#121A21",
+  "theme_color": "#121A21",
+  "icons": [
+    { "src": "/devereux/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/devereux/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

@@ -5,39 +5,43 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, watchProb } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 
-test("forecast matches the Python model on a synthetic December storm", () => {
+test("Breach Watch probability matches the Python fit (src/watch_model.py)", () => {
+  for (const c of params.watch.cases) {
+    const p = watchProb(params.watch, c);
+    assert.ok(Math.abs(p - c.p) < 1e-9, `${JSON.stringify(c)}: ${p} vs ${c.p}`);
+  }
+});
+
+test("forecast: level from the water balance, chance from Breach Watch, rain-only fallback", () => {
   const days = dateRange("2026-10-01", "2026-12-31");
   const storm = { "2026-12-01": 0.8, "2026-12-02": 2.4, "2026-12-03": 0.6 };
   const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
   const args = { rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-20", ft: 8.5 }, params };
   const out = forecast(args);
-  // [stage ft, breach chance (unified), rain-only chance, crest ft] from src/unified.py
-  const expected = {
-    "2026-12-01": [8.754979, 0.011237, 0.004763, 10.307396],
-    "2026-12-02": [10.037122, 0.982559, 0.706495, 10.307577],
-    "2026-12-03": [10.97948, 0.990919, 0.378559, 10.307754],
-    "2026-12-04": [11.195292, 0.958436, 0.093825, 10.307926],
-  };
-  for (const [date, [stage, p, pRain, crest]] of Object.entries(expected)) {
+  // stage from WaterBalance.run_from (src/model.py) on the same inputs
+  const stage = { "2026-12-01": 8.791073, "2026-12-02": 10.248057, "2026-12-03": 11.305315, "2026-12-04": 11.537135 };
+  const wy = { "2026-12-01": 0.8, "2026-12-02": 3.2, "2026-12-03": 3.8, "2026-12-04": 3.8 };
+  for (const [date, ft] of Object.entries(stage)) {
     const r = out.find((x) => x.date === date);
-    assert.ok(Math.abs(r.stage_ft - stage) < 1e-4, `${date} stage ${r.stage_ft} vs ${stage}`);
-    assert.ok(Math.abs(r.p - p) < 1e-4, `${date} p ${r.p} vs ${p}`);
-    assert.ok(Math.abs(r.p_rain - pRain) < 1e-4, `${date} p_rain ${r.p_rain} vs ${pRain}`);
-    assert.ok(Math.abs(r.crest_ft - crest) < 1e-4, `${date} crest ${r.crest_ft} vs ${crest}`);
+    assert.ok(Math.abs(r.stage_ft - ft) < 1e-4, `${date} stage ${r.stage_ft} vs ${ft}`);
+    const p = watchProb(params.watch, { rain_in: storm[date] ?? 0, rain_wy: wy[date], stage: r.stage_ft, later: 0 });
+    assert.ok(Math.abs(r.p - p) < 1e-12, `${date} p`);
     assert.equal(r.model, "level + rain");
+    assert.equal(r.later, 0);
   }
-  assert.equal(out.find((x) => x.date === "2026-12-02").alert, "likely");
-  // a fresh berm can't be lower than the water it held back when it closed
-  const fl = forecast({ ...args, closedSince: "2026-11-25", crestFloor: 8.4 });
-  const f1 = fl.find((x) => x.date === "2026-12-01"), f2 = fl.find((x) => x.date === "2026-12-02");
-  assert.equal(f1.crest_ft, 8.4);
-  assert.ok(Math.abs(f1.p - 0.346882) < 1e-4, `floor p ${f1.p}`);
-  assert.ok(Math.abs(f2.p - 0.99962) < 1e-4, `floor p ${f2.p}`);
+  assert.ok(out.find((x) => x.date === "2026-12-02").p > 0.9, "a 2.4 in storm on a 10 ft slough is near certain");
+  assert.ok(out.find((x) => x.date === "2026-12-01").p < 0.05);
+  // a breach earlier this water year makes the berm a "later" one; last season's doesn't count
+  const lt = forecast({ ...args, breaches: ["2026-11-10"] }).find((x) => x.date === "2026-12-01");
+  const fy = forecast({ ...args, breaches: ["2026-02-19"] }).find((x) => x.date === "2026-12-01");
+  assert.equal(lt.later, 1);
+  assert.equal(fy.later, 0);
+  assert.ok(lt.p > out.find((x) => x.date === "2026-12-01").p);
   // no usable reading: fall back to the rain-only model
   const fb = forecast({ ...args, stage0: null });
   for (const r of fb) {

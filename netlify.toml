@@ -1,4 +1,9 @@
-# Only function settings live here. Build and publish settings stay in the Netlify UI.
+# Function settings and the secret-scan exception live here. Build and publish settings stay in the Netlify UI.
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+# The Web Push "subject" is the page's public URL, which appears in ordinary site files.
+# It is not a secret, so keep Netlify's secret scan from failing deploys on it.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "DEVEREUX_VAPID_SUBJECT"

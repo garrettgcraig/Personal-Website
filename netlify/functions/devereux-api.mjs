@@ -290,7 +290,9 @@ export async function buildStatus(now = new Date()) {
   const lastOpen = events.filter((e) => e.state === "open").at(-1)?.date;
   const stale = latest && daysSince(latest.date, today) > 45;
   const preBreach = latest && lastOpen && latest.date < lastOpen;
-  const stage0 = latest && !stale && !preBreach ? latest : null;
+  // a reading from before the berm closed is tidal and doesn't carry into the closure
+  const preClosure = latest && last && !mouthOpen && latest.date < last.date;
+  const stage0 = latest && !stale && !preBreach && !preClosure ? latest : null;
   // crest floor: the highest measured level in the first 3 days after the latest closure
   let crestFloor = null;
   if (last && !mouthOpen) {
@@ -298,10 +300,11 @@ export async function buildStatus(now = new Date()) {
       .filter((r) => r.date >= last.date && r.date <= addDays(last.date, 2) && r.date < today);
     if (lv.length) crestFloor = Math.max(...lv.map((r) => r.ft));
   }
+  const breaches = events.filter((e) => e.state === "open").map((e) => e.date);
   let outlook = [];
   let stageSeries = [];
   if (last && !mouthOpen) {
-    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
+    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, breaches, showFrom: addDays(today, -14) });
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
       const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
@@ -310,8 +313,8 @@ export async function buildStatus(now = new Date()) {
         .map((r) => ({ ...r, breach_level_ft: bl[r.date] ?? null }));
       if (daysSince(stage0.date, today) > 21) warnings.push("The latest slough-level reading is more than three weeks old, so the level is less certain.");
     } else {
-      warnings.push(preBreach
-        ? "No slough-level reading since the last breach, so the outlook uses rain alone."
+      warnings.push(preBreach || preClosure
+        ? "No slough-level reading since the mouth closed, so the outlook uses rain alone."
         : "No slough-level reading in the last 45 days, so the outlook uses rain alone.");
     }
     if (!sensorLatest && hourly.length === 0) {

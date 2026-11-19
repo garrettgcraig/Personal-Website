@@ -27,3 +27,8 @@
 # Just a Phone unlock tags carry /justaphone/unlock/<secret>. The app opens these;
 # anyone else gets a short explainer page.
 /justaphone/unlock/*   /justaphone/unlock.html   200
+
+# Devereux design notes live beside the page for the design tools; don't serve them.
+/devereux/PRODUCT.md   /devereux/   404!
+/devereux/DESIGN.md    /devereux/   404!
+/devereux/.impeccable/*   /devereux/   404!
