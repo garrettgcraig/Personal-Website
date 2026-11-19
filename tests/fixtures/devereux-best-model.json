@@ -1,0 +1,113 @@
+{
+  "model": "rain_in + rain_prev + margin + margin_max",
+  "fit": {
+    "method": "logistic regression, no penalty, all measured-level closed-mouth days WY2019-WY2026",
+    "days": 2386,
+    "breaches": 16,
+    "intercept": -5.260221,
+    "coef": {
+      "rain_in": 3.780513,
+      "rain_prev": 4.358366,
+      "margin": 2.989021,
+      "margin_max": -3.546549
+    },
+    "formula": "p = 1 / (1 + exp(-(intercept + sum(coef[k] * input[k]))))"
+  },
+  "inputs": {
+    "rain_in": "Rain on the day (in), COP gauge (NOAA GHCN USW00053152, USCRN, then KSBA scaled to local CoCoRaHS), calendar day midnight to midnight, local standard time",
+    "rain_prev": "rain_in of the day before (in)",
+    "stage": "Slough level for the day (ft NAVD88): yesterday's measured daily mean (logger or live sensor) rolled forward one day with today's rain by the water balance (unified.stage_from_measured)",
+    "crest": "Estimated berm crest (ft NAVD88): c_inf - (c_inf - c0) * exp(-dc / tau), c_inf 10.015, c0 6.171, tau 64.19 days; floored at the highest level in the first 3 days after the closure (known from day 4)",
+    "dc": "Berm age at the start of the day: days since the mouth closed (1 on the first closed day)",
+    "margin": "stage - crest (ft)",
+    "maxlvl": "Highest measured daily mean level since the current closure began, through the day before (ft NAVD88); on the first closed day it equals stage",
+    "margin_max": "stage - maxlvl (ft)",
+    "berm_clock": "Berm age and maxlvl reset when the mouth opens (a breach or an open spell) and start again at the next closure. Days labeled leaky in data/mouth_corrections.csv (king tides over a closed berm, e.g. 2024-02-21..24) keep both running (same berm) but are not scored."
+  },
+  "levels": [
+    {
+      "key": "low",
+      "min": 0.0
+    },
+    {
+      "key": "watch",
+      "min": 0.125,
+      "caught": 16,
+      "false_alarm_days": 8,
+      "false_alarm_episodes": 1
+    },
+    {
+      "key": "warning",
+      "min": 0.2,
+      "caught": 15,
+      "false_alarm_days": 8,
+      "false_alarm_episodes": 1
+    },
+    {
+      "key": "likely",
+      "min": 0.5,
+      "caught": 13,
+      "false_alarm_days": 8,
+      "false_alarm_episodes": 1
+    }
+  ],
+  "honest_check": {
+    "caught": 15,
+    "breaches": 16,
+    "false_alarm_days": 8,
+    "false_alarm_episodes": 1,
+    "missed": "2020-03-16"
+  },
+  "breach_peaks_heldout": {
+    "2019-01-07": 0.9494,
+    "2020-03-16": 0.1266,
+    "2020-04-06": 0.3398,
+    "2021-01-28": 1.0,
+    "2021-12-23": 0.9959,
+    "2023-02-25": 0.9985,
+    "2023-03-10": 0.9932,
+    "2023-03-14": 0.9986,
+    "2024-01-22": 1.0,
+    "2024-02-01": 1.0,
+    "2024-03-06": 1.0,
+    "2024-03-31": 1.0,
+    "2025-02-13": 0.931,
+    "2025-03-13": 0.3282,
+    "2025-11-15": 0.9999,
+    "2026-02-19": 0.8975
+  },
+  "check_cases": [
+    {
+      "rain_in": 1.61,
+      "rain_prev": 0.74,
+      "margin": -0.1735125477146955,
+      "margin_max": 0.0,
+      "p": 0.971611,
+      "date": "2019-01-07"
+    },
+    {
+      "rain_in": 1.16,
+      "rain_prev": 0.15,
+      "margin": -0.1738780743147501,
+      "margin_max": 0.0,
+      "p": 0.32283,
+      "date": "2020-03-16"
+    },
+    {
+      "rain_in": 0.0,
+      "rain_prev": 0.0,
+      "margin": -0.413671438200625,
+      "margin_max": -0.00507749049993933,
+      "p": 0.001533,
+      "date": "2019-03-24"
+    },
+    {
+      "rain_in": 0.0,
+      "rain_prev": 0.0,
+      "margin": -1.7123528877846814,
+      "margin_max": -0.16269992125623656,
+      "p": 5.5e-05,
+      "date": "2020-05-20"
+    }
+  ]
+}

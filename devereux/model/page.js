@@ -29,9 +29,10 @@ function plot({ width, height = 260, x: [x0, x1], y: [y0, y1], xTicks = [], yTic
 const legend = (items) => `<div class="legend">${items.map(([c, l, st]) => `<span><i class="${st || ""}" style="background:${c};border-color:${c}"></i>${esc(l)}</span>`).join("")}</div>`;
 
 const NAMES = { rain_in: "rain that day", rain_prev: "rain the day before", rain_3d: "rain, last 3 days", api: "wetness of the watershed (API)",
-  rain_wy: "rain since Oct 1", log_dc: "berm age", stage: "slough level", later: "already breached this season" };
-const nice = (m) => (m.startsWith("crest") ? "Crest curve: level vs. rebuilding berm, plus rain (in use)"
-  : m.split(" + ").map((t) => NAMES[t] || t).join(" + ").replace(/^./, (c) => c.toUpperCase()));
+  rain_wy: "rain since Oct 1", log_dc: "berm age", stage: "slough level", later: "already breached this season",
+  margin: "level minus berm crest", margin_max: "level minus its highest since closure", maxlvl: "highest level since closure", crest: "berm crest",
+  rain_2d: "rain, last 2 days", trail24: "rain, last 24 hours", trail48: "rain, last 48 hours", peak24: "wettest 24 hours of the day" };
+const nice = (m) => m.split(" + ").map((t) => NAMES[t] || t).join(" + ").replace(/^./, (c) => c.toUpperCase());
 const LEVEL_COLOR = { low: "#4E8F4A", watch: "#E2B33C", warning: "#D9772B", likely: "#C23B30" };
 // Scores span 0.0001 to 1, and the level cutoffs sit at a few percent, so plots use a log scale.
 const LO = 1e-4, lg = (v) => Math.log10(Math.max(LO, v));
@@ -42,7 +43,8 @@ function render(R) {
   const L = R.levels, n = R.n_breaches;
   const cp = Object.fromEntries(R.crest_params.map((q) => [q.name, q.value]));
   const crest = (dc) => cp.c_inf - (cp.c_inf - cp.c0) * Math.exp(-dc / cp.tau);
-  const score = (stage, dc, rain) => 1 / (1 + Math.exp(-(cp.b0 + cp.b_margin * (stage - crest(dc)) + cp.b_rain * rain + cp.b_rain3 * rain + cp.b_api * rain)));
+  // rain on the day only, and the slough at its highest since the closure (margin_max 0)
+  const score = (stage, dc, rain) => 1 / (1 + Math.exp(-(cp.b0 + cp.b_margin * (stage - crest(dc)) + cp.b_rain * rain)));
   const watch = L.find((l) => l.key === "watch");
   const levelLines = (X, Y, x0, x1) => L.filter((l) => l.min > 0).map((l) => `<line x1="${X(x0)}" x2="${X(x1)}" y1="${Y(lg(l.min))}" y2="${Y(lg(l.min))}" stroke="${LEVEL_COLOR[l.key]}" stroke-dasharray="4 4" stroke-width="1.4"/><text x="${X(x1)}" y="${Y(lg(l.min)) - 4}" text-anchor="end" style="fill:${LEVEL_COLOR[l.key]}">${esc(l.label)}</text>`).join("");
 
@@ -60,9 +62,9 @@ function render(R) {
   // --- held-out score through time, with breaches
   const H = R.heldout.map(([d, p]) => [dnum(d), p]);
   const bset = R.breaches.map((b) => ({ ...b, x: dnum(b.date) }));
-  const xa = H[0][0], xb = H.at(-1)[0];
+  const xa = H.length ? H[0][0] : 0, xb = H.length ? H.at(-1)[0] : 1;
   const years = []; for (let y = 2019; y <= 2026; y++) years.push(Date.UTC(y, 0, 1) / 86400000);
-  const timeChart = plot({
+  const timeChart = !H.length ? "" : plot({
     width: W(), height: 280, x: [xa, xb], y: [-4, 0], xTicks: years, xFmt: (x) => String(new Date(x * 86400000).getUTCFullYear()),
     yTicks: logTicks.map(Math.log10), yFmt: logFmt, yLabel: "held-out daily score",
     draw: ({ X, Y }) => {
@@ -102,8 +104,8 @@ function render(R) {
   app.innerHTML = `
   <section class="page-head">
     <h1>The model behind Breach Watch</h1>
-    <p class="lead">Each day's score comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed.</p>
-    <p class="outlook">The goal is to flag every breach with as few false alarms as possible. ${R.n_models} combinations of rain, level and berm inputs were tested on the ${R.n_days.toLocaleString()} closed-mouth days with a measured water level (${esc(R.seasons.replace("-", " to "))}), which hold ${n} breaches. Every result below predicts each season with a model trained only on the other seasons. At <strong>Watch</strong>, the model in use flagged <strong>all ${watch.caught} of ${n}</strong>, with ${watch.false_alarm_episodes} false-alarm episodes over eight seasons.${R.excluded.length ? ` Breaches without a measured level (${R.excluded.map((d) => day(d)).join(", ")}) are left out.` : ""}</p>
+    <p class="lead">Each day's score comes from rain on the watershed that day and the day before, how far the slough sits below the berm's crest, which rebuilds after every closure, and whether the slough is still climbing to new highs since the mouth closed.</p>
+    <p class="outlook">The goal is to flag every breach with as few false alarms as possible. ${R.n_models.toLocaleString()} combinations of rain, level and berm inputs were tested on the ${R.n_days.toLocaleString()} closed-mouth days with a measured water level (${esc(R.seasons.replace("-", " to "))}), which hold ${n} breaches. Every result below predicts each season with a model trained only on the other seasons. At <strong>Watch</strong>, the model in use flagged <strong>all ${watch.caught} of ${n}</strong>, with ${watch.false_alarm_episodes} false-alarm episode${watch.false_alarm_episodes === 1 ? "" : "s"} (${watch.false_alarm_days} days) over eight seasons.${R.excluded.length ? ` Breaches without a measured level (${R.excluded.map((d) => day(d)).join(", ")}) are left out.` : ""}</p>
   </section>
 
   <section class="block">
@@ -120,7 +122,7 @@ function render(R) {
 
   <section class="block">
     <h2>The model</h2>
-    <p class="intro">A logistic model of the gap between the slough and an estimated berm crest, plus rain. The crest isn't measured: it starts low when the mouth closes and rebuilds toward a ceiling, and a newly closed berm is never lower than the water it held back. All eight parameters are fit together on the breach record.</p>
+    <p class="intro">A logistic model with four inputs: <strong>rain that day</strong>, <strong>rain the day before</strong>, <strong>how far the slough sits below an estimated berm crest</strong>, and <strong>how far it sits below the highest level it has reached since the mouth closed</strong>. The crest isn't measured: it starts low when the mouth closes and rebuilds toward a ceiling, and a newly closed berm is never lower than the water it held back in its first three days. The last input separates a slough that is still climbing toward new highs, which is when breaches happen, from one that has already peaked and is falling back. Rain is the Coal Oil Point gauge, midnight to midnight. The slough level for a day is the previous day's measured mean rolled forward with that day's rain.</p>
     <div class="cols">
       <div class="table-scroll"><table class="stats">
         <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
@@ -135,18 +137,18 @@ function render(R) {
     </div>
   </section>
 
-  <section class="block">
+  ${!H.length ? "" : `<section class="block">
     <h2>Held-out score, every measured day</h2>
     <p class="intro">Each season scored by a model that never saw it. Vertical lines are breaches (blue: first of the season; orange: later ones). Gaps are times the mouth was open or the level wasn't measured.</p>
     ${legend([[css("--color-text"), "daily score", "line"], [C.first, "first breach of a season", "line"], [C.later, "later breach", "line"]])}
     ${timeChart}
-  </section>
+  </section>`}
 
   <section class="block">
     <h2>Each breach</h2>
     <div class="cols">
       <div>
-        <p class="intro">The highest score on the breach day or the day before, since runoff can take a day to arrive. The lowest, ${esc(day(weakest.date))}, came ${weakest.days_closed} days after the berm closed, with the slough right at the young berm's estimated crest and ${weakest.rain} in of rain that day.</p>
+        <p class="intro">The highest score on the breach day or the day before, since runoff can take a day to arrive. The lowest, ${esc(day(weakest.date))}, came ${weakest.days_closed} days after the berm closed, with the slough at ${weakest.stage.toFixed(2)} ft and ${weakest.rain} in of rain that day.</p>
         ${legend([[C.first, "first of the season"], [C.later, "later"]])}
         ${perBreach}
       </div>
@@ -161,12 +163,12 @@ function render(R) {
 
   <section class="block">
     <h2>How it compares</h2>
-    <p class="intro">The leaders of the ${R.n_models}-model search. "Tuned" sets the cutoff as low as the weakest breach requires. "Honest" sets each season's cutoff from the other seasons only. Alerts go out once per episode, so false-alarm episodes are what subscribers would see.</p>
+    <p class="intro">The leaders of the ${R.n_models.toLocaleString()}-model search. "Tuned" sets the cutoff as low as the weakest breach requires. "Honest" sets each season's cutoff from the other seasons only. Alerts go out once per episode, so false-alarm episodes are what subscribers would see.</p>
     <div class="table-scroll"><table class="stats">
-      <thead><tr><th>Model</th><th>Tuned: false-alarm days</th><th>Tuned: episodes</th><th>Honest: caught</th><th>Honest: episodes</th><th>Honest: missed</th><th>Reached 0.5</th></tr></thead>
-      <tbody>${R.search.map((c) => `<tr class="${c.model.startsWith("crest") ? "pick" : ""}"><td>${esc(nice(c.model))}</td><td>${c.fa_days}</td><td>${c.fa_episodes}</td><td>${esc(c.honest_caught.replace("/", " of "))}</td><td>${c.honest_fa_episodes}</td><td>${esc(c.honest_missed ? day(c.honest_missed) : "none")}</td><td>${c.caught_50} of ${n}</td></tr>`).join("")}</tbody>
+      <thead><tr><th>Model</th><th>Tuned: false-alarm days</th><th>Tuned: episodes</th><th>Honest: caught</th><th>Honest: episodes</th><th>Honest: missed</th><th>Honest: false-alarm days</th></tr></thead>
+      <tbody>${R.search.map((c) => `<tr class="${c.model === R.model ? "pick" : ""}"><td>${esc(nice(c.model))}${c.model === R.model ? " (in use)" : ""}</td><td>${c.fa_days}</td><td>${c.fa_episodes}</td><td>${esc(c.honest_caught.replace("/", " of "))}</td><td>${c.honest_fa_episodes}</td><td>${esc(c.honest_missed ? c.honest_missed.split(";").map((d) => day(d)).join(", ") : "none")}</td><td>${c.honest_fa_days}</td></tr>`).join("")}</tbody>
     </table></div>
-    <p class="note">Rain-only models flag big storms as well as the crest curve does at the low end, but few breaches reach their upper range, so their higher levels would mean little.</p>
+    <p class="note">The top six are the leaders of the search; they all catch 15 of 16 honestly with 8 false-alarm days in one episode, and the one in use is the simplest of them. Below them for comparison: a level-and-rain model without the highest-since-closure input, which needs a cutoff so low it raises dozens of false-alarm episodes, and the old rain-only model (rain that day plus rain since October 1), which catches as many but with 11 false-alarm episodes. The earlier crest-curve model, refit on the reviewed breach dates, needed a Watch cutoff that rounds to zero, so it was retired.</p>
   </section>
 
   <section class="block">
