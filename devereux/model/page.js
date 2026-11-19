@@ -140,7 +140,7 @@ function render(R) {
   ${!H.length ? "" : `<section class="block">
     <h2>Held-out score, every measured day</h2>
     <p class="intro">Each season scored by a model that never saw it. Vertical lines are breaches (blue: first of the season; orange: later ones). Gaps are times the mouth was open or the level wasn't measured.</p>
-    ${legend([[css("--color-text"), "daily score", "line"], [C.first, "first breach of a season", "line"], [C.later, "later breach", "line"]])}
+    ${legend([[css("--color-text"), "daily score", "line"], [C.first, "first breach of a season", "vline"], [C.later, "later breach", "vline"]])}
     ${timeChart}
   </section>`}
 
@@ -149,7 +149,7 @@ function render(R) {
     <div class="cols">
       <div>
         <p class="intro">The highest score on the breach day or the day before, since a storm that runs past midnight spans two calendar days. The lowest, ${esc(day(weakest.date))}, came ${weakest.days_closed} days after the berm closed, with the slough at ${weakest.stage.toFixed(2)} ft and ${weakest.rain} in of rain that day.</p>
-        ${legend([[C.first, "first of the season"], [C.later, "later"]])}
+        ${legend([[C.first, "first of the season", "lollipop"], [C.later, "later", "lollipop"]])}
         ${perBreach}
       </div>
       <div>

@@ -271,7 +271,7 @@ function render() {
 
   <section class="block" id="overtopping">
     <h2>Overtopping, up close</h2>
-    ${legend([[css("--color-text"), "slough level", "line"], [COLORS.sky, "tide, observed (NOAA Santa Barbara)", "line"], [COLORS.mist, "tide, predicted", "dash"], [COLORS.ochre + "44", "overtopping event"]])}
+    ${legend([[css("--color-text"), "slough level", "line"], [COLORS.sky, "tide, observed (NOAA Santa Barbara)", "line"], [COLORS.mist, "tide, predicted", "dash"], [COLORS.ochre, "overtopping event", "vband", 0.3]])}
     <div class="ev-examples">${EVENTS.examples.map((x) => `
       <figure class="ev-example">
         ${exampleChart(x)}

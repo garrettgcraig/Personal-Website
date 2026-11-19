@@ -87,8 +87,23 @@ export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt 
   g += `<line class="axis" x1="${m.l}" x2="${W - m.r}" y1="${Y(bot)}" y2="${Y(bot)}"/>`;
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
 }
-// items: [color, label, style] with style "line", "dash" or none (a swatch)
-export const legend = (items) => `<div class="legend">${items.map(([c, l, st]) => `<span><i class="${st || ""}" style="background:${c};border-color:${c}"></i>${esc(l)}</span>`).join("")}</div>`;
+// items: [color, label, kind, opacity]. Each swatch is drawn the way the item appears in its
+// chart: "line" / "dash" (a series over time), "vline" (a mark on one date), "dot", "bar"
+// (bars standing on the axis), "hang" (bars hanging from the top, as rain on the level chart),
+// "lollipop" (a stem with a dot), "band" (a shaded range) or "vband" (a shaded span of time);
+// anything else is a plain square.
+const SWATCH = {
+  line: (c) => `<line x1="1" x2="17" y1="6" y2="6" stroke="${c}" stroke-width="2"/>`,
+  dash: (c) => `<line x1="1" x2="17" y1="6" y2="6" stroke="${c}" stroke-width="2" stroke-dasharray="4 3"/>`,
+  vline: (c) => `<line x1="9" x2="9" y1="0" y2="12" stroke="${c}" stroke-width="2"/>`,
+  dot: (c) => `<circle cx="9" cy="6" r="4" fill="${c}"/>`,
+  bar: (c) => `<rect x="2" y="5" width="6" height="7" rx="1" fill="${c}"/><rect x="10" y="1" width="6" height="11" rx="1" fill="${c}"/>`,
+  hang: (c) => `<rect x="2" y="0" width="6" height="11" fill="${c}"/><rect x="10" y="0" width="6" height="6" fill="${c}"/>`,
+  lollipop: (c) => `<line x1="9" x2="9" y1="12" y2="4" stroke="${c}" stroke-width="2"/><circle cx="9" cy="4" r="3.2" fill="${c}"/>`,
+  band: (c) => `<rect x="0" y="2.5" width="18" height="7" fill="${c}"/>`,
+  vband: (c) => `<rect x="4" y="0" width="10" height="12" fill="${c}"/>`,
+};
+export const legend = (items) => `<div class="legend">${items.map(([c, l, kind, op]) => `<span><svg class="sw" viewBox="0 0 18 12" aria-hidden="true"${op != null ? ` opacity="${op}"` : ""}>${(SWATCH[kind] || ((col) => `<rect x="3" y="1" width="12" height="10" rx="1" fill="${col}"/>`))(c)}</svg>${esc(l)}</span>`).join("")}</div>`;
 export const dayNum = (iso) => Date.parse(`${iso}T12:00:00Z`) / 86400000;
 export const everyN = (arr, n) => arr.filter((_, i) => i % n === 0);
 // evenly spaced day ticks (every `step` days) across [a, b]
