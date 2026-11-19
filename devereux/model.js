@@ -118,6 +118,9 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
   return out;
 }
 
+/** The Breach Watch level for a daily model score: the highest level whose lower bound it meets. */
+export const levelOf = (p, levels) => (p == null ? null : [...levels].reverse().find((l) => p >= l.min) ?? levels[0]);
+
 /**
  * Run the forecast.
  *  rain: [{date, rain_in, src}] covering at least (today - 120 d) .. (today + horizon - 1),
@@ -125,15 +128,12 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
  *  closedSince: ISO date the mouth last closed.
  *  stage0: {date, ft} latest stage reading (ft NAVD88) on or before today, or null.
  *  crestFloor: highest level (ft) in the first 3 days after the mouth closed, or null.
- *  breaches: ISO dates of past breaches (mouth openings), for the season's "later" flag.
- * Breach chance is the Breach Watch logistic model (today's rain, rain since Oct 1, slough
- * level, and whether the mouth already breached this water year; devereux-breach/src/
- * watch_model.py) when a level estimate exists, otherwise the rain-only logistic model.
- * The crest curve (src/unified.py) still sets the displayed breach level.
+ * The daily breach score is the crest-curve hazard (devereux-breach/src/unified.py): how far
+ * the slough sits below a berm crest that rebuilds after each closure, plus rain. It ranks
+ * risk well but isn't a calibrated probability, so the page reports levels (params.levels).
+ * With no level estimate it falls back to the rain-only logistic model.
  */
-export const watchProb = (W, x) => sigmoid(W.intercept + W.features.reduce((a, f, k) => a + W.coef[k] * x[f], 0));
-
-export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null, breaches = [] }) {
+export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null }) {
   const P = rain.map((r) => r.rain_in ?? 0);
   const dates = rain.map((r) => r.date);
   const decay = params.api_decay;
@@ -171,9 +171,9 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     // levels off near the top of that range and is not itself the level breaches happen at.
     const BL = params.breach_levels;
     const breachLevel = BL ? Math.min(crest, BL.mature_median_ft) : crest;
-    const later = breaches.some((b) => b < d && waterYear(b) === waterYear(d)) ? 1 : 0;
-    const p = stage[n] == null ? pRain
-      : watchProb(params.watch, { rain_in: P[n], rain_wy: rainWy[n], stage: stage[n], later });
+    const p = margin == null ? pRain
+      : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
+    const level = levelOf(p, params.levels);
     out.push({
       date: d,
       observed: d < today,
@@ -187,10 +187,10 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
       breach_level_ft: breachLevel,
       below_breach_ft: stage[n] == null ? null : breachLevel - stage[n],
       p_rain: pRain,
-      later,
-      model: stage[n] == null ? "rain only" : "level + rain",
+      model: margin == null ? "rain only" : "level + rain",
       p,
-      alert: p >= params.thresholds.likely ? "likely" : p >= params.thresholds.watch ? "watch" : "low",
+      level: level.key,
+      alert: level.key,
     });
   });
   return out;

@@ -2246,6 +2246,8 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#at-the-alert-threshold" id="toc-at-the-alert-threshold" class="nav-link" data-scroll-target="#at-the-alert-threshold">At the alert threshold</a></li>
   <li><a href="#what-it-means" id="toc-what-it-means" class="nav-link" data-scroll-target="#what-it-means">What it means</a></li>
   </ul></li>
+  <li><a href="#part-4.-days-with-a-measured-level" id="toc-part-4.-days-with-a-measured-level" class="nav-link" data-scroll-target="#part-4.-days-with-a-measured-level">Part 4. Days with a measured level</a></li>
+  <li><a href="#part-5.-catching-every-breach" id="toc-part-5.-catching-every-breach" class="nav-link" data-scroll-target="#part-5.-catching-every-breach">Part 5. Catching every breach</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 </nav>
@@ -5081,9 +5083,8 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="ss">  (</span><span class="sc">{</span>a30<span class="sc">.</span>loc[(<span class="st">&#39;3 inputs + later&#39;</span>, <span class="st">&#39;30%&#39;</span>), <span class="st">&#39;missed&#39;</span>]<span class="sc">}</span><span class="ss">), young berms that broke at low levels after moderate rain.</span></span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- **Its percentages are less trustworthy as odds** (it fails the calibration test), but with 14 breaches that test has little to</span></span>
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="ss">  stand on, and the site uses the chance as a ranking with a single alert line.</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- **Decision:** the site runs the 3-input + later model (`src/watch_model.py`) with alerts at 30%. The crest curve still sets</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="ss">  the breach level shown on the page.</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- **Next:** Part 4 refits on days with a measured level, which is how the site runs, and settles the inputs.</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="fl-summary" class="cell-output cell-output-display cell-output-markdown">
 <ul>
@@ -5091,34 +5092,450 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <li><strong>The crest-curve model already knows this,</strong> through berm age: a separate later-berm shift fits at -0.19 ft and is not significant (p = 0.87). With breaches dated by when the slough drained, it has the best held-out log loss (0.0088) and passes the calibration test.</li>
 <li><strong>At the alert line the 3-input + later model has fewer false alarms:</strong> at 30% it flags 12/14 breaches with 0 false-alarm day(s), versus 11/14 with 4 for the crest curve. Both miss the same two later breaches (2024-03-07, 2025-03-13), young berms that broke at low levels after moderate rain.</li>
 <li><strong>Its percentages are less trustworthy as odds</strong> (it fails the calibration test), but with 14 breaches that test has little to stand on, and the site uses the chance as a ranking with a single alert line.</li>
-<li><strong>Decision:</strong> the site runs the 3-input + later model (<code>src/watch_model.py</code>) with alerts at 30%. The crest curve still sets the breach level shown on the page.</li>
+<li><strong>Next:</strong> Part 4 refits on days with a measured level, which is how the site runs, and settles the inputs.</li>
 </ul>
 </div>
 </div>
 </section>
 </section>
-<section id="summary" class="level2">
-<h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<div id="cell-summary" class="cell" data-execution_count="27">
+<section id="part-4.-days-with-a-measured-level" class="level2">
+<h2 class="anchored" data-anchor-id="part-4.-days-with-a-measured-level">Part 4. Days with a measured level</h2>
+<p>The site always starts from a measured level: yesterday’s mean from the live sensor. Earlier seasons sometimes had no logger running, and on those days the level above is a staff-gauge reading rolled forward with rain, or a filled-in typical value. Here the models are refit and scored only on closed-mouth days whose level was measured the day before. Breaches on days without one are left out rather than counted as misses. Season-to-date rain is dropped (its coefficient was not significant), and rain the day before is tested as a lag term.</p>
+<div id="measured" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>su <span class="op">=</span> score(pu)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="ss">**Breach.** Among </span><span class="sc">{</span><span class="bu">len</span>(res)<span class="sc">}</span><span class="ss"> logistic models with up to four inputs, the best held-out performance came</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="ss">from **</span><span class="sc">{</span>top<span class="sc">.</span>inputs<span class="sc">}</span><span class="ss">**: held-out log loss </span><span class="sc">{</span>top<span class="sc">.</span>cv_logloss<span class="sc">:.4f}</span><span class="ss"> versus </span><span class="sc">{</span>clim[<span class="st">&#39;cv_logloss&#39;</span>]<span class="sc">:.4f}</span><span class="ss"> for a constant rate,</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="ss">with </span><span class="sc">{</span><span class="bu">int</span>(top.caught_p50)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> breaches caught at 50% and </span><span class="sc">{</span><span class="bu">int</span>(top.false_alarm_days_p50)<span class="sc">}</span><span class="ss"> false-alarm days.</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="ss">The website&#39;s model (nonlinear crest curve plus rain) scores </span><span class="sc">{</span>su[<span class="st">&#39;cv_logloss&#39;</span>]<span class="sc">:.4f}</span><span class="ss"> and catches </span><span class="sc">{</span>su[<span class="st">&#39;caught_p50&#39;</span>]<span class="sc">}</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="ss">of </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> with </span><span class="sc">{</span>su[<span class="st">&#39;false_alarm_days_p50&#39;</span>]<span class="sc">}</span><span class="ss"> false-alarm days. Tide height, surge and waves</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="st">&#39;appear&#39;</span> <span class="cf">if</span> <span class="bu">any</span>(c <span class="kw">in</span> top.inputs <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">&#39;tide_max&#39;</span>, <span class="st">&#39;surge&#39;</span>, <span class="st">&#39;hs_max&#39;</span>, <span class="st">&#39;wave30&#39;</span>]) <span class="cf">else</span> <span class="st">&#39;do not appear&#39;</span><span class="sc">}</span><span class="ss"> in the best model.</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="ss">With </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> events, differences of a few thousandths in log loss are within noise; the events-per-variable limit</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="ss">and the bootstrap sign stability are the guardrails.</span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="ss">**Slough rise.** Across </span><span class="sc">{</span><span class="bu">len</span>(E)<span class="sc">}</span><span class="ss"> storms the best leave-one-storm-out model was **rise ~ </span><span class="sc">{</span>RSEL<span class="sc">}</span><span class="ss">**</span></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="ss">(error </span><span class="sc">{</span>RS<span class="sc">.</span>LOO_RMSE_ft<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss"> ft, versus </span><span class="sc">{</span>RM<span class="sc">.</span>set_index(<span class="st">&#39;model&#39;</span>)<span class="sc">.</span>loc[<span class="st">&#39;R0 intercept only&#39;</span>, <span class="st">&#39;LOO_RMSE_ft&#39;</span>]<span class="sc">:.2f}</span><span class="ss"> ft</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="ss">for the mean alone). The daily distributed-lag model, using </span><span class="sc">{</span><span class="bu">int</span>(mb.nobs)<span class="sc">:,}</span><span class="ss"> closed-mouth days, puts the response at</span></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">float</span>(np.asarray(wald.effect)[<span class="dv">0</span>])<span class="sc">:.2f}</span><span class="ss"> ft per inch of rain spread over </span><span class="sc">{</span>best_nl<span class="sc">}</span><span class="ss"> day(s), plus </span><span class="sc">{</span>mb<span class="sc">.</span>params[<span class="st">&#39;hinge&#39;</span>]<span class="sc">:.2f}</span><span class="ss"> ft per</span></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="ss">inch of a single day&#39;s rain above 0.5 in.</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>meas <span class="op">=</span> d.stage_mean_ft.where(d.stage_src.fillna(<span class="st">&quot;&quot;</span>).<span class="bu">str</span>.endswith((<span class="st">&quot;_logger&quot;</span>, <span class="st">&quot;_sensor&quot;</span>)))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>risk[<span class="st">&quot;measured&quot;</span>] <span class="op">=</span> meas.shift(<span class="dv">1</span>).reindex(risk.index).notna()</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>risk[<span class="st">&quot;rain_prev&quot;</span>] <span class="op">=</span> d.rain_in.fillna(<span class="dv">0</span>).shift(<span class="dv">1</span>).reindex(risk.index)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> risk[risk.measured].copy()</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>yM <span class="op">=</span> M.breach.values</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>excluded <span class="op">=</span> [<span class="bu">str</span>(b.date()) <span class="cf">for</span> b <span class="kw">in</span> risk.index[(risk.breach <span class="op">==</span> <span class="dv">1</span>) <span class="op">&amp;</span> <span class="op">~</span>risk.measured]]</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>evM <span class="op">=</span> M.index[yM <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>ixM <span class="op">=</span> [np.where((M.index <span class="op">&gt;=</span> b <span class="op">-</span> pd.Timedelta(days<span class="op">=</span><span class="dv">1</span>)) <span class="op">&amp;</span> (M.index <span class="op">&lt;=</span> b))[<span class="dv">0</span>] <span class="cf">for</span> b <span class="kw">in</span> evM]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>nearM <span class="op">=</span> near[risk.measured.values]</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cvM(cols):</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> np.zeros(<span class="bu">len</span>(M))<span class="op">;</span> Xa <span class="op">=</span> M[cols].values.astype(<span class="bu">float</span>)<span class="op">;</span> yrs <span class="op">=</span> M.water_year.values</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> wy <span class="kw">in</span> np.unique(yrs):</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        tr, te <span class="op">=</span> yrs <span class="op">!=</span> wy, yrs <span class="op">==</span> wy</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>        mu, sd <span class="op">=</span> Xa[tr].mean(<span class="dv">0</span>), Xa[tr].std(<span class="dv">0</span>) <span class="op">+</span> <span class="fl">1e-12</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>        m <span class="op">=</span> LogisticRegression(penalty<span class="op">=</span><span class="va">None</span>, max_iter<span class="op">=</span><span class="dv">10000</span>).fit((Xa[tr] <span class="op">-</span> mu) <span class="op">/</span> sd, yM[tr])</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        p[te] <span class="op">=</span> m.predict_proba((Xa[te] <span class="op">-</span> mu) <span class="op">/</span> sd)[:, <span class="dv">1</span>]</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> atM(p, thr):</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    hit <span class="op">=</span> np.array([p[ix].<span class="bu">max</span>() <span class="op">&gt;=</span> thr <span class="cf">for</span> ix <span class="kw">in</span> ixM])</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(caught<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>hit<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="bu">len</span>(hit)<span class="sc">}</span><span class="ss">&quot;</span>, missed<span class="op">=</span><span class="st">&quot;, &quot;</span>.join(<span class="bu">str</span>(b.date()) <span class="cf">for</span> b, h <span class="kw">in</span> <span class="bu">zip</span>(evM, hit) <span class="cf">if</span> <span class="kw">not</span> h),</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>                false_alarm_days<span class="op">=</span><span class="bu">int</span>(((p <span class="op">&gt;=</span> thr) <span class="op">&amp;</span> <span class="op">~</span>nearM).<span class="bu">sum</span>()))</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>FINAL <span class="op">=</span> [<span class="st">&quot;rain_in&quot;</span>, <span class="st">&quot;stage&quot;</span>, <span class="st">&quot;later&quot;</span>]</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> {<span class="st">&quot;rain that day + level + later (in use)&quot;</span>: FINAL,</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>     <span class="st">&quot;+ rain the day before&quot;</span>: [<span class="st">&quot;rain_in&quot;</span>, <span class="st">&quot;rain_prev&quot;</span>, <span class="st">&quot;stage&quot;</span>, <span class="st">&quot;later&quot;</span>],</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>     <span class="st">&quot;+ rain since Oct 1&quot;</span>: [<span class="st">&quot;rain_in&quot;</span>, <span class="st">&quot;rain_wy&quot;</span>, <span class="st">&quot;stage&quot;</span>, <span class="st">&quot;later&quot;</span>],</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>     <span class="st">&quot;+ both&quot;</span>: [<span class="st">&quot;rain_in&quot;</span>, <span class="st">&quot;rain_prev&quot;</span>, <span class="st">&quot;rain_wy&quot;</span>, <span class="st">&quot;stage&quot;</span>, <span class="st">&quot;later&quot;</span>]}</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>PM <span class="op">=</span> {k: cvM(v) <span class="cf">for</span> k, v <span class="kw">in</span> V.items()}</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>PM[<span class="st">&quot;crest curve + rain (previous site model)&quot;</span>] <span class="op">=</span> pu[risk.measured.values]</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>T4 <span class="op">=</span> pd.DataFrame([<span class="bu">dict</span>(model<span class="op">=</span>k, cv_logloss<span class="op">=</span>log_loss(yM, np.clip(p, <span class="fl">1e-6</span>, <span class="dv">1</span> <span class="op">-</span> <span class="fl">1e-6</span>)), cv_AUC<span class="op">=</span>roc_auc_score(yM, p),</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>                        <span class="op">**</span>{<span class="ss">f&quot;</span><span class="sc">{</span>k2<span class="sc">}</span><span class="ss">@30&quot;</span>: v2 <span class="cf">for</span> k2, v2 <span class="kw">in</span> atM(p, <span class="fl">0.3</span>).items()}, <span class="op">**</span>{<span class="st">&quot;caught@50&quot;</span>: atM(p, <span class="fl">0.5</span>)[<span class="st">&quot;caught&quot;</span>]})</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>                   <span class="cf">for</span> k, p <span class="kw">in</span> PM.items()])</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;**</span><span class="sc">{</span><span class="bu">len</span>(M)<span class="sc">:,}</span><span class="ss"> days with a measured level, </span><span class="sc">{</span><span class="bu">int</span>(yM.<span class="bu">sum</span>())<span class="sc">}</span><span class="ss"> breaches.** Left out for lack of a measured level: &quot;</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>   <span class="op">+</span> <span class="st">&quot;, &quot;</span>.join(excluded) <span class="op">+</span> <span class="st">&quot;.&quot;</span>)</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>T4.<span class="bu">round</span>({<span class="st">&quot;cv_logloss&quot;</span>: <span class="dv">4</span>, <span class="st">&quot;cv_AUC&quot;</span>: <span class="dv">3</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="measured-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>2,254 days with a measured level, 10 breaches.</strong> Left out for lack of a measured level: 2022-12-31, 2024-01-22, 2024-02-01, 2024-03-07.</p>
+</div>
+<div id="measured-2" class="cell-output cell-output-display" data-execution_count="27">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">model</th>
+<th data-quarto-table-cell-role="th">cv_logloss</th>
+<th data-quarto-table-cell-role="th">cv_AUC</th>
+<th data-quarto-table-cell-role="th">caught@30</th>
+<th data-quarto-table-cell-role="th">missed@30</th>
+<th data-quarto-table-cell-role="th">false_alarm_days@30</th>
+<th data-quarto-table-cell-role="th">caught@50</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>rain that day + level + later (in use)</td>
+<td>0.0110</td>
+<td>0.972</td>
+<td>9/10</td>
+<td>2025-03-13</td>
+<td>2</td>
+<td>8/10</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>+ rain the day before</td>
+<td>0.0080</td>
+<td>0.989</td>
+<td>8/10</td>
+<td>2025-03-13, 2026-02-19</td>
+<td>1</td>
+<td>7/10</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>+ rain since Oct 1</td>
+<td>0.0120</td>
+<td>0.967</td>
+<td>9/10</td>
+<td>2025-03-13</td>
+<td>1</td>
+<td>8/10</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>+ both</td>
+<td>0.0205</td>
+<td>0.871</td>
+<td>7/10</td>
+<td>2023-03-10, 2025-03-13, 2026-02-19</td>
+<td>0</td>
+<td>6/10</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>crest curve + rain (previous site model)</td>
+<td>0.0049</td>
+<td>0.999</td>
+<td>8/10</td>
+<td>2020-03-16, 2025-03-13</td>
+<td>1</td>
+<td>8/10</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="measured-final" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mF <span class="op">=</span> sm.Logit(yM, sm.add_constant(M[FINAL].astype(<span class="bu">float</span>))).fit(disp<span class="op">=</span><span class="dv">0</span>, maxiter<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>mP <span class="op">=</span> sm.Logit(yM, sm.add_constant(M[V[<span class="st">&quot;+ rain the day before&quot;</span>]].astype(<span class="bu">float</span>))).fit(disp<span class="op">=</span><span class="dv">0</span>, maxiter<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>t4 <span class="op">=</span> T4.set_index(<span class="st">&quot;model&quot;</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;Adding rain the day before is significant (p = </span><span class="sc">{</span>mP<span class="sc">.</span>pvalues[<span class="st">&#39;rain_prev&#39;</span>]<span class="sc">:.3f}</span><span class="ss">) and improves the fit overall &quot;</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>   <span class="ss">f&quot;(AIC </span><span class="sc">{</span>mP<span class="sc">.</span>aic<span class="sc">:.1f}</span><span class="ss"> vs </span><span class="sc">{</span>mF<span class="sc">.</span>aic<span class="sc">:.1f}</span><span class="ss">), but at the 30% alert line it flags </span><span class="sc">{</span>t4<span class="sc">.</span>loc[<span class="st">&#39;+ rain the day before&#39;</span>, <span class="st">&#39;caught@30&#39;</span>]<span class="sc">}</span><span class="ss"> &quot;</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>   <span class="ss">f&quot;breaches against </span><span class="sc">{</span>t4<span class="sc">.</span>loc[<span class="st">&#39;rain that day + level + later (in use)&#39;</span>, <span class="st">&#39;caught@30&#39;</span>]<span class="sc">}</span><span class="ss">. The level input already carries &quot;</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>   <span class="st">&quot;yesterday&#39;s rain, because the water balance adds runoff over the two days after a storm, so the two overlap. &quot;</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>   <span class="st">&quot;The best of these simple models, for comparison with Part 5:&quot;</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({<span class="st">&quot;coef&quot;</span>: mF.params, <span class="st">&quot;SE&quot;</span>: mF.bse, <span class="st">&quot;95% CI low&quot;</span>: mF.conf_int()[<span class="dv">0</span>], <span class="st">&quot;95% CI high&quot;</span>: mF.conf_int()[<span class="dv">1</span>],</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;odds ratio&quot;</span>: np.exp(mF.params), <span class="st">&quot;p&quot;</span>: mF.pvalues}).<span class="bu">round</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="measured-final-1" class="cell-output cell-output-display cell-output-markdown">
+<p>Adding rain the day before is significant (p = 0.012) and improves the fit overall (AIC 30.6 vs 37.3), but at the 30% alert line it flags 8/10 breaches against 9/10. The level input already carries yesterday’s rain, because the water balance adds runoff over the two days after a storm, so the two overlap. The best of these simple models, for comparison with Part 5:</p>
+</div>
+<div id="measured-final-2" class="cell-output cell-output-display" data-execution_count="28">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">coef</th>
+<th data-quarto-table-cell-role="th">SE</th>
+<th data-quarto-table-cell-role="th">95% CI low</th>
+<th data-quarto-table-cell-role="th">95% CI high</th>
+<th data-quarto-table-cell-role="th">odds ratio</th>
+<th data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">const</th>
+<td>-35.7462</td>
+<td>9.0238</td>
+<td>-53.4325</td>
+<td>-18.0598</td>
+<td>0.0000</td>
+<td>0.0001</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">rain_in</th>
+<td>3.7093</td>
+<td>0.8189</td>
+<td>2.1042</td>
+<td>5.3143</td>
+<td>40.8242</td>
+<td>0.0000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">stage</th>
+<td>3.2919</td>
+<td>0.9574</td>
+<td>1.4155</td>
+<td>5.1684</td>
+<td>26.8953</td>
+<td>0.0006</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">later</th>
+<td>7.4409</td>
+<td>2.4291</td>
+<td>2.6799</td>
+<td>12.2019</td>
+<td>1704.2939</td>
+<td>0.0022</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="part-5.-catching-every-breach" class="level2">
+<h2 class="anchored" data-anchor-id="part-5.-catching-every-breach">Part 5. Catching every breach</h2>
+<p>The goal for alerts is to flag every breach on the measured-level record with as few false alarms as possible; there is no fixed cutoff. For each model the cutoff is set as low as the weakest breach requires (its highest score on the breach day or the day before), and false alarms are counted at that cutoff, as days and as episodes (one alert per episode). That cutoff is tuned on the same predictions it is scored on, so each model is also checked honestly: every season’s cutoff comes only from the other seasons’ breaches. Every combination of up to five rain, level and berm-age inputs is searched; tide, surge and wave inputs are left out (they do not drive breaches here), and the crest-curve model is scored alongside.</p>
+<div id="catch-all" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>C5 <span class="op">=</span> [<span class="st">&quot;rain_in&quot;</span>, <span class="st">&quot;rain_prev&quot;</span>, <span class="st">&quot;rain_3d&quot;</span>, <span class="st">&quot;api&quot;</span>, <span class="st">&quot;rain_wy&quot;</span>, <span class="st">&quot;log_dc&quot;</span>, <span class="st">&quot;stage&quot;</span>, <span class="st">&quot;later&quot;</span>]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>X5 <span class="op">=</span> M[C5].astype(<span class="bu">float</span>).fillna(M[C5].median()).values</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>yrsM <span class="op">=</span> M.water_year.values</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>evyr <span class="op">=</span> np.array([yrsM[ix[<span class="op">-</span><span class="dv">1</span>]] <span class="cf">for</span> ix <span class="kw">in</span> ixM])</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> n_eps(idx): <span class="cf">return</span> <span class="bu">int</span>((np.diff(np.r_[<span class="op">-</span><span class="dv">99</span>, idx]) <span class="op">&gt;</span> <span class="dv">3</span>).<span class="bu">sum</span>()) <span class="cf">if</span> <span class="bu">len</span>(idx) <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> catch_all(p, name):</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    peaks <span class="op">=</span> np.array([p[ix].<span class="bu">max</span>() <span class="cf">for</span> ix <span class="kw">in</span> ixM])<span class="op">;</span> thr <span class="op">=</span> peaks.<span class="bu">min</span>()</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    fa <span class="op">=</span> np.where((p <span class="op">&gt;=</span> thr) <span class="op">&amp;</span> <span class="op">~</span>nearM)[<span class="dv">0</span>]</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    c, nfa, miss <span class="op">=</span> <span class="dv">0</span>, [], []</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> w <span class="kw">in</span> np.unique(yrsM):</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>        t <span class="op">=</span> peaks[evyr <span class="op">!=</span> w].<span class="bu">min</span>()</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        hit <span class="op">=</span> peaks[evyr <span class="op">==</span> w] <span class="op">&gt;=</span> t</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>        c <span class="op">+=</span> <span class="bu">int</span>(hit.<span class="bu">sum</span>())<span class="op">;</span> miss <span class="op">+=</span> [<span class="bu">str</span>(evM[i].date()) <span class="cf">for</span> i <span class="kw">in</span> np.where(evyr <span class="op">==</span> w)[<span class="dv">0</span>][<span class="op">~</span>hit]]</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>        nfa <span class="op">+=</span> <span class="bu">list</span>(np.where((p <span class="op">&gt;=</span> t) <span class="op">&amp;</span> <span class="op">~</span>nearM <span class="op">&amp;</span> (yrsM <span class="op">==</span> w))[<span class="dv">0</span>])</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(model<span class="op">=</span>name, cutoff<span class="op">=</span>thr, fa_days<span class="op">=</span><span class="bu">len</span>(fa), fa_episodes<span class="op">=</span>n_eps(fa), honest_caught<span class="op">=</span><span class="ss">f&quot;</span><span class="sc">{</span>c<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="bu">len</span>(peaks)<span class="sc">}</span><span class="ss">&quot;</span>,</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>                honest_fa_days<span class="op">=</span><span class="bu">len</span>(nfa), honest_fa_episodes<span class="op">=</span>n_eps(np.sort(nfa)), honest_missed<span class="op">=</span><span class="st">&quot;, &quot;</span>.join(miss),</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>                caught_50<span class="op">=</span><span class="bu">int</span>((peaks <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">sum</span>()), fa_days_50<span class="op">=</span><span class="bu">int</span>(((p <span class="op">&gt;=</span> <span class="fl">0.5</span>) <span class="op">&amp;</span> <span class="op">~</span>nearM).<span class="bu">sum</span>()))</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>rows5 <span class="op">=</span> []</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>):</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> cols <span class="kw">in</span> itertools.combinations(<span class="bu">range</span>(<span class="bu">len</span>(C5)), k):</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>        Xa <span class="op">=</span> X5[:, cols]<span class="op">;</span> p <span class="op">=</span> np.zeros(<span class="bu">len</span>(M))</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> w <span class="kw">in</span> np.unique(yrsM):</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>            tr, te <span class="op">=</span> yrsM <span class="op">!=</span> w, yrsM <span class="op">==</span> w</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>            mu, sd <span class="op">=</span> Xa[tr].mean(<span class="dv">0</span>), Xa[tr].std(<span class="dv">0</span>) <span class="op">+</span> <span class="fl">1e-12</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>            p[te] <span class="op">=</span> LogisticRegression(penalty<span class="op">=</span><span class="va">None</span>, max_iter<span class="op">=</span><span class="dv">5000</span>).fit((Xa[tr] <span class="op">-</span> mu) <span class="op">/</span> sd, yM[tr]).predict_proba((Xa[te] <span class="op">-</span> mu) <span class="op">/</span> sd)[:, <span class="dv">1</span>]</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>        rows5.append(catch_all(p, <span class="st">&quot; + &quot;</span>.join(C5[c] <span class="cf">for</span> c <span class="kw">in</span> cols)))</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>pcrest <span class="op">=</span> pu[risk.measured.values]</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>rows5.append(catch_all(pcrest, <span class="st">&quot;crest curve (level vs rebuilding berm + rain_in + rain_3d + api)&quot;</span>))</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>R5 <span class="op">=</span> pd.DataFrame(rows5)</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;**</span><span class="sc">{</span><span class="bu">len</span>(R5)<span class="sc">}</span><span class="ss"> models.** Best ten by the honest check (breaches caught, then false-alarm episodes, which is what alerts send):&quot;</span>)</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>R5.sort_values([<span class="st">&quot;honest_caught&quot;</span>, <span class="st">&quot;honest_fa_episodes&quot;</span>, <span class="st">&quot;honest_fa_days&quot;</span>], ascending<span class="op">=</span>[<span class="va">False</span>, <span class="va">True</span>, <span class="va">True</span>]).head(<span class="dv">10</span>).<span class="bu">round</span>({<span class="st">&quot;cutoff&quot;</span>: <span class="dv">4</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="catch-all-1" class="cell-output cell-output-display cell-output-markdown">
+<p><strong>219 models.</strong> Best ten by the honest check (breaches caught, then false-alarm episodes, which is what alerts send):</p>
+</div>
+<div id="catch-all-2" class="cell-output cell-output-display" data-execution_count="29">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">model</th>
+<th data-quarto-table-cell-role="th">cutoff</th>
+<th data-quarto-table-cell-role="th">fa_days</th>
+<th data-quarto-table-cell-role="th">fa_episodes</th>
+<th data-quarto-table-cell-role="th">honest_caught</th>
+<th data-quarto-table-cell-role="th">honest_fa_days</th>
+<th data-quarto-table-cell-role="th">honest_fa_episodes</th>
+<th data-quarto-table-cell-role="th">honest_missed</th>
+<th data-quarto-table-cell-role="th">caught_50</th>
+<th data-quarto-table-cell-role="th">fa_days_50</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">218</th>
+<td>crest curve (level vs rebuilding berm + rain_i...</td>
+<td>0.0225</td>
+<td>16</td>
+<td>6</td>
+<td>9/10</td>
+<td>14</td>
+<td>5</td>
+<td>2025-03-13</td>
+<td>8</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">56</th>
+<td>rain_in + stage + later</td>
+<td>0.0095</td>
+<td>94</td>
+<td>6</td>
+<td>9/10</td>
+<td>94</td>
+<td>6</td>
+<td>2025-03-13</td>
+<td>8</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">13</th>
+<td>rain_in + stage</td>
+<td>0.0111</td>
+<td>105</td>
+<td>6</td>
+<td>9/10</td>
+<td>104</td>
+<td>6</td>
+<td>2025-03-13</td>
+<td>6</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>rain_in + rain_wy</td>
+<td>0.0411</td>
+<td>8</td>
+<td>7</td>
+<td>9/10</td>
+<td>8</td>
+<td>7</td>
+<td>2025-03-13</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">69</th>
+<td>rain_prev + log_dc + stage</td>
+<td>0.0084</td>
+<td>96</td>
+<td>7</td>
+<td>9/10</td>
+<td>96</td>
+<td>7</td>
+<td>2025-03-13</td>
+<td>6</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">14</th>
+<td>rain_in + later</td>
+<td>0.0305</td>
+<td>8</td>
+<td>8</td>
+<td>9/10</td>
+<td>8</td>
+<td>8</td>
+<td>2020-03-16</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">146</th>
+<td>rain_prev + log_dc + stage + later</td>
+<td>0.0094</td>
+<td>87</td>
+<td>8</td>
+<td>9/10</td>
+<td>87</td>
+<td>8</td>
+<td>2023-03-10</td>
+<td>6</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">0</th>
+<td>rain_in</td>
+<td>0.0332</td>
+<td>9</td>
+<td>9</td>
+<td>9/10</td>
+<td>9</td>
+<td>9</td>
+<td>2026-02-19</td>
+<td>4</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>rain_3d</td>
+<td>0.0209</td>
+<td>20</td>
+<td>9</td>
+<td>9/10</td>
+<td>20</td>
+<td>9</td>
+<td>2025-03-13</td>
+<td>4</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">159</th>
+<td>api + rain_wy + stage + later</td>
+<td>0.0000</td>
+<td>1668</td>
+<td>10</td>
+<td>9/10</td>
+<td>1663</td>
+<td>9</td>
+<td>2025-03-13</td>
+<td>7</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="cell-catch-all-decision" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>cr <span class="op">=</span> R5[R5.model.<span class="bu">str</span>.startswith(<span class="st">&quot;crest&quot;</span>)].iloc[<span class="dv">0</span>]</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="ss">No model catches all </span><span class="sc">{</span><span class="bu">len</span>(evM)<span class="sc">}</span><span class="ss"> breaches when the cutoff is set without seeing the season: with ten events</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="ss">the weakest breach can&#39;t be anticipated from the others. The crest-curve model catches </span><span class="sc">{</span>cr<span class="sc">.</span>honest_caught<span class="sc">}</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="ss">that way with </span><span class="sc">{</span>cr<span class="sc">.</span>honest_fa_episodes<span class="sc">}</span><span class="ss"> false-alarm episodes, the fewest of the leaders, and it is the only one</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="ss">whose upper range means much: </span><span class="sc">{</span>cr<span class="sc">.</span>caught_50<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span><span class="bu">len</span>(evM)<span class="sc">}</span><span class="ss"> breaches reached 0.5, against 4 to 5 for the rain-only</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="ss">models that score as well at the low end. Tuned on all seasons, a cutoff of </span><span class="sc">{</span>cr<span class="sc">.</span>cutoff<span class="sc">:.3f}</span><span class="ss"> catches every breach</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="ss">with </span><span class="sc">{</span>cr<span class="sc">.</span>fa_days<span class="sc">}</span><span class="ss"> false-alarm days in </span><span class="sc">{</span>cr<span class="sc">.</span>fa_episodes<span class="sc">}</span><span class="ss"> episodes. **The site uses the crest-curve model** and reports</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="ss">levels rather than percentages: Watch (every recorded breach reached it), Warning (0.2) and Likely (0.5),</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="ss">with alerts at Watch (`src/levels.py`).</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="catch-all-decision" class="cell-output cell-output-display cell-output-markdown">
+<p>No model catches all 10 breaches when the cutoff is set without seeing the season: with ten events the weakest breach can’t be anticipated from the others. The crest-curve model catches 9/10 that way with 5 false-alarm episodes, the fewest of the leaders, and it is the only one whose upper range means much: 8 of 10 breaches reached 0.5, against 4 to 5 for the rain-only models that score as well at the low end. Tuned on all seasons, a cutoff of 0.023 catches every breach with 16 false-alarm days in 6 episodes. <strong>The site uses the crest-curve model</strong> and reports levels rather than percentages: Watch (every recorded breach reached it), Warning (0.2) and Likely (0.5), with alerts at Watch (<code>src/levels.py</code>).</p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<div id="cell-summary" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>su <span class="op">=</span> score(pu)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>md(<span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="ss">**Breach.** Among </span><span class="sc">{</span><span class="bu">len</span>(res)<span class="sc">}</span><span class="ss"> logistic models with up to four inputs, the best held-out performance came</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ss">from **</span><span class="sc">{</span>top<span class="sc">.</span>inputs<span class="sc">}</span><span class="ss">**: held-out log loss </span><span class="sc">{</span>top<span class="sc">.</span>cv_logloss<span class="sc">:.4f}</span><span class="ss"> versus </span><span class="sc">{</span>clim[<span class="st">&#39;cv_logloss&#39;</span>]<span class="sc">:.4f}</span><span class="ss"> for a constant rate,</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="ss">with </span><span class="sc">{</span><span class="bu">int</span>(top.caught_p50)<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> breaches caught at 50% and </span><span class="sc">{</span><span class="bu">int</span>(top.false_alarm_days_p50)<span class="sc">}</span><span class="ss"> false-alarm days.</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="ss">The website&#39;s model (nonlinear crest curve plus rain) scores </span><span class="sc">{</span>su[<span class="st">&#39;cv_logloss&#39;</span>]<span class="sc">:.4f}</span><span class="ss"> and catches </span><span class="sc">{</span>su[<span class="st">&#39;caught_p50&#39;</span>]<span class="sc">}</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="ss">of </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> with </span><span class="sc">{</span>su[<span class="st">&#39;false_alarm_days_p50&#39;</span>]<span class="sc">}</span><span class="ss"> false-alarm days. Tide height, surge and waves</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="st">&#39;appear&#39;</span> <span class="cf">if</span> <span class="bu">any</span>(c <span class="kw">in</span> top.inputs <span class="cf">for</span> c <span class="kw">in</span> [<span class="st">&#39;tide_max&#39;</span>, <span class="st">&#39;surge&#39;</span>, <span class="st">&#39;hs_max&#39;</span>, <span class="st">&#39;wave30&#39;</span>]) <span class="cf">else</span> <span class="st">&#39;do not appear&#39;</span><span class="sc">}</span><span class="ss"> in the best model.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="ss">With </span><span class="sc">{</span>n_ev<span class="sc">}</span><span class="ss"> events, differences of a few thousandths in log loss are within noise; the events-per-variable limit</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="ss">and the bootstrap sign stability are the guardrails.</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="ss">**Slough rise.** Across </span><span class="sc">{</span><span class="bu">len</span>(E)<span class="sc">}</span><span class="ss"> storms the best leave-one-storm-out model was **rise ~ </span><span class="sc">{</span>RSEL<span class="sc">}</span><span class="ss">**</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="ss">(error </span><span class="sc">{</span>RS<span class="sc">.</span>LOO_RMSE_ft<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss"> ft, versus </span><span class="sc">{</span>RM<span class="sc">.</span>set_index(<span class="st">&#39;model&#39;</span>)<span class="sc">.</span>loc[<span class="st">&#39;R0 intercept only&#39;</span>, <span class="st">&#39;LOO_RMSE_ft&#39;</span>]<span class="sc">:.2f}</span><span class="ss"> ft</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="ss">for the mean alone). The daily distributed-lag model, using </span><span class="sc">{</span><span class="bu">int</span>(mb.nobs)<span class="sc">:,}</span><span class="ss"> closed-mouth days, puts the response at</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span><span class="bu">float</span>(np.asarray(wald.effect)[<span class="dv">0</span>])<span class="sc">:.2f}</span><span class="ss"> ft per inch of rain spread over </span><span class="sc">{</span>best_nl<span class="sc">}</span><span class="ss"> day(s), plus </span><span class="sc">{</span>mb<span class="sc">.</span>params[<span class="st">&#39;hinge&#39;</span>]<span class="sc">:.2f}</span><span class="ss"> ft per</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="ss">inch of a single day&#39;s rain above 0.5 in.</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="summary" class="cell-output cell-output-display cell-output-markdown">
 <p><strong>Breach.</strong> Among 385 logistic models with up to four inputs, the best held-out performance came from <strong>rain_in + rain_3d + log_dc + stage</strong>: held-out log loss 0.0091 versus 0.0341 for a constant rate, with 11 of 14 breaches caught at 50% and 1 false-alarm days. The website’s model (nonlinear crest curve plus rain) scores 0.0085 and catches 11 of 14 with 3 false-alarm days. Tide height, surge and waves do not appear in the best model. With 14 events, differences of a few thousandths in log loss are within noise; the events-per-variable limit and the bootstrap sign stability are the guardrails.</p>

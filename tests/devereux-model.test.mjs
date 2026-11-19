@@ -5,49 +5,50 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, watchProb, chanceWithin, breachWindow } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 
-test("Breach Watch probability matches the Python fit (src/watch_model.py)", () => {
-  for (const c of params.watch.cases) {
-    const p = watchProb(params.watch, c);
-    assert.ok(Math.abs(p - c.p) < 1e-9, `${JSON.stringify(c)}: ${p} vs ${c.p}`);
-  }
-});
-
-test("forecast: level from the water balance, chance from Breach Watch, rain-only fallback", () => {
+test("forecast matches the Python crest-curve model on a synthetic December storm", () => {
   const days = dateRange("2026-10-01", "2026-12-31");
   const storm = { "2026-12-01": 0.8, "2026-12-02": 2.4, "2026-12-03": 0.6 };
   const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
   const args = { rain, today: "2026-12-01", closedSince: "2026-03-07", stage0: { date: "2026-11-20", ft: 8.5 }, params };
   const out = forecast(args);
-  // stage from WaterBalance.run_from (src/model.py) on the same inputs
-  const stage = { "2026-12-01": 8.791073, "2026-12-02": 10.248057, "2026-12-03": 11.305315, "2026-12-04": 11.537135 };
-  const wy = { "2026-12-01": 0.8, "2026-12-02": 3.2, "2026-12-03": 3.8, "2026-12-04": 3.8 };
-  for (const [date, ft] of Object.entries(stage)) {
+  // [stage ft, score, crest ft] from WaterBalance.run_from and Unified.prob (src/model.py, src/unified.py)
+  const expected = {
+    "2026-12-01": [8.791073, 0.000582, 9.714543],
+    "2026-12-02": [10.248057, 0.963756, 9.715296],
+    "2026-12-03": [11.305315, 0.997933, 9.716036],
+    "2026-12-04": [11.537135, 0.996354, 9.716764],
+  };
+  for (const [date, [stage, p, crest]] of Object.entries(expected)) {
     const r = out.find((x) => x.date === date);
-    assert.ok(Math.abs(r.stage_ft - ft) < 1e-4, `${date} stage ${r.stage_ft} vs ${ft}`);
-    const p = watchProb(params.watch, { rain_in: storm[date] ?? 0, rain_wy: wy[date], stage: r.stage_ft, later: 0 });
-    assert.ok(Math.abs(r.p - p) < 1e-12, `${date} p`);
+    assert.ok(Math.abs(r.stage_ft - stage) < 1e-4, `${date} stage ${r.stage_ft} vs ${stage}`);
+    assert.ok(Math.abs(r.p - p) < 1e-4, `${date} p ${r.p} vs ${p}`);
+    assert.ok(Math.abs(r.crest_ft - crest) < 1e-4, `${date} crest ${r.crest_ft} vs ${crest}`);
     assert.equal(r.model, "level + rain");
-    assert.equal(r.later, 0);
   }
-  assert.ok(out.find((x) => x.date === "2026-12-02").p > 0.9, "a 2.4 in storm on a 10 ft slough is near certain");
-  assert.ok(out.find((x) => x.date === "2026-12-01").p < 0.05);
-  // a breach earlier this water year makes the berm a "later" one; last season's doesn't count
-  const lt = forecast({ ...args, breaches: ["2026-11-10"] }).find((x) => x.date === "2026-12-01");
-  const fy = forecast({ ...args, breaches: ["2026-02-19"] }).find((x) => x.date === "2026-12-01");
-  assert.equal(lt.later, 1);
-  assert.equal(fy.later, 0);
-  assert.ok(lt.p > out.find((x) => x.date === "2026-12-01").p);
+  assert.equal(out.find((x) => x.date === "2026-12-01").level, "low");
+  assert.equal(out.find((x) => x.date === "2026-12-02").level, "likely");
+  // a fresh berm can't be lower than the water it held back when it closed
+  const fl = forecast({ ...args, closedSince: "2026-11-25", crestFloor: 8.4 });
+  assert.equal(fl.find((x) => x.date === "2026-12-01").crest_ft, 8.4);
   // no usable reading: fall back to the rain-only model
-  const fb = forecast({ ...args, stage0: null });
-  for (const r of fb) {
+  for (const r of forecast({ ...args, stage0: null })) {
     assert.equal(r.p, r.p_rain);
     assert.equal(r.model, "rain only");
   }
+});
+
+test("levels: each score maps to the highest level whose cutoff it meets", () => {
+  const L = params.levels;
+  assert.deepEqual(L.map((l) => l.key), ["low", "watch", "warning", "likely"]);
+  assert.equal(levelOf(0, L).key, "low");
+  assert.equal(levelOf(L[1].min, L).key, "watch");
+  assert.equal(levelOf(0.99, L).key, "likely");
+  assert.equal(L[1].caught, params.levels_record.breaches, "Watch caught every recorded breach");
 });
 
 test("rain composite rescales KSBA timing to the local CoCoRaHS storm total", () => {

@@ -300,11 +300,10 @@ export async function buildStatus(now = new Date()) {
       .filter((r) => r.date >= last.date && r.date <= addDays(last.date, 2) && r.date < today);
     if (lv.length) crestFloor = Math.max(...lv.map((r) => r.ft));
   }
-  const breaches = events.filter((e) => e.state === "open").map((e) => e.date);
   let outlook = [];
   let stageSeries = [];
   if (last && !mouthOpen) {
-    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, breaches, showFrom: addDays(today, -14) });
+    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
       const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
@@ -355,7 +354,7 @@ export async function buildStatus(now = new Date()) {
       waves: wave,
     },
     model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified,
-      breach_levels: params.breach_levels },
+      breach_levels: params.breach_levels, levels: params.levels, levels_record: params.levels_record, alert_threshold: params.alert_threshold },
     sources: status,
     warnings,
   };
