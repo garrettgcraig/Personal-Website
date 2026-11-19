@@ -6,7 +6,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
-import { parseCsv } from "../netlify/functions/devereux-api.mjs";
+import { parseCsv, restOfToday } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 
@@ -147,4 +147,35 @@ test("breach window: extrapolates the current rise to the breach-level range", (
   assert.equal(breachWindow({ hourly: slow, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H }).state, "beyond");
   const high = rising.map((h, k) => ({ ...h, ft: 9.4 + 0.05 * k }));
   assert.equal(breachWindow({ hourly: high, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H }).state, "within");
+});
+
+test("a mid-day live reading rolls on to the end of the day with the rain still to come", () => {
+  const days = dateRange("2026-10-01", "2026-12-31");
+  const storm = { "2026-12-01": 2.0 };
+  const rain = days.map((d) => ({ date: d, rain_in: storm[d] ?? 0, src: "test" }));
+  const base = { rain, today: "2026-12-01", closedSince: "2026-03-07", params };
+  const at = (rest) => stageOutlook({ ...base, stage0: { date: "2026-12-01", ft: 7, rest } });
+  const morning = at({ rain_in: 1.8, frac: 0.75 }); // most of the storm still to fall
+  const evening = at({ rain_in: 0.1, frac: 0.1 }); // storm nearly over (and in the reading)
+  const plain = at(undefined);
+  assert.equal(plain[0].ft, 7);
+  assert.equal(plain[0].phase, "reading");
+  assert.equal(morning[0].phase, "forecast");
+  assert.ok(morning[0].ft > evening[0].ft + 0.5, `${morning[0].ft} vs ${evening[0].ft}`);
+  assert.ok(Math.abs(evening[0].ft - 7) < 0.2, `evening ${evening[0].ft}`);
+  assert.ok(morning[0].hi > morning[0].ft && morning[0].lo < morning[0].ft);
+  // the daily score uses the end-of-day level too
+  const f = forecast({ ...base, stage0: { date: "2026-12-01", ft: 7, rest: { rain_in: 1.8, frac: 0.75 } } });
+  assert.ok(Math.abs(f[0].stage_ft - morning[0].ft) < 1e-9);
+});
+
+test("restOfToday sums Open-Meteo hours after the reading, the current hour in part", () => {
+  const hourly = {};
+  for (let k = 0; k < 24; k++) hourly[`2026-12-01T${String(k).padStart(2, "0")}:00`] = 0.1;
+  hourly["2026-12-02T00:00"] = 0.1;
+  // 2026-12-01 18:30 PST = 2026-12-02 02:30 UTC: hour 19 counts half, then 20..24 in full
+  const r = restOfToday(Date.parse("2026-12-02T02:30:00Z"), "2026-12-01", hourly);
+  assert.ok(Math.abs(r.rain_in - 0.55) < 1e-9, String(r.rain_in));
+  assert.ok(Math.abs(r.frac - 5.5 / 24) < 1e-9);
+  assert.equal(restOfToday(Date.parse("2026-12-02T02:30:00Z"), "2026-12-01", null).rain_in, 0);
 });

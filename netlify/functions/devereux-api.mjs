@@ -145,11 +145,16 @@ async function copGauge(start, end) {
   return out;
 }
 
+// Daily forecast rain, plus hourly for the rest of today (local "YYYY-MM-DDTHH:00" keys), so a
+// forecast starting from a mid-day live reading still counts the rain to come that day.
 async function openMeteo() {
   const url = "https://api.open-meteo.com/v1/forecast?latitude=34.41&longitude=-119.88&daily=precipitation_sum"
-    + `&precipitation_unit=inch&timezone=America%2FLos_Angeles&forecast_days=${HORIZON}`;
+    + `&hourly=precipitation&precipitation_unit=inch&timezone=America%2FLos_Angeles&forecast_days=${HORIZON}`;
   const j = JSON.parse(await fetchText(url));
-  return Object.fromEntries(j.daily.time.map((d, i) => [d, j.daily.precipitation_sum[i]]));
+  return {
+    daily: Object.fromEntries(j.daily.time.map((d, i) => [d, j.daily.precipitation_sum[i]])),
+    hourly: Object.fromEntries((j.hourly?.time || []).slice(0, 48).map((t, i) => [t, j.hourly.precipitation[i]])),
+  };
 }
 
 const NOAA = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&datum=NAVD&units=english"
@@ -201,6 +206,24 @@ export async function sensor(days = 120, minutes = 60) {
   const seen = new Set();
   return rows.filter(([t]) => !seen.has(t) && seen.add(t)).sort((a, b) => a[0] - b[0])
     .map(([t, m]) => ({ t, ft: m * 3.28084 + params.licor_offset_ft }));
+}
+
+// Forecast rain still to fall today after a reading at epoch ms `t`, and the share of the
+// day left. Hourly keys are Pacific local hours; the reading's hour counts in proportion.
+export function restOfToday(t, today, hourly) {
+  const local = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(t));
+  const [hh, mm] = local.split(":").map(Number);
+  const h = hh + mm / 60;
+  // Open-Meteo's hourly value at local hour k is the rain over the hour ending then (k-1 to k),
+  // so the rest of the day is hours floor(h)+1 .. 24 (24 = tomorrow's 00:00), the first in part.
+  let rain = 0;
+  for (let k = Math.floor(h) + 1; k <= 24; k++) {
+    const key = k < 24 ? `${today}T${String(k).padStart(2, "0")}:00` : `${addDays(today, 1)}T00:00`;
+    const v = hourly?.[key];
+    if (v == null) continue;
+    rain += k === Math.floor(h) + 1 ? v * (k - h) : v;
+  }
+  return { rain_in: hourly ? rain : 0, frac: (24 - h) / 24 };
 }
 
 const pacificDate = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date(ms));
@@ -268,8 +291,9 @@ export async function buildStatus(now = new Date()) {
   // Rain: observed composite before today, Open-Meteo from today on.
   const past = dateRange(start, yesterday);
   const rain = rainComposite(past, { cop: cop || {}, ksba: sba || {}, cocorahs: coco || {} }, params);
+  const omDaily = om?.daily ?? om; // older cached copies are the daily map alone
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
-    rain.push({ date: d, rain_in: om?.[d] ?? null, src: om?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
+    rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
   }
   const missing = rain.filter((r) => r.rain_in == null && r.date >= addDays(today, -30)).length;
   if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
@@ -286,7 +310,7 @@ export async function buildStatus(now = new Date()) {
   // moves with the sensor through the day), else the latest complete sensor day.
   const nowRead = (live5 || []).at(-1) || hourly.at(-1) || null;
   const liveNow = nowRead && now.getTime() - nowRead.t < 3 * 3600000 && pacificDate(nowRead.t) === today
-    ? { date: today, ft: nowRead.ft, t: nowRead.t, src: "live sensor, latest reading" } : null;
+    ? { date: today, ft: nowRead.ft, t: nowRead.t, src: "live sensor, latest reading", rest: restOfToday(nowRead.t, today, om?.hourly) } : null;
   const sensorLatest = liveNow || sensorDays.filter((r) => daysSince(r.date, today) <= 3).at(-1) || null;
   const latest = sensorLatest || (manualLatest && { ...manualLatest, src: "staff gauge" });
   const mouthOpen = last?.state === "open";

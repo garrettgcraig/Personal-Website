@@ -65,10 +65,22 @@ export function rainComposite(days, { cop = {}, ksba = {}, cocorahs = {} }, para
 export const crestFt = (dc, c) => c.c_inf - (c.c_inf - c.c0) * Math.exp(-dc / c.tau);
 
 // Water balance: roll stage forward from a reading through daily rain P (inches).
-function simulateStage(P, dates, i0, ft0, closedSince, wb) {
+// rest (optional): the starting reading is from partway through day i0. {rain_in: forecast
+// rain still to fall that day, frac: fraction of the day left}. Day i0 then ends at the
+// reading plus the inflow still to come: that share of the day's rain response, and the
+// lagged runoff from the two days before for the rest of the day, less the day's losses.
+function simulateStage(P, dates, i0, ft0, closedSince, wb, rest = null) {
   const out = new Array(dates.length).fill(null);
-  out[i0] = ft0;
   let s = ft0;
+  if (rest) {
+    const n = i0, dc = daysBetween(closedSince, dates[n]) + 1;
+    const share = P[n] > 0 ? Math.min(1, rest.rain_in / P[n]) : 0;
+    const inflow = (wb.a0 * P[n] + wb.b * Math.max(P[n] - wb.ia, 0)) * share
+      + (wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0)) * rest.frac;
+    const loss = wb.e0 + wb.e1 * Math.cos((2 * Math.PI * (dayOfYear(dates[n]) - 200)) / 365.25) + wb.q * Math.exp(-dc / 7);
+    s = s + Math.exp(-wb.beta * (s - 6)) * inflow - loss * rest.frac;
+  }
+  out[i0] = s;
   for (let n = i0 + 1; n < dates.length; n++) {
     const dc = daysBetween(closedSince, dates[n]) + 1;
     const inflow = wb.a0 * P[n] + wb.a1 * (P[n - 1] || 0) + wb.a2 * (P[n - 2] || 0) + wb.b * Math.max(P[n] - wb.ia, 0);
@@ -96,22 +108,25 @@ export function stageOutlook({ rain, today, closedSince, stage0, params }) {
   const [kLo, kHi] = params.rain_scenarios;
   const wb = params.water_balance;
   const PLo = scaled(kLo), PHi = scaled(kHi);
-  const mid = simulateStage(P, dates, i0, stage0.ft, closedSince, wb);
-  const lo = simulateStage(PLo, dates, i0, stage0.ft, closedSince, wb);
-  const hi = simulateStage(PHi, dates, i0, stage0.ft, closedSince, wb);
+  const R = stage0.rest || null;
+  const restK = (k) => (R ? { ...R, rain_in: R.rain_in * k } : null);
+  const mid = simulateStage(P, dates, i0, stage0.ft, closedSince, wb, R);
+  const lo = simulateStage(PLo, dates, i0, stage0.ft, closedSince, wb, restK(kLo));
+  const hi = simulateStage(PHi, dates, i0, stage0.ft, closedSince, wb, restK(kHi));
   const e = params.stage_error_80;
   const out = [];
   let cumLo = 0, cumHi = 0;
   for (let n = i0; n < dates.length; n++) {
     if (n > i0) { cumLo += PLo[n]; cumHi += PHi[n]; }
-    const days = n - i0;
-    const err = (cum) => (days ? e.a + e.per_day * days + e.per_in * cum : 0);
+    const days = n - i0 + (R ? R.frac : 0);
+    const err = (cum) => (days ? e.a + e.per_day * days + e.per_in * (cum + (R ? R.rain_in : 0)) : 0);
     out.push({
       date: dates[n],
       ft: mid[n],
       lo: lo[n] - err(cumLo),
       hi: hi[n] + err(cumHi),
-      phase: n === i0 ? "reading" : dates[n] < today ? "estimated" : "forecast",
+      // a mid-day live reading rolls on to the end of that day, so day i0 is a forecast too
+      phase: n === i0 && !R ? "reading" : dates[n] < today ? "estimated" : "forecast",
       rain_in: rain[n].rain_in,
     });
   }
@@ -126,7 +141,9 @@ export const levelOf = (p, levels) => (p == null ? null : [...levels].reverse().
  *  rain: [{date, rain_in, src}] covering at least (today - 120 d) .. (today + horizon - 1),
  *        observed before today, forecast from today on.
  *  closedSince: ISO date the mouth last closed.
- *  stage0: {date, ft} latest stage reading (ft NAVD88) on or before today, or null.
+ *  stage0: {date, ft, rest?} latest stage reading (ft NAVD88) on or before today, or null.
+ *          rest {rain_in, frac}: for a reading from partway through today, the forecast rain
+ *          still to fall today and the fraction of the day left (see simulateStage).
  *  crestFloor: highest level (ft) in the first 3 days after the mouth closed, or null.
  * The daily breach score is the crest-curve hazard (devereux-breach/src/unified.py): how far
  * the slough sits below a berm crest that rebuilds after each closure, plus rain. It ranks
@@ -150,7 +167,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
 
   // water balance from the latest stage reading (none -> rain model only)
   const iStage = stage0 ? dates.indexOf(stage0.date) : -1;
-  const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance)
+  const stage = iStage >= 0 ? simulateStage(P, dates, iStage, stage0.ft, closedSince, params.water_balance, stage0.rest || null)
     : new Array(dates.length).fill(null);
 
   const L = params.rain_logit;
