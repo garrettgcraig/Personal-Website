@@ -203,11 +203,25 @@ function seasonTimeline(events) {
       const t = `<title>${esc(evDate(e.start))}: ${esc(e.type === "breach" ? (e.cat === "first" ? "season's first breach" : "later breach") : e.type)}${e.peak_level_ft != null && e.type === "breach" ? `, ${e.peak_level_ft.toFixed(1)} ft` : ""}${e.provisional ? " (provisional)" : ""}</title>`;
       if (e.type === "breach" && e.cat === "first") g += `<circle cx="${x}" cy="${y}" r="7" fill="${breachC}">${t}</circle>`;
       else if (e.type === "breach") g += `<circle cx="${x}" cy="${y}" r="5.5" fill="var(--color-bg)" stroke="${breachC}" stroke-width="2.2">${t}</circle>`;
-      else if (e.type === "closure") g += `<line x1="${x}" x2="${x}" y1="${y - 9}" y2="${y + 9}" stroke="${muted}" stroke-width="2.4">${t}</line>`;
-      else g += `<path d="M${x},${y - 12} l4,6 h-8Z" fill="${skyC}">${t}</path>`;
+      else if (e.type === "closure") g += `<line x1="${x}" x2="${x}" y1="${y - 7}" y2="${y + 7}" stroke="${muted}" stroke-width="2.4">${t}</line>`;
+      else g += `<path d="M${x},${y - 7} l-4.5,-8 h9Z" fill="${skyC}">${t}</path>`;
     }
   });
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mouth events by water year">${g}</svg>`;
+}
+
+// Legend for the season timeline, drawn with the same marks as the chart
+function timelineLegend() {
+  const breachC = css("--breach"), muted = css("--color-muted"), skyC = document.body.classList.contains("dark-mode") ? COLORS.mist : COLORS.sky;
+  const sw = (inner, w = 18) => `<svg width="${w}" height="16" viewBox="0 0 ${w} 16" aria-hidden="true">${inner}</svg>`;
+  const items = [
+    [sw(`<circle cx="9" cy="8" r="6" fill="${breachC}"/>`), "season's first breach"],
+    [sw(`<circle cx="9" cy="8" r="5" fill="none" stroke="${breachC}" stroke-width="2.2"/>`), "later breach"],
+    [sw(`<line x1="9" x2="9" y1="1" y2="15" stroke="${muted}" stroke-width="2.4"/>`), "closure"],
+    [sw(`<path d="M9,13 l-4.5,-8 h9Z" fill="${skyC}"/>`), "overtopping"],
+    [sw(`<rect x="1" y="3" width="24" height="10" rx="2" fill="${muted}" opacity="0.22"/>`, 26), "mouth closed"],
+  ];
+  return `<div class="legend tl-legend">${items.map(([m, l]) => `<span>${m}${esc(l)}</span>`).join("")}</div>`;
 }
 
 // ------------------------------------------------------------- render
@@ -250,7 +264,7 @@ function render() {
   <section class="block" id="seasons">
     <h2>Every season since 2017</h2>
     <div class="ev-cards">${cards.map(([k, l, c, d]) => `<button type="button" class="ev-card ev-${k}" data-evf="${k}"><span class="ev-card-n">${c}</span><span class="ev-card-l">${esc(l)}</span><span class="ev-card-d">${esc(d)}</span></button>`).join("")}</div>
-    ${legend([[breachC, "season's first breach"], ["transparent", "later breach"], [css("--color-muted"), "closure", "line"], [skyC, "overtopping"], [css("--color-muted") + "44", "mouth closed"]]).replace('<i class="" style="background:transparent;border-color:transparent">', `<i class="ring" style="border-color:${breachC}">`)}
+    ${timelineLegend()}
     <div class="table-scroll">${seasonTimeline(ev)}</div>
     <p class="note">Water years run October to September. The record starts with CCBER's mouth log in January 2017, so the first breach shown for 2016–17 may not have been that season's first. Level loggers start in late 2018, so earlier breaches have no measured peak.${np ? ` ${np} events were found in the level record rather than CCBER's log and are provisional until they're reviewed.` : ""}</p>
   </section>
