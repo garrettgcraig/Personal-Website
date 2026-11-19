@@ -1,6 +1,8 @@
 // Devereux Slough breach outlook page. Fetches /devereux/api/status (see
 // netlify/functions/devereux-api.mjs) and draws everything with inline SVG.
 
+import { chanceWithin, breachWindow } from "./model.js";
+
 const app = document.getElementById("app");
 const PCT = (p) => (p == null ? "n/a" : p < 0.01 ? "<1%" : `${Math.round(p * 100)}%`);
 const FT = (v, d = 1) => (v == null ? "n/a" : `${v.toFixed(d)} ft`);
@@ -14,8 +16,9 @@ const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
 
 // ------------------------------------------------------------- tiny SVG charts
 // series: [{type: "bar"|"line"|"dots"|"step", points: [{x: Date|number, y}], color, width, opacity, dash}]
-// y2 (optional): a second, right-hand axis for bars that hang down from the top of the
-// plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}.
+// y2 (optional): a second, right-hand axis, either bars that hang down from the top of the
+// plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}, or dots on a
+// normal axis: {dots: [{x, y, title}], min, max, fmt, label, color}.
 function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2 }) {
   const W = width, H = height, m = { l: 40, r: y2 ? 44 : 12, t: 10, b: 24 };
   const xs = series.flatMap((s) => s.points.map((p) => +p.x));
@@ -37,7 +40,18 @@ function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) =
   for (const h of hlines) g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="${h.color}" stroke-dasharray="4 4" stroke-width="1.5"/><text x="${W - m.r}" y="${Y(h.y) - 4}" text-anchor="end" style="fill:${h.color}">${esc(h.label)}</text>`;
   for (const v of vlines) g += `<line x1="${X(v.x)}" x2="${X(v.x)}" y1="${m.t}" y2="${H - m.b}" stroke="${v.color}" stroke-width="1.5" opacity="0.8"/>${v.label ? `<text x="${X(v.x) + 3}" y="${H - m.b - 4}" style="fill:${v.color}">${esc(v.label)}</text>` : ""}`;
   // y2 bars are drawn first so the lines stay on top
-  if (y2) {
+  if (y2?.dots) {
+    // right axis for a second measure drawn as dots (bottom-up)
+    const plotH = H - m.t - m.b, lo2 = y2.min ?? 0;
+    const Y2 = (v) => m.t + (1 - (v - lo2) / Math.max(1e-9, y2.max - lo2)) * plotH;
+    for (const p of y2.dots) if (p.y != null && +p.x >= x0 && +p.x <= x1) g += `<circle cx="${X(p.x).toFixed(1)}" cy="${Y2(p.y).toFixed(1)}" r="${y2.r || 2.4}" fill="${y2.color}" opacity="0.85"><title>${esc(p.title || "")}</title></circle>`;
+    for (let i = 0; i <= 2; i++) {
+      const v = lo2 + ((y2.max - lo2) * i) / 2;
+      g += `<text x="${W - m.r + 6}" y="${(Y2(v) + 4).toFixed(1)}" text-anchor="start">${y2.fmt(v)}</text>`;
+    }
+    g += `<text x="${W - 4}" y="${m.t + plotH / 2}" text-anchor="middle" transform="rotate(90 ${W - 4} ${m.t + plotH / 2})">${esc(y2.label)}</text>`;
+    g += `<line class="axis" x1="${W - m.r}" x2="${W - m.r}" y1="${m.t}" y2="${H - m.b}"/>`;
+  } else if (y2) {
     const plotH = H - m.t - m.b;
     const Y2 = (v) => m.t + (v / y2.max) * plotH; // 0 at the top, growing downward
     for (const b of y2.bars) {
@@ -221,8 +235,8 @@ document.addEventListener("change", (e) => {
 const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 
 // ------------------------------------------------------------- breach likelihood dial
-// Five bands, like a fire-danger sign. The needle follows the highest daily chance in the
-// next 10 days. Alerts go out when it first reaches "High" (30%).
+// Five bands, like a fire-danger sign. The needle shows the chance of a breach in the next
+// 48 hours. Alerts go out when any day in the next 10 reaches 30% ("High").
 const BANDS = [
   { key: "low", label: "Low", min: 0, color: "#4E8F4A", ink: "#fff" },
   { key: "moderate", label: "Moderate", min: 0.05, color: "#3E78A8", ink: "#fff" },
@@ -300,8 +314,6 @@ function render(s) {
   const todayRow = s.outlook.find((r) => r.date === s.today);
   const ahead = s.outlook.filter((r) => r.date >= s.today);
   const peak = s.peak;
-  // mouth state dot: green = open to the ocean, red = closed behind the berm
-  const stateColor = !s.mouth ? css("--color-muted") : open ? "var(--open)" : "var(--closed)";
 
   const nowFt = s.stage?.sensor_now?.ft ?? s.stage?.today_est_ft;
   const nowWhen = s.stage?.sensor_now
@@ -310,10 +322,24 @@ function render(s) {
   const blToday = !open ? s.stage?.breach_level_today_ft : null;
   const mature = BLV && blToday != null && blToday >= BLV.mature_median_ft - 1e-6;
 
-  const headline = !s.mouth ? "Mouth state unknown." : open ? "The mouth is open." : "The mouth is closed.";
+  // Breach Watch leads: the chance of a breach in the next 48 hours, and once the slough
+  // is rising toward breach levels, when it would get there at the current rate.
+  const next2 = ahead.slice(0, 2).map((r) => r.p);
+  const p48 = open || !peak ? null : chanceWithin(next2);
+  const band48 = p48 == null ? null : bandOf(p48);
+  const lvLo = mature ? BLV.mature_min_ft : blToday != null ? blToday - 0.5 : null;
+  const lvHi = mature ? BLV.mature_max_ft : blToday != null ? blToday + 0.5 : null;
+  const win = !open && lvLo != null && s.stage?.sensor_hourly?.length
+    ? breachWindow({ hourly: s.stage.sensor_hourly.map((h) => ({ t: Date.parse(h.t), ft: h.ft })), lo: lvLo, hi: lvHi, nowMs: Date.now() }) : null;
+  const when = (ms) => new Date(ms).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" }).replace(/ /g, "\u00a0");
+  const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch: ${band48.label.toLowerCase()}.`;
+  const headColor = band48 ? band48.color : css("--color-muted");
+  let windowLine = "";
+  if (win?.state === "within") windowLine = `The slough is already at <span class="num">${win.cur.toFixed(2)}&nbsp;ft</span>, within the range where past breaches happened. A breach could come at any time.`;
+  else if (win?.state === "rising") windowLine = `Rising <span class="num">${win.slope.toFixed(2)}&nbsp;ft</span> an hour. At that rate it reaches breach levels (${lvLo.toFixed(1)} to ${lvHi.toFixed(1)} ft) between <strong>${when(win.start)}</strong> and <strong>${when(win.end)}</strong>. More rain would bring that sooner.`;
   let lead = "";
   if (s.mouth) {
-    lead = `${open ? "Open" : "Closed"} since ${day(s.mouth.since, { month: "long", day: "numeric", year: "numeric" })}, ${s.mouth.days} days.`;
+    lead = `The mouth has been ${open ? "open" : "closed"} since ${day(s.mouth.since, { month: "long", day: "numeric", year: "numeric" })} (${s.mouth.days} days).`;
     if (nowFt != null) lead += ` The slough is at <span class="num">${nowFt.toFixed(2)}&nbsp;ft</span>`
       + (blToday != null ? `, about ${(blToday - nowFt).toFixed(1)} ft below ${mature ? "where past breaches happened" : "the estimated breach level for this young berm"}.` : ".");
   }
@@ -329,15 +355,16 @@ function render(s) {
     const near = f.reduce((m, r) => (m == null || r.breach_level_ft - r.ft < m.breach_level_ft - m.ft ? r : m), null);
     const nearHi = f.reduce((m, r) => Math.min(m, r.breach_level_ft - r.hi), Infinity);
     const word = bandOf(peak.p).label.toLowerCase();
-    outlook = `Breach chance over the next 10 days peaks at <span class="num ${peak.alert === "likely" ? "chance-likely" : ""}">${PCT(peak.p)}</span> on ${day(peak.date)}`
+    outlook = `Over the next 10 days the daily chance peaks at <span class="num ${peak.alert === "likely" ? "chance-likely" : ""}">${PCT(peak.p)}</span> on ${day(peak.date)}`
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day` : "")
-      + `, which is ${word}. Today: ${PCT(todayRow?.p)}.`
+      + ` (${word}).`
       + (near ? ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${day(near.date, { month: "short", day: "numeric" })}`
         + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : ".") : "");
   }
 
   const wyear = s.today.slice(0, 4) * 1 + (s.today.slice(5, 7) >= "10" ? 1 : 0);
   const readings = [
+    ["Mouth", s.mouth ? `${open ? "Open" : "Closed"}` : "unknown", s.mouth ? `since ${day(s.mouth.since, { month: "short", day: "numeric", year: "numeric" })}` : ""],
     ["Slough level", nowFt != null ? `${nowFt.toFixed(2)} ft` : "n/a", nowWhen],
     [mature ? "Typical breach level" : "Breach level, young berm", blToday != null ? `${blToday.toFixed(1)} ft` : "n/a", mature ? `past ${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)}` : open ? "mouth open" : "estimated"],
     ["Rain since October 1", `${s.recent.season_rain_in.toFixed(2)} in`, `water year ${wyear}`],
@@ -399,6 +426,11 @@ function render(s) {
   const waveChart = wv?.series?.length ? chart({
     width: panelW(), height: 190, yMin: 0, yFmt: (v) => v.toFixed(0),
     series: [{ type: "line", color: COLORS.mesa, width: 2.2, points: wv.series.map((p) => ({ x: localH(p.t), y: p.hs_ft })) }],
+    y2: (() => {
+      const ps = wv.series.map((p) => p.period_s).filter((v) => v != null);
+      return ps.length ? { dots: wv.series.map((p) => ({ x: localH(p.t), y: p.period_s, title: `${p.period_s} s` })), min: 0, max: Math.max(20, Math.ceil(Math.max(...ps) / 5) * 5),
+        fmt: (v) => v.toFixed(0), label: "period, s", color: COLORS.ochre } : undefined;
+    })(),
     xTicks: midnights(wv.series.map((p) => localH(p.t))), xFmt: localDayLabel, now: nowH,
   }) : `<p class="muted">Wave data unavailable.</p>`;
 
@@ -417,9 +449,11 @@ function render(s) {
   app.innerHTML = `
   <section class="head">
     <div aria-live="polite">
-      <h1><span class="dot" style="background:${stateColor}" aria-hidden="true"></span>${headline}</h1>
-      ${lead ? `<p class="lead">${lead}</p>` : ""}
+      <h1><span class="dot" style="background:${headColor}" aria-hidden="true"></span>${headline}</h1>
+      ${p48 != null ? `<p class="lead">Chance of a breach in the next 48 hours: <span class="num">${PCT(p48)}</span>.</p>` : ""}
+      ${windowLine ? `<p class="window">${windowLine}</p>` : ""}
       <p class="outlook">${outlook}</p>
+      ${lead ? `<p class="outlook">${lead}</p>` : ""}
       <dl class="readings">${readings.map(([l, v, n]) => `<dt>${esc(l)}</dt><dd>${esc(v)}${n ? `<small>${esc(n)}</small>` : ""}</dd>`).join("")}</dl>
     </div>
     ${framesHtml()}
@@ -449,11 +483,11 @@ function render(s) {
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
       <div class="sign-dial">
         <p class="sign-title">Breach likelihood</p>
-        <p class="sign-sub">${open ? "Mouth open" : "Next 10 days"}</p>
-        ${dialSvg(peak?.p, open || !peak)}
+        <p class="sign-sub">${open ? "Mouth open" : "Next 48 hours"}</p>
+        ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
-          : `<strong>${bandOf(peak.p).label}.</strong> Highest daily chance ${PCT(peak.p)}, ${day(peak.date).replace(/ /g, "\u00a0")}. Today ${PCT(todayRow?.p)}.`}</p>
+          : `<strong>${band48.label}.</strong> ${PCT(p48)} chance of a breach in the next 48 hours. Next 10 days: highest daily chance ${PCT(peak.p)}, ${day(peak.date).replace(/ /g, "\u00a0")}.`}</p>
       </div>
     </div>
     ${open ? "" : `
@@ -505,7 +539,7 @@ function render(s) {
       </div>
       <div>
         <h3>Waves, ${esc(wv?.station || "Harvest buoy")}</h3>
-        ${legend([[COLORS.mesa, "significant wave height, ft", "line"]])}
+        ${legend([[COLORS.mesa, "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)"]])}
         ${waveChart}
         ${wv?.latest ? `<p class="note">Latest <span class="num">${wv.latest.hs_ft.toFixed(1)} ft</span> at <span class="num">${wv.latest.period_s ?? "?"} s</span> from <span class="num">${wv.latest.dir_deg ?? "?"}°</span>, ${new Date(wv.latest.t).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" })}.</p>` : ""}
       </div>
@@ -523,7 +557,7 @@ function render(s) {
     <div class="prose">
       <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.7 ft of rise per inch of rain on past storms, a little less when the slough is already full.</p>
       <p>The chance of a breach on a given day is a logistic regression on four inputs: that day's rain, the rain since October 1, the slough level, and whether the mouth has already breached once this water year. That last one matters because the season's first breach comes after months behind a tall, wave-built berm, at 8.9 to 10.5 ft, while later breaches cut through a berm only days or weeks old, at 5.9 to 8.0 ft. The model was chosen from dozens of combinations of rain, level, berm age, tide and wave inputs, tested on 14 breaches from 2019 to 2026. The berm's height is not measured; the "typical breach level" on this page is the range where past mature berms broke${BLV ? ` (${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, median ${BLV.mature_median_ft.toFixed(1)} ft)` : ""}, and for a young berm a curve that rebuilds from about ${s.model.crest.c0.toFixed(1)} ft over a couple of months. With no usable level reading (none since the last breach, or none in 45 days), the page falls back to a rain-only model.</p>
-      <p>Predicting each season with a model trained on the others, it reached 30% (the dial's "high", where alerts go out) before ${esc(s.model.skill.hits_p30.replace("/", " of "))} breaches, with ${s.model.skill.false_alarm_days_p30 === 1 ? "one false-alarm day" : s.model.skill.false_alarm_days_p30 ? `${s.model.skill.false_alarm_days_p30} false-alarm days` : "no false alarms"}. Breach days are dated by when the slough began to drain in the water-level record, not the day the open mouth was logged; three overnight breaches count on the rain day before. The two it missed were later breaches of a young berm at low levels (5.8 and 6.4 ft) after moderate rain. Tides and offshore waves are shown for context; they did not improve the daily model. With 14 breaches, the percentages are best read as a ranking of risk, not exact odds.</p>
+      <p>Predicting each season with a model trained on the others, it reached 30% (the dial's "high", where alerts go out) before ${esc(s.model.skill.hits_p30.replace("/", " of "))} breaches, with ${s.model.skill.false_alarm_days_p30 === 1 ? "one false-alarm day" : s.model.skill.false_alarm_days_p30 ? `${s.model.skill.false_alarm_days_p30} false-alarm days` : "no false alarms"}. Breach days are the day the slough began to drain in the water-level record; a breach counts as flagged if the chance reached 30% that day or the day before, since runoff can take a day to arrive. The two it missed were later breaches of a young berm at low levels, after moderate rain. Tides and offshore waves are shown for context; they did not improve the daily model. With 14 breaches, the percentages are best read as a ranking of risk, not exact odds.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
     <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>

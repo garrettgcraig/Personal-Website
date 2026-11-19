@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, watchProb } from "../devereux/model.js";
+import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, watchProb, chanceWithin, breachWindow } from "../devereux/model.js";
 import { parseCsv } from "../netlify/functions/devereux-api.mjs";
 
 const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
@@ -125,4 +125,25 @@ test("displayed breach level: young-berm curve, capped at the median past mature
   assert.equal(y.breach_level_ft, y.crest_ft, "young berm follows the rebuilding curve");
   assert.ok(y.breach_level_ft < BL.mature_median_ft);
   assert.ok(BL.mature_min_ft <= BL.mature_median_ft && BL.mature_median_ft <= BL.mature_max_ft);
+});
+
+test("48-hour chance combines the two daily chances", () => {
+  assert.ok(Math.abs(chanceWithin([0.2, 0.5]) - 0.6) < 1e-12);
+  assert.equal(chanceWithin([0, 0]), 0);
+});
+
+test("breach window: extrapolates the current rise to the breach-level range", () => {
+  const H = 3600000, t0 = Date.UTC(2026, 11, 2, 12);
+  const rising = [...Array(7).keys()].map((k) => ({ t: t0 + k * H, ft: 8.0 + 0.1 * k })); // 8.0 -> 8.6 ft, 0.1 ft/h
+  const w = breachWindow({ hourly: rising, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H });
+  assert.equal(w.state, "rising");
+  assert.ok(Math.abs(w.slope - 0.1) < 1e-9);
+  assert.ok(Math.abs(w.start - (t0 + 13 * H)) < 1000, "reaches 9.3 ft 7 hours after 8.6 ft");
+  assert.ok(Math.abs(w.end - (t0 + 24 * H)) < 1000);
+  const flat = rising.map((h) => ({ ...h, ft: 8.0 }));
+  assert.equal(breachWindow({ hourly: flat, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H }).state, "steady");
+  const slow = rising.map((h, k) => ({ ...h, ft: 6.0 + 0.02 * k }));
+  assert.equal(breachWindow({ hourly: slow, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H }).state, "beyond");
+  const high = rising.map((h, k) => ({ ...h, ft: 9.4 + 0.05 * k }));
+  assert.equal(breachWindow({ hourly: high, lo: 9.3, hi: 10.4, nowMs: t0 + 6 * H }).state, "within");
 });

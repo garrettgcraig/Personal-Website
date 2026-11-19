@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Devereux Breach Model - Garrett G. Craig</title>
+	<meta name="description" content="How the Devereux Slough Breach Watch model was chosen and tested: coefficients, held-out results for 14 breaches, and the slough's response to rain." />
+	<link rel="canonical" href="https://garrettgcraig.com/devereux/model/" />
+	<meta property="og:type" content="article" />
+	<meta property="og:site_name" content="Garrett G. Craig" />
+	<meta property="og:title" content="The model behind Breach Watch" />
+	<meta property="og:description" content="Coefficients, held-out results and diagnostics for the Devereux Slough breach model." />
+	<meta property="og:url" content="https://garrettgcraig.com/devereux/model/" />
+	<meta property="og:image" content="https://garrettgcraig.com/images/og-card.jpg" />
+	<link rel="stylesheet" href="/assets/css/brand.css" />
+	<link rel="stylesheet" href="/devereux/style.css" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<meta name="theme-color" content="#121A21" />
+	<script src="/assets/js/darkmode.js"></script>
+	<style>
+		.page-head { padding: clamp(40px, 6vw, 72px) 0 clamp(24px, 3vw, 40px); max-width: 860px; }
+		.page-head h1 { font-size: clamp(2.2rem, 3vw + 1rem, 3.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+		.page-head .lead { max-width: 60ch; }
+		table.stats { width: 100%; border-collapse: collapse; font: 0.92rem var(--font-ui); font-variant-numeric: tabular-nums lining-nums; margin-top: var(--space-3); }
+		table.stats th { font-weight: 500; color: var(--color-muted); text-align: right; padding: 0 10px 8px; white-space: nowrap; }
+		table.stats td { text-align: right; padding: 8px 10px; border-top: 1px solid var(--color-border); }
+		table.stats th:first-child, table.stats td:first-child { text-align: left; padding-left: 0; }
+		table.stats td { white-space: nowrap; }
+		table.stats td:first-child { white-space: normal; }
+		table.stats .unit { display: block; font-size: 0.8rem; color: var(--color-muted); }
+		table.stats td.desc { text-align: left; color: var(--color-muted); white-space: normal; min-width: 14ch; }
+		table.stats tr.pick td { font-weight: 600; }
+		.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); margin-top: var(--space-4); }
+		@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+		.prose p { max-width: 72ch; }
+	</style>
+</head>
+<body>
+	<header class="top">
+		<div class="wrap">
+			<a class="brand" href="/" aria-label="Garrett G. Craig, home">
+				<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1B2530"/><path d="M71 33 A26 26 0 1 0 74 58" fill="none" stroke="#F6F6F2" stroke-width="8" stroke-linecap="round"/><path d="M44 58 L54 45 L61 52 L66 47 L76 58" fill="none" stroke="#D3A43B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+				Garrett G. Craig
+			</a>
+			<nav class="tabs" aria-label="Devereux pages"><a href="/devereux/">Breach Watch</a><a href="/devereux/model/" aria-current="page">Model</a></nav>
+			<span class="place">Devereux Slough, Coal Oil Point Reserve, Goleta</span>
+			<button class="dm" id="dark-mode-toggle" type="button" aria-label="Switch to dark mode">Theme</button>
+		</div>
+	</header>
+
+	<main class="wrap" id="app">
+		<div class="loading">Loading the model results...</div>
+	</main>
+
+	<footer>
+		<div class="wrap">
+			Model and page by <a href="/">Garrett G. Craig</a>. Data: CCBER (UC Santa Barbara), UC Davis Coastal Oceanography Group and California State Parks, NOAA, CoCoRaHS, Iowa Environmental Mesonet, NDBC.
+		</div>
+	</footer>
+
+	<script type="module" src="page.js"></script>
+</body>
+</html>

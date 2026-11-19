@@ -196,6 +196,33 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
   return out;
 }
 
+/** Chance of at least one breach over the given days' independent daily chances. */
+export const chanceWithin = (ps) => 1 - ps.reduce((q, p) => q * (1 - (p ?? 0)), 1);
+
+/**
+ * When would the slough reach the levels where breaches happen, at its current rate of rise?
+ * hourly: [{t: epoch ms, ft}] (live sensor), lo/hi: breach-level range (ft), nowMs.
+ * Uses a least-squares slope over the last `fitHours`. Returns
+ *   {cur, slope (ft/h), state: "within" | "rising" | "beyond" | "steady", start, end} with
+ *   start/end in epoch ms (only for "within" and "rising"). Extrapolation only: more rain
+ *   speeds the rise, and the rise slows as storm runoff tapers.
+ */
+export function breachWindow({ hourly, lo, hi, nowMs, horizonH = 48, fitHours = 6 }) {
+  const H = 3600000;
+  const last = hourly.at(-1);
+  if (!last) return null;
+  const pts = hourly.filter((h) => h.t >= last.t - fitHours * H);
+  if (pts.length < 3) return null;
+  const mt = pts.reduce((a, h) => a + h.t, 0) / pts.length, mf = pts.reduce((a, h) => a + h.ft, 0) / pts.length;
+  const slope = (pts.reduce((a, h) => a + (h.t - mt) * (h.ft - mf), 0) / pts.reduce((a, h) => a + (h.t - mt) ** 2, 0)) * H;
+  const cur = last.ft, t0 = Math.max(nowMs, last.t);
+  if (cur >= lo) return { cur, slope, state: "within", start: t0, end: slope > 0.005 && cur < hi ? Math.min(t0 + ((hi - cur) / slope) * H, t0 + horizonH * H) : t0 + horizonH * H };
+  if (!(slope > 0.01)) return { cur, slope, state: "steady" };
+  const start = last.t + ((lo - cur) / slope) * H, end = last.t + ((hi - cur) / slope) * H;
+  if (start > t0 + horizonH * H) return { cur, slope, state: "beyond" };
+  return { cur, slope, state: "rising", start: Math.max(start, t0), end: Math.min(end, t0 + horizonH * H) };
+}
+
 /**
  * Detect mouth openings and closings from the live water-level sensor (hourly, ft).
  * Validated on Apr 2025 - Nov 2026 against CCBER's log (2025-11-15 open, 2026-02-06
