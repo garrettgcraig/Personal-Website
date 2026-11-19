@@ -298,10 +298,11 @@ function liveNote(s) {
   const n = s.stage?.sensor_now;
   if (!n) return "";
   const when = new Date(n.t).toLocaleString("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
-  return `Live sensor: ${n.ft.toFixed(2)} ft at ${when}. The chart's right end follows the sensor and refreshes every 5 minutes while this page is open.`;
+  return `Live sensor: ${n.ft.toFixed(2)} ft at ${when}. The chart's right end follows the sensor and refreshes every 5 minutes while this page is open; the forecast starts from the newest reading and updates every 10.`;
 }
-// Poll the live sensor every 5 minutes while the page is visible; rebuild the whole page
-// from the status API every 30 minutes so the forecast and Breach Watch keep up too.
+// Poll the live sensor every 5 minutes while the page is visible, and rebuild the whole page
+// from the status API every 10 minutes: the forecast and Breach Watch start from the newest
+// live reading, so they move with the sensor too.
 async function pollLive() {
   const s = window.__devereux;
   if (!s || document.hidden) return;
@@ -318,7 +319,7 @@ async function pollLive() {
   } catch { /* keep the last readings */ }
 }
 setInterval(pollLive, 5 * 60000);
-setInterval(() => { if (!document.hidden) load(); }, 30 * 60000);
+setInterval(() => { if (!document.hidden) load(); }, 10 * 60000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) pollLive(); });
 
 function redrawLevel() {

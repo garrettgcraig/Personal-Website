@@ -282,7 +282,12 @@ export async function buildStatus(now = new Date()) {
   const sensorDays = Object.entries(sensorDaily).filter(([d, v]) => d < today && v.length >= 12)
     .map(([date, v]) => ({ date, ft: v.reduce((a, b) => a + b, 0) / v.length, src: "live sensor" }));
   const manualLatest = readings.filter((r) => r.date <= today && r.date >= start).at(-1) || null;
-  const sensorLatest = sensorDays.filter((r) => daysSince(r.date, today) <= 3).at(-1) || null;
+  // The forecast starts from the newest live reading when it is under 3 hours old (so it
+  // moves with the sensor through the day), else the latest complete sensor day.
+  const nowRead = (live5 || []).at(-1) || hourly.at(-1) || null;
+  const liveNow = nowRead && now.getTime() - nowRead.t < 3 * 3600000 && pacificDate(nowRead.t) === today
+    ? { date: today, ft: nowRead.ft, t: nowRead.t, src: "live sensor, latest reading" } : null;
+  const sensorLatest = liveNow || sensorDays.filter((r) => daysSince(r.date, today) <= 3).at(-1) || null;
   const latest = sensorLatest || (manualLatest && { ...manualLatest, src: "staff gauge" });
   const mouthOpen = last?.state === "open";
   // A reading only counts if no breach happened after it (the slough drains when the
@@ -369,7 +374,7 @@ export default async (req) => {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=300",
-      "Netlify-CDN-Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
+      "Netlify-CDN-Cache-Control": "public, s-maxage=300, stale-while-revalidate=900",
     },
   });
 };
