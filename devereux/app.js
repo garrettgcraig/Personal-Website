@@ -17,7 +17,7 @@ addEventListener("resize", () => {
 
 // ------------------------------------------------------------- slough level time series
 let HISTORY = null; // stage-history.json: re-leveled daily record (static, from the Python project)
-let levelRange = "3m";
+let levelRange = "1w";
 // custom range for the level chart (ISO dates); defaults to the last six months
 let customFrom = null, customTo = null;
 let showRain = false; // rainfall overlay on the level chart (toggle)
@@ -415,6 +415,10 @@ function render(s) {
     xTicks: everyN(rr.map((p) => p.x), 7), xFmt: shortDay,
   });
 
+  const rainCell = (r) => r.date === s.today && r.so_far_in != null
+    ? `${(r.rain_in ?? 0).toFixed(2)}<br><span class="muted" style="font-size:.85em">${r.so_far_in.toFixed(2)} so far + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
+    : (r.rain_in ?? 0).toFixed(2);
+
   // --- tides (72 h observed + predicted +/- 3 days)
   // Pacific clock time as hours since epoch (treating local time as UTC), so local
   // midnights fall on multiples of 24
@@ -424,13 +428,16 @@ function render(s) {
   const localDayLabel = (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short", day: "numeric" });
   const nowH = tParse(new Date().toLocaleString("sv-SE", { timeZone: tz }).slice(0, 16));
   const td = s.recent.tides;
+  // predictions now run the full forecast horizon; this panel shows +/- 3 days
+  const tWin = (p) => Math.abs(tParse(p.t) - nowH) <= 72;
+  const tPred = (td?.predicted || []).filter(tWin);
   const tideChart = td ? chart({
     width: panelW(), height: 190, yMin: -2, yMax: 8, yFmt: (v) => v.toFixed(0),
     series: [
-      { type: "line", color: COLORS.mist, width: 2, points: td.predicted.map((p) => ({ x: tParse(p.t), y: p.ft })) },
-      { type: "line", color: css("--color-accent"), width: 2.2, points: td.observed.map((p) => ({ x: tParse(p.t), y: p.ft })) },
+      { type: "line", color: COLORS.mist, width: 2, points: tPred.map((p) => ({ x: tParse(p.t), y: p.ft })) },
+      { type: "line", color: css("--color-accent"), width: 2.2, points: td.observed.filter(tWin).map((p) => ({ x: tParse(p.t), y: p.ft })) },
     ],
-    xTicks: midnights(td.predicted.map((p) => tParse(p.t))), xFmt: localDayLabel, now: nowH,
+    xTicks: midnights(tPred.map((p) => tParse(p.t))), xFmt: localDayLabel, now: nowH,
   }) : `<p class="muted">Tide data unavailable.</p>`;
   const nextTides = (td?.hilo || []).filter((p) => tParse(p.t) >= nowH).slice(0, 4);
 
@@ -506,7 +513,7 @@ function render(s) {
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label]))}
@@ -517,7 +524,7 @@ function render(s) {
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th>Breach level</th><th>Below it</th><th>Level</th></tr></thead>
-        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${(r.rain_in ?? 0).toFixed(2)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.p >= 0.5 ? "likely" : ""}">${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
+        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td>${r.breach_level_ft.toFixed(1)}</td><td>${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="${r.p >= 0.5 ? "likely" : ""}">${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
       </table></div>
     </div>`}
   </section>

@@ -12,6 +12,10 @@ import { addDays, dateRange, detectMouthEvents, forecast, iso, rainComposite, st
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
 const HORIZON = 10; // forecast days including today
+// Rain multiplier for scoring a forecast day `lead` days out: 1 today, rising linearly to
+// LEAD_MAX on the last forecast day, for the growing error of multi-day rain forecasts.
+const LEAD_MAX = 1.5;
+export const leadScale = (lead) => 1 + (LEAD_MAX - 1) * Math.min(1, Math.max(0, lead) / (HORIZON - 1));
 
 // ---------------------------------------------------------------- helpers
 async function fetchText(url, ms = 15000) {
@@ -164,15 +168,30 @@ async function tides(today) {
   const ymd = (d) => d.replaceAll("-", "");
   const [obs, pred, hilo] = await Promise.all([
     fetchText(`${NOAA}&product=water_level&range=72`),
-    fetchText(`${NOAA}&product=predictions&interval=h&begin_date=${ymd(addDays(today, -3))}&end_date=${ymd(addDays(today, 3))}`),
+    fetchText(`${NOAA}&product=predictions&interval=h&begin_date=${ymd(addDays(today, -3))}&end_date=${ymd(addDays(today, HORIZON))}`), // out to the end of the rain/level forecast
     fetchText(`${NOAA}&product=predictions&interval=hilo&begin_date=${ymd(today)}&end_date=${ymd(addDays(today, 3))}`),
   ]).then((t) => t.map((x) => JSON.parse(x)));
   const pick = (arr, every = 1) => (arr || []).filter((_, i) => i % every === 0).map((x) => ({ t: x.t, ft: Number(x.v), type: x.type }));
   return { observed: pick(obs.data, 5), predicted: pick(pred.predictions), hilo: pick(hilo.predictions) };
 }
 
+// Nearest wave buoy that is reporting: CDIP 107 Goleta Point (NDBC 46216, about 3 mi
+// offshore of the slough), then NDBC 46053 East Santa Barbara (in the channel), then
+// 46218 Harvest (off Point Conception, open-ocean swell). NTBC1 is the Santa Barbara
+// tide-gauge weather station and has no wave sensor.
+const BUOYS = [["46216", "CDIP 107 Goleta Point"], ["46053", "NDBC 46053 East Santa Barbara"], ["46218", "NDBC 46218 Harvest"]];
 async function waves() {
-  const lines = (await fetchText("https://www.ndbc.noaa.gov/data/realtime2/46218.txt")).split("\n").filter((l) => l && !l.startsWith("#"));
+  let lastErr;
+  for (const [id, name] of BUOYS) {
+    try {
+      const w = await buoy(id, name);
+      if (w.series.length) return w;
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error("no wave buoy reporting");
+}
+async function buoy(id, name) {
+  const lines = (await fetchText(`https://www.ndbc.noaa.gov/data/realtime2/${id}.txt`)).split("\n").filter((l) => l && !l.startsWith("#"));
   const rows = lines.map((l) => l.trim().split(/\s+/)).map((f) => ({
     t: `${f[0]}-${f[1]}-${f[2]}T${f[3]}:${f[4]}:00Z`,
     hs_ft: f[8] === "MM" ? null : Number(f[8]) * 3.28084,
@@ -180,7 +199,7 @@ async function waves() {
     dir_deg: f[11] === "MM" ? null : Number(f[11]),
   })).filter((r) => r.hs_ft != null);
   const cutoff = Date.now() - 72 * 3600000;
-  return { station: "NDBC 46218 Harvest", series: rows.filter((r) => Date.parse(r.t) >= cutoff).reverse(), latest: rows[0] || null };
+  return { station: name, series: rows.filter((r) => Date.parse(r.t) >= cutoff).reverse(), latest: rows[0] || null };
 }
 
 // Real-time water level (UC Davis Coastal Oceanography Group / California State Parks,
@@ -295,6 +314,15 @@ export async function buildStatus(now = new Date()) {
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
     rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
   }
+  // Today: rain measured so far (Santa Barbara airport, scaled to Coal Oil Point) plus only the
+  // forecast hours still to come, so rain that has already stopped isn't counted as coming.
+  const soFar = sba?.[today];
+  if (soFar != null && om?.hourly) {
+    const left = restOfToday(now.getTime(), today, om.hourly).rain_in;
+    const r0 = rain.find((r) => r.date === today);
+    Object.assign(r0, { rain_in: soFar * params.rain.ksba_ratio + left, so_far_in: soFar * params.rain.ksba_ratio, rest_in: left,
+      src: "so far (Santa Barbara airport) + forecast for the hours left" });
+  }
   const missing = rain.filter((r) => r.rain_in == null && r.date >= addDays(today, -30)).length;
   if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
 
@@ -333,6 +361,20 @@ export async function buildStatus(now = new Date()) {
   let stageSeries = [];
   if (last && !mouthOpen) {
     outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
+    // Rain forecasts get less reliable with lead time, so each future day is also scored with
+    // its forecast rain (and the days before it) scaled up by leadScale, which grows from 1 today
+    // to LEAD_MAX on the last day. The stated level is the higher of the two scores; the level
+    // chart and table keep the central forecast.
+    const lib = forecast({ rain: rain.map((r) => (r.date > today && r.rain_in != null ? { ...r, rain_in: r.rain_in * leadScale(daysSince(today, r.date)) } : r)),
+      today, closedSince: last.date, stage0, params, crestFloor, showFrom: today });
+    const libBy = Object.fromEntries(lib.map((r) => [r.date, r]));
+    outlook = outlook.map((r) => {
+      const l = libBy[r.date];
+      if (!l || r.date <= today || !(l.p > r.p)) return r;
+      return { ...r, p_central: r.p, p: l.p, level: l.level, alert: l.alert, lead_scale: leadScale(daysSince(today, r.date)) };
+    });
+    const tr = rain.find((x) => x.date === today);
+    if (tr?.so_far_in != null) outlook = outlook.map((r) => (r.date === today ? { ...r, so_far_in: tr.so_far_in, rest_in: tr.rest_in } : r));
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
       const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
