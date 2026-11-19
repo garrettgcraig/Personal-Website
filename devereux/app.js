@@ -222,11 +222,11 @@ const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 
 // ------------------------------------------------------------- breach likelihood dial
 // Five bands, like a fire-danger sign. The needle follows the highest daily chance in the
-// next 10 days. "Very high" starts at 50%, the same point where alerts go out.
+// next 10 days. Alerts go out when it first reaches "High" (30%).
 const BANDS = [
   { key: "low", label: "Low", min: 0, color: "#4E8F4A", ink: "#fff" },
   { key: "moderate", label: "Moderate", min: 0.05, color: "#3E78A8", ink: "#fff" },
-  { key: "high", label: "High", min: 0.2, color: "#E2B33C", ink: "#1B2530" },
+  { key: "high", label: "High", min: 0.3, color: "#E2B33C", ink: "#1B2530" },
   { key: "veryhigh", label: "Very high", min: 0.5, color: "#D9772B", ink: "#fff" },
   { key: "extreme", label: "Extreme", min: 0.8, color: "#C23B30", ink: "#fff" },
 ];
@@ -328,7 +328,7 @@ function render(s) {
     const f = (s.stage?.series || []).filter((r) => r.date >= s.today && r.breach_level_ft != null);
     const near = f.reduce((m, r) => (m == null || r.breach_level_ft - r.ft < m.breach_level_ft - m.ft ? r : m), null);
     const nearHi = f.reduce((m, r) => Math.min(m, r.breach_level_ft - r.hi), Infinity);
-    const word = { low: "low", watch: "worth watching", likely: "likely" }[peak.alert];
+    const word = bandOf(peak.p).label.toLowerCase();
     outlook = `Breach chance over the next 10 days peaks at <span class="num ${peak.alert === "likely" ? "chance-likely" : ""}">${PCT(peak.p)}</span> on ${day(peak.date)}`
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day` : "")
       + `, which is ${word}. Today: ${PCT(todayRow?.p)}.`
@@ -354,7 +354,7 @@ function render(s) {
         opacity: r.observed ? 0.4 : 1, title: `${day(r.date)}: ${PCT(r.p)}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
-    hlines: [{ y: 0.5, color: BANDS[3].color, label: "very high" }, { y: 0.2, color: BANDS[2].color, label: "high" }],
+    hlines: [{ y: 0.5, color: BANDS[3].color, label: "very high" }, { y: 0.3, color: BANDS[2].color, label: "high" }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
   });
   const rainChart = chart({
@@ -457,7 +457,7 @@ function render(s) {
       </div>
     </div>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's chance depends on how far the slough sits below the breach level and how much rain falls on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's chance comes from four things: that day's rain, the rain so far this season, the slough level, and whether the mouth has already breached once this season. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain, which updates through the day.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b, k) => [b.color, `${b.label}${k ? `, ${Math.round(b.min * 100)}% or more` : ""}`]))}
@@ -521,9 +521,9 @@ function render(s) {
   <section class="block" id="how">
     <h2>How this works</h2>
     <div class="prose">
-      <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. So the model asks two things each day: <strong>how far below the top of the berm is the slough</strong>, and <strong>how much rain is falling on the watershed</strong>, which drives a rise that keeps coming for a day or two as runoff drains in. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.8 ft of slough rise per inch of rain on past storms.</p>
-      <p>The berm's height is not measured. It is low right after a closure (about ${s.model.crest.c0.toFixed(1)} ft) and rebuilds over a couple of months as waves pile sand back up, but only so far: ${BLV ? `berms that had been closed for months broke between ${BLV.mature_min_ft.toFixed(1)} and ${BLV.mature_max_ft.toFixed(1)} ft (median ${BLV.mature_median_ft.toFixed(1)} ft), and the slough has never been measured above ${BLV.mature_max_ft.toFixed(1)} ft` : "it levels off"}. A newly closed berm is also never lower than the water it was holding back when it closed. The crest curve and the weights were fit together on CCBER's record of 14 breaches from 2019 to 2026, using measured water levels. With no usable reading (none since the last breach, or none in 45 days), the page falls back to a rain-only version.</p>
-      <p>Predicting each season with a model trained on the others, starting each day from the previous day's measured level as this page does, it flagged ${esc(s.model.skill.hits_p50)} breaches at the 50% level with ${s.model.skill.false_alarm_days_p50} false-alarm days over eight seasons (${esc(s.model.skill.hits_p20)} at 20%, with ${s.model.skill.false_alarm_days_p20}). A rain-only version caught 6 of 14. It still misses small-rain re-breaches of a freshly closed berm, which may be driven by tides or waves. Tides and offshore waves are shown for context; they did not improve the daily model.</p>
+      <p>The slough fills with rain and the runoff it sends down from the roughly 2.5-square-mile watershed, and the berm breaches when the water tops it. The slough level comes from the live water-level sensor (yesterday's average), or from the latest weekly staff-gauge reading if the sensor is down. Future days roll that level forward with forecast rain and runoff, at about 0.7 ft of rise per inch of rain on past storms, a little less when the slough is already full.</p>
+      <p>The chance of a breach on a given day is a logistic regression on four inputs: that day's rain, the rain since October 1, the slough level, and whether the mouth has already breached once this water year. That last one matters because the season's first breach comes after months behind a tall, wave-built berm, at 8.9 to 10.5 ft, while later breaches cut through a berm only days or weeks old, at 5.9 to 8.0 ft. The model was chosen from dozens of combinations of rain, level, berm age, tide and wave inputs, tested on 14 breaches from 2019 to 2026. The berm's height is not measured; the "typical breach level" on this page is the range where past mature berms broke${BLV ? ` (${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, median ${BLV.mature_median_ft.toFixed(1)} ft)` : ""}, and for a young berm a curve that rebuilds from about ${s.model.crest.c0.toFixed(1)} ft over a couple of months. With no usable level reading (none since the last breach, or none in 45 days), the page falls back to a rain-only model.</p>
+      <p>Predicting each season with a model trained on the others, it reached 30% (the dial's "high", where alerts go out) before ${esc(s.model.skill.hits_p30.replace("/", " of "))} breaches, with ${s.model.skill.false_alarm_days_p30 ? `${s.model.skill.false_alarm_days_p30} false-alarm days` : "no false alarms"}; one of those breaches only just cleared it, at 36%. At 50% it caught ${esc(s.model.skill.hits_p50.replace("/", " of "))}. The two it never flagged were later breaches of a young berm with little or no rain, which may have been pushed by waves. Tides and offshore waves are shown for context; they did not improve the daily model. With 14 breaches, the percentages are best read as a ranking of risk, not exact odds.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
     <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">NDBC 46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
@@ -604,7 +604,7 @@ async function initAlerts() {
   const q = new URLSearchParams(location.search).get("alerts");
   const emailNote = document.getElementById("email-note");
   if (q) {
-    emailNote.textContent = { confirmed: "You're signed up. You'll get an email when a breach becomes likely.", unsubscribed: "You're unsubscribed. No more emails.", invalid: "That link didn't work. Try signing up again." }[q] || "";
+    emailNote.textContent = { confirmed: "You're signed up. You'll get an email when the Breach Watch reaches high.", unsubscribed: "You're unsubscribed. No more emails.", invalid: "That link didn't work. Try signing up again." }[q] || "";
     emailNote.className = `note ${q === "invalid" ? "err" : "ok"}`;
   }
 

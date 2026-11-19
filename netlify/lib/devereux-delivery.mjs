@@ -74,8 +74,8 @@ export async function sendConfirmEmail(email, key, token) {
   return resend({
     to: email,
     subject: "Confirm Devereux Slough breach alerts",
-    text: `Confirm that you want an email when a breach of the Devereux Slough berm becomes likely:\n\n${link}\n\nIf you didn't ask for this, ignore this email and nothing will be sent.`,
-    html: shell(`<p>Confirm that you want an email when a breach of the Devereux Slough berm becomes likely.</p>`
+    text: `Confirm that you want an email when the Devereux Slough Breach Watch reaches high (a 30% chance of a breach or more):\n\n${link}\n\nIf you didn't ask for this, ignore this email and nothing will be sent.`,
+    html: shell(`<p>Confirm that you want an email when the Devereux Slough Breach Watch reaches high (a 30% chance of a breach or more).</p>`
       + `<p><a href="${link}" style="background:#2D5A7B;color:#F6F6F2;padding:10px 18px;border-radius:999px;text-decoration:none;display:inline-block">Confirm alerts</a></p>`
       + `<p style="color:#56606A">If you didn't ask for this, ignore this email and nothing will be sent.</p>`),
   });

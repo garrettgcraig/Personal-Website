@@ -52,6 +52,52 @@
     "b_rain3": 1.5087393770840076,
     "b_api": 0.1547739050118738
   },
+  "watch": {
+    "features": [
+      "rain_in",
+      "rain_wy",
+      "stage",
+      "later"
+    ],
+    "intercept": -28.183090823493377,
+    "coef": [
+      3.7079532045951575,
+      -0.07090286209080436,
+      2.5157604524863078,
+      7.003396370328597
+    ],
+    "cases": [
+      {
+        "rain_in": 0.0,
+        "rain_wy": 2.0,
+        "stage": 6.3,
+        "later": 0,
+        "p": 3.818665600227607e-06
+      },
+      {
+        "rain_in": 1.5,
+        "rain_wy": 6.0,
+        "stage": 9.0,
+        "later": 0,
+        "p": 0.4001754507389565
+      },
+      {
+        "rain_in": 0.8,
+        "rain_wy": 15.0,
+        "stage": 7.5,
+        "later": 1,
+        "p": 0.3992307307284545
+      },
+      {
+        "rain_in": 2.5,
+        "rain_wy": 9.0,
+        "stage": 9.6,
+        "later": 0,
+        "p": 0.9900478707504436
+      }
+    ]
+  },
+  "alert_threshold": 0.3,
   "api_decay": 0.9,
   "rain": {
     "ksba_ratio": 0.94,
@@ -64,7 +110,7 @@
   "stick_offset_ft": 0.19,
   "licor_offset_ft": -0.21,
   "thresholds": {
-    "watch": 0.2,
+    "watch": 0.3,
     "likely": 0.5
   },
   "stage_error_80": {
@@ -77,10 +123,12 @@
     1.5
   ],
   "skill": {
-    "hits_p50": "10/14",
-    "false_alarm_days_p50": 4,
+    "hits_p50": "11/14",
+    "false_alarm_days_p50": 0,
+    "hits_p30": "12/14",
+    "false_alarm_days_p30": 0,
     "hits_p20": "12/14",
-    "false_alarm_days_p20": 8,
+    "false_alarm_days_p20": 3,
     "seasons": "WY2019-WY2026"
   },
   "breach_levels": {
