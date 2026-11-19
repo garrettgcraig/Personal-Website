@@ -13,8 +13,8 @@ export const css = (v) => getComputedStyle(document.body).getPropertyValue(v).tr
 // plot (a hyetograph): {bars: [{x0, x1, y, color, title}], max, fmt, label}, or dots on a
 // normal axis: {dots: [{x, y, title}], min, max, fmt, label, color}.
 let clipSeq = 0;
-export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2, left = 40 }) {
-  const W = width, H = height, m = { l: left, r: y2 ? 44 : 12, t: 10, b: 24 };
+export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt = (v) => v, xTicks, xFmt, now, bands = [], hlines = [], vlines = [], xMin, xMax, y2, left = 40, yLabel }) {
+  const W = width, H = height, m = { l: left + (yLabel ? 16 : 0), r: y2 ? 44 : 12, t: 10, b: 24 };
   const xs = series.flatMap((s) => s.points.map((p) => +p.x));
   const x0 = xMin ?? Math.min(...xs), x1 = xMax ?? Math.max(...xs);
   const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
@@ -27,6 +27,7 @@ export function chart({ series, width = 680, height = 200, yMin = 0, yMax, yFmt 
   let g = "";
   for (const b of bands) g += `<rect x="${X(b.x0)}" y="${m.t}" width="${Math.max(0, X(b.x1) - X(b.x0))}" height="${H - m.t - m.b}" fill="${b.color}" opacity="${b.opacity ?? 0.12}"/>`;
   const ticks = 4;
+  if (yLabel) g += `<text x="10" y="${m.t + (H - m.t - m.b) / 2}" text-anchor="middle" transform="rotate(-90 10 ${m.t + (H - m.t - m.b) / 2})">${esc(yLabel)}</text>`;
   for (let i = 0; i <= ticks; i++) {
     const v = bot + ((top - bot) * i) / ticks;
     g += `<line class="grid" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${yFmt(v)}</text>`;
