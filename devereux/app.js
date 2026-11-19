@@ -595,12 +595,12 @@ function render(s) {
     <div class="sign">
       <figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="The Devereux Crow, a cartoon crow with binoculars, a field bag, a map, and a surfboard, waving in front of the slough." /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
       <div class="sign-dial">
-        <p class="sign-title">Breach likelihood</p>
+        <p class="sign-title">${!open && peak && band48 ? `<strong class="sign-level">${band48.label}</strong> ` : ""}Breach likelihood</p>
         <p class="sign-sub">${open ? "Mouth open" : "Next 48 hours"}</p>
         ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
-          : `<strong>${band48.label}</strong> for the next 48 hours. Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.`}</p>
+          : `Next 10 days: ${bandOf(peak.p).label} at most, ${day(peak.date).replace(/ /g, "\u00a0")}.`}</p>
       </div>
     </div>
     </div>

@@ -118,6 +118,7 @@ ul.plain li .num { font-size: 0.86rem; }
 .sign .dial { width: 100%; max-width: 430px; height: auto; display: block; margin: 0 auto; font-family: var(--font-ui); }
 .sign-read { font: 1rem/1.5 var(--font-ui); margin: var(--space-3) auto 0; max-width: 34ch; color: #F3EBDD; }
 .sign-read strong { color: #E0B656; font-size: 1.15rem; }
+.sign-title .sign-level { display: block; font-size: 1.45em; font-weight: 800; color: #F3EBDD; }
 .custom-range { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: var(--space-3); font: 0.92rem var(--font-ui); color: var(--color-muted); }
 .custom-range input { font: 0.92rem var(--font-ui); color: var(--color-text); background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 6px 8px; margin-left: 6px; color-scheme: light dark; }
 .custom-range[hidden] { display: none; }
