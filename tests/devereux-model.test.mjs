@@ -6,7 +6,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { bestScore, dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
-import { parseCsv, restOfToday } from "../netlify/functions/devereux-api.mjs";
+import { parseCsv, restOfToday, parseUscrnHourly } from "../netlify/functions/devereux-api.mjs";
 
 const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 // the earlier crest-curve hazard, still the fallback when params.best is absent
@@ -207,4 +207,15 @@ test("restOfToday sums Open-Meteo hours after the reading, the current hour in p
   assert.ok(Math.abs(r.rain_in - 0.55) < 1e-9, String(r.rain_in));
   assert.ok(Math.abs(r.frac - 5.5 / 24) < 1e-9);
   assert.equal(restOfToday(Date.parse("2026-12-02T02:30:00Z"), "2026-12-01", null).rain_in, 0);
+});
+
+test("Coal Oil Point hourly feed sums rain by local standard day and skips missing hours", () => {
+  const row = (ud, ut, ld, lt, mm) => `53152 ${ud} ${ut} ${ld} ${lt} 3 -119.88 34.41 12.0 12.0 12.5 11.5 ${mm} 0 C`;
+  const t = [row("20261119", "0700", "20261118", "2300", "2.5"), row("20261119", "0800", "20261119", "0000", "5.8"),
+    row("20261119", "0900", "20261119", "0100", "-9999.0"), row("20261119", "1000", "20261119", "0200", "10.6")].join("\n");
+  const r = parseUscrnHourly(t);
+  assert.ok(Math.abs(r.daily["2026-11-18"] - 2.5 / 25.4) < 1e-9);
+  assert.ok(Math.abs(r.daily["2026-11-19"] - 16.4 / 25.4) < 1e-9);
+  assert.equal(r.hours["2026-11-19"], 2);
+  assert.equal(r.lastMs, Date.UTC(2026, 10, 19, 10, 0));
 });

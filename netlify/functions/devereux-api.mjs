@@ -138,6 +138,37 @@ async function ksba(start, end) {
   return out;
 }
 
+// Coal Oil Point USCRN station, hourly (about an hour behind real time). The NCEI daily
+// summaries lag by days, so this fills recent days and gives today's rain so far.
+// Columns: WBANNO UTC_DATE UTC_TIME LST_DATE LST_TIME ... P_CALC (mm, field 12); -9999 = missing.
+export function parseUscrnHourly(text) {
+  const daily = {}, hours = {};
+  let lastMs = null;
+  for (const line of text.split("\n")) {
+    const f = line.trim().split(/\s+/);
+    if (f.length < 13 || !/^\d{8}$/.test(f[3])) continue;
+    const mm = Number(f[12]);
+    if (!Number.isFinite(mm) || mm < 0) continue;
+    const d = `${f[3].slice(0, 4)}-${f[3].slice(4, 6)}-${f[3].slice(6, 8)}`;
+    daily[d] = (daily[d] || 0) + mm / 25.4;
+    hours[d] = (hours[d] || 0) + 1;
+    lastMs = Date.UTC(+f[1].slice(0, 4), +f[1].slice(4, 6) - 1, +f[1].slice(6, 8), +f[2].slice(0, 2), +f[2].slice(2, 4));
+  }
+  return { daily, hours, lastMs };
+}
+
+async function uscrn(today) {
+  const years = [...new Set([addDays(today, -21).slice(0, 4), today.slice(0, 4)])];
+  const out = { daily: {}, hours: {}, lastMs: null };
+  for (const y of years) {
+    const r = parseUscrnHourly(await fetchText(`https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/${y}/CRNH0203-${y}-CA_Santa_Barbara_11_W.txt`, 20000));
+    Object.assign(out.daily, r.daily); Object.assign(out.hours, r.hours);
+    if (r.lastMs != null) out.lastMs = Math.max(out.lastMs ?? 0, r.lastMs);
+  }
+  if (out.lastMs == null) throw new Error("no USCRN hours");
+  return out;
+}
+
 async function copGauge(start, end) {
   const url = "https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USW00053152"
     + `&startDate=${start}&endDate=${end}&dataTypes=PRCP&units=standard&format=csv`;
@@ -296,7 +327,7 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, coco, sba, cop, om, tide, wave, live, live5] = await Promise.all([
+  const [log, staff, coco, sba, cop, om, tide, wave, live, live5, crn] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cocorahs", () => cocorahs(start, yesterday), blobs, status),
@@ -308,6 +339,7 @@ export async function buildStatus(now = new Date()) {
     withFallback("live_sensor", () => sensor(120), blobs, status),
     // newest 5-minute readings (the sensor's native interval) for the "now" value
     sensor(0.25, 5).catch(() => []),
+    withFallback("cop_hourly", () => uscrn(today), blobs, status),
   ]);
 
   // Mouth state: CCBER's log and the site's own event list, plus openings/closings the
@@ -333,19 +365,26 @@ export async function buildStatus(now = new Date()) {
 
   // Rain: observed composite before today, Open-Meteo from today on.
   const past = dateRange(start, yesterday);
-  const rain = rainComposite(past, { cop: cop || {}, ksba: sba || {}, cocorahs: coco || {} }, params);
+  // complete recent days from the Coal Oil Point hourly feed where the daily summary isn't out yet
+  const copAll = { ...(cop || {}) };
+  for (const d of past) if (copAll[d] == null && (crn?.hours?.[d] ?? 0) >= 22) copAll[d] = Math.round(crn.daily[d] * 100) / 100;
+  const rain = rainComposite(past, { cop: copAll, ksba: sba || {}, cocorahs: coco || {} }, params);
   const omDaily = om?.daily ?? om; // older cached copies are the daily map alone
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
     rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
   }
   // Today: rain measured so far (Santa Barbara airport, scaled to Coal Oil Point) plus only the
   // forecast hours still to come, so rain that has already stopped isn't counted as coming.
-  const soFar = sba?.[today];
+  // Prefer the Coal Oil Point gauge (hourly, within the last 3 hours); the airport gauge can
+  // miss most of a storm that the coast gets.
+  const crnFresh = crn?.lastMs != null && now.getTime() - crn.lastMs < 3 * 3600000;
+  const soFar = crnFresh ? (crn.daily[today] ?? 0) : sba?.[today] != null ? sba[today] * params.rain.ksba_ratio : null;
   if (soFar != null && om?.hourly) {
-    const left = restOfToday(now.getTime(), today, om.hourly).rain_in;
+    const asOf = crnFresh ? crn.lastMs : now.getTime();
+    const left = restOfToday(asOf, today, om.hourly).rain_in;
     const r0 = rain.find((r) => r.date === today);
-    Object.assign(r0, { rain_in: soFar * params.rain.ksba_ratio + left, so_far_in: soFar * params.rain.ksba_ratio, rest_in: left,
-      src: "so far (Santa Barbara airport) + forecast for the hours left" });
+    Object.assign(r0, { rain_in: soFar + left, so_far_in: soFar, rest_in: left, so_far_as_of: new Date(asOf).toISOString(),
+      src: crnFresh ? "so far (Coal Oil Point gauge) + forecast for the hours left" : "so far (Santa Barbara airport) + forecast for the hours left" });
   }
   const missing = rain.filter((r) => r.rain_in == null && r.date >= addDays(today, -30)).length;
   if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
@@ -406,7 +445,7 @@ export async function buildStatus(now = new Date()) {
       return { ...r, p_central: r.p, p: l.p, level: l.level, alert: l.alert, lead_scale: leadScale(daysSince(today, r.date)) };
     });
     const tr = rain.find((x) => x.date === today);
-    if (tr?.so_far_in != null) outlook = outlook.map((r) => (r.date === today ? { ...r, so_far_in: tr.so_far_in, rest_in: tr.rest_in } : r));
+    if (tr?.so_far_in != null) outlook = outlook.map((r) => (r.date === today ? { ...r, so_far_in: tr.so_far_in, rest_in: tr.rest_in, so_far_as_of: tr.so_far_as_of, so_far_src: tr.src } : r));
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
       const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: stage0.date })
