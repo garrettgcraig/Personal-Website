@@ -37,7 +37,32 @@
 	</header>
 
 	<main class="wrap" id="app">
-		<div class="loading" id="loading">Checking the slough...</div>
+		<div class="skeleton" id="loading" aria-busy="true">
+			<section class="head">
+				<div>
+					<p class="loading-status" role="status">Checking the slough...</p>
+					<span class="sk-line" style="width: 92%"></span>
+					<span class="sk-line" style="width: 78%"></span>
+					<span class="sk-line" style="width: 85%"></span>
+					<span class="sk-line" style="width: 60%"></span>
+					<div class="sk-readings"><span></span><span></span><span></span><span></span></div>
+				</div>
+				<div class="head-sign">
+					<div class="sign">
+						<figure class="crow"><img src="media/crow/devereux-crow.webp" width="560" height="521" alt="" /><figcaption>Devereux Crow wants you to know...</figcaption></figure>
+						<div class="sign-dial">
+							<p class="sign-title">Breach likelihood</p>
+							<p class="sign-sub">Reading the gauges...</p>
+							<svg class="dial sk-dial" viewBox="0 0 200 118" aria-hidden="true"><path d="M20 105 A80 80 0 0 1 180 105" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round" /></svg>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="block">
+				<h2>Slough water level</h2>
+				<div class="sk-chart"></div>
+			</section>
+		</div>
 	</main>
 
 	<!-- Persistent widgets (kept outside #app, which re-renders); app.js moves them into place. -->
