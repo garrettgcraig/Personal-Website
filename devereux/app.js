@@ -549,7 +549,6 @@ function render(s) {
     ? breachWindow({ hourly: s.stage.sensor_hourly.map((h) => ({ t: Date.parse(h.t), ft: h.ft })), lo: lvLo, hi: lvHi, nowMs: Date.now() }) : null;
   const when = (ms) => new Date(ms).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" }).replace(/ /g, "\u00a0");
   const headline = !s.mouth ? "Breach Watch is off." : open ? "Breach Watch is off: the mouth is open." : !peak ? "Breach Watch is off." : `Breach Watch: ${band48.label.toLowerCase()}.`;
-  const headColor = band48 ? band48.color : css("--color-muted");
   let windowLine = "";
   if (win?.state === "within") windowLine = `The slough is already at <span class="num">${win.cur.toFixed(2)}&nbsp;ft</span>, within the range where past breaches happened. A breach could come at any time.`;
   else if (win?.state === "rising") windowLine = `Rising <span class="num">${win.slope.toFixed(2)}&nbsp;ft</span> an hour. At that rate it reaches breach levels (${lvLo.toFixed(1)} to ${lvHi.toFixed(1)} ft) between <strong>${when(win.start)}</strong> and <strong>${when(win.end)}</strong>. More rain would bring that sooner.`;
@@ -662,7 +661,7 @@ function render(s) {
   app.innerHTML = `
   <section class="head">
     <div aria-live="polite">
-      <h1><span class="dot" style="background:${headColor}" aria-hidden="true"></span>${headline}</h1>
+      <h1 class="sr-only">${headline}</h1>
       ${p48 != null ? `<p class="lead">Next 48 hours: <strong>${band48.label}</strong>. ${levelMeaning(band48, s.model?.levels_record)}</p>` : ""}
       ${windowLine ? `<p class="window">${windowLine}</p>` : ""}
       <p class="outlook">${outlook}</p>
