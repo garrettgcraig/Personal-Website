@@ -286,7 +286,9 @@ const LEVEL_STYLE = { low: { color: "#C23B30", ink: "#fff" }, watch: { color: "#
   warning: { color: "#E2B33C", ink: "#1B2530" }, likely: { color: "#4E8F4A", ink: "#fff" } };
 let BANDS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Watch", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }]
   .map((l) => ({ ...l, ...LEVEL_STYLE[l.key] }));
-const setBands = (levels) => { if (levels?.length) BANDS = levels.map((l) => ({ ...l, ...(LEVEL_STYLE[l.key] || LEVEL_STYLE.low) })); };
+// names live here, by key, so a cached status from before a rename can't bring old names back
+const LEVEL_NAME = { low: "No Chance", watch: "Watch", warning: "Likely", likely: "Imminent" };
+const setBands = (levels) => { if (levels?.length) BANDS = levels.map((l) => ({ ...l, label: LEVEL_NAME[l.key] ?? l.label, ...(LEVEL_STYLE[l.key] || LEVEL_STYLE.low) })); };
 const bandOf = (p) => (p == null ? null : [...BANDS].reverse().find((b) => p >= b.min) ?? BANDS[0]);
 // What each level has meant on the record
 function levelMeaning(b, rec) {

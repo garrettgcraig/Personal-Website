@@ -45,7 +45,8 @@ const LEVELS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", labe
 export function alertMessage(status) {
   const pk = status.peak;
   const levels = status.model?.levels || LEVELS;
-  const lv = [...levels].reverse().find((l) => pk.p >= l.min) || levels[0];
+  const found = [...levels].reverse().find((l) => pk.p >= l.min) || levels[0];
+  const lv = { ...found, label: LEVELS.find((l) => l.key === found.key)?.label ?? found.label };
   const rain = pk.rain_in != null && pk.rain_in >= 0.1 ? `, with ${pk.rain_in.toFixed(2)} in of rain forecast` : "";
   const ft = status.stage?.sensor_now?.ft ?? status.stage?.today_est_ft;
   const when = pk.date === status.today ? "today" : `by ${niceDay(pk.date)}`;
