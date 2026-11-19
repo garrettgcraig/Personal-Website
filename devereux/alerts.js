@@ -39,7 +39,7 @@ function niceDay(iso) {
   return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "short", day: "numeric" });
 }
 
-const LEVELS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Watch", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }];
+const LEVELS = [{ key: "low", label: "No Chance", min: 0 }, { key: "watch", label: "Possible", min: 0.125 }, { key: "warning", label: "Likely", min: 0.2 }, { key: "likely", label: "Imminent", min: 0.5 }];
 
 /** Text for push and email. Levels, not percentages: the score ranks risk but isn't a calibrated chance. */
 export function alertMessage(status) {
@@ -50,15 +50,16 @@ export function alertMessage(status) {
   const rain = pk.rain_in != null && pk.rain_in >= 0.1 ? `, with ${pk.rain_in.toFixed(2)} in of rain forecast` : "";
   const ft = status.stage?.sensor_now?.ft ?? status.stage?.today_est_ft;
   const when = pk.date === status.today ? "today" : `by ${niceDay(pk.date)}`;
-  const title = `Devereux Slough Breach Watch: ${lv.label} ${when}`;
-  const body = `The breach outlook reaches ${lv.label} on ${niceDay(pk.date)}${rain}. Every recorded breach reached at least Watch first.`
+  const phrase = { low: "No Chance of Breach", watch: "Possible Breach", warning: "Likely to Breach", likely: "Imminent Breach" }[lv.key] ?? lv.label;
+  const title = `Devereux Slough Breach Watch: ${phrase} ${when}`;
+  const body = `The breach outlook reaches ${lv.label} on ${niceDay(pk.date)}${rain}. Every recorded breach reached at least Possible first.`
     + (ft != null ? ` The slough is at ${ft.toFixed(2)} ft now.` : "");
   return { title, body, url: PAGE };
 }
 
 /** A test message, for checking delivery after setup. */
 export function testMessage() {
-  return { title: "Devereux Slough alerts are working", body: "This is a test. You'll get a message like this when the Breach Watch reaches Watch.", url: PAGE };
+  return { title: "Devereux Slough alerts are working", body: "This is a test. You'll get a message like this when the Breach Watch reaches Possible.", url: PAGE };
 }
 
 // Plain, permissive email check: one @, a dot in the domain, no spaces, sane length.

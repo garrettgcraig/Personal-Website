@@ -18,7 +18,7 @@ test("alerts once when the outlook first reaches Watch", () => {
   const a = decideAlert({}, status(0.05), T);
   assert.equal(a.send, true);
   assert.equal(a.state.active, true);
-  assert.match(a.alert.title, /Breach Watch: Watch by Friday, Nov 20/);
+  assert.match(a.alert.title, /Breach Watch: Possible Breach by Friday, Nov 20/);
   assert.doesNotMatch(a.alert.body, /%/);
   assert.match(a.alert.body, /7\.12 ft/);
   // still on watch 3 hours later: no repeat
@@ -44,8 +44,8 @@ test("episode ends when the outlook falls well below Watch or the berm breaches,
 });
 
 test("message names the level and says today when the peak is today", () => {
-  assert.match(alertMessage(status(0.7, { date: "2026-11-18" })).title, /Breach Watch: Imminent today/);
-  assert.match(alertMessage(status(0.25)).title, /Likely/);
+  assert.match(alertMessage(status(0.7, { date: "2026-11-18" })).title, /Breach Watch: Imminent Breach today/);
+  assert.match(alertMessage(status(0.25)).title, /Likely to Breach/);
 });
 
 test("email validation", () => {

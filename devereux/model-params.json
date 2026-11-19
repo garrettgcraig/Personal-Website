@@ -64,7 +64,7 @@
   },
   {
    "key": "watch",
-   "label": "Watch",
+   "label": "Possible",
    "min": 0.125,
    "caught": 16,
    "false_alarm_days": 8,
@@ -122,7 +122,7 @@
  "skill": {
   "watch": {
    "key": "watch",
-   "label": "Watch",
+   "label": "Possible",
    "min": 0.125,
    "caught": 16,
    "false_alarm_days": 8,
