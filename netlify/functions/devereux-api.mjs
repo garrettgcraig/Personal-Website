@@ -381,16 +381,24 @@ export async function buildStatus(now = new Date()) {
       .filter((r) => r.date >= last.date && r.date <= addDays(last.date, 2) && r.date < today);
     if (lv.length) crestFloor = Math.max(...lv.map((r) => r.ft));
   }
+  // measured daily means since the closure (live sensor, staff gauge where the sensor has none),
+  // for the model's highest-level-since-closure input
+  const levelHistory = [];
+  if (last && !mouthOpen) {
+    const byDate = new Map(readings.filter((r) => r.date >= last.date && r.date < today).map((r) => [r.date, r.ft]));
+    for (const r of sensorDays) if (r.date >= last.date) byDate.set(r.date, r.ft);
+    for (const [date, ft] of [...byDate].sort()) levelHistory.push({ date, ft });
+  }
   let outlook = [];
   let stageSeries = [];
   if (last && !mouthOpen) {
-    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: addDays(today, -14) });
+    outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: addDays(today, -14) });
     // Rain forecasts get less reliable with lead time, so each future day is also scored with
     // its forecast rain (and the days before it) scaled up by leadScale, which grows from 1 today
     // to LEAD_MAX on the last day. The stated level is the higher of the two scores; the level
     // chart and table keep the central forecast.
     const lib = forecast({ rain: rain.map((r) => (r.date > today && r.rain_in != null ? { ...r, rain_in: r.rain_in * leadScale(daysSince(today, r.date)) } : r)),
-      today, closedSince: last.date, stage0, params, crestFloor, showFrom: today });
+      today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: today });
     const libBy = Object.fromEntries(lib.map((r) => [r.date, r]));
     outlook = outlook.map((r) => {
       const l = libBy[r.date];
@@ -401,7 +409,7 @@ export async function buildStatus(now = new Date()) {
     if (tr?.so_far_in != null) outlook = outlook.map((r) => (r.date === today ? { ...r, so_far_in: tr.so_far_in, rest_in: tr.rest_in } : r));
     if (stage0) {
       // level (with range) and crest from the latest reading on, for the level chart
-      const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, showFrom: stage0.date })
+      const bl = Object.fromEntries(forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: stage0.date })
         .map((r) => [r.date, r.breach_level_ft]));
       stageSeries = stageOutlook({ rain, today, closedSince: last.date, stage0, params })
         .map((r) => ({ ...r, breach_level_ft: bl[r.date] ?? null }));
@@ -426,7 +434,7 @@ export async function buildStatus(now = new Date()) {
     const k = params.rain_scenarios?.[1] ?? 1.5;
     const rainHi = rain.map((r) => (r.date >= today && r.rain_in != null ? { ...r, rain_in: r.rain_in * k } : r));
     const s0 = stage0.rest ? { ...stage0, rest: { ...stage0.rest, rain_in: stage0.rest.rain_in * k } } : stage0;
-    peakHeavy = forecast({ rain: rainHi, today, closedSince: last.date, stage0: s0, params, crestFloor, showFrom: today })
+    peakHeavy = forecast({ rain: rainHi, today, closedSince: last.date, stage0: s0, params, crestFloor, levelHistory, showFrom: today })
       .reduce((m, r) => (r.p > (m?.p ?? -1) ? r : m), null);
     if (peakHeavy) peakHeavy = { date: peakHeavy.date, p: peakHeavy.p, stage_ft: peakHeavy.stage_ft, rain_in: peakHeavy.rain_in, scale: k };
   }
@@ -461,7 +469,7 @@ export async function buildStatus(now = new Date()) {
       tides: tide,
       waves: wave,
     },
-    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.unified,
+    model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.best?.crest || params.unified, best: params.best,
       breach_levels: params.breach_levels, levels: params.levels, levels_record: params.levels_record, alert_threshold: params.alert_threshold },
     sources: status,
     warnings,

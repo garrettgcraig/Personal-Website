@@ -5,10 +5,39 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
+import { bestScore, dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
 import { parseCsv, restOfToday } from "../netlify/functions/devereux-api.mjs";
 
-const params = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
+const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
+// the earlier crest-curve hazard, still the fallback when params.best is absent
+const params = { ...live, best: undefined };
+const spec = JSON.parse(readFileSync(new URL("./fixtures/devereux-best-model.json", import.meta.url)));
+
+test("site model reproduces the Python check cases (best_margin_max.json)", () => {
+  assert.equal(live.best.intercept, spec.fit.intercept);
+  assert.deepEqual(live.best.coef, spec.fit.coef);
+  for (const c of spec.check_cases) {
+    const p = bestScore(c, live.best);
+    assert.ok(Math.abs(p - c.p) < 5e-6 || Math.abs(p - c.p) / c.p < 1e-3, `${c.date}: ${p} vs ${c.p}`);
+  }
+  assert.deepEqual(live.levels.map((l) => l.min), spec.levels.map((l) => l.min));
+});
+
+test("site model: highest level since closure comes from measured days, then the simulated level", () => {
+  const days = dateRange("2026-10-01", "2026-12-10");
+  const rain = days.map((d) => ({ date: d, rain_in: d === "2026-12-02" ? 2 : 0, src: "test" }));
+  const levelHistory = [{ date: "2026-11-20", ft: 7.9 }, { date: "2026-11-29", ft: 7.2 }];
+  const out = forecast({ rain, today: "2026-12-01", closedSince: "2026-11-15", stage0: { date: "2026-11-30", ft: 7.3 }, params: live, levelHistory, showFrom: "2026-11-15" });
+  const d1 = out.find((r) => r.date === "2026-12-01");
+  assert.equal(d1.max_level_ft, 7.9);
+  assert.ok(Math.abs(d1.margin_max_ft - (d1.stage_ft - 7.9)) < 1e-9);
+  const first = out.find((r) => r.date === "2026-11-15");
+  assert.ok(first.margin_max_ft === null || first.margin_max_ft === 0);
+  // after the storm lifts the simulated level past 7.9, the next day's max follows it
+  const d3 = out.find((r) => r.date === "2026-12-03"), d2 = out.find((r) => r.date === "2026-12-02");
+  if (d2.stage_ft > 7.9) assert.ok(Math.abs(d3.max_level_ft - d2.stage_ft) < 1e-9);
+  assert.ok(d2.p > d1.p, "storm day scores higher");
+});
 
 test("forecast matches the Python crest-curve model on a synthetic December storm", () => {
   const days = dateRange("2026-10-01", "2026-12-31");

@@ -150,7 +150,16 @@ export const levelOf = (p, levels) => (p == null ? null : [...levels].reverse().
  * risk well but isn't a calibrated probability, so the page reports levels (params.levels).
  * With no level estimate it falls back to the rain-only logistic model.
  */
-export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null }) {
+/** The site's breach score (devereux-breach models/best_margin_max.json):
+ *  logit p = b0 + rain_in, rain_prev, margin (stage - crest), margin_max (stage - highest level
+ *  since the closure, through the day before). */
+export function bestScore(x, B) {
+  const z = B.intercept + B.coef.rain_in * x.rain_in + B.coef.rain_prev * x.rain_prev
+    + B.coef.margin * x.margin + B.coef.margin_max * x.margin_max;
+  return sigmoid(z);
+}
+
+export function forecast({ rain, today, closedSince, stage0, params, showFrom, crestFloor = null, levelHistory = [] }) {
   const P = rain.map((r) => r.rain_in ?? 0);
   const dates = rain.map((r) => r.date);
   const decay = params.api_decay;
@@ -171,6 +180,18 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     : new Array(dates.length).fill(null);
 
   const L = params.rain_logit;
+  const B = params.best;
+  // highest level since the closure through each day before: measured daily means, then the
+  // simulated level for days past the latest reading
+  const measured = new Map(levelHistory.filter((r) => r.date >= closedSince && r.ft != null).map((r) => [r.date, r.ft]));
+  const maxBefore = [];
+  let run = -Infinity;
+  dates.forEach((d, n) => {
+    maxBefore.push(run);
+    if (d < closedSince) return;
+    const v = measured.has(d) ? measured.get(d) : (iStage >= 0 && n >= iStage ? stage[n] : null);
+    if (v != null) run = Math.max(run, v);
+  });
   const out = [];
   dates.forEach((d, n) => {
     if (d < (showFrom || today)) return;
@@ -179,7 +200,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     const z = L.intercept + L.features.reduce((a, f, k) => a + (L.coef[k] * (x[f] - L.mean[k])) / L.scale[k], 0);
     const pRain = sigmoid(z);
     // One hazard: how far the slough sits below the berm crest, plus the day's rain.
-    const U = params.unified;
+    const U = B?.crest || params.unified;
     // a just-closed berm is at least as high as the water it held back when it closed
     const crest = Math.max(crestFt(dc, U), crestFloor ?? -Infinity);
     const margin = stage[n] == null ? null : stage[n] - crest;
@@ -188,7 +209,11 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     // levels off near the top of that range and is not itself the level breaches happen at.
     const BL = params.breach_levels;
     const breachLevel = BL ? Math.min(crest, BL.mature_median_ft) : crest;
+    // first closed day (or no earlier level): the max is the day's own level
+    const maxlvl = margin == null ? null : Number.isFinite(maxBefore[n]) ? maxBefore[n] : stage[n];
+    const marginMax = margin == null ? null : stage[n] - maxlvl;
     const p = margin == null ? pRain
+      : B ? bestScore({ rain_in: P[n], rain_prev: P[n - 1] || 0, margin, margin_max: marginMax }, B)
       : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
     const level = levelOf(p, params.levels);
     out.push({
@@ -201,6 +226,8 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
       stage_ft: stage[n],
       crest_ft: crest,
       margin_ft: margin,
+      max_level_ft: margin == null ? null : maxlvl,
+      margin_max_ft: margin == null ? null : marginMax,
       breach_level_ft: breachLevel,
       below_breach_ft: stage[n] == null ? null : breachLevel - stage[n],
       p_rain: pRain,

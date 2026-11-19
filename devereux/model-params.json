@@ -1,207 +1,218 @@
 {
-  "exported": "2026-11-18",
-  "rain_logit": {
-    "features": [
-      "rain_in",
-      "rain_3d",
-      "api",
-      "log_dc",
-      "rain_wy"
-    ],
-    "mean": [
-      0.0354302554027505,
-      0.08703732809430237,
-      0.2674256306119261,
-      4.628290510072444,
-      12.013375245579567
-    ],
-    "scale": [
-      0.20441584207514438,
-      0.35482830816132066,
-      0.5341489576532448,
-      1.053847789554608,
-      9.57483378069578
-    ],
-    "coef": [
-      0.2490464573218249,
-      0.3328824471775945,
-      0.45422265365305303,
-      -0.23052345983354708,
-      0.19017010644212184
-    ],
-    "intercept": -6.9605063030931404
-  },
-  "water_balance": {
-    "a0": 0.11619025788653242,
-    "a1": 0.3476842730631182,
-    "a2": 0.010562182455644846,
-    "b": 0.41968224683946886,
-    "e0": 0.007960522360617528,
-    "e1": 0.008089179626622077,
-    "q": 0.0,
-    "ia": 0.25,
-    "beta": 0.0
-  },
-  "unified": {
-    "c_inf": 9.760385020979076,
-    "c0": 5.758964447025345,
-    "tau": 60.41330514965268,
-    "b0": -7.460644524244837,
-    "b_margin": 2.652931694075272,
-    "b_rain": 0.3890166303194985,
-    "b_rain3": 0.07098618770460435,
-    "b_api": 2.6176424291668425
-  },
-  "levels": [
-    {
-      "key": "low",
-      "label": "Low",
-      "min": 0.0,
-      "caught": null,
-      "false_alarm_days": null,
-      "false_alarm_episodes": null
-    },
-    {
-      "key": "watch",
-      "label": "Watch",
-      "min": 0.02,
-      "caught": 10,
-      "false_alarm_days": 17,
-      "false_alarm_episodes": 6
-    },
-    {
-      "key": "warning",
-      "label": "Warning",
-      "min": 0.2,
-      "caught": 9,
-      "false_alarm_days": 1,
-      "false_alarm_episodes": 1
-    },
-    {
-      "key": "likely",
-      "label": "Likely",
-      "min": 0.5,
-      "caught": 8,
-      "false_alarm_days": 1,
-      "false_alarm_episodes": 1
-    }
+ "exported": "2026-11-19",
+ "rain_logit": {
+  "features": [
+   "rain_in",
+   "rain_3d",
+   "api",
+   "log_dc",
+   "rain_wy"
   ],
-  "levels_record": {
-    "breaches": 10,
-    "days": 2254,
-    "seasons": "WY2019-WY2026",
-    "excluded": [
-      "2022-12-31",
-      "2024-01-22",
-      "2024-02-01",
-      "2024-03-07"
-    ]
-  },
-  "alert_threshold": 0.02,
-  "api_decay": 0.9,
-  "rain": {
-    "ksba_ratio": 0.94,
-    "cocorahs": {
-      "CA-SB-30": 1.0,
-      "CA-SB-23": 1.04,
-      "CA-SB-1": 1.17
-    }
-  },
-  "stick_offset_ft": 0.19,
-  "licor_offset_ft": -0.21,
-  "thresholds": {
-    "watch": 0.02,
-    "warning": 0.2,
-    "likely": 0.5
-  },
-  "stage_error_80": {
-    "a": 0.028,
-    "per_day": 0.013,
-    "per_in": 0.229
-  },
-  "rain_scenarios": [
-    0.5,
-    1.5
+  "mean": [
+   0.0354302554027505,
+   0.08703732809430237,
+   0.2674256306119261,
+   4.628290510072444,
+   12.013375245579567
   ],
-  "skill": {
-    "watch": {
-      "key": "watch",
-      "label": "Watch",
-      "min": 0.02,
-      "caught": 10,
-      "false_alarm_days": 17,
-      "false_alarm_episodes": 6
-    },
-    "breaches": 10,
-    "seasons": "WY2019-WY2026"
+  "scale": [
+   0.20441584207514438,
+   0.35482830816132066,
+   0.5341489576532448,
+   1.053847789554608,
+   9.57483378069578
+  ],
+  "coef": [
+   0.2490464573218249,
+   0.3328824471775945,
+   0.45422265365305303,
+   -0.23052345983354708,
+   0.19017010644212184
+  ],
+  "intercept": -6.9605063030931404
+ },
+ "water_balance": {
+  "a0": 0.11619025788653242,
+  "a1": 0.3476842730631182,
+  "a2": 0.010562182455644846,
+  "b": 0.41968224683946886,
+  "e0": 0.007960522360617528,
+  "e1": 0.008089179626622077,
+  "q": 0.0,
+  "ia": 0.25,
+  "beta": 0.0
+ },
+ "unified": {
+  "c_inf": 9.760385020979076,
+  "c0": 5.758964447025345,
+  "tau": 60.41330514965268,
+  "b0": -7.460644524244837,
+  "b_margin": 2.652931694075272,
+  "b_rain": 0.3890166303194985,
+  "b_rain3": 0.07098618770460435,
+  "b_api": 2.6176424291668425
+ },
+ "levels": [
+  {
+   "key": "low",
+   "label": "Low",
+   "min": 0.0,
+   "caught": null,
+   "false_alarm_days": null,
+   "false_alarm_episodes": null
   },
-  "breach_levels": {
-    "events": [
-      {
-        "date": "2019-01-07",
-        "peak_ft": 9.28,
-        "days_closed": 1,
-        "mature": true
-      },
-      {
-        "date": "2020-03-16",
-        "peak_ft": 10.06,
-        "days_closed": 361,
-        "mature": true
-      },
-      {
-        "date": "2021-01-28",
-        "peak_ft": 9.55,
-        "days_closed": 298,
-        "mature": true
-      },
-      {
-        "date": "2021-12-23",
-        "peak_ft": 9.72,
-        "days_closed": 311,
-        "mature": true
-      },
-      {
-        "date": "2023-02-25",
-        "peak_ft": 8.38,
-        "days_closed": 21,
-        "mature": false
-      },
-      {
-        "date": "2023-03-10",
-        "peak_ft": 6.84,
-        "days_closed": 6,
-        "mature": false
-      },
-      {
-        "date": "2025-02-13",
-        "peak_ft": 10.44,
-        "days_closed": 335,
-        "mature": true
-      },
-      {
-        "date": "2025-03-13",
-        "peak_ft": 6.78,
-        "days_closed": 10,
-        "mature": false
-      },
-      {
-        "date": "2025-11-15",
-        "peak_ft": 9.41,
-        "days_closed": 244,
-        "mature": true
-      },
-      {
-        "date": "2026-02-19",
-        "peak_ft": 7.91,
-        "days_closed": 13,
-        "mature": false
-      }
-    ],
-    "mature_min_ft": 9.28,
-    "mature_max_ft": 10.44,
-    "mature_median_ft": 9.635000000000002,
-    "mature_n": 6,
-    "mature_days": 120
+  {
+   "key": "watch",
+   "label": "Watch",
+   "min": 0.125,
+   "caught": 16,
+   "false_alarm_days": 8,
+   "false_alarm_episodes": 1
+  },
+  {
+   "key": "warning",
+   "label": "Warning",
+   "min": 0.2,
+   "caught": 15,
+   "false_alarm_days": 8,
+   "false_alarm_episodes": 1
+  },
+  {
+   "key": "likely",
+   "label": "Likely",
+   "min": 0.5,
+   "caught": 13,
+   "false_alarm_days": 8,
+   "false_alarm_episodes": 1
   }
+ ],
+ "levels_record": {
+  "breaches": 16,
+  "days": 2386,
+  "seasons": "WY2019-WY2026",
+  "excluded": []
+ },
+ "alert_threshold": 0.125,
+ "api_decay": 0.9,
+ "rain": {
+  "ksba_ratio": 0.94,
+  "cocorahs": {
+   "CA-SB-30": 1.0,
+   "CA-SB-23": 1.04,
+   "CA-SB-1": 1.17
+  }
+ },
+ "stick_offset_ft": 0.19,
+ "licor_offset_ft": -0.21,
+ "thresholds": {
+  "watch": 0.125,
+  "warning": 0.2,
+  "likely": 0.5
+ },
+ "stage_error_80": {
+  "a": 0.028,
+  "per_day": 0.013,
+  "per_in": 0.229
+ },
+ "rain_scenarios": [
+  0.5,
+  1.5
+ ],
+ "skill": {
+  "watch": {
+   "key": "watch",
+   "label": "Watch",
+   "min": 0.125,
+   "caught": 16,
+   "false_alarm_days": 8,
+   "false_alarm_episodes": 1
+  },
+  "breaches": 16,
+  "seasons": "WY2019-WY2026"
+ },
+ "breach_levels": {
+  "events": [
+   {
+    "date": "2019-01-07",
+    "peak_ft": 9.28,
+    "days_closed": 1,
+    "mature": true
+   },
+   {
+    "date": "2020-03-16",
+    "peak_ft": 10.06,
+    "days_closed": 361,
+    "mature": true
+   },
+   {
+    "date": "2021-01-28",
+    "peak_ft": 9.55,
+    "days_closed": 298,
+    "mature": true
+   },
+   {
+    "date": "2021-12-23",
+    "peak_ft": 9.72,
+    "days_closed": 311,
+    "mature": true
+   },
+   {
+    "date": "2023-02-25",
+    "peak_ft": 8.38,
+    "days_closed": 21,
+    "mature": false
+   },
+   {
+    "date": "2023-03-10",
+    "peak_ft": 6.84,
+    "days_closed": 6,
+    "mature": false
+   },
+   {
+    "date": "2025-02-13",
+    "peak_ft": 10.44,
+    "days_closed": 335,
+    "mature": true
+   },
+   {
+    "date": "2025-03-13",
+    "peak_ft": 6.78,
+    "days_closed": 10,
+    "mature": false
+   },
+   {
+    "date": "2025-11-15",
+    "peak_ft": 9.41,
+    "days_closed": 244,
+    "mature": true
+   },
+   {
+    "date": "2026-02-19",
+    "peak_ft": 7.91,
+    "days_closed": 13,
+    "mature": false
+   }
+  ],
+  "mature_min_ft": 9.28,
+  "mature_max_ft": 10.44,
+  "mature_median_ft": 9.635000000000002,
+  "mature_n": 6,
+  "mature_days": 120
+ },
+ "best": {
+  "model": "rain_in + rain_prev + margin + margin_max",
+  "intercept": -5.260221,
+  "coef": {
+   "rain_in": 3.780513,
+   "rain_prev": 4.358366,
+   "margin": 2.989021,
+   "margin_max": -3.546549
+  },
+  "crest": {
+   "c_inf": 10.014886720087272,
+   "c0": 6.170550214098007,
+   "tau": 64.1944226697477
+  },
+  "source": "devereux-breach models/best_margin_max.json @6b1a15c"
+ }
 }
