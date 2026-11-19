@@ -149,15 +149,39 @@ async function copGauge(start, end) {
   return out;
 }
 
+// Forecast grid points across the Devereux Creek watershed, from the slough up through
+// the Ellwood mesa and Goleta foothill reaches; the forecast is their mean so a cell
+// that misses a band of rain doesn't stand in for the whole catchment.
+export const WATERSHED = [
+  [34.415, -119.876], // slough
+  [34.428, -119.880], // lower creek, Ellwood mesa
+  [34.440, -119.884], // middle reaches, north of Hollister
+  [34.452, -119.888], // upper reaches, foothills
+  [34.435, -119.900], // western tributary, Ellwood
+];
+
+// Average per-point series key by key, skipping missing values.
+export function meanSeries(list) {
+  const acc = {};
+  for (const m of list) for (const [k, v] of Object.entries(m)) {
+    if (v == null || !Number.isFinite(v)) continue;
+    (acc[k] ||= []).push(v);
+  }
+  return Object.fromEntries(Object.entries(acc).map(([k, vs]) => [k, Math.round(vs.reduce((x, y) => x + y, 0) / vs.length * 1000) / 1000]));
+}
+
 // Daily forecast rain, plus hourly for the rest of today (local "YYYY-MM-DDTHH:00" keys), so a
 // forecast starting from a mid-day live reading still counts the rain to come that day.
 async function openMeteo() {
-  const url = "https://api.open-meteo.com/v1/forecast?latitude=34.41&longitude=-119.88&daily=precipitation_sum"
+  const lat = WATERSHED.map((p) => p[0]).join(","), lon = WATERSHED.map((p) => p[1]).join(",");
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=precipitation_sum`
     + `&hourly=precipitation&precipitation_unit=inch&timezone=America%2FLos_Angeles&forecast_days=${HORIZON}`;
-  const j = JSON.parse(await fetchText(url));
+  const raw = JSON.parse(await fetchText(url));
+  const pts = Array.isArray(raw) ? raw : [raw];
   return {
-    daily: Object.fromEntries(j.daily.time.map((d, i) => [d, j.daily.precipitation_sum[i]])),
-    hourly: Object.fromEntries((j.hourly?.time || []).slice(0, 48).map((t, i) => [t, j.hourly.precipitation[i]])),
+    daily: meanSeries(pts.map((j) => Object.fromEntries(j.daily.time.map((d, i) => [d, j.daily.precipitation_sum[i]])))),
+    hourly: meanSeries(pts.map((j) => Object.fromEntries((j.hourly?.time || []).slice(0, 48).map((t, i) => [t, j.hourly.precipitation[i]])))),
+    points: pts.length,
   };
 }
 
