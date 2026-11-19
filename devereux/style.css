@@ -274,3 +274,4 @@ ol.stages .txt { display: block; margin-top: 2px; }
 .alert-btn .sm { display: none; }
 @media (max-width: 480px) { .alert-btn .lg { display: none; } .alert-btn .sm { display: inline; } .site-title { font-size: 0.98rem; } header.top .wrap { gap: 10px; } }
 .tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
+html.dark-mode-preload { background: #121A21; color-scheme: dark; }
