@@ -416,7 +416,7 @@ function render(s) {
   });
 
   const rainCell = (r) => r.date === s.today && r.so_far_in != null
-    ? `${(r.rain_in ?? 0).toFixed(2)}<br><span class="muted" style="font-size:.85em">${r.so_far_in.toFixed(2)} so far + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
+    ? `${(r.rain_in ?? 0).toFixed(2)}<br><span class="muted" style="font-size:.85em"><span title="${esc(r.so_far_src || "")}">${r.so_far_in.toFixed(2)} so far${r.so_far_as_of ? ` (to ${new Date(r.so_far_as_of).toLocaleTimeString("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" })})` : ""}</span> + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
     : (r.rain_in ?? 0).toFixed(2);
 
   // --- tides (72 h observed + predicted +/- 3 days)
@@ -513,7 +513,7 @@ function render(s) {
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from how far the slough sits below the berm's crest, which rebuilds after every closure, and from rain on the watershed. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label]))}
