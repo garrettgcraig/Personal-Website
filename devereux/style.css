@@ -124,7 +124,7 @@ ul.plain li .num { font-size: 0.86rem; }
 .sign-dial { text-align: center; }
 .sign-title { font: 700 clamp(1.5rem, 1.6vw + 1rem, 2.1rem)/1.1 var(--font-display); color: #E0B656; margin: 0; letter-spacing: -0.01em; }
 .sign-sub { font: 500 0.95rem var(--font-ui); color: #D8CBB4; margin: 4px 0 var(--space-3); }
-.sign .dial { width: 100%; max-width: 430px; height: auto; display: block; margin: 0 auto; font-family: var(--font-ui); }
+.sign .dial { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; font-family: var(--font-ui); }
 .sign-read { font: 1rem/1.5 var(--font-ui); margin: var(--space-3) auto 0; max-width: 34ch; color: #F3EBDD; }
 .sign-read strong { color: #E0B656; font-size: 1.15rem; }
 .sign-title .sign-level { display: block; font-size: 1.45em; font-weight: 800; color: #F3EBDD; }

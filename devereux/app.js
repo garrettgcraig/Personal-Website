@@ -314,11 +314,13 @@ function dialSvg(p, off) {
   const b = off ? null : bandOf(p), i = b ? BANDS.indexOf(b) : -1;
   const a = mid(i);
   const [tx, ty] = pt(R - 10, a), [lx, ly] = pt(8, a + Math.PI / 2), [rx, ry] = pt(8, a - Math.PI / 2);
-  return `<svg class="dial" viewBox="-30 0 440 186" role="img" aria-label="${off ? "Breach likelihood dial, off while the mouth is open" : `Breach likelihood: ${b.label}`}">
+  return `<svg class="dial" viewBox="40 22 300 176" role="img" aria-label="${off ? "Breach likelihood dial, off while the mouth is open" : `Breach likelihood: ${b.label}`}">
     ${BANDS.map((bd, k) => `<path d="${wedge(k)}" fill="${bd.color}" opacity="${off ? 0.3 : k === i ? 1 : 0.72}" stroke="#2A2119" stroke-width="2"/>`).join("")}
     ${BANDS.map((bd, k) => {
-      const [x, y] = pt(R + 12, mid(k)), c = Math.cos(mid(k));
-      return `<text x="${x}" y="${y + 4}" text-anchor="${Math.abs(c) < 0.2 ? "middle" : c < 0 ? "end" : "start"}" fill="${k === i ? "#F3EBDD" : "#BFAE93"}" font-size="14" font-weight="${k === i ? 700 : 500}">${bd.label}</text>`;
+      // end slices: label centered under the slice's base; middle slices: centered just beyond the arc
+      const end = k === 0 || k === n - 1;
+      const [x, y] = end ? [cx + (k === 0 ? -1 : 1) * (R + r) / 2, cy + 21] : pt(R + 14, mid(k));
+      return `<text x="${x}" y="${end ? y : y + 1}" text-anchor="middle" fill="${k === i ? "#F3EBDD" : "#BFAE93"}" font-size="14" font-weight="${k === i ? 700 : 500}">${bd.label}</text>`;
     }).join("")}
     ${off ? "" : `<path d="M${lx},${ly} L${tx},${ty} L${rx},${ry} Z" fill="#F3EBDD" stroke="#2A2119" stroke-width="1.5" stroke-linejoin="round"/>`}
     <circle cx="${cx}" cy="${cy}" r="12" fill="#2A2119" stroke="#E0B656" stroke-width="2.5"/>
