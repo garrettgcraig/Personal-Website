@@ -8,7 +8,7 @@ const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
 const fmtP = (p) => (p < 0.001 ? "<0.001" : p.toFixed(3));
-const C = { first: "#2D5A7B", later: "#C9652F", line: "#D9772B", sage: "#5E6E3A" };
+const C = { first: "#3F86C8", later: "#C9652F", line: "#D9772B", sage: "#5E6E3A" };
 const day = (iso, o = { month: "short", day: "numeric", year: "numeric" }) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", o);
 const dnum = (iso) => Date.parse(`${iso}T12:00:00Z`) / 86400000;
 const W = () => Math.max(300, Math.round(app.clientWidth || 1000));
@@ -51,7 +51,7 @@ function render(R) {
   const levelLines = (X, Y, x0, x1) => L.filter((l) => l.min > 0).map((l) => `<line x1="${X(x0)}" x2="${X(x1)}" y1="${Y(lg(l.min))}" y2="${Y(lg(l.min))}" stroke="${LEVEL_COLOR[l.key]}" stroke-dasharray="4 4" stroke-width="1.4"/><text x="${X(x1)}" y="${Y(lg(l.min)) - 4}" text-anchor="end" style="fill:${LEVEL_COLOR[l.key]}">${esc(l.label)}</text>`).join("");
 
   // --- response curves: score vs slough level, young and mature berm, two rain days
-  const curves = [[11, 0.5, "#9DB9CF", "6 4"], [11, 1.5, "#2D5A7B", "6 4"], [300, 0.5, "#E0B656", ""], [300, 1.5, "#A65A3C", ""]].map(([dc, rain, col, dash]) => {
+  const curves = [[11, 0.5, "#3F86C8", "6 4"], [11, 1.5, "#8E62C9", "6 4"], [300, 0.5, "#D9A23A", ""], [300, 1.5, "#C2553A", ""]].map(([dc, rain, col, dash]) => {
     const pts = []; for (let st = 4; st <= 11.001; st += 0.05) pts.push([st, score(st, dc, rain)]);
     return { dc, rain, col, dash, pts };
   });
@@ -133,7 +133,7 @@ function render(R) {
       <p class="note">A <strong>coefficient</strong> is an input's weight: positive pushes the score up, negative pulls it down. The <strong>odds ratio</strong> is the same weight in a form that's easier to read: it's what the odds of a breach are multiplied by for one more unit of the input. An odds ratio of 2 doubles the odds, 1 leaves them alone, and 0.5 halves them. Units are per inch of rain, per foot of level and per doubling of berm age; the intercept is the starting point before any input is added. Fit on all ${R.n_days.toLocaleString()} measured days; the results above use fits that leave out the season being scored.</p></div>
       <div>
         <h3>What it means</h3>
-        ${legend([["#9DB9CF", "young berm (11 days), 0.5 in of rain", "dash"], ["#2D5A7B", "young berm, 1.5 in", "dash"], ["#E0B656", "mature berm (300 days), 0.5 in", "line"], ["#A65A3C", "mature berm, 1.5 in", "line"]])}
+        ${legend([["#3F86C8", "young berm (11 days), 0.5 in of rain", "dash"], ["#8E62C9", "young berm, 1.5 in", "dash"], ["#D9A23A", "mature berm (300 days), 0.5 in", "line"], ["#C2553A", "mature berm, 1.5 in", "line"]])}
         <p class="note">Each line is the score for one kind of day as the slough's highest level climbs, with 10 in of rain so far this season. The score axis is a log scale: each gridline is ten times the one below it.</p>
         ${respChart}
       </div>

@@ -6,6 +6,10 @@ export const day = (iso, opts = { weekday: "short", month: "short", day: "numeri
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", opts);
 export const COLORS = { sky: "#2D5A7B", ochre: "#D3A43B", sage: "#5E6E3A", clay: "#A65A3C", mesa: "#6B4A73", mist: "#7FA3BD" };
 export const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
+// observed vs predicted/forecast series: blue (the theme accent) against violet, so the
+// two never read as one color in either theme; predicted lines are also dashed
+export const OBS = () => css("--color-accent");
+export const PRED = () => (document.body.classList.contains("dark-mode") ? "#B98CF2" : "#7A55B0");
 
 // ------------------------------------------------------------- tiny SVG charts
 // series: [{type: "bar"|"line"|"dots"|"step", points: [{x: Date|number, y}], color, width, opacity, dash}]
