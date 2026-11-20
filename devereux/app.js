@@ -403,23 +403,22 @@ function render(s) {
     ["Rain since October 1", `${s.recent.season_rain_in.toFixed(2)} in`, `water year ${wyear}`],
   ];
 
-  // --- outlook chart: past 14 days observed + 10-day forecast
-  const nowX = dayNum(s.today);
-  const pts = s.outlook.map((r) => ({ x: dayNum(r.date), r }));
+  // --- outlook chart: today and the forecast days only (past days would be scored after the fact)
+  const pts = s.outlook.filter((r) => r.date >= s.today).map((r) => ({ x: dayNum(r.date), r }));
   const probChart = chart({
     width: splitW(), height: 200, left: 70, yLabel: "level", yMin: 0, yMax: BANDS.length, yFmt: (v) => (v >= 1 ? BANDS[Math.round(v) - 1]?.label ?? "" : ""),
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: BANDS.indexOf(bandOf(r.p)) + 1, color: bandOf(r.p).color,
-        opacity: r.observed ? 0.4 : 1, title: `${day(r.date)}: ${bandOf(r.p).label}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
+        title: `${day(r.date)}: ${bandOf(r.p).label}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
-    xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
+    xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }),
   });
   const rainChart = chart({
     width: splitW(), height: 120, left: 70, yLabel: "rain, in", yMin: 0, yFmt: (v) => v.toFixed(1),
     series: [{ type: "bar", points: pts.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.observed ? css("--color-accent") : COLORS.mist, title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.rain_src})` })) }],
-    xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }), now: nowX - 0.5,
+    xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }),
   });
 
   const lastDay = s.stage?.series?.length ? s.stage.series.at(-1).date : s.today;
@@ -534,7 +533,7 @@ function render(s) {
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off about 6 to 8 hours after the rain stops, so a storm's rain day scores highest. On Likely and Imminent days the table gives the most likely breach hours: about two hours after the storm's rain passes 1.8 inches, the typical total that has set off past breaches.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off about 6 to 8 hours after the rain stops, so a storm's rain day scores highest. On Likely and Imminent days the table gives the most likely breach hours: about two hours after the storm's rain passes about 1.9 inches, the typical total that has set off past breaches.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label, "bar"]))}
@@ -542,7 +541,7 @@ function render(s) {
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
         ${legend([[css("--color-accent"), "observed", "bar"], [COLORS.mist, "forecast (Open-Meteo, watershed average)", "bar"]])}
         ${rainChart}
-        <p class="note">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left. Rain forecasts get less reliable further out, so later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), and the higher level is shown.</p>
+        <p class="note">Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left. Rain forecasts get less reliable further out, so later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), and the higher level is shown.</p>
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
