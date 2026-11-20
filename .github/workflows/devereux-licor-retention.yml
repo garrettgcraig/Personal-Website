@@ -1,0 +1,50 @@
+name: Devereux sensor history watch
+# Weekly check that the UC Davis / State Parks water-level sensor (LI-COR Cloud) still serves
+# its full history. The first 5-minute reading was 2025-04-01 00:05 UTC (Mar 31, 5:05 PM
+# Pacific). If the earliest reading moves later, old data is being dropped and the site
+# should start saving raw readings itself; this opens an issue so that gets noticed.
+on:
+  schedule:
+    - cron: '17 16 * * 1'   # Mondays, 8:17 AM Pacific standard time
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query the earliest sensor reading
+        id: q
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, urllib.request, datetime as dt
+          body = {
+            "channels": [{"channelUUID": "0942b00d-ca65-460d-9b34-8ca6f3912883", "channelType": "dataChannel",
+                          "metricName": "com.onset.sensordata.waterlevel_si",
+                          "aggregationInterval": {"value": 5, "unit": "minutes"},
+                          "aggregationFunction": "avg", "limit": 10000}],
+            "time": {"absolute": {"from": 1743465600000, "to": 1744329600000}},  # 2025-04-01 to 2025-04-11 UTC
+            "dashboardUUID": "cd5b1933-9022-44e4-a3c8-f4cfcc2a3433",
+          }
+          req = urllib.request.Request("https://www.licor.cloud/api/v2/timeseriesdata", data=json.dumps(body).encode(),
+                                       headers={"Content-Type": "application/json", "Accept": "application/json",
+                                                "User-Agent": "garrettgcraig.com devereux-breach"})
+          d = json.load(urllib.request.urlopen(req, timeout=60))
+          v = (((d.get("value") or {}).get("records") or [{}])[0].get("datum") or {}).get("valid") or []
+          first = dt.datetime.fromtimestamp(v[0][0] / 1000, dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC") if v else "none"
+          print(f"first={first}")
+          print(f"count={len(v)}")
+          print("ok=" + ("true" if v and v[0][0] <= 1743465900000 and len(v) > 2500 else "false"))
+          EOF
+      - name: Report
+        run: echo "Earliest reading ${{ steps.q.outputs.first }}, ${{ steps.q.outputs.count }} readings in the first 10 days."
+      - name: Open an issue if the oldest readings are gone
+        if: steps.q.outputs.ok != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Devereux: LI-COR sensor history is losing its oldest readings"
+          if [ -z "$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[].number')" ]; then
+            gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --body "The weekly check found the earliest 5-minute reading at ${{ steps.q.outputs.first }} (${{ steps.q.outputs.count }} readings between Apr 1 and Apr 11, 2025; a full record has about 2,880). The first reading used to be 2025-04-01 00:05 UTC, so LI-COR appears to be dropping old data. Time to start saving raw sensor readings in the site's own storage."
+          fi
