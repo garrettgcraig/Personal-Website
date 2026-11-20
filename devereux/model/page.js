@@ -124,17 +124,17 @@ function render(R) {
 
   <section class="block">
     <h2>The model</h2>
-    <p class="intro">A logistic model with four inputs: <strong>rain that day</strong>, <strong>rain since October 1</strong>, <strong>how many days the berm has had to build</strong> since the mouth last closed (on a log scale, so the first weeks count most), and <strong>the highest the slough has stood since then</strong>, through the day before. A slough that has already held high water against a berm has shown how close it is to the top; a young berm fails at lower levels than an old one, and a wet season primes the watershed. Rain is the Coal Oil Point gauge, midnight to midnight. An earlier version used how far the slough sat below an estimated berm crest and below its own high. A bug in its training data gave that second input an ideal value on every breach day, which made it look better than it was; with the bug fixed, the model here did better.</p>
+    <p class="intro">A <strong>logistic model</strong> turns several inputs into one daily score between 0 and 1. Each input is multiplied by a weight learned from past days (its coefficient) and the results are added up; the logistic curve then squeezes that total so the score can't fall below 0 or rise above 1. A higher score means a breach is more likely. This one has four inputs: <strong>rain that day</strong>, <strong>rain since October 1</strong>, <strong>how many days the berm has had to build</strong> since the mouth last closed, and <strong>the highest the slough has stood since then</strong>, through the day before. Berm age enters on a <strong>log scale</strong>, meaning each doubling counts the same: going from 10 to 20 days matters as much as going from 100 to 200, so the first weeks count most. A slough that has already held high water against a berm has shown how close it is to the top; a young berm fails at lower levels than an old one, and a wet season primes the watershed. Rain is the Coal Oil Point gauge, midnight to midnight.</p>
     <div class="cols">
       <div class="table-scroll"><table class="stats">
         <thead><tr><th>Input</th><th>Coefficient</th><th>Odds ratio</th></tr></thead>
         <tbody>${R.coef.map((c) => `<tr><td>${esc(c.label)}${c.unit ? `<small class="unit">${esc(c.unit)}</small>` : ""}</td><td>${c.coef.toFixed(3)}</td><td>${c.term === "intercept" ? "" : (c.term === "log_dc" ? Math.exp(c.coef * Math.LN2) : Math.exp(c.coef)).toPrecision(3)}</td></tr>`).join("")}</tbody>
       </table>
-      <p class="note">Odds ratios are per inch of rain, per foot of level and per doubling of berm age. Fit on all ${R.n_days.toLocaleString()} measured days; the results above use leave-one-season-out fits.</p></div>
+      <p class="note">A <strong>coefficient</strong> is an input's weight: positive pushes the score up, negative pulls it down. The <strong>odds ratio</strong> is the same weight in a form that's easier to read: it's what the odds of a breach are multiplied by for one more unit of the input. An odds ratio of 2 doubles the odds, 1 leaves them alone, and 0.5 halves them. Units are per inch of rain, per foot of level and per doubling of berm age; the intercept is the starting point before any input is added. Fit on all ${R.n_days.toLocaleString()} measured days; the results above use fits that leave out the season being scored.</p></div>
       <div>
         <h3>What it means</h3>
         ${legend([["#9DB9CF", "young berm (11 days), 0.5 in of rain", "dash"], ["#2D5A7B", "young berm, 1.5 in", "dash"], ["#E0B656", "mature berm (300 days), 0.5 in", "line"], ["#A65A3C", "mature berm, 1.5 in", "line"]])}
-        <p class="note">With 10 in of rain so far this season.</p>
+        <p class="note">Each line is the score for one kind of day as the slough's highest level climbs, with 10 in of rain so far this season. The score axis is a log scale: each gridline is ten times the one below it.</p>
         ${respChart}
       </div>
     </div>
@@ -145,7 +145,7 @@ function render(R) {
     
     ${legend([[css("--color-text"), "daily score", "line"], [C.first, "first breach of a season", "vline"], [C.later, "later breach", "vline"]])}
     ${timeChart}
-    <p class="note">Each season scored by a model that never saw it. Vertical lines are breaches (blue: first of the season; orange: later ones). Gaps are times the mouth was open or the level wasn't measured.</p>
+    <p class="note"><strong>Held-out</strong> means each season is scored by a model fit only on the other seasons, so it meets that season the way the live model meets a new winter. That's a fairer test than scoring the days a model learned from. Vertical lines are breaches (blue: first of the season; orange: later ones). Gaps are times the mouth was open or the level wasn't measured.</p>
   </section>`}
 
   <section class="block">
@@ -167,17 +167,17 @@ function render(R) {
 
   <section class="block">
     <h2>How it compares</h2>
-    <p class="intro">The leaders of the ${R.n_models.toLocaleString()}-model search. "Tuned" sets the cutoff as low as the weakest breach requires. "Honest" sets each season's cutoff from the other seasons only. Alerts go out once per episode, so false-alarm episodes are what subscribers would see.</p>
+    <p class="intro">The leaders of the ${R.n_models.toLocaleString()}-model search. "Tuned" sets the cutoff using every season, just low enough to catch the weakest breach. "Honest" sets each season's cutoff from the other seasons only, as if that season were new. A false-alarm episode is a run of days over the cutoff with no breach after it; alerts go out once per episode, so episodes are what subscribers would see.</p>
     <div class="table-scroll"><table class="stats">
       <thead><tr><th>Model</th><th>Tuned: false-alarm days</th><th>Tuned: episodes</th><th>Honest: caught</th><th>Honest: episodes</th><th>Honest: missed</th><th>Honest: false-alarm days</th></tr></thead>
       <tbody>${R.search.map((c) => `<tr class="${c.model === R.model ? "pick" : ""}"><td>${esc(nice(c.model))}${c.model === R.model ? " (in use)" : ""}</td><td>${c.fa_days}</td><td>${c.fa_episodes}</td><td>${esc(c.honest_caught.replace("/", " of "))}</td><td>${c.honest_fa_episodes}</td><td>${esc(c.honest_missed ? c.honest_missed.split(";").map((d) => day(d)).join(", ") : "none")}</td><td>${c.honest_fa_days}</td></tr>`).join("")}</tbody>
     </table></div>
-    <p class="note">The top eight lead the search; they all catch 15 of 16 honestly, and the one in use has the fewest false alarms with the simplest inputs. Below them for comparison: the earlier model in use (rain that day and the day before, level below the crest and below its own high), scored with its training bug fixed; the old rain-only model (rain that day plus rain since October 1), which catches as many but with 11 false-alarm episodes; and a level-and-rain model that needs a cutoff so low it raises dozens of false-alarm episodes.</p>
+    <p class="note">The top eight lead the search; all catch 15 of 16 on the honest test, and the one in use has the fewest false alarms with the simplest inputs. Three more are shown for comparison: one built on how far the slough sits below an estimated berm crest and below its own high, with rain that day and the day before; a rain-only model (rain that day plus rain since October 1), which catches as many but with 11 false-alarm episodes; and a level-and-rain model that needs a cutoff so low it raises dozens of false-alarm episodes.</p>
   </section>
 
   <section class="block">
     <h2>Which inputs matter on their own</h2>
-    <p class="intro">Each input alone, on all closed-mouth days. Tides and waves were screened out early.</p>
+    <p class="intro">Each input alone, on all closed-mouth days. Tides and waves were screened out early. The <strong>likelihood-ratio χ²</strong> measures how much better a model with that input sorts breach days from other days than a model with no inputs; bigger is better. <strong>p</strong> is the chance of an improvement that large if the input had no real link to breaches, so a small p (under 0.05) means the link is unlikely to be luck. <strong>AUC</strong> is the chance that a random breach day scores higher than a random non-breach day: 0.5 is a coin flip and 1 is perfect.</p>
     <div class="table-scroll"><table class="stats">
       <thead><tr><th>Input</th><th>Likelihood-ratio χ²</th><th>p</th><th>AUC alone</th></tr></thead>
       <tbody>${R.univariate.filter((u) => !OCEAN.has(u.input)).map((u) => `<tr><td>${esc((NAMES[u.input] || u.input).replace(/^./, (c) => c.toUpperCase()))}</td><td>${u.lr.toFixed(1)}</td><td>${fmtP(u.p)}</td><td>${u.auc.toFixed(3)}</td></tr>`).join("")}</tbody>
@@ -188,7 +188,7 @@ function render(R) {
     <h2>How much the slough rises in a storm</h2>
     <div class="cols">
       <div>
-        <p class="intro">Ordinary least squares on ${S.length} storms: <strong>${esc(R.rise.formula)}</strong>. A fuller slough rises less per inch because it spreads over a wider area. Adjusted R² ${R.rise.r2_adj.toFixed(2)}; leave-one-storm-out error ${R.rise.loo_rmse.toFixed(2)} ft. Robust (HC3) standard errors.</p>
+        <p class="intro">A straight-line fit (ordinary least squares) on ${S.length} storms: <strong>${esc(R.rise.formula)}</strong>. A fuller slough rises less per inch because it spreads over a wider area. <strong>Adjusted R²</strong> is ${R.rise.r2_adj.toFixed(2)}: the share of the storm-to-storm differences in rise the fit explains (1 would be all of it), with a small penalty for each input. <strong>Leave-one-storm-out error</strong> is ${R.rise.loo_rmse.toFixed(2)} ft: refit without each storm, predict it, and that's the typical miss. The <strong>95% CI</strong> (confidence interval) is the range the true coefficient most likely falls in. The standard errors behind it are robust (HC3), meaning they don't assume every storm is equally predictable.</p>
         <table class="stats">
           <thead><tr><th>Term</th><th>Coefficient</th><th>95% CI</th><th>p</th></tr></thead>
           <tbody>${riseRows}</tbody>
@@ -200,7 +200,7 @@ function render(R) {
 
   <section class="block">
     <h2>Full report</h2>
-    <p class="intro">Every test behind these numbers, with code: collinearity, separation, Box–Tidwell, Hosmer–Lemeshow, influence, season-block bootstrap, the catch-every-breach search, and the residual checks for the rise model. <a href="report.html">Open the full statistical report</a>. Generated ${esc(day(R.generated))}.</p>
+    <p class="intro">Every test behind these numbers, with code. That includes checks that the inputs don't overlap too much (collinearity), that no input splits breach days from the rest too perfectly to fit (separation), that each input's effect has the right shape (Box–Tidwell) and the scores match how often breaches happened (Hosmer–Lemeshow), that no single day drives the fit (influence), and that the results hold when whole seasons are resampled (season-block bootstrap), plus the catch-every-breach search and the checks on the rise model's errors. <a href="report.html">Open the full statistical report</a>. Generated ${esc(day(R.generated))}.</p>
   </section>`;
 }
 
