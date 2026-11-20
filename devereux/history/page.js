@@ -1,7 +1,7 @@
 // The History tab: how the mouth cycle works, satellite views, and every breach, closure and
 // overtopping event since the 2018–19 season (events.json, from scripts/build_devereux_events.py).
 
-import { esc, COLORS, css, chart, legend, fullW, wide } from "../shared.js";
+import { esc, COLORS, css, OBS, PRED, chart, legend, fullW, wide } from "../shared.js";
 
 const app = document.getElementById("app");
 
@@ -41,8 +41,8 @@ function exampleChart(x) {
     yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0), yLabel: "water level, ft NAVD88",
     bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
     series: [
-      { type: "line", color: COLORS.mist, width: 1.2, dash: "3 3", points: pts.map((q) => ({ x: q.h, y: q.p })) },
-      { type: "line", color: COLORS.sky, width: 1.4, opacity: 0.8, points: pts.map((q) => ({ x: q.h, y: q.o })) },
+      { type: "line", color: PRED(), width: 1.2, dash: "3 3", points: pts.map((q) => ({ x: q.h, y: q.p })) },
+      { type: "line", color: OBS(), width: 1.4, opacity: 0.85, points: pts.map((q) => ({ x: q.h, y: q.o })) },
       { type: "line", color: css("--color-text"), width: 2.2, points: pts.map((q) => ({ x: q.h, y: q.lv })) },
     ],
     xTicks: mids, xFmt: (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" }),
@@ -325,7 +325,7 @@ function render() {
 
   <section class="block" id="overtopping">
     <h2>Overtopping, up close</h2>
-    ${legend([[css("--color-text"), "slough level", "line"], [COLORS.sky, "tide, observed (NOAA Santa Barbara)", "line"], [COLORS.mist, "tide, predicted", "dash"], [COLORS.ochre, "overtopping event", "vband", 0.3]])}
+    ${legend([[css("--color-text"), "slough level", "line"], [OBS(), "tide, observed (NOAA Santa Barbara)", "line"], [PRED(), "tide, predicted", "dash"], [COLORS.ochre, "overtopping event", "vband", 0.3]])}
     <div class="ev-examples">${EVENTS.examples.map((x) => `
       <figure class="ev-example">
         ${exampleChart(x)}

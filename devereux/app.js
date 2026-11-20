@@ -2,7 +2,7 @@
 // netlify/functions/devereux-api.mjs) and draws everything with inline SVG.
 
 import { breachWindow } from "./model.js";
-import { esc, tz, day, COLORS, css, chart, legend, dayNum, everyN, dayTicks, shortDay, fullW, wide } from "./shared.js";
+import { esc, tz, day, COLORS, css, OBS, PRED, chart, legend, dayNum, everyN, dayTicks, shortDay, fullW, wide } from "./shared.js";
 
 const app = document.getElementById("app");
 const splitW = () => (wide() ? Math.round((fullW() - 56) * 1.2 / 2.2) : fullW());
@@ -66,8 +66,8 @@ function tideSeries(s, start, end) {
   const ys = [...obs, ...pred].map((p) => p.y).filter((v) => v != null);
   if (end - start <= 120) {
     return { ys, series: [
-      { type: "line", color: COLORS.mist, width: 1.1, dash: "3 3", opacity: 0.9, gap: 0.05, points: pred },
-      { type: "line", color: COLORS.sky, width: 1, opacity: 0.6, gap: 0.05, points: obs },
+      { type: "line", color: PRED(), width: 1.1, dash: "3 3", opacity: 0.9, gap: 0.05, points: pred },
+      { type: "line", color: OBS(), width: 1.2, opacity: 0.75, gap: 0.05, points: obs },
     ] };
   }
   // daily high/low envelope, observed where at least 18 of 24 hours exist, else predicted
@@ -82,7 +82,7 @@ function tideSeries(s, start, end) {
     const v = r.o.length >= 18 ? r.o : r.o.concat(r.p);
     return { x: d + 0.5, lo: Math.min(...v), hi: Math.max(...v) };
   });
-  return { ys, series: [{ type: "band", color: COLORS.sky, opacity: 0.14, points: band }] };
+  return { ys, series: [{ type: "band", color: OBS(), opacity: 0.16, points: band }] };
 }
 
 function monthTicks(a, b, everyMonths) {
@@ -107,7 +107,7 @@ function rainBars(s, start, end) {
   for (const r of s.recent?.rain || []) if (r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: false });
   for (const r of s.outlook || []) if (!r.observed && r.rain_in != null) daily.set(dayNum(r.date), { y: r.rain_in, fc: true });
   const days = [...daily].filter(([x, v]) => x >= start - 7 && x <= end && v.y > 0).sort((a, b) => a[0] - b[0]);
-  const obsColor = css("--color-accent"), fcColor = COLORS.mist;
+  const obsColor = OBS(), fcColor = PRED();
   // daily in every view, so each bar lines up with the day the slough responds
   return days.map(([x, v]) => ({ x0: x - 0.5, x1: x + 0.5, y: v.y, color: v.fc ? fcColor : obsColor, opacity: v.fc ? 0.5 : 0.6,
     title: `${shortDay(x)}: ${v.y.toFixed(2)} in${v.fc ? " (forecast)" : ""}` }));
@@ -192,10 +192,12 @@ function levelSummary(s) {
     + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
 }
 
-const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)", "hang", 0.6], [COLORS.mist, "rain, forecast", "hang", 0.5]]);
+// olive for the Coal Oil Point gauge, lifted in dark mode so it reads on the dark background
+const SAGE = () => (document.body.classList.contains("dark-mode") ? "#A3BE6E" : COLORS.sage);
+const rainLegend = () => legend([[css("--color-accent"), "rain, observed (right axis, hanging from the top)", "hang", 0.6], [PRED(), "rain, forecast", "hang", 0.5]]);
 const tideLegend = () => (levelSpan() <= 120
-  ? legend([[COLORS.sky, "tide, observed (NOAA Santa Barbara, same axis)", "line"], [COLORS.mist, "tide, predicted where observed is missing", "dash"]])
-  : legend([[COLORS.sky, "daily tide range, high to low (NOAA Santa Barbara, same axis)", "band", 0.3]]));
+  ? legend([[OBS(), "tide, observed (NOAA Santa Barbara, same axis)", "line", 0.75], [PRED(), "tide, predicted where observed is missing", "dash"]])
+  : legend([[OBS(), "daily tide range, high to low (NOAA Santa Barbara, same axis)", "band", 0.3]]));
 // span in days of the level chart's current view
 function levelSpan() {
   if (levelRange === "1w") return 17;
@@ -417,7 +419,7 @@ function render(s) {
   });
   const rainChart = chart({
     width: splitW(), height: 120, left: 70, yLabel: "rain, in", yMin: 0, yFmt: (v) => v.toFixed(1),
-    series: [{ type: "bar", points: pts.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.observed ? css("--color-accent") : COLORS.mist, title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.rain_src})` })) }],
+    series: [{ type: "bar", points: pts.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.observed ? OBS() : PRED(), title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.rain_src})` })) }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }),
   });
 
@@ -429,7 +431,7 @@ function render(s) {
   const rr = s.recent.rain.map((r) => ({ x: dayNum(r.date), r }));
   const recentRain = chart({
     width: panelW(), height: 180, yMin: 0, yFmt: (v) => v.toFixed(1), yLabel: "rain, in/day",
-    series: [{ type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.src.startsWith("Coal") ? COLORS.sage : css("--color-accent"), title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.src})` })) }],
+    series: [{ type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.src.startsWith("Coal") ? SAGE() : css("--color-accent"), title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.src})` })) }],
     xTicks: everyN(rr.map((p) => p.x), 7), xFmt: shortDay,
   });
 
@@ -452,7 +454,7 @@ function render(s) {
   const tideChart = td ? chart({
     width: panelW(), height: 190, yMin: -2, yMax: 8, yFmt: (v) => v.toFixed(0), yLabel: "tide, ft NAVD88",
     series: [
-      { type: "line", color: COLORS.mist, width: 2, points: tPred.map((p) => ({ x: tParse(p.t), y: p.ft })) },
+      { type: "line", color: PRED(), width: 1.8, dash: "5 4", points: tPred.map((p) => ({ x: tParse(p.t), y: p.ft })) },
       { type: "line", color: css("--color-accent"), width: 2.2, points: td.observed.filter(tWin).map((p) => ({ x: tParse(p.t), y: p.ft })) },
     ],
     xTicks: midnights(tPred.map((p) => tParse(p.t))), xFmt: localDayLabel, now: nowH,
@@ -463,7 +465,7 @@ function render(s) {
   const wv = s.recent.waves;
   const waveChart = wv?.series?.length ? chart({
     width: panelW(), height: 190, yMin: 0, yFmt: (v) => v.toFixed(0), yLabel: "wave height, ft",
-    series: [{ type: "line", color: COLORS.mesa, width: 2.2, points: wv.series.map((p) => ({ x: localH(p.t), y: p.hs_ft })) }],
+    series: [{ type: "line", color: OBS(), width: 2.2, points: wv.series.map((p) => ({ x: localH(p.t), y: p.hs_ft })) }],
     y2: (() => {
       const ps = wv.series.map((p) => p.period_s).filter((v) => v != null);
       return ps.length ? { dots: wv.series.map((p) => ({ x: localH(p.t), y: p.period_s, title: `${p.period_s} s` })), min: 0, max: Math.max(20, Math.ceil(Math.max(...ps) / 5) * 5),
@@ -539,7 +541,7 @@ function render(s) {
         ${legend(BANDS.map((b) => [b.color, b.label, "bar"]))}
         ${probChart}
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
-        ${legend([[css("--color-accent"), "observed", "bar"], [COLORS.mist, "forecast (Open-Meteo, watershed average)", "bar"]])}
+        ${legend([[OBS(), "observed", "bar"], [PRED(), "forecast (Open-Meteo, watershed average)", "bar"]])}
         ${rainChart}
         <p class="note">Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left. Rain forecasts get less reliable further out, so later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), and the higher level is shown.</p>
       </div>
@@ -561,7 +563,7 @@ function render(s) {
       </div>` : ""}
       <div>
         <h3>Rain, last 30 days</h3>
-        ${legend([[COLORS.sage, "Coal Oil Point gauge", "bar"], [css("--color-accent"), "airport and local CoCoRaHS gauges", "bar"]])}
+        ${legend([[SAGE(), "Coal Oil Point gauge", "bar"], [css("--color-accent"), "airport and local CoCoRaHS gauges", "bar"]])}
         ${recentRain}
         <p class="note">Water year to date: <span class="num">${s.recent.season_rain_in.toFixed(2)} in</span></p>
       </div>
@@ -571,14 +573,14 @@ function render(s) {
       </div>
       <div>
         <h3>Ocean level, Santa Barbara</h3>
-        ${legend([[css("--color-accent"), "observed", "line"], [COLORS.mist, "predicted tide", "line"]])}
+        ${legend([[OBS(), "observed", "line"], [PRED(), "predicted tide", "dash"]])}
         ${tideChart}
         <ul class="plain">${nextTides.map((p) => `<li><span>${p.type === "H" ? "High" : "Low"}, ${new Date(p.t.replace(" ", "T")).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" })}</span><span class="num">${p.ft.toFixed(1)} ft</span></li>`).join("")}</ul>
         <p class="note">NOAA station 9411340.</p>
       </div>
       <div>
         <h3>Waves, ${esc(wv?.station || "nearest buoy")}</h3>
-        ${legend([[COLORS.mesa, "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)", "dot"]])}
+        ${legend([[OBS(), "significant wave height, ft (left)", "line"], [COLORS.ochre, "dominant period, s (right)", "dot"]])}
         ${waveChart}
         ${wv?.latest ? `<p class="note">Latest <span class="num">${wv.latest.hs_ft.toFixed(1)} ft</span> at <span class="num">${wv.latest.period_s ?? "?"} s</span> from <span class="num">${wv.latest.dir_deg ?? "?"}°</span>, ${new Date(wv.latest.t).toLocaleString("en-US", { timeZone: tz, weekday: "short", hour: "numeric", minute: "2-digit" })}.</p>` : ""}
       </div>
