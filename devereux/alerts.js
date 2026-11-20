@@ -10,8 +10,8 @@ const cut = (status) => status?.model?.alert_threshold ?? ALERT;
 
 /**
  * Decide whether to alert. One alert per episode: an episode starts the first time any day
- * in the 10-day outlook reaches the watch level while the mouth is closed, and ends when the
- * mouth opens or the outlook falls below half the watch level. Returns {send, state, alert}.
+ * in the 10-day outlook reaches Possible (the "watch" key) while the mouth is closed, and ends when the
+ * mouth opens or the outlook falls below half the Possible cutoff. Returns {send, state, alert}.
  *  prev:   {active, since, peak_date, p} from the last run (or {} on the first)
  *  status: the /devereux/api/status document
  */
