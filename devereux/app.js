@@ -270,12 +270,93 @@ document.addEventListener("click", async (e) => {
   if (cr) cr.hidden = levelRange !== "custom";
   redrawLevel();
 });
-document.addEventListener("change", (e) => {
-  if (!e.target.matches?.("#custom-range input") || !window.__devereux) return;
-  const [a, b] = [document.getElementById("range-from").value, document.getElementById("range-to").value];
-  if (!a || !b) return;
-  [customFrom, customTo] = a <= b ? [a, b] : [b, a];
+// ------------------------------------------------------------- custom date range
+// Typed dates: 10/1/2022, 10-1-22, 2022-10-01, Oct 1 2022, 1 October 2022, Oct 2022 or 2022
+// (a month or year alone means its first day for From and its last day for To). Applied on
+// Enter or when the field loses focus; the calendar button opens the browser's date picker.
+const RANGE_MIN = "2018-10-01";
+let rangeMax = null;
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const pad2 = (n) => String(n).padStart(2, "0");
+const lastOfMonth = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate();
+function parseDateText(str, end) {
+  const t = String(str || "").trim().toLowerCase().replace(/,/g, " ").replace(/\s+/g, " ");
+  if (!t) return null;
+  const yr = (y) => (y.length === 2 ? 2000 + +y : +y);
+  const mon = (w) => { const i = MONTHS.indexOf(w.slice(0, 3)); return i < 0 ? null : i + 1; };
+  let y, m, d, k;
+  if ((k = t.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/))) [y, m, d] = [+k[1], +k[2], +k[3]];
+  else if ((k = t.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2}|\d{4})$/))) [m, d, y] = [+k[1], +k[2], yr(k[3])];
+  else if ((k = t.match(/^(\d{1,2})[-/.](\d{4})$/))) [m, y] = [+k[1], +k[2]];
+  else if ((k = t.match(/^([a-z]+)\.? (\d{1,2})(?:st|nd|rd|th)? (\d{2}|\d{4})$/))) [m, d, y] = [mon(k[1]), +k[2], yr(k[3])];
+  else if ((k = t.match(/^(\d{1,2}) ([a-z]+)\.? (\d{2}|\d{4})$/))) [d, m, y] = [+k[1], mon(k[2]), yr(k[3])];
+  else if ((k = t.match(/^([a-z]+)\.? (\d{4})$/))) [m, y] = [mon(k[1]), +k[2]];
+  else if ((k = t.match(/^(\d{4})$/))) [y] = [+k[1]];
+  else return null;
+  if (!y || (m != null && (m < 1 || m > 12))) return null;
+  if (m == null) [m, d] = end ? [12, 31] : [1, 1];
+  if (d == null) d = end ? lastOfMonth(y, m) : 1;
+  if (d < 1 || d > lastOfMonth(y, m)) return null;
+  return `${y}-${pad2(m)}-${pad2(d)}`;
+}
+const fmtDate = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const calIcon = `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>`;
+function dateField(id, label, value, max) {
+  return `<label class="date-field">${label}<span class="date-box"><input type="text" id="${id}" class="date-text" value="${fmtDate(value)}" placeholder="e.g. 10/1/2022" autocomplete="off" spellcheck="false" enterkeyhint="done" /><button type="button" class="date-cal" data-cal="${id}" aria-label="${label} date: open calendar">${calIcon}</button><input type="date" class="date-native" data-for="${id}" min="${RANGE_MIN}" max="${max}" value="${value}" tabindex="-1" aria-hidden="true" /></span></label>`;
+}
+function waterYears(max) {
+  const last = +max.slice(0, 4) + (+max.slice(5, 7) >= 10 ? 1 : 0), out = [];
+  for (let w = last; w >= 2019; w--) out.push(w);
+  return out;
+}
+function applyRange(from, to, msg = "") {
+  const clamp = (v) => (v < RANGE_MIN ? RANGE_MIN : rangeMax && v > rangeMax ? rangeMax : v);
+  let [a, b] = [clamp(from), clamp(to)];
+  if (a > b) [a, b] = [b, a];
+  if (!msg && (a !== from || b !== to) && from <= to) msg = `Data runs ${fmtDate(RANGE_MIN)} to ${fmtDate(rangeMax)}.`;
+  [customFrom, customTo] = [a, b];
+  for (const [id, v] of [["range-from", a], ["range-to", b]]) {
+    const t = document.getElementById(id); if (t) { t.value = fmtDate(v); t.removeAttribute("aria-invalid"); }
+    const n = document.querySelector(`.date-native[data-for="${id}"]`); if (n) n.value = v;
+  }
+  const m = document.getElementById("range-msg"); if (m) m.textContent = msg;
   redrawLevel();
+}
+function applyTyped(edited) {
+  const f = document.getElementById("range-from"), t = document.getElementById("range-to");
+  let a = parseDateText(f.value, false), b = parseDateText(t.value, true);
+  for (const [el, v] of [[f, a], [t, b]]) el.toggleAttribute("aria-invalid", !v);
+  if (!a || !b) { document.getElementById("range-msg").textContent = "Try a date like 10/1/2022 or Oct 1, 2022."; return; }
+  // one end moved past the other: keep the old span instead of swapping the ends
+  const otherUntouched = edited === "range-from" ? b === customTo : edited === "range-to" ? a === customFrom : false;
+  if (a > b && customFrom && customTo && otherUntouched) {
+    const span = dayNum(customTo) - dayNum(customFrom);
+    if (edited === "range-from") b = isoDay(dayNum(a) + span); else if (edited === "range-to") a = isoDay(dayNum(b) - span);
+  }
+  document.getElementById("range-preset").value = "";
+  applyRange(a, b);
+}
+document.addEventListener("change", (e) => {
+  if (!window.__devereux) return;
+  if (e.target.matches?.("#custom-range .date-text")) applyTyped(e.target.id);
+  else if (e.target.matches?.("#custom-range .date-native") && e.target.value) {
+    const id = e.target.dataset.for;
+    document.getElementById("range-preset").value = "";
+    applyRange(id === "range-from" ? e.target.value : customFrom, id === "range-to" ? e.target.value : customTo);
+  } else if (e.target.matches?.("#range-preset") && e.target.value) {
+    const w = +e.target.value;
+    applyRange(`${w - 1}-10-01`, `${w}-09-30`, " ");
+  }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.matches?.("#custom-range .date-text")) { e.preventDefault(); applyTyped(e.target.id); }
+});
+document.addEventListener("click", (e) => {
+  const b = e.target.closest?.("[data-cal]");
+  if (!b) return;
+  const n = document.querySelector(`.date-native[data-for="${b.dataset.cal}"]`);
+  if (!n) return;
+  try { n.showPicker(); } catch { n.focus(); n.click(); }
 });
 const isoDay = (x) => new Date(x * 86400000).toISOString().slice(0, 10);
 
@@ -425,6 +506,7 @@ function render(s) {
 
   const lastDay = s.stage?.series?.length ? s.stage.series.at(-1).date : s.today;
   if (!customFrom) { customFrom = isoDay(dayNum(s.today) - 182); customTo = lastDay; }
+  rangeMax = lastDay;
   const levelChart = levelChartSvg(s, levelRange);
 
   // --- recent rain (30 days)
@@ -520,8 +602,10 @@ function render(s) {
       <div class="controls" role="group" aria-label="Chart options">${["1w", "3m", "1y", "all", "custom"].map((k) => `<button type="button" data-range="${k}" aria-pressed="${k === levelRange}">${{ "1w": "Past week", "3m": "3 months", "1y": "1 year", all: "Since 2018", custom: "Custom" }[k]}</button>`).join("")}<span class="sep" aria-hidden="true"></span><button type="button" class="ic" data-rain aria-pressed="${showRain}">${ICON_RAIN}Show daily rain</button><button type="button" class="ic" data-tide aria-pressed="${showTide}">${ICON_WAVE}Show tide</button></div>
     </div>
     <div class="custom-range" id="custom-range" ${levelRange === "custom" ? "" : "hidden"}>
-      <label>From <input type="date" id="range-from" min="2018-10-01" max="${lastDay}" value="${customFrom}" /></label>
-      <label>to <input type="date" id="range-to" min="2018-10-01" max="${lastDay}" value="${customTo}" /></label>
+      ${dateField("range-from", "From", customFrom, lastDay)}
+      ${dateField("range-to", "to", customTo, lastDay)}
+      <select id="range-preset" aria-label="Show a whole water year"><option value="">Water year…</option>${waterYears(lastDay).map((w) => `<option value="${w}">${w - 1}–${String(w).slice(2)}</option>`).join("")}</select>
+      <span class="range-msg" id="range-msg" role="status" aria-live="polite"></span>
     </div>
     ${legend([[css("--color-text"), "measured (loggers and live sensor)", "line"], [COLORS.ochre, "staff gauge readings", "dot"], [css("--color-accent"), "forecast", "dash"], [css("--color-accent"), "forecast range", "band", 0.3], [COLORS.clay, "where past breaches happened", "band", 0.22], [COLORS.clay, "breach level, this closure", "dash"], [css("--breach"), "breach", "vline"]])}
     <div id="rain-legend">${showRain ? rainLegend() : ""}</div>

@@ -129,7 +129,18 @@ ul.plain li .num { font-size: 0.86rem; }
 .sign-read strong { color: #E0B656; font-size: 1.15rem; }
 .sign-title .sign-level { display: block; font-size: 1.45em; font-weight: 800; color: #F3EBDD; }
 .custom-range { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: var(--space-3); font: 0.92rem var(--font-ui); color: var(--color-muted); }
-.custom-range input { font: 0.92rem var(--font-ui); color: var(--color-text); background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 6px 8px; margin-left: 6px; color-scheme: light dark; }
+.custom-range { align-items: center; }
+.custom-range .date-field { display: inline-flex; align-items: center; gap: 6px; }
+.custom-range .date-box { position: relative; display: inline-flex; align-items: center; background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.custom-range .date-box:focus-within { border-color: var(--color-accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 30%, transparent); }
+.custom-range .date-text { font: 0.95rem var(--font-ui); color: var(--color-text); background: transparent; border: 0; outline: 0; padding: 7px 4px 7px 10px; width: 9.5em; font-variant-numeric: tabular-nums; }
+.custom-range .date-text[aria-invalid] { color: var(--closed); }
+.custom-range .date-cal { all: unset; cursor: pointer; display: inline-grid; place-items: center; width: 34px; height: 34px; color: var(--color-muted); border-left: 1px solid var(--color-border); }
+.custom-range .date-cal:hover, .custom-range .date-cal:focus-visible { color: var(--color-text); }
+.custom-range .date-native { position: absolute; right: 0; bottom: 0; width: 34px; height: 1px; opacity: 0; pointer-events: none; border: 0; padding: 0; color-scheme: light dark; }
+.custom-range select { font: 0.92rem var(--font-ui); color: var(--color-text); background: var(--color-raised); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 7px 8px; color-scheme: light dark; }
+.custom-range .range-msg { font-size: 0.85rem; }
+@media (max-width: 560px) { .custom-range .date-text { font-size: 16px; width: 8.5em; } }
 .custom-range[hidden] { display: none; }
 @media (max-width: 640px) { .sign { grid-template-columns: 1fr; } .sign img { max-width: 220px; margin: 0 auto; } }
 .head-sign .sign { margin-top: 0; }
