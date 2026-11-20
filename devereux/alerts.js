@@ -52,14 +52,14 @@ export function alertMessage(status) {
   const when = pk.date === status.today ? "today" : `by ${niceDay(pk.date)}`;
   const phrase = { low: "No Chance of Breach", watch: "Possible Breach", warning: "Likely to Breach", likely: "Imminent Breach" }[lv.key] ?? lv.label;
   const title = `Devereux Slough Breach Watch: ${phrase} ${when}`;
-  const body = `The breach outlook reaches ${lv.label} on ${niceDay(pk.date)}${rain}. Every recorded breach reached at least Possible first.`
+  const body = `Breach Watch for ${niceDay(pk.date)}: ${phrase}${rain}. Every recorded breach got at least a Possible Breach call first.`
     + (ft != null ? ` The slough is at ${ft.toFixed(2)} ft now.` : "");
   return { title, body, url: PAGE };
 }
 
 /** A test message, for checking delivery after setup. */
 export function testMessage() {
-  return { title: "Devereux Slough alerts are working", body: "This is a test. You'll get a message like this when the Breach Watch reaches Possible.", url: PAGE };
+  return { title: "Devereux Slough alerts are working", body: "This is a test. You'll get a message like this when the 10-day outlook first shows a Possible Breach or higher.", url: PAGE };
 }
 
 // Plain, permissive email check: one @, a dot in the domain, no spaces, sane length.
