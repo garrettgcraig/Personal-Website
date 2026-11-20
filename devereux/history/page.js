@@ -1,5 +1,5 @@
 // The History tab: how the mouth cycle works, satellite views, and every breach, closure and
-// overtopping event since 2017 (events.json, from scripts/build_devereux_events.py).
+// overtopping event since the 2018–19 season (events.json, from scripts/build_devereux_events.py).
 
 import { esc, COLORS, css, chart, legend, fullW, wide } from "../shared.js";
 
@@ -147,6 +147,7 @@ function initGallery() {
 
 // ------------------------------------------------------------- seasons
 // Water year: October through September, named for the year it ends in.
+const LOGGED_FROM = "2018-10-01";
 const wyOf = (iso) => +iso.slice(0, 4) + (+iso.slice(5, 7) >= 10 ? 1 : 0);
 const median = (a) => { const b = a.slice().sort((x, y) => x - y), n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : (b[n / 2 - 1] + b[n / 2]) / 2) : null; };
 const daysBetween = (a, b) => Math.round((Date.parse(b.slice(0, 10)) - Date.parse(a.slice(0, 10))) / 86400000);
@@ -262,11 +263,11 @@ function render() {
   </section>
 
   <section class="block" id="seasons">
-    <h2>Every season since 2017</h2>
+    <h2>Every season since 2018</h2>
     <div class="ev-cards">${cards.map(([k, l, c, d]) => `<button type="button" class="ev-card ev-${k}" data-evf="${k}"><span class="ev-card-n">${c}</span><span class="ev-card-l">${esc(l)}</span><span class="ev-card-d">${esc(d)}</span></button>`).join("")}</div>
     ${timelineLegend()}
     <div class="table-scroll">${seasonTimeline(ev)}</div>
-    <p class="note">Water years run October to September. The record starts with CCBER's mouth log in January 2017, so the first breach shown for 2016–17 may not have been that season's first. Level loggers start in late 2018, so earlier breaches have no measured peak.${np ? ` ${np} events were found in the level record rather than CCBER's log and are provisional until they're reviewed.` : ""}</p>
+    <p class="note">Water years run October to September. Seasons start with 2018–19, when level logging began on October 1, 2018.${np ? ` ${np} events were found in the level record rather than CCBER's log and are provisional until they're reviewed.` : ""}</p>
   </section>
 
   <section class="block" id="overtopping">
@@ -306,6 +307,9 @@ addEventListener("resize", () => {
   window.__rz = setTimeout(() => { if (EVENTS && Math.abs(fullW() - lastW) > 40) { lastW = fullW(); render(); } }, 200);
 });
 fetch("/devereux/events.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((j) => {
-  EVENTS = j; classify(EVENTS.events); lastW = fullW(); render(); initGallery();
+  EVENTS = j; classify(EVENTS.events);
+  // level logging starts Oct 1, 2018 (water year 2019): earlier seasons have no measured
+  // levels, so they're left out (classify ran on the full log so berm ages stay right)
+  EVENTS.events = EVENTS.events.filter((e) => e.start >= LOGGED_FROM); lastW = fullW(); render(); initGallery();
   new MutationObserver(() => render()).observe(document.body, { attributes: true, attributeFilter: ["class"] });
 }).catch((e) => { app.innerHTML = `<div class="loading">Couldn't load the event record (${esc(e.message)}).</div>`; });
