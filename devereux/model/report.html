@@ -2272,7 +2272,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#each-breach" id="toc-each-breach" class="nav-link" data-scroll-target="#each-breach">Each breach</a></li>
   <li><a href="#levels" id="toc-levels" class="nav-link" data-scroll-target="#levels">Levels</a></li>
   <li><a href="#against-the-other-models" id="toc-against-the-other-models" class="nav-link" data-scroll-target="#against-the-other-models">Against the other models</a></li>
-  <li><a href="#the-honest-check" id="toc-the-honest-check" class="nav-link" data-scroll-target="#the-honest-check">The honest check</a></li>
+  <li><a href="#the-honest-check" id="toc-the-honest-check" class="nav-link" data-scroll-target="#the-honest-check">The season-held-out (cross-validated) check</a></li>
   <li><a href="#inputs-known-in-advance" id="toc-inputs-known-in-advance" class="nav-link" data-scroll-target="#inputs-known-in-advance">Inputs known in advance</a></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
@@ -5319,7 +5319,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 </section>
 <section id="part-5.-catching-every-breach" class="level2">
 <h2 class="anchored" data-anchor-id="part-5.-catching-every-breach">Part 5. Catching every breach</h2>
-<p>The goal for alerts is to flag every breach on the measured-level record with as few false alarms as possible; there is no fixed cutoff. For each model the cutoff is set as low as the weakest breach requires (its highest score on the breach day or the day before), and false alarms are counted at that cutoff, as days and as episodes (one alert per episode). That cutoff is tuned on the same predictions it is scored on, so each model is also checked honestly: every season’s cutoff comes only from the other seasons’ breaches. Every combination of up to five rain, level and berm-age inputs is searched; tide, surge and wave inputs are left out (they do not drive breaches here), and the crest-curve model is scored alongside.</p>
+<p>The goal for alerts is to flag every breach on the measured-level record with as few false alarms as possible; there is no fixed cutoff. For each model the cutoff is set as low as the weakest breach requires (its highest score on the breach day or the day before), and false alarms are counted at that cutoff, as days and as episodes (one alert per episode). That cutoff is tuned on the same predictions it is scored on, so each model is also checked with each season held out (cross-validated): every season’s cutoff comes only from the other seasons’ breaches. Every combination of up to five rain, level and berm-age inputs is searched; tide, surge and wave inputs are left out (they do not drive breaches here), and the crest-curve model is scored alongside.</p>
 <div id="catch-all" class="cell" data-execution_count="29">
 <details class="code-fold">
 <summary>Code</summary>
@@ -5356,7 +5356,7 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>R5.sort_values([<span class="st">&quot;honest_caught&quot;</span>, <span class="st">&quot;honest_fa_episodes&quot;</span>, <span class="st">&quot;honest_fa_days&quot;</span>], ascending<span class="op">=</span>[<span class="va">False</span>, <span class="va">True</span>, <span class="va">True</span>]).head(<span class="dv">10</span>).<span class="bu">round</span>({<span class="st">&quot;cutoff&quot;</span>: <span class="dv">4</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="catch-all-1" class="cell-output cell-output-display cell-output-markdown">
-<p><strong>219 models.</strong> Best ten by the honest check (breaches caught, then false-alarm episodes, which is what alerts send):</p>
+<p><strong>219 models.</strong> Best ten by the season-held-out check (breaches caught, then false-alarm episodes, which is what alerts send):</p>
 </div>
 <div id="catch-all-2" class="cell-output cell-output-display" data-execution_count="29">
 <div>
@@ -5533,13 +5533,13 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="catch-all-decision" class="cell-output cell-output-display cell-output-markdown">
-<p>No model catches all 16 breaches when the cutoff is set without seeing the season: with ten events the weakest breach can’t be anticipated from the others. The crest-curve model catches 15/16 that way with 25 false-alarm episodes, the fewest of the leaders, and it is the only one whose upper range means much: 11 of 16 breaches reached 0.5, against 4 to 5 for the rain-only models that score as well at the low end. Tuned on all seasons, a cutoff of 0.000 catches every breach with 568 false-alarm days in 29 episodes. The model the site runs is in <strong>Part 7</strong>; it reports No Chance, Possible (every recorded breach reached it), Likely (0.2) and Imminent (0.5), with alerts at Possible.</p>
+<p>No model catches all 16 breaches when the cutoff is set without seeing the season: with ten events the weakest breach can’t be anticipated from the others. The crest-curve model catches 15/16 that way with 25 false-alarm episodes, the fewest of the leaders, and it is the only one whose upper range means much: 11 of 16 breaches reached 0.5, against 4 to 5 for the rain-only models that score as well at the low end. In-sample, with one cutoff tuned on all seasons, a cutoff of 0.000 catches every breach with 568 false-alarm days in 29 episodes. The model the site runs is in <strong>Part 7</strong>; it reports No Chance, Possible (every recorded breach reached it), Likely (0.2) and Imminent (0.5), with alerts at Possible.</p>
 </div>
 </div>
 </section>
 <section id="part-6.-breach-dates-berm-height-and-rain-windows" class="level2">
 <h2 class="anchored" data-anchor-id="part-6.-breach-dates-berm-height-and-rain-windows">Part 6. Breach dates, berm height and rain windows</h2>
-<p>Three questions from the Part 5 search. Are the breach dates right? Does an estimate of the berm height (the crest curve, or the highest level the berm has held since it closed) help when combined with rain? And would rain over the prior 24 or 48 hours, rather than same-day rain, catch the weakest breach, 2025-03-13? The scripts are in <code>analysis/berm/</code>, the case notes in <code>analysis/berm/README.md</code> and the level-gap audit in <code>analysis/berm/data_gaps.md</code>; this part reads their saved tables (the searches take a few minutes each). Scoring is as in Part 5: measured-level days, leave-one-season-out fits, the catch-all cutoff at the weakest breach, and the honest check with each season’s cutoff from the other seasons. Tide, surge and wave inputs are left out. Levels in the figures are hourly logger readings put on the daily composite’s NAVD88 datum (<code>analysis/berm/hourly_level.py</code>).</p>
+<p>Three questions from the Part 5 search. Are the breach dates right? Does an estimate of the berm height (the crest curve, or the highest level the berm has held since it closed) help when combined with rain? And would rain over the prior 24 or 48 hours, rather than same-day rain, catch the weakest breach, 2025-03-13? The scripts are in <code>analysis/berm/</code>, the case notes in <code>analysis/berm/README.md</code> and the level-gap audit in <code>analysis/berm/data_gaps.md</code>; this part reads their saved tables (the searches take a few minutes each). Scoring is as in Part 5: measured-level days, leave-one-season-out fits, the catch-all cutoff at the weakest breach, and the season-held-out check with each season’s cutoff from the other seasons. Tide, surge and wave inputs are left out. Levels in the figures are hourly logger readings put on the daily composite’s NAVD88 datum (<code>analysis/berm/hourly_level.py</code>).</p>
 <div id="berm-setup" class="cell" data-execution_count="31">
 <details class="code-fold">
 <summary>Code</summary>
@@ -5896,7 +5896,7 @@ Figure 6: <strong>March 10 to April 15, 2023 (reviewed).</strong> The 3/10 brea
 </div>
 </div>
 </div>
-<p>The table entries are honest false-alarm days / episodes. Every combination of up to five of the 16 inputs (6,886 models) was searched with the fair crest and the corrected labels. The best fifteen, and the reference models:</p>
+<p>The table entries are held-out false-alarm days / episodes. Every combination of up to five of the 16 inputs (6,886 models) was searched with the fair crest and the corrected labels. The best fifteen, and the reference models:</p>
 <div id="cell-berm-search" class="cell" data-execution_count="40">
 <details class="code-fold">
 <summary>Code</summary>
@@ -5911,10 +5911,10 @@ Figure 6: <strong>March 10 to April 15, 2023 (reviewed).</strong> The 3/10 brea
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">Model</th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
-<th data-quarto-table-cell-role="th">Honest false-alarm days</th>
-<th data-quarto-table-cell-role="th">Honest episodes</th>
-<th data-quarto-table-cell-role="th">Honest miss</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
+<th data-quarto-table-cell-role="th">Held out: false-alarm days</th>
+<th data-quarto-table-cell-role="th">Held out: episodes</th>
+<th data-quarto-table-cell-role="th">Held out: missed</th>
 <th data-quarto-table-cell-role="th">Catch-all false-alarm days</th>
 <th data-quarto-table-cell-role="th">Catch-all episodes</th>
 </tr>
@@ -6093,10 +6093,10 @@ Figure 6: <strong>March 10 to April 15, 2023 (reviewed).</strong> The 3/10 brea
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">Model</th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
-<th data-quarto-table-cell-role="th">Honest false-alarm days</th>
-<th data-quarto-table-cell-role="th">Honest episodes</th>
-<th data-quarto-table-cell-role="th">Honest miss</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
+<th data-quarto-table-cell-role="th">Held out: false-alarm days</th>
+<th data-quarto-table-cell-role="th">Held out: episodes</th>
+<th data-quarto-table-cell-role="th">Held out: missed</th>
 <th data-quarto-table-cell-role="th">Catch-all false-alarm days</th>
 <th data-quarto-table-cell-role="th">Catch-all episodes</th>
 </tr>
@@ -6263,7 +6263,7 @@ Figure 6: <strong>March 10 to April 15, 2023 (reviewed).</strong> The 3/10 brea
 <span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="berm-selection" class="cell-output cell-output-display cell-output-markdown">
-<p><strong>2024-03-06 is the weakest breach</strong> for the crest-curve model and most others: a berm about two weeks old that drained from about 6.0 ft after 0.75 in of rain. <strong>2025-03-13 is caught</strong> on the honest check by the crest-curve model (peak score 0.11) and by most models.</p>
+<p><strong>2024-03-06 is the weakest breach</strong> for the crest-curve model and most others: a berm about two weeks old that drained from about 6.0 ft after 0.75 in of rain. <strong>2025-03-13 is caught</strong> on the season-held-out check by the crest-curve model (peak score 0.11) and by most models.</p>
 <p><strong>Best models.</strong> The leaders all use <strong>maxlvl</strong>, the highest level this berm has already held: <strong>rain_in + rain_wy + log_dc + maxlvl</strong> catches 15/16 with 3 false-alarm days in 3 episodes, missing 2020-04-06. The best of up to three inputs is <strong>crest + maxlvl + rain_2d</strong>: 15/16, 5 days in 4 episodes, missing 2024-03-06. rain_in + rain_prev + margin + margin_max has 10 days in 4 episodes. The crest-curve model, refit, catches 15/16 with 484 days in 26 episodes; rain_in + later does 12 / 10, rain_in + rain_wy 12 / 11, and margin + peak24 281 / 31.</p>
 <p><strong>Overfitting check.</strong> Repeating the whole search with each season held out (the best model of up to three inputs chosen from the other seasons, alerts at its training cutoff) catches <strong>13 of 16</strong> with <strong>12 false-alarm days in 5 episodes</strong>, missing 2019-01-07, 2021-01-28, 2024-03-06. It picks maxlvl or margin_max with a rain total in every season, though which exact inputs win changes from season to season.</p>
 </div>
@@ -6595,7 +6595,7 @@ Figure 7: <strong>The false alarms that remain.</strong> Hourly level, daily ra
 </section>
 <section id="fixes" class="level3">
 <h3 class="anchored" data-anchor-id="fixes">Fixes</h3>
-<p>Each fix was added to the simple models and judged on the honest check (corrected labels; the old-label results are in <code>analysis/berm/results/old_labels/</code>):</p>
+<p>Each fix was added to the simple models and judged on the season-held-out check (corrected labels; the old-label results are in <code>analysis/berm/results/old_labels/</code>):</p>
 <div id="cell-berm-fixes" class="cell" data-execution_count="45">
 <details class="code-fold">
 <summary>Code</summary>
@@ -6879,7 +6879,7 @@ Figure 7: <strong>The false alarms that remain.</strong> Hourly level, daily ra
 <span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="berm-crest-text" class="cell-output cell-output-display cell-output-markdown">
-<p>With all the corrections every version catches 2025-03-13 on the honest check and misses 2024-03-07 instead, which scores near zero on any crest curve and drags the cutoff down. The uncertain crest (d) helps most (242 false-alarm days against 484), the open-duration start (a) a little (408), the late-season rebuild (c) not at all, and closure-level starts (b) make it worse (1041). None comes close to the berm-history models above. The fitted base curve now starts at 6.17 ft and rises toward 10.02 ft with a 64-day time constant (5.76 ft, 9.76 ft and 60 days in the committed model). The crest’s shape is weakly pinned down by about 16 breaches; a measured berm top (CCBER’s 2024 COPR berm surveys, <code>data/berm_profiles</code> in their repository) would test it.</p>
+<p>With all the corrections every version catches 2025-03-13 on the season-held-out check and misses 2024-03-07 instead, which scores near zero on any crest curve and drags the cutoff down. The uncertain crest (d) helps most (242 false-alarm days against 484), the open-duration start (a) a little (408), the late-season rebuild (c) not at all, and closure-level starts (b) make it worse (1041). None comes close to the berm-history models above. The fitted base curve now starts at 6.17 ft and rises toward 10.02 ft with a 64-day time constant (5.76 ft, 9.76 ft and 60 days in the committed model). The crest’s shape is weakly pinned down by about 16 breaches; a measured berm top (CCBER’s 2024 COPR berm surveys, <code>data/berm_profiles</code> in their repository) would test it.</p>
 </div>
 </div>
 </section>
@@ -6900,7 +6900,7 @@ Figure 7: <strong>The false alarms that remain.</strong> Hourly level, daily ra
 <span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>SBs.loc[[p <span class="cf">for</span> p <span class="kw">in</span> pair <span class="cf">if</span> p <span class="kw">in</span> SBs.index], [<span class="st">&quot;h_caught&quot;</span>, <span class="st">&quot;h_fa_days&quot;</span>, <span class="st">&quot;h_fa_ep&quot;</span>, <span class="st">&quot;h_missed&quot;</span>]].rename(columns<span class="op">=</span>NICE)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="berm-sb1-1" class="cell-output cell-output-display cell-output-markdown">
-<p>Since WY2019 the station is missing 23 of 2971 days (7 in November to April). On the 115 storm days with at least 0.5 in at any gauge it caught 1.22 times the COP gauge’s rain and 1.33 times KSBA’s (correlation 0.901 with COP). The same three-input models with each gauge (honest check):</p>
+<p>Since WY2019 the station is missing 23 of 2971 days (7 in November to April). On the 115 storm days with at least 0.5 in at any gauge it caught 1.22 times the COP gauge’s rain and 1.33 times KSBA’s (correlation 0.901 with COP). The same three-input models with each gauge (season-held-out check):</p>
 </div>
 <div id="berm-sb1-2" class="cell-output cell-output-display" data-execution_count="48">
 <div>
@@ -6910,10 +6910,10 @@ Figure 7: <strong>The false alarms that remain.</strong> Hourly level, daily ra
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
-<th data-quarto-table-cell-role="th">Honest false-alarm days</th>
-<th data-quarto-table-cell-role="th">Honest episodes</th>
-<th data-quarto-table-cell-role="th">Honest miss</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
+<th data-quarto-table-cell-role="th">Held out: false-alarm days</th>
+<th data-quarto-table-cell-role="th">Held out: episodes</th>
+<th data-quarto-table-cell-role="th">Held out: missed</th>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">model</th>
@@ -7143,7 +7143,7 @@ Figure 8: <strong>Breach timing from the storm’s rain.</strong> Left: cumulat
 </section>
 <section id="which-day-gets-the-call" class="level3">
 <h3 class="anchored" data-anchor-id="which-day-gets-the-call">Which day gets the call</h3>
-<p>Garrett’s rule of thumb: if all the rain falls in the morning and the next day is dry, the breach comes the day it rains. The best model weighs yesterday’s rain (4.36 per inch) a little more than today’s (3.78), so its score the day after a storm stays close to the storm day’s. <code>rain_timing.py</code> and <code>rain_timing2.py</code> rebuild the daily rain from KSBA hourly rain in local standard time, in forms an hourly forecast can also give: 24-hour windows ending at 12:00 to 24:00 and the window before, rain before 16:00 plus the previous evening’s, and 6-hour blocks. Each is searched with the berm terms on the honest check. Every breach’s apex falls on its labeled day in local standard time.</p>
+<p>Garrett’s rule of thumb: if all the rain falls in the morning and the next day is dry, the breach comes the day it rains. The best model weighs yesterday’s rain (4.36 per inch) a little more than today’s (3.78), so its score the day after a storm stays close to the storm day’s. <code>rain_timing.py</code> and <code>rain_timing2.py</code> rebuild the daily rain from KSBA hourly rain in local standard time, in forms an hourly forecast can also give: 24-hour windows ending at 12:00 to 24:00 and the window before, rain before 16:00 plus the previous evening’s, and 6-hour blocks. Each is searched with the berm terms on the season-held-out check. Every breach’s apex falls on its labeled day in local standard time.</p>
 <div id="berm-rainday" class="cell" data-execution_count="53">
 <details class="code-fold">
 <summary>Code</summary>
@@ -7166,10 +7166,10 @@ Figure 8: <strong>Breach timing from the storm’s rain.</strong> Left: cumulat
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
-<th data-quarto-table-cell-role="th">Honest false-alarm days</th>
-<th data-quarto-table-cell-role="th">Honest episodes</th>
-<th data-quarto-table-cell-role="th">Honest miss</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
+<th data-quarto-table-cell-role="th">Held out: false-alarm days</th>
+<th data-quarto-table-cell-role="th">Held out: episodes</th>
+<th data-quarto-table-cell-role="th">Held out: missed</th>
 <th data-quarto-table-cell-role="th">Breaches peaking on the day</th>
 <th data-quarto-table-cell-role="th">Rain day scores higher</th>
 <th data-quarto-table-cell-role="th">Next day / rain day</th>
@@ -7382,7 +7382,7 @@ Figure 8: <strong>Breach timing from the storm’s rain.</strong> Left: cumulat
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">Model</th>
 <th data-quarto-table-cell-role="th">Added</th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
 <th data-quarto-table-cell-role="th">False-alarm days</th>
 <th data-quarto-table-cell-role="th">Episodes</th>
 <th data-quarto-table-cell-role="th">Missed</th>
@@ -7659,7 +7659,7 @@ Figure 8: <strong>Breach timing from the storm’s rain.</strong> Left: cumulat
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">Form</th>
 <th data-quarto-table-cell-role="th">Rain</th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
 <th data-quarto-table-cell-role="th">False-alarm days</th>
 <th data-quarto-table-cell-role="th">Episodes</th>
 <th data-quarto-table-cell-role="th">Missed</th>
@@ -8018,7 +8018,7 @@ Figure 11: <strong>Tides topping a closed berm.</strong> Hourly slough level (b
 <span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="berm-summary" class="cell-output cell-output-display cell-output-markdown">
-<p><strong>Summary.</strong> The breach dates hold up against the hourly record. Garrett reviewed every label correction: an unlogged breach on 2020-04-06 with the berm closed from 3/26; an earlier 2023 closure (3/12) with a brief opening on 3/14; the 2024 breach moved to the evening of 3/6; an unlogged breach on 2024-03-31; and king-tide days on 2024-02-21 to 24 labeled leaky (not scored, same berm). The 2023-24 pier record adds three logged breaches. With 16 measured-level breaches, <strong>rain_in + rain_wy + log_dc + maxlvl</strong> catches 15/16 on the honest check with 3 false-alarm days in 3 episodes, against 484 days in 26 episodes for the refit crest-curve model; the search held out by season does 13/16 with 12 days in 5 episodes. How high the berm has already held the slough is the input that matters most.</p>
+<p><strong>Summary.</strong> The breach dates hold up against the hourly record. Garrett reviewed every label correction: an unlogged breach on 2020-04-06 with the berm closed from 3/26; an earlier 2023 closure (3/12) with a brief opening on 3/14; the 2024 breach moved to the evening of 3/6; an unlogged breach on 2024-03-31; and king-tide days on 2024-02-21 to 24 labeled leaky (not scored, same berm). The 2023-24 pier record adds three logged breaches. With 16 measured-level breaches, <strong>rain_in + rain_wy + log_dc + maxlvl</strong> catches 15/16 on the season-held-out check with 3 false-alarm days in 3 episodes, against 484 days in 26 episodes for the refit crest-curve model; the search held out by season does 13/16 with 12 days in 5 episodes. How high the berm has already held the slough is the input that matters most.</p>
 </div>
 </div>
 </section>
@@ -8509,10 +8509,10 @@ Figure 12: <strong>Held-out daily score, by water year.</strong> Each point is 
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">Model</th>
-<th data-quarto-table-cell-role="th">Honest caught</th>
-<th data-quarto-table-cell-role="th">Honest false-alarm days</th>
-<th data-quarto-table-cell-role="th">Honest episodes</th>
-<th data-quarto-table-cell-role="th">Honest miss</th>
+<th data-quarto-table-cell-role="th">Held out: caught</th>
+<th data-quarto-table-cell-role="th">Held out: false-alarm days</th>
+<th data-quarto-table-cell-role="th">Held out: episodes</th>
+<th data-quarto-table-cell-role="th">Held out: missed</th>
 <th data-quarto-table-cell-role="th">Catch-all false-alarm days</th>
 <th data-quarto-table-cell-role="th">Catch-all episodes</th>
 </tr>
@@ -8666,8 +8666,8 @@ Figure 12: <strong>Held-out daily score, by water year.</strong> Each point is 
 </div>
 </section>
 <section id="the-honest-check" class="level3">
-<h3 class="anchored" data-anchor-id="the-honest-check">The honest check</h3>
-<p>The lowest level was set from all eight seasons’ breaches, so it has seen the season it scores. The honest check sets each season’s line only from the other seasons’ breaches.</p>
+<h3 class="anchored" data-anchor-id="the-honest-check">The season-held-out (cross-validated) check</h3>
+<p>The lowest level was set from all eight seasons’ breaches, so it has seen the season it scores. The season-held-out (cross-validated) check sets each season’s line only from the other seasons’ breaches.</p>
 <div id="live-honest" class="cell" data-execution_count="74">
 <details class="code-fold">
 <summary>Code</summary>
@@ -8687,7 +8687,7 @@ Figure 12: <strong>Held-out daily score, by water year.</strong> Each point is 
 <span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>HT</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="live-honest-1" class="cell-output cell-output-display cell-output-markdown">
-<p><strong>Honest check: 15 of 16 caught, 3 false-alarm days in 3 episodes</strong>, missing 2020-04-06.</p>
+<p><strong>Season-held-out check: 15 of 16 caught, 3 false-alarm days in 3 episodes</strong>, missing 2020-04-06.</p>
 </div>
 <div id="live-honest-2" class="cell-output cell-output-display" data-execution_count="74">
 <div>
