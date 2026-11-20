@@ -21,47 +21,6 @@ export const wyStart = (d) => `${waterYear(d) - 1}-10-01`;
 const dayOfYear = (d) => daysBetween(`${d.slice(0, 4)}-01-01`, d) + 1;
 const sigmoid = (z) => 1 / (1 + Math.exp(-z));
 
-/**
- * Daily rain on the Coal Oil Point gauge scale (inches), mirroring obs.rain_composite:
- * the COP gauge where present; otherwise KSBA timing (/ ksba_ratio) with each storm's
- * total rescaled to the mean of the local CoCoRaHS gauges (each / its ratio).
- * cop, ksba: {date: inches}. cocorahs: {date: {station: inches}}, already shifted to
- * the day the rain fell.
- */
-export function rainComposite(days, { cop = {}, ksba = {}, cocorahs = {} }, params) {
-  const k = days.map((d) => (ksba[d] == null ? null : ksba[d] / params.rain.ksba_ratio));
-  const local = days.map((d) => {
-    const st = cocorahs[d];
-    if (!st) return null;
-    const vals = Object.entries(st)
-      .filter(([s, v]) => v != null && params.rain.cocorahs[s])
-      .map(([s, v]) => v / params.rain.cocorahs[s]);
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-  });
-  const est = k.slice();
-  // storms = runs of days where either KSBA or the local gauges recorded rain
-  let i = 0;
-  while (i < days.length) {
-    if (!((k[i] || 0) > 0 || (local[i] || 0) > 0)) { i++; continue; }
-    let j = i;
-    while (j < days.length && ((k[j] || 0) > 0 || (local[j] || 0) > 0)) j++;
-    const idx = [...Array(j - i).keys()].map((x) => x + i);
-    const kt = idx.reduce((a, x) => a + (k[x] || 0), 0);
-    const lt = idx.reduce((a, x) => a + (local[x] || 0), 0);
-    if (idx.some((x) => local[x] != null)) {
-      for (const x of idx) {
-        est[x] = kt > 0 ? (k[x] || 0) * Math.min(3, Math.max(1 / 3, lt / kt)) : local[x];
-      }
-    }
-    i = j;
-  }
-  return days.map((d, n) => {
-    if (cop[d] != null) return { date: d, rain_in: cop[d], src: "Coal Oil Point gauge" };
-    if (est[n] != null) return { date: d, rain_in: est[n], src: "KSBA + CoCoRaHS" };
-    return { date: d, rain_in: null, src: "missing" };
-  });
-}
-
 export const crestFt = (dc, c) => c.c_inf - (c.c_inf - c.c0) * Math.exp(-dc / c.tau);
 
 // Water balance: roll stage forward from a reading through daily rain P (inches).
