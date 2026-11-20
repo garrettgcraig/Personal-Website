@@ -224,7 +224,7 @@ test("Coal Oil Point hourly feed sums rain by local standard day and skips missi
 test("breach hours: storm rain reaching the typical breach total, plus the median lead", () => {
   const hrs = [];
   for (let h = 0; h < 30; h++) hrs.push([`2026-12-02T${String(h % 24).padStart(2, "0")}:00`.replace("2026-12-02", h < 24 ? "2026-12-02" : "2026-12-03"), 0]);
-  // 0.3 in/h from 10:00 to 17:00 (8 hours, 2.4 in); 1.77 in is reached at the hour ending 15:00
+  // 0.3 in/h from 10:00 to 17:00 (8 hours, 2.4 in); 1.9 in is reached at the hour ending 16:00
   for (let h = 10; h <= 17; h++) hrs[h][1] = 0.3;
   hrs[2][1] = 0.05; // an early shower more than 6 dry hours before is its own storm
   const st = breachHours(hrs);
@@ -233,10 +233,10 @@ test("breach hours: storm rain reaching the typical breach total, plus the media
   assert.equal(big.onset, "2026-12-02T10:00");
   assert.equal(big.total_in, 2.4);
   assert.ok(big.reaches_need);
-  // 15:00 + 2 h; window 1 h before to 3 h after
-  assert.equal(big.predicted, "2026-12-02T17:00");
-  assert.equal(big.start, "2026-12-02T16:00");
-  assert.equal(big.finish, "2026-12-02T20:00");
+  // 16:00 + 2 h; window 1 h before to 3 h after
+  assert.equal(big.predicted, "2026-12-02T18:00");
+  assert.equal(big.start, "2026-12-02T17:00");
+  assert.equal(big.finish, "2026-12-02T21:00");
   // a storm that stops short of the total uses its last wet hour
   assert.equal(st[0].reaches_need, false);
   assert.equal(st[0].predicted, "2026-12-02T04:00");
