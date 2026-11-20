@@ -1,5 +1,5 @@
 {
- "exported": "2026-11-19",
+ "exported": "2026-11-20",
  "rain_logit": {
   "features": [
    "rain_in",
@@ -67,23 +67,23 @@
    "label": "Possible",
    "min": 0.125,
    "caught": 16,
-   "false_alarm_days": 8,
-   "false_alarm_episodes": 1
+   "false_alarm_days": 3,
+   "false_alarm_episodes": 3
   },
   {
    "key": "warning",
    "label": "Likely",
    "min": 0.2,
-   "caught": 15,
-   "false_alarm_days": 8,
-   "false_alarm_episodes": 1
+   "caught": 12,
+   "false_alarm_days": 2,
+   "false_alarm_episodes": 2
   },
   {
    "key": "likely",
    "label": "Imminent",
    "min": 0.5,
-   "caught": 13,
-   "false_alarm_days": 8,
+   "caught": 11,
+   "false_alarm_days": 1,
    "false_alarm_episodes": 1
   }
  ],
@@ -125,8 +125,8 @@
    "label": "Possible",
    "min": 0.125,
    "caught": 16,
-   "false_alarm_days": 8,
-   "false_alarm_episodes": 1
+   "false_alarm_days": 3,
+   "false_alarm_episodes": 3
   },
   "breaches": 16,
   "seasons": "WY2019-WY2026"
@@ -201,19 +201,26 @@
   "mature_days": 120
  },
  "best": {
-  "model": "rain_in + rain_prev + margin + margin_max",
-  "intercept": -5.260221,
+  "model": "rain_in + rain_wy + log_dc + maxlvl",
+  "intercept": -14.554976,
   "coef": {
-   "rain_in": 3.780513,
-   "rain_prev": 4.358366,
-   "margin": 2.989021,
-   "margin_max": -3.546549
+   "rain_in": 4.234659,
+   "rain_wy": 0.047662,
+   "log_dc": -1.857204,
+   "maxlvl": 2.055137
   },
   "crest": {
    "c_inf": 10.014886720087272,
    "c0": 6.170550214098007,
    "tau": 64.1944226697477
   },
-  "source": "devereux-breach models/best_margin_max.json @6b1a15c"
+  "honest_check": {
+   "caught": 15,
+   "breaches": 16,
+   "false_alarm_days": 3,
+   "false_alarm_episodes": 3,
+   "missed": "2020-04-06"
+  },
+  "source": "devereux-breach models/best_daily.json @22cedc2"
  }
 }

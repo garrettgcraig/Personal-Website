@@ -13,7 +13,7 @@ const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", im
 const params = { ...live, best: undefined, water_balance: { ...live.water_balance, carry: undefined } };
 const spec = JSON.parse(readFileSync(new URL("./fixtures/devereux-best-model.json", import.meta.url)));
 
-test("site model reproduces the Python check cases (best_margin_max.json)", () => {
+test("site model reproduces the Python check cases (best_daily.json)", () => {
   assert.equal(live.best.intercept, spec.fit.intercept);
   assert.deepEqual(live.best.coef, spec.fit.coef);
   for (const c of spec.check_cases) {

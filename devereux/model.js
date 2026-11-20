@@ -160,12 +160,14 @@ export const levelOf = (p, levels) => (p == null ? null : [...levels].reverse().
  * risk well but isn't a calibrated probability, so the page reports levels (params.levels).
  * With no level estimate it falls back to the rain-only logistic model.
  */
-/** The site's breach score (devereux-breach models/best_margin_max.json):
- *  logit p = b0 + rain_in, rain_prev, margin (stage - crest), margin_max (stage - highest level
- *  since the closure, through the day before). */
+/** The site's breach score (devereux-breach models/best_daily.json): a logistic model,
+ *  logit p = intercept + sum(coef[k] * x[k]). best_daily uses rain_in (that day), rain_wy (rain
+ *  since Oct 1 through the day), log_dc (ln of berm age, days) and maxlvl (highest measured daily
+ *  mean since the closure, through the day before). Older exports used rain_prev, margin and
+ *  margin_max; any input named in coef is read from x. */
 export function bestScore(x, B) {
-  const z = B.intercept + B.coef.rain_in * x.rain_in + B.coef.rain_prev * x.rain_prev
-    + B.coef.margin * x.margin + B.coef.margin_max * x.margin_max;
+  let z = B.intercept;
+  for (const [k, c] of Object.entries(B.coef)) z += c * (x[k] ?? 0);
   return sigmoid(z);
 }
 
@@ -228,7 +230,7 @@ export function forecast({ rain, today, closedSince, stage0, params, showFrom, c
     const maxlvl = margin == null ? null : Number.isFinite(maxBefore[n]) ? maxBefore[n] : sStage[n];
     const marginMax = margin == null ? null : sStage[n] - maxlvl;
     const p = margin == null ? pRain
-      : B ? bestScore({ rain_in: P[n], rain_prev: P[n - 1] || 0, margin, margin_max: marginMax }, B)
+      : B ? bestScore({ rain_in: P[n], rain_prev: P[n - 1] || 0, rain_wy: rainWy[n], log_dc: Math.log(Math.max(dc, 1)), maxlvl, margin, margin_max: marginMax }, B)
       : sigmoid(U.b0 + U.b_margin * margin + U.b_rain * P[n] + U.b_rain3 * rain3[n] + U.b_api * api[n]);
     const level = levelOf(p, params.levels);
     out.push({
