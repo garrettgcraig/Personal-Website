@@ -225,6 +225,54 @@ function timelineLegend() {
   return `<div class="legend tl-legend">${items.map(([m, l]) => `<span>${m}${esc(l)}</span>`).join("")}</div>`;
 }
 
+// ------------------------------------------------------------- days open to the tide
+// Reviewed mouth record by water year (devereux-breach, CCBER mouth log with Garrett's
+// corrections; the breach day counts as open). Seasons after the last row are computed
+// live from the event record. partial: level logging covered only part of the year.
+const MOUTH_YEARS = [
+  { wy: 2019, open: 73, closed: 292, openings: 1, longest: 73, span: "Jan 7 to Mar 20" },
+  { wy: 2020, open: 17, closed: 349, openings: 2, longest: 10 },
+  { wy: 2021, open: 18, closed: 347, openings: 1, longest: 18, partial: true },
+  { wy: 2022, open: 24, closed: 341, openings: 1, longest: 24 },
+  { wy: 2023, open: 46, closed: 319, openings: 4, longest: 35, span: "Dec 31 to Feb 3", partial: true },
+  { wy: 2024, open: 40, closed: 322, leaky: 4, openings: 4, longest: 19, partial: true },
+  { wy: 2025, open: 21, closed: 344, openings: 2, longest: 18 },
+  { wy: 2026, open: 99, closed: 266, openings: 2, longest: 83, span: "Nov 15 to Feb 5" },
+];
+const isoAdd = (iso, k) => new Date(Date.parse(`${iso}T12:00:00Z`) + k * 86400000).toISOString().slice(0, 10);
+// the season in progress, from breaches and closures since Oct 1, through yesterday
+function currentMouthYear(ev) {
+  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "America/Los_Angeles" });
+  const wy = +today.slice(0, 4) + (+today.slice(5, 7) >= 10 ? 1 : 0);
+  if (wy <= MOUTH_YEARS.at(-1).wy) return null;
+  const start = `${wy - 1}-10-01`, end = isoAdd(today, -1);
+  if (end < start) return null;
+  const all = [...ev].filter((e) => e.type === "breach" || e.type === "closure").sort((a, b) => a.start.localeCompare(b.start));
+  const before = all.filter((e) => e.start.slice(0, 10) < start).at(-1);
+  let open = before?.type === "breach" ? start : null, nOpen = 0, openings = 0, longest = 0;
+  for (const e of all.filter((e) => e.start.slice(0, 10) >= start && e.start.slice(0, 10) <= end)) {
+    const d = e.start.slice(0, 10);
+    if (e.type === "breach" && !open) { open = d; openings++; }
+    if (e.type === "closure" && open) { const k = daysBetween(open, d); nOpen += k; longest = Math.max(longest, k); open = null; }
+  }
+  if (open) { const k = daysBetween(open, end) + 1; nOpen += k; longest = Math.max(longest, k); }
+  const total = daysBetween(start, end) + 1;
+  return { wy, open: nOpen, closed: total - nOpen, openings, longest, current: true, through: end };
+}
+function mouthYearsHtml(ev) {
+  const cur = currentMouthYear(ev), rows = cur ? [...MOUTH_YEARS, cur] : MOUTH_YEARS;
+  const max = Math.max(...rows.map((r) => r.open)), med = median(MOUTH_YEARS.map((r) => r.open));
+  const sd = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const wyLabel = (r) => `${r.wy - 1}–${String(r.wy).slice(2)}${r.partial ? "*" : ""}${r.current ? ` <span class="muted sub">so far, to ${sd(r.through)}</span>` : ""}`;
+  return `
+    <p class="intro">Most of the year the berm keeps the slough closed. After a breach it is open to the ocean and rises and falls with the tide until waves seal it again. A typical year has about ${Math.round(med / 5) * 5} of these tidal days; the longest stretches came in 2018–19 and 2025–26, when the mouth stayed open for more than two months.</p>
+    <div class="table-scroll"><table class="days mouth-years">
+      <thead><tr><th>Water year</th><th>Tidal days</th><th></th><th>Closed days</th><th>Openings</th><th>Longest open</th></tr></thead>
+      <tbody>${rows.map((r) => `<tr class="${r.current ? "today" : ""}"><td>${wyLabel(r)}</td><td>${r.open}</td><td class="mbar"><span style="width:${max ? (100 * r.open) / max : 0}%"></span></td><td>${r.closed}${r.leaky ? "†" : ""}</td><td>${r.openings}</td><td>${r.openings ? `${r.longest} days${r.span ? ` <span class="muted sub">${r.span}</span>` : ""}` : "none"}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <p class="note">Water years run October 1 to September 30. A breach day counts as open. Every opening on record began with a rain breach, and nearly all tidal days fall between November and April. From CCBER's mouth log with corrections checked against the level record; the season in progress is counted from the events below. * Level logging covered only part of that year, so the mouth record leans more on CCBER's log. † Plus 4 days in February 2024 when king tides seeped through a closed berm.</p>`;
+}
+
 // ------------------------------------------------------------- render
 function render() {
   const ev = EVENTS.events;
@@ -268,6 +316,11 @@ function render() {
     ${timelineLegend()}
     <div class="table-scroll">${seasonTimeline(ev)}</div>
     <p class="note">Water years run October to September. Seasons start with 2018–19, when level logging began on October 1, 2018.${np ? ` ${np} events were found in the level record rather than CCBER's log and are provisional until they're reviewed.` : ""}</p>
+  </section>
+
+  <section class="block" id="tidal-days">
+    <h2>Days open to the tide, by year</h2>
+    ${mouthYearsHtml(ev)}
   </section>
 
   <section class="block" id="overtopping">

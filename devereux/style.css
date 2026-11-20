@@ -276,3 +276,9 @@ ol.stages .txt { display: block; margin-top: 2px; }
 .tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
 html.dark-mode-preload { background: #121A21; color-scheme: dark; }
 @media (max-width: 360px) { .site-title { white-space: normal; } .tabs { gap: 16px; } }
+
+/* History: days open to the tide */
+.mouth-years td.mbar { width: 28%; min-width: 60px; text-align: left; }
+@media (max-width: 560px) { .mouth-years td.mbar, .mouth-years th:nth-child(3) { display: none; } table.days.mouth-years tr td .sub { display: block; margin-left: 0; } }
+.mouth-years td.mbar span { display: block; height: 10px; border-radius: 2px; background: var(--color-accent); }
+table.days.mouth-years td .sub { display: inline; margin-left: 4px; white-space: nowrap; }
