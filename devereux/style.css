@@ -245,7 +245,7 @@ header.top .wrap { gap: 24px; }
 
 /* History tab */
 .page-intro { padding: clamp(40px, 6vw, 72px) 0 clamp(24px, 3vw, 40px); }
-.page-intro h1 { font-size: clamp(2.2rem, 3vw + 1rem, 3.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.page-intro h1 { font-size: clamp(2.2rem, 3vw + 1rem, 3.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; margin-bottom: var(--space-6); }
 .ev-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: var(--space-4) 0 var(--space-4); }
 .ev-card { all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: start; gap: 2px; padding: 14px 16px; border: 1px solid var(--color-border); border-top: 4px solid var(--color-muted); border-radius: 6px; font-family: var(--font-ui); }
 .ev-card:hover { background: var(--color-surface); }
