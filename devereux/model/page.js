@@ -1,6 +1,8 @@
 // The Model tab: how the Breach Watch model was chosen and how it did on held-out seasons.
 // Data: /devereux/model-report.json, written by devereux-breach/analysis/regressions.qmd
-// (Parts 4 and 5: measured-level days, the catch-every-breach search, the crest-curve model).
+// (Parts 4, 5 and 7: measured-level days, the catch-every-breach search, the model in use).
+
+import { legend } from "../shared.js";
 
 const app = document.getElementById("app");
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -26,7 +28,7 @@ function plot({ width, height = 260, x: [x0, x1], y: [y0, y1], xTicks = [], yTic
   g += draw({ X, Y, m, width, height });
   return `<svg class="chart" viewBox="0 0 ${width} ${height}" role="img">${g}</svg>`;
 }
-const legend = (items) => `<div class="legend">${items.map(([c, l, st]) => `<span><i class="${st || ""}" style="background:${c};border-color:${c}"></i>${esc(l)}</span>`).join("")}</div>`;
+
 
 const NAMES = { rain_in: "rain that day", rain_prev: "rain the day before", rain_3d: "rain, last 3 days", api: "wetness of the watershed (API)",
   rain_wy: "rain since Oct 1", log_dc: "berm age", stage: "slough level", later: "already breached this season",
@@ -41,10 +43,10 @@ const logFmt = (v) => ({ "-4": "0.0001", "-3": "0.001", "-2": "0.01", "-1": "0.1
 
 function render(R) {
   const L = R.levels, n = R.n_breaches;
-  const cp = Object.fromEntries(R.crest_params.map((q) => [q.name, q.value]));
-  const crest = (dc) => cp.c_inf - (cp.c_inf - cp.c0) * Math.exp(-dc / cp.tau);
-  // rain on the day only, and the slough at its highest since the closure (margin_max 0)
-  const score = (stage, dc, rain) => 1 / (1 + Math.exp(-(cp.b0 + cp.b_margin * (stage - crest(dc)) + cp.b_rain * rain)));
+  const K = Object.fromEntries(R.coef.map((c) => [c.term, c.coef]));
+  // score for a day's rain, given the highest level since closure, berm age and a typical 10 in season so far
+  const WY = 10;
+  const score = (maxlvl, dc, rain) => 1 / (1 + Math.exp(-(K.intercept + K.rain_in * rain + K.rain_wy * WY + K.log_dc * Math.log(dc) + K.maxlvl * maxlvl)));
   const watch = L.find((l) => l.key === "watch");
   const levelLines = (X, Y, x0, x1) => L.filter((l) => l.min > 0).map((l) => `<line x1="${X(x0)}" x2="${X(x1)}" y1="${Y(lg(l.min))}" y2="${Y(lg(l.min))}" stroke="${LEVEL_COLOR[l.key]}" stroke-dasharray="4 4" stroke-width="1.4"/><text x="${X(x1)}" y="${Y(lg(l.min)) - 4}" text-anchor="end" style="fill:${LEVEL_COLOR[l.key]}">${esc(l.label)}</text>`).join("");
 
@@ -55,7 +57,7 @@ function render(R) {
   });
   const respChart = plot({
     width: half(), height: 300, x: [4, 11], y: [-4, 0], xTicks: [4, 5, 6, 7, 8, 9, 10, 11], yTicks: logTicks.map(Math.log10), yFmt: logFmt,
-    xLabel: "slough level, ft NAVD88", yLabel: "daily score (log scale)",
+    xLabel: "highest level since the mouth closed, ft NAVD88", yLabel: "daily score (log scale)",
     draw: ({ X, Y }) => levelLines(X, Y, 4, 11) + curves.map((c) => `<path d="${c.pts.map(([a, b], k) => `${k ? "L" : "M"}${X(a).toFixed(1)},${Y(lg(b)).toFixed(1)}`).join("")}" fill="none" stroke="${c.col}" stroke-width="2.4" ${c.dash ? `stroke-dasharray="${c.dash}"` : ""}/>`).join(""),
   });
 
@@ -104,8 +106,8 @@ function render(R) {
   app.innerHTML = `
   <section class="page-head">
     <h1>The model behind Breach Watch</h1>
-    <p class="lead">Each day's score comes from rain on the watershed that day and the day before, how far the slough sits below the berm's crest, which rebuilds after every closure, and whether the slough is still climbing to new highs since the mouth closed.</p>
-    <p class="outlook">The goal is to flag every breach with as few false alarms as possible. ${R.n_models.toLocaleString()} combinations of rain, level and berm inputs were tested on the ${R.n_days.toLocaleString()} closed-mouth days with a measured water level (${esc(R.seasons.replace("-", " to "))}), which hold ${n} breaches. Every result below predicts each season with a model trained only on the other seasons. At <strong>Possible</strong>, the model in use flagged <strong>all ${watch.caught} of ${n}</strong>, with ${watch.false_alarm_episodes} false-alarm episode${watch.false_alarm_episodes === 1 ? "" : "s"} (${watch.false_alarm_days} days) over eight seasons.${R.excluded.length ? ` Breaches without a measured level (${R.excluded.map((d) => day(d)).join(", ")}) are left out.` : ""}</p>
+    <p class="lead">Each day's score comes from rain that day, how wet the season has been, how long the berm has had to build since the mouth last closed, and the highest the slough has stood since then.</p>
+    <p class="outlook">The goal is to flag every breach with as few false alarms as possible. ${R.n_models.toLocaleString()} combinations of rain, level and berm inputs were tested on the ${R.n_days.toLocaleString()} closed-mouth days with a measured water level (${esc(R.seasons.replace("-", " to "))}), which hold ${n} breaches. Every result below predicts each season with a model trained only on the other seasons. At <strong>Possible</strong>, the model in use flagged <strong>all ${watch.caught} of ${n}</strong>, with ${watch.false_alarm_episodes} false-alarm episode${watch.false_alarm_episodes === 1 ? "" : "s"} (${watch.false_alarm_days} days) over eight seasons. With each season's cutoff set only from the other seasons, it caught ${R.honest.caught} of ${R.honest.breaches}.${R.excluded.length ? ` Breaches without a measured level (${R.excluded.map((d) => day(d)).join(", ")}) are left out.` : ""}</p>
   </section>
 
   <section class="block">
@@ -116,22 +118,23 @@ function render(R) {
       <tbody>${L.filter((l) => l.min > 0).map((l) => `<tr><td><span class="swatch" style="background:${LEVEL_COLOR[l.key]}"></span>${esc(l.label)}${l.key === "watch" ? " (alerts)" : ""}</td><td>${l.min}</td><td>${l.caught} of ${n}</td><td>${l.false_alarm_days}</td><td>${l.false_alarm_episodes}</td></tr>`).join("")}</tbody>
     </table></div>
     <h3 style="margin:var(--space-6) 0 0">How the live forecast feeds the model</h3>
-    <p class="intro">Today's rain is the amount already measured at the Coal Oil Point gauge (hourly, about an hour behind; the Santa Barbara airport only if that feed is down) plus the forecast for the hours left in the day. Forecast rain is Open-Meteo's best-match forecast averaged over five grid points spread across the Devereux Creek watershed, from the slough to the foothills, rather than a single point at the mouth, so rain that has ended no longer counts as still to come. Rain forecasts lose skill with lead time, so each future day is also scored with its forecast rain scaled up a little more each day, reaching 1.5 times on day 10, and the page shows the higher of the two levels. The slough answers rain within hours: over 49 closed-mouth storms the rise began a median 3 to 4 hours after the rain did, and after the rain stopped it gained only about a fifth more, within 6 to 8 hours. The projected level shown on the Outlook puts each storm's rise on its rain day accordingly, while the score itself uses the daily-mean level form it was fit on. The cutoffs above come from observed rain; this lead-time allowance is a judgment call that trades a few more early Possible calls for fewer late surprises, and alerts follow it.</p>
-    <p class="note">The Possible cutoff is the lowest score any recorded breach reached, rounded down, so it is tuned on the same record. Set honestly, from the other seasons only, it would have missed one breach: ${esc(day(weakest.date))}.</p>
+    <p class="intro">Today's rain is the amount already measured at the Coal Oil Point gauge (hourly, about an hour behind; the Santa Barbara airport only if that feed is down) plus the forecast for the hours left in the day. Forecast rain is Open-Meteo's best-match forecast averaged over five grid points spread across the Devereux Creek watershed, from the slough to the foothills, rather than a single point at the mouth, so rain that has ended no longer counts as still to come. Rain forecasts lose skill with lead time, so each future day is also scored with its forecast rain scaled up a little more each day, reaching 1.5 times on day 10, and the page shows the higher of the two levels. The slough answers rain within hours: over 49 closed-mouth storms the rise began a median 3 to 4 hours after the rain did, and after the rain stopped it gained only about a fifth more, within 6 to 8 hours. The projected level shown on the Outlook puts each storm's rise on its rain day accordingly; the score itself uses the highest measured daily mean before each day, and the projected level only for days past the latest reading. The cutoffs above come from observed rain; this lead-time allowance is a judgment call that trades a few more early Possible calls for fewer late surprises, and alerts follow it.</p>
+    <p class="note">The Possible cutoff is the lowest score any recorded breach reached, rounded down, so it is tuned on the same record. Set honestly, from the other seasons only, it would have missed one breach: ${esc(day(R.honest.missed))}.</p>
   </section>
 
   <section class="block">
     <h2>The model</h2>
-    <p class="intro">A logistic model with four inputs: <strong>rain that day</strong>, <strong>rain the day before</strong>, <strong>how far the slough sits below an estimated berm crest</strong>, and <strong>how far it sits below the highest level it has reached since the mouth closed</strong>. The crest isn't measured: it starts low when the mouth closes and rebuilds toward a ceiling, and a newly closed berm is never lower than the water it held back in its first three days. The last input separates a slough that is still climbing toward new highs, which is when breaches happen, from one that has already peaked and is falling back. Rain is the Coal Oil Point gauge, midnight to midnight. The slough level for a day is the previous day's measured mean rolled forward with that day's rain.</p>
+    <p class="intro">A logistic model with four inputs: <strong>rain that day</strong>, <strong>rain since October 1</strong>, <strong>how many days the berm has had to build</strong> since the mouth last closed (on a log scale, so the first weeks count most), and <strong>the highest the slough has stood since then</strong>, through the day before. A slough that has already held high water against a berm has shown how close it is to the top; a young berm fails at lower levels than an old one, and a wet season primes the watershed. Rain is the Coal Oil Point gauge, midnight to midnight. An earlier version used how far the slough sat below an estimated berm crest and below its own high; a bug gave the second input a perfect value on every breach day in training, and once fixed, this model did better.</p>
     <div class="cols">
       <div class="table-scroll"><table class="stats">
-        <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-        <tbody>${R.crest_params.map((q) => `<tr><td>${esc(q.label)}${q.unit ? `<small class="unit">${esc(q.unit)}</small>` : ""}</td><td>${fmtv(q.value)}</td></tr>`).join("")}</tbody>
+        <thead><tr><th>Input</th><th>Coefficient</th><th>Odds ratio</th></tr></thead>
+        <tbody>${R.coef.map((c) => `<tr><td>${esc(c.label)}${c.unit ? `<small class="unit">${esc(c.unit)}</small>` : ""}</td><td>${c.coef.toFixed(3)}</td><td>${c.term === "intercept" ? "" : (c.term === "log_dc" ? Math.exp(c.coef * Math.LN2) : Math.exp(c.coef)).toPrecision(3)}</td></tr>`).join("")}</tbody>
       </table>
-      <p class="note">Crest after ${weakest.days_closed} days, the age of the berm on ${esc(day(weakest.date))}: ${crest(weakest.days_closed).toFixed(2)} ft. After 300 days: ${crest(300).toFixed(2)} ft.</p></div>
+      <p class="note">Odds ratios are per inch of rain, per foot of level and per doubling of berm age. Fit on all ${R.n_days.toLocaleString()} measured days; the results above use leave-one-season-out fits.</p></div>
       <div>
         <h3>What it means</h3>
         ${legend([["#9DB9CF", "young berm (11 days), 0.5 in of rain", "dash"], ["#2D5A7B", "young berm, 1.5 in", "dash"], ["#E0B656", "mature berm (300 days), 0.5 in", "line"], ["#A65A3C", "mature berm, 1.5 in", "line"]])}
+        <p class="note">With 10 in of rain so far this season.</p>
         ${respChart}
       </div>
     </div>
@@ -168,7 +171,7 @@ function render(R) {
       <thead><tr><th>Model</th><th>Tuned: false-alarm days</th><th>Tuned: episodes</th><th>Honest: caught</th><th>Honest: episodes</th><th>Honest: missed</th><th>Honest: false-alarm days</th></tr></thead>
       <tbody>${R.search.map((c) => `<tr class="${c.model === R.model ? "pick" : ""}"><td>${esc(nice(c.model))}${c.model === R.model ? " (in use)" : ""}</td><td>${c.fa_days}</td><td>${c.fa_episodes}</td><td>${esc(c.honest_caught.replace("/", " of "))}</td><td>${c.honest_fa_episodes}</td><td>${esc(c.honest_missed ? c.honest_missed.split(";").map((d) => day(d)).join(", ") : "none")}</td><td>${c.honest_fa_days}</td></tr>`).join("")}</tbody>
     </table></div>
-    <p class="note">The top six are the leaders of the search; they all catch 15 of 16 honestly with 8 false-alarm days in one episode, and the one in use is the simplest of them. Below them for comparison: a level-and-rain model without the highest-since-closure input, which needs a cutoff so low it raises dozens of false-alarm episodes, and the old rain-only model (rain that day plus rain since October 1), which catches as many but with 11 false-alarm episodes. The earlier crest-curve model, refit on the reviewed breach dates, needed a Possible cutoff that rounds to zero, so it was retired.</p>
+    <p class="note">The top eight lead the search; they all catch 15 of 16 honestly, and the one in use has the fewest false alarms with the simplest inputs. Below them for comparison: the earlier model in use (rain that day and the day before, level below the crest and below its own high), scored with its training bug fixed; the old rain-only model (rain that day plus rain since October 1), which catches as many but with 11 false-alarm episodes; and a level-and-rain model that needs a cutoff so low it raises dozens of false-alarm episodes.</p>
   </section>
 
   <section class="block">
