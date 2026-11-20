@@ -5,8 +5,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { bestScore, breachHours, dateRange, forecast, rainComposite, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
-import { parseCsv, restOfToday, parseUscrnHourly } from "../netlify/functions/devereux-api.mjs";
+import { bestScore, breachHours, dateRange, forecast, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
+import { copDailyRain, parseCsv, restOfToday, parseUscrnHourly } from "../netlify/functions/devereux-api.mjs";
 
 const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 // the earlier crest-curve hazard, still the fallback when params.best is absent
@@ -80,16 +80,15 @@ test("levels: each score maps to the highest level whose cutoff it meets", () =>
   assert.equal(L[1].caught, params.levels_record.breaches, "Watch caught every recorded breach");
 });
 
-test("rain composite rescales KSBA timing to the local CoCoRaHS storm total", () => {
-  const days = ["2026-11-12", "2026-11-13", "2026-11-14"];
-  const ksba = { "2026-11-12": 0.02, "2026-11-13": 0.19, "2026-11-14": 0 };
-  const cocorahs = { "2026-11-13": { "CA-SB-30": 0.38, "CA-SB-23": 0.38 * 1.04 } };
-  const out = rainComposite(days, { ksba, cocorahs }, params);
-  const total = out.reduce((a, r) => a + r.rain_in, 0);
-  assert.ok(Math.abs(total - 0.38) < 1e-9, `storm total ${total}`);
-  assert.equal(out[1].src, "KSBA + CoCoRaHS");
-  // the gauge wins whenever it reported
-  assert.equal(rainComposite(days, { cop: { "2026-11-13": 0.5 }, ksba, cocorahs }, params)[1].rain_in, 0.5);
+test("past rain comes from the Coal Oil Point gauge alone, gaps stay missing", () => {
+  const days = ["2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"];
+  const cop = { "2026-11-17": 0, "2026-11-18": 0.27 };
+  const crn = { daily: { "2026-11-18": 0.3, "2026-11-19": 1.6535 }, hours: { "2026-11-18": 24, "2026-11-19": 17 } };
+  const out = copDailyRain(days, cop, crn);
+  assert.deepEqual(out.map((r) => r.rain_in), [0, 0.27, 1.65, null]);
+  assert.equal(out[2].hours, 17);
+  assert.equal(out[1].hours, undefined);
+  assert.equal(out[3].src, "missing");
 });
 
 test("berm crest rebuilds from c0 toward c_inf", () => {

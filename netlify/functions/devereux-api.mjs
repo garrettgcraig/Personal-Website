@@ -7,7 +7,7 @@ import { inflateRawSync } from "node:zlib";
 import { getStore } from "@netlify/blobs";
 import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
-import { addDays, breachHours, dateRange, detectMouthEvents, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
+import { addDays, breachHours, dateRange, detectMouthEvents, forecast, iso, stageOutlook, wyStart } from "../../devereux/model.js";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
@@ -110,34 +110,6 @@ async function staffGauge() {
   return { export: latest, readings: Object.entries(byDate).map(([date, ft]) => ({ date, ft })).sort((a, b) => a.date.localeCompare(b.date)) };
 }
 
-async function cocorahs(start, end) {
-  const fmt = (d) => `${d.slice(5, 7)}/${d.slice(8, 10)}/${d.slice(0, 4)}`;
-  const url = "https://data.cocorahs.org/export/exportreports.aspx?ReportType=Daily&dtf=1&Format=CSV&State=CA&County=SB"
-    + `&ReportDateType=reportdate&StartDate=${fmt(start)}&EndDate=${fmt(addDays(end, 1))}`;
-  const out = {};
-  for (const r of parseCsv(await fetchText(url, 25000))) {
-    const st = r.StationNumber;
-    if (!params.rain.cocorahs[st]) continue;
-    const amt = r.TotalPrecipAmt === "T" ? 0 : Number(r.TotalPrecipAmt);
-    if (!Number.isFinite(amt)) continue;
-    const fell = addDays(r.ObservationDate.slice(0, 10), -1); // 7 am report covers the previous day
-    (out[fell] ||= {})[st] = amt;
-  }
-  return out;
-}
-
-async function ksba(start, end) {
-  const [y1, m1, d1] = start.split("-").map(Number), [y2, m2, d2] = end.split("-").map(Number);
-  const url = "https://mesonet.agron.iastate.edu/cgi-bin/request/daily.py?network=CA_ASOS&stations=SBA"
-    + `&year1=${y1}&month1=${m1}&day1=${d1}&year2=${y2}&month2=${m2}&day2=${d2}&var=precip_in&format=csv`;
-  const out = {};
-  for (const r of parseCsv(await fetchText(url, 25000))) {
-    const v = Number(r.precip_in);
-    if (r.day && Number.isFinite(v) && r.precip_in !== "None") out[r.day] = Math.max(v, 0);
-  }
-  return out;
-}
-
 // Coal Oil Point USCRN station, hourly (about an hour behind real time). The NCEI daily
 // summaries lag by days, so this fills recent days and gives today's rain so far.
 // Columns: WBANNO UTC_DATE UTC_TIME LST_DATE LST_TIME ... P_CALC (mm, field 12); -9999 = missing.
@@ -158,6 +130,18 @@ export function parseUscrnHourly(text) {
     lastMs = Date.UTC(+f[1].slice(0, 4), +f[1].slice(4, 6) - 1, +f[1].slice(6, 8), +f[2].slice(0, 2), +f[2].slice(2, 4));
   }
   return { daily, hours, hourly, lastMs };
+}
+
+// Past days' rain from the Coal Oil Point gauge alone: the NCEI daily summary, else the
+// station's hourly feed (with `hours` when some of the day's hours are still missing), else
+// missing. No other gauge stands in for it.
+export function copDailyRain(days, cop, crn) {
+  return days.map((d) => {
+    if (cop?.[d] != null) return { date: d, rain_in: cop[d], src: "Coal Oil Point gauge" };
+    const h = crn?.hours?.[d] ?? 0;
+    if (h > 0) return { date: d, rain_in: Math.round(crn.daily[d] * 100) / 100, src: "Coal Oil Point gauge", ...(h < 24 ? { hours: h } : {}) };
+    return { date: d, rain_in: null, src: "missing" };
+  });
 }
 
 async function uscrn(today) {
@@ -330,11 +314,9 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, coco, sba, cop, om, tide, wave, live, live5, crn] = await Promise.all([
+  const [log, staff, cop, om, tide, wave, live, live5, crn] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
-    withFallback("cocorahs", () => cocorahs(start, yesterday), blobs, status),
-    withFallback("ksba", () => ksba(start, today), blobs, status),
     withFallback("cop_gauge", () => copGauge(start, yesterday), blobs, status),
     withFallback("open_meteo", openMeteo, blobs, status),
     withFallback("tides", () => tides(today), blobs, status),
@@ -366,31 +348,25 @@ export async function buildStatus(now = new Date()) {
   const warnings = [];
   if (!last) warnings.push("No mouth-state record could be loaded.");
 
-  // Rain: observed composite before today, Open-Meteo from today on.
-  const past = dateRange(start, yesterday);
-  // complete recent days from the Coal Oil Point hourly feed where the daily summary isn't out yet
-  const copAll = { ...(cop || {}) };
-  for (const d of past) if (copAll[d] == null && (crn?.hours?.[d] ?? 0) >= 22) copAll[d] = Math.round(crn.daily[d] * 100) / 100;
-  const rain = rainComposite(past, { cop: copAll, ksba: sba || {}, cocorahs: coco || {} }, params);
+  // Rain: the Coal Oil Point gauge alone before today, Open-Meteo from today on.
+  const rain = copDailyRain(dateRange(start, yesterday), cop, crn);
   const omDaily = om?.daily ?? om; // older cached copies are the daily map alone
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
     rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
   }
-  // Today: rain measured so far (Santa Barbara airport, scaled to Coal Oil Point) plus only the
-  // forecast hours still to come, so rain that has already stopped isn't counted as coming.
-  // Prefer the Coal Oil Point gauge (hourly, within the last 3 hours); the airport gauge can
-  // miss most of a storm that the coast gets.
-  const crnFresh = crn?.lastMs != null && now.getTime() - crn.lastMs < 3 * 3600000;
-  const soFar = crnFresh ? (crn.daily[today] ?? 0) : sba?.[today] != null ? sba[today] * params.rain.ksba_ratio : null;
-  if (soFar != null && om?.hourly) {
-    const asOf = crnFresh ? crn.lastMs : now.getTime();
-    const left = restOfToday(asOf, today, om.hourly).rain_in;
+  // Today: rain the Coal Oil Point gauge has measured so far plus only the forecast hours
+  // after its latest hour, so rain that has already stopped isn't counted as coming. Until
+  // the gauge reports an hour of today, today is the forecast alone.
+  const crnToday = crn?.lastMs != null && pacificDate(crn.lastMs) === today;
+  if (crnToday && om?.hourly) {
+    const soFar = crn.daily[today] ?? 0;
+    const left = restOfToday(crn.lastMs, today, om.hourly).rain_in;
     const r0 = rain.find((r) => r.date === today);
-    Object.assign(r0, { rain_in: soFar + left, so_far_in: soFar, rest_in: left, so_far_as_of: new Date(asOf).toISOString(),
-      src: crnFresh ? "so far (Coal Oil Point gauge) + forecast for the hours left" : "so far (Santa Barbara airport) + forecast for the hours left" });
+    Object.assign(r0, { rain_in: soFar + left, so_far_in: soFar, rest_in: left, so_far_as_of: new Date(crn.lastMs).toISOString(),
+      src: "so far (Coal Oil Point gauge) + forecast for the hours left" });
   }
   const missing = rain.filter((r) => r.rain_in == null && r.date >= addDays(today, -30)).length;
-  if (missing) warnings.push(`${missing} recent or forecast days have no rain data and are treated as dry.`);
+  if (missing) warnings.push(`${missing} recent or forecast days have no Coal Oil Point rain data and are treated as dry.`);
 
   const readings = staff?.readings || [];
   // Daily means from the live sensor; the latest complete day (>= 12 hourly values)
@@ -521,6 +497,7 @@ export async function buildStatus(now = new Date()) {
     recent: {
       rain: rain.filter((r) => r.date >= addDays(today, -30) && r.date < today),
       season_rain_in: rain.filter((r) => r.date >= wyStart(today) && r.date < today).reduce((a, r) => a + (r.rain_in || 0), 0),
+      season_missing_days: rain.filter((r) => r.date >= wyStart(today) && r.date < today && r.rain_in == null).length,
       tides: tide,
       waves: wave,
     },

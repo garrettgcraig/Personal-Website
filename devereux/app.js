@@ -99,8 +99,8 @@ function monthTicks(a, b, everyMonths) {
   return out;
 }
 
-// Daily rain (in) for the level chart: baked-in history (Coal Oil Point gauge, filled from
-// KSBA + CoCoRaHS), then the live feed's last 30 days, then the 10-day forecast.
+// Daily rain (in) for the level chart: baked-in history (Coal Oil Point gauge), then the live
+// feed's last 30 days, then the 10-day forecast.
 function rainBars(s, start, end) {
   const daily = new Map();
   for (const [d, v] of HISTORY?.rain || []) daily.set(dayNum(d), { y: v, fc: false });
@@ -513,9 +513,18 @@ function render(s) {
   const rr = s.recent.rain.map((r) => ({ x: dayNum(r.date), r }));
   const recentRain = chart({
     width: panelW(), height: 180, yMin: 0, yFmt: (v) => v.toFixed(1), yLabel: "rain, in/day",
-    series: [{ type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: r.src.startsWith("Coal") ? SAGE() : css("--color-accent"), title: `${day(r.date)}: ${(r.rain_in ?? 0).toFixed(2)} in (${r.src})` })) }],
+    series: [
+      // every day gets a bar (a missing day's is empty) so bar widths stay daily
+      { type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: SAGE(), opacity: r.hours ? 0.45 : 1,
+        title: r.rain_in == null ? "" : `${day(r.date)}: ${r.rain_in.toFixed(2)} in${r.hours ? ` (${r.hours} of 24 hours reported so far)` : ""}` })) },
+      { type: "dots", color: css("--color-muted"), r: 3, points: rr.filter(({ r }) => r.rain_in == null).map(({ x, r }) => ({ x, y: 0, title: `${day(r.date)}: no reading` })) },
+    ],
     xTicks: everyN(rr.map((p) => p.x), 7), xFmt: shortDay,
   });
+
+  const partial = s.recent.rain.filter((r) => r.hours), gaps = s.recent.season_missing_days || 0;
+  const recentRainNote = (partial.length ? `. Faded bars are days the gauge hasn't finished reporting (${partial.map((r) => `${day(r.date)}: ${r.hours} of 24 hours`).join(", ")}).` : "")
+    + (gaps ? ` ${gaps} day${gaps > 1 ? "s" : ""} this season ${gaps > 1 ? "have" : "has"} no reading yet (gray dot${gaps > 1 ? "s" : ""}) and count${gaps > 1 ? "" : "s"} as dry.` : "");
 
   const rainCell = (r) => r.date === s.today && r.so_far_in != null
     ? `${(r.rain_in ?? 0).toFixed(2)}<span class="muted sub"><span title="${esc(r.so_far_src || "")}">${r.so_far_in.toFixed(2)} so far${r.so_far_as_of ? ` (to ${new Date(r.so_far_as_of).toLocaleTimeString("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" })})` : ""}</span> + ${(r.rest_in ?? 0).toFixed(2)} to come</span>`
@@ -647,9 +656,9 @@ function render(s) {
       </div>` : ""}
       <div>
         <h3>Rain, last 30 days</h3>
-        ${legend([[SAGE(), "Coal Oil Point gauge", "bar"], [css("--color-accent"), "airport and local CoCoRaHS gauges", "bar"]])}
+        ${legend([[SAGE(), "Coal Oil Point gauge", "bar"]])}
         ${recentRain}
-        <p class="note">Water year to date: <span class="num">${s.recent.season_rain_in.toFixed(2)} in</span></p>
+        <p class="note">Water year to date: <span class="num">${s.recent.season_rain_in.toFixed(2)} in</span>${recentRainNote}</p>
       </div>
       <div>
         <h3>Mouth history</h3>
@@ -679,7 +688,7 @@ function render(s) {
       <p>The score ranks risk well but, with ${s.model.levels_record?.breaches ?? 16} recorded breaches, isn't a dependable percentage, so the page reports levels. Each level's cutoff was set from the scores on past breach days. Over the record, ${BANDS.filter((b) => b.key !== "low").map((b) => `${b.label} came before ${b.caught} of ${s.model.levels_record?.breaches ?? 16} breaches and came up ${b.false_alarm_episodes ? (b.false_alarm_episodes === 1 ? "once" : `${b.false_alarm_episodes} times`) + " with no breach after it" : "with no false alarms"}`).join("; ")}. Alerts go out at Possible. A breach counts as flagged if the level was reached that day or the day before, since a storm that runs past midnight spans two calendar days. Tides and waves are shown for context; they don't drive breaches here.</p>
       <p>Limits: the current slough level is measured (the UC Davis sensor reports every 5 minutes; this page uses hourly averages), but the next 10 days are a forecast, and a single storm's rise can miss by about 0.4 ft either way. Forecast rain comes from a weather model that can miss local totals by a factor of two. The mouth state comes from CCBER's log, updated by the live sensor within hours of a breach or closure; if the sensor is down, the page relies on the log, which can lag by days.</p>
     </div>
-    <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://www.cocorahs.org/">CoCoRaHS</a>, <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a> (KSBA), <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://cdip.ucsd.edu/m/products/?stn=107p1">CDIP 107 Goleta Point</a> and NDBC buoys <a href="https://www.ndbc.noaa.gov/station_page.php?station=46053">46053</a> and <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
+    <p class="sources">Sources: <a href="https://github.com/ccber-restoration/hydrology">CCBER hydrology data</a> (mouth log, staff gauge), <a href="https://coastalocean.ucdavis.edu/ocean-observing/flooding/devereux-slough">UC Davis / State Parks sensor</a>, <a href="https://www.ncei.noaa.gov/">NOAA NCEI</a> Coal Oil Point gauge, <a href="https://open-meteo.com/">Open-Meteo</a>, <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=9411340">NOAA tides</a>, <a href="https://cdip.ucsd.edu/m/products/?stn=107p1">CDIP 107 Goleta Point</a> and NDBC buoys <a href="https://www.ndbc.noaa.gov/station_page.php?station=46053">46053</a> and <a href="https://www.ndbc.noaa.gov/station_page.php?station=46218">46218</a>, <a href="https://dataspace.copernicus.eu/">Copernicus Sentinel-2</a>, <a href="https://naip-usdaonline.hub.arcgis.com/">USDA NAIP</a>.<br/>
     Live feeds: ${sources}. Updated ${new Date(s.generated_at).toLocaleString("en-US", { timeZone: tz, dateStyle: "medium", timeStyle: "short" })} Pacific. Model fit ${esc(s.model.exported)}.</p>
   </section>`;
 }
