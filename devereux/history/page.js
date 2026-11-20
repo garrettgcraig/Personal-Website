@@ -283,7 +283,7 @@ function render() {
   const rng = (a) => (a.length ? `${Math.min(...a).toFixed(1)} to ${Math.max(...a).toFixed(1)} ft` : "");
   const cd = (a) => median(a.map((e) => e.closedDays).filter((v) => v != null));
   const no = n((e) => e.type === "overtopping"), ns = n((e) => e.type === "overtopping" && e.summer);
-  const np = n((e) => e.provisional);
+  const nu = n((e) => e.type !== "overtopping" && e.logged === false);
   const breachC = css("--breach"), skyC = document.body.classList.contains("dark-mode") ? COLORS.mist : COLORS.sky;
   const cards = [
     ["first", "Season's first breaches", firsts.length, mf != null ? `median peak ${mf.toFixed(1)} ft (${rng(pk(firsts))}), after a median ${cd(firsts)} days closed` : ""],
@@ -315,7 +315,7 @@ function render() {
     <div class="ev-cards">${cards.map(([k, l, c, d]) => `<button type="button" class="ev-card ev-${k}" data-evf="${k}"><span class="ev-card-n">${c}</span><span class="ev-card-l">${esc(l)}</span><span class="ev-card-d">${esc(d)}</span></button>`).join("")}</div>
     ${timelineLegend()}
     <div class="table-scroll">${seasonTimeline(ev)}</div>
-    <p class="note">Water years run October to September. Seasons start with 2018–19, when level logging began on October 1, 2018.${np ? ` ${np} events were found in the level record rather than CCBER's log and are provisional until they're reviewed.` : ""}</p>
+    <p class="note">Water years run October to September. Seasons start with 2018–19, when level logging began on October 1, 2018.${nu ? ` ${nu} events were found in the level record rather than CCBER's log, and each was reviewed against it.` : ""}</p>
   </section>
 
   <section class="block" id="tidal-days">
