@@ -286,6 +286,35 @@ export function breachWindow({ hourly, lo, hi, nowMs, horizonH = 48, fitHours = 
 }
 
 /**
+ * Most likely breach hours for a storm (devereux-breach analysis/berm/breach_hour.py, rule
+ * "rainsum_shift"): a storm is a run of wet hours (>= 0.01 in, dry gaps of up to 6 h); the
+ * breach comes about when the storm's rain reaches the median rain-to-breach of past breaches
+ * (1.77 in), plus 2 h. A storm that stops short uses its last wet hour + 2 h. The window runs
+ * from 1 h before to 3 h after, since misses run late. Backtested on 16 breaches with perfect
+ * rain: 75% within 4 h, median error 1.5 h.
+ *  hourly: [[key "YYYY-MM-DDTHH:00" local, rain in the hour ending then], ...] sorted.
+ * Returns [{onset, end, total_in, predicted, start, finish}] with local keys.
+ */
+export const BREACH_HOUR = { need_in: 1.77, lead_h: 2, before_h: 1, after_h: 3, wet_in: 0.01, gap_h: 6 };
+export function breachHours(hourly, R = BREACH_HOUR) {
+  const H = 3600000;
+  const ms = (k) => Date.parse(`${k}:00Z`);
+  const key = (t) => new Date(Math.round(t / H) * H).toISOString().slice(0, 13) + ":00";
+  const wet = hourly.filter(([, v]) => v >= R.wet_in).map(([k, v]) => [ms(k), v]);
+  const storms = [];
+  for (const [t, v] of wet) {
+    const cur = storms.at(-1);
+    if (cur && t - cur.end <= (R.gap_h + 1) * H) { cur.end = t; cur.total += v; if (cur.fire == null && cur.total >= R.need_in) cur.fire = t; }
+    else storms.push({ onset: t, end: t, total: v, fire: v >= R.need_in ? t : null });
+  }
+  return storms.map((st) => {
+    const pred = (st.fire ?? st.end) + R.lead_h * H;
+    return { onset: key(st.onset), end: key(st.end), total_in: Math.round(st.total * 100) / 100, reaches_need: st.fire != null,
+      predicted: key(pred), start: key(pred - R.before_h * H), finish: key(pred + R.after_h * H) };
+  });
+}
+
+/**
  * Detect mouth openings and closings from the live water-level sensor (hourly, ft).
  * Validated on Apr 2025 - Nov 2026 against CCBER's log (2025-11-15 open, 2026-02-06
  * closed, 2026-02-19 open, 2026-03-07 closed; detected within 0-2 days):

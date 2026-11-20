@@ -325,6 +325,15 @@ function dialSvg(p, off) {
   </svg>`;
 }
 
+// "Tue 2 to 6 AM" / "Tue 11 PM to Wed 3 AM" from a breach window's local hour keys
+function windowText(w) {
+  const parts = (k) => { const d = new Date(`${k}:00Z`), h = d.getUTCHours();
+    return { wd: d.toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short" }), h: h % 12 || 12, ap: h < 12 ? "AM" : "PM" }; };
+  const a = parts(w.start), b = parts(w.finish);
+  if (a.wd !== b.wd) return `${a.wd} ${a.h} ${a.ap} to ${b.wd} ${b.h} ${b.ap}`;
+  return a.ap === b.ap ? `${a.wd} ${a.h} to ${b.h} ${b.ap}` : `${a.wd} ${a.h} ${a.ap} to ${b.h} ${b.ap}`;
+}
+
 // ------------------------------------------------------------- render
 function render(s) {
   lastW = fullW();
@@ -336,6 +345,8 @@ function render(s) {
   const peak = s.peak;
   const heavy = s.peak_heavy;
   const heavyUp = !open && peak && heavy && BANDS.indexOf(bandOf(heavy.p)) > BANDS.indexOf(bandOf(peak.p));
+  // first Likely or Imminent day ahead with a storm to time: its most likely breach hours
+  const bw = open ? null : (s.outlook || []).find((r) => r.date >= s.today && r.breach_window);
 
   const nowFt = s.stage?.sensor_now?.ft ?? s.stage?.today_est_ft;
   const nowWhen = s.stage?.sensor_now
@@ -484,7 +495,8 @@ function render(s) {
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
           : (bandOf(peak.p).key === "low" ? "Next 10 days: no chance of breach." : `Next 10 days peak: <strong>${bandOf(peak.p).label}</strong>, ${day(peak.date).replace(/ /g, "\u00a0")}.`)
-            + (heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : "")}</p>
+            + (heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : "")
+            + (bw ? `<br/>Most likely breach: <strong>${windowText(bw.breach_window).replace(/ /g, "\u00a0")}</strong>.` : "")}</p>
       </div>
     </div>
     </div>
@@ -531,7 +543,7 @@ function render(s) {
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
-        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td title="breach level ${r.breach_level_ft.toFixed(1)} ft">${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="lvl ${r.p >= 0.5 ? "likely" : ""}"><span class="dot" style="background:${bandOf(r.p).color}"></span>${bandOf(r.p).label}</td></tr>`).join("")}</tbody>
+        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td title="breach level ${r.breach_level_ft.toFixed(1)} ft">${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="lvl ${r.p >= 0.5 ? "likely" : ""}"><span class="dot" style="background:${bandOf(r.p).color}"></span>${bandOf(r.p).label}${r.breach_window ? `<span class="muted sub" title="When storm rain reaches the typical breach total (${r.breach_window.total_in.toFixed(2)} in forecast for this storm)">most likely ${windowText(r.breach_window)}</span>` : ""}</td></tr>`).join("")}</tbody>
       </table>
       <p class="note">Breach level: ${ahead[0]?.breach_level_ft?.toFixed(1) ?? "n/a"} ft, the typical level of past breaches (lower for a young berm).</p></div>
     </div>`}

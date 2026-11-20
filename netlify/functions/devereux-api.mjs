@@ -7,7 +7,7 @@ import { inflateRawSync } from "node:zlib";
 import { getStore } from "@netlify/blobs";
 import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
-import { addDays, dateRange, detectMouthEvents, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
+import { addDays, breachHours, dateRange, detectMouthEvents, forecast, iso, rainComposite, stageOutlook, wyStart } from "../../devereux/model.js";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
@@ -142,7 +142,7 @@ async function ksba(start, end) {
 // summaries lag by days, so this fills recent days and gives today's rain so far.
 // Columns: WBANNO UTC_DATE UTC_TIME LST_DATE LST_TIME ... P_CALC (mm, field 12); -9999 = missing.
 export function parseUscrnHourly(text) {
-  const daily = {}, hours = {};
+  const daily = {}, hours = {}, hourly = {};
   let lastMs = null;
   for (const line of text.split("\n")) {
     const f = line.trim().split(/\s+/);
@@ -152,17 +152,20 @@ export function parseUscrnHourly(text) {
     const d = `${f[3].slice(0, 4)}-${f[3].slice(4, 6)}-${f[3].slice(6, 8)}`;
     daily[d] = (daily[d] || 0) + mm / 25.4;
     hours[d] = (hours[d] || 0) + 1;
+    // hour ending at LST_TIME, keyed like Open-Meteo's local hours ("2400" is the next day's 00:00)
+    const hh = +f[4].slice(0, 2);
+    hourly[hh === 24 ? `${addDays(d, 1)}T00:00` : `${d}T${String(hh).padStart(2, "0")}:00`] = mm / 25.4;
     lastMs = Date.UTC(+f[1].slice(0, 4), +f[1].slice(4, 6) - 1, +f[1].slice(6, 8), +f[2].slice(0, 2), +f[2].slice(2, 4));
   }
-  return { daily, hours, lastMs };
+  return { daily, hours, hourly, lastMs };
 }
 
 async function uscrn(today) {
   const years = [...new Set([addDays(today, -21).slice(0, 4), today.slice(0, 4)])];
-  const out = { daily: {}, hours: {}, lastMs: null };
+  const out = { daily: {}, hours: {}, hourly: {}, lastMs: null };
   for (const y of years) {
     const r = parseUscrnHourly(await fetchText(`https://www.ncei.noaa.gov/pub/data/uscrn/products/hourly02/${y}/CRNH0203-${y}-CA_Santa_Barbara_11_W.txt`, 20000));
-    Object.assign(out.daily, r.daily); Object.assign(out.hours, r.hours);
+    Object.assign(out.daily, r.daily); Object.assign(out.hours, r.hours); Object.assign(out.hourly, r.hourly);
     if (r.lastMs != null) out.lastMs = Math.max(out.lastMs ?? 0, r.lastMs);
   }
   if (out.lastMs == null) throw new Error("no USCRN hours");
@@ -211,7 +214,7 @@ async function openMeteo() {
   const pts = Array.isArray(raw) ? raw : [raw];
   return {
     daily: meanSeries(pts.map((j) => Object.fromEntries(j.daily.time.map((d, i) => [d, j.daily.precipitation_sum[i]])))),
-    hourly: meanSeries(pts.map((j) => Object.fromEntries((j.hourly?.time || []).slice(0, 48).map((t, i) => [t, j.hourly.precipitation[i]])))),
+    hourly: meanSeries(pts.map((j) => Object.fromEntries((j.hourly?.time || []).map((t, i) => [t, j.hourly.precipitation[i]])))),
     points: pts.length,
   };
 }
@@ -443,6 +446,19 @@ export async function buildStatus(now = new Date()) {
       const l = libBy[r.date];
       if (!l || r.date <= today || !(l.p > r.p)) return r;
       return { ...r, p_central: r.p, p: l.p, level: l.level, alert: l.alert, lead_scale: leadScale(daysSince(today, r.date)) };
+    });
+    // Likely and Imminent days: the most likely breach hours, from hourly rain (Coal Oil Point
+    // gauge for hours already measured, the watershed forecast after that)
+    const hr = new Map();
+    if (om?.hourly) for (const [k, v] of Object.entries(om.hourly)) hr.set(k, v);
+    if (crn?.hourly) for (const [k, v] of Object.entries(crn.hourly)) if (k >= `${addDays(today, -3)}T00:00`) hr.set(k, v);
+    const storms = breachHours([...hr].sort((a, b) => (a[0] < b[0] ? -1 : 1)));
+    outlook = outlook.map((r) => {
+      if (r.date < today || !["warning", "likely"].includes(r.level)) return r;
+      const onDay = storms.filter((st) => st.predicted.slice(0, 10) === r.date);
+      // otherwise the storm with the most rain that day's score counts on
+      const st = onDay.at(-1) || storms.filter((x) => x.onset.slice(0, 10) <= r.date && x.end.slice(0, 10) >= r.date).sort((a, b) => b.total_in - a.total_in)[0];
+      return st ? { ...r, breach_window: st } : r;
     });
     const tr = rain.find((x) => x.date === today);
     if (tr?.so_far_in != null) outlook = outlook.map((r) => (r.date === today ? { ...r, so_far_in: tr.so_far_in, rest_in: tr.rest_in, so_far_as_of: tr.so_far_as_of, so_far_src: tr.src } : r));
