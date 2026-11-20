@@ -3,7 +3,7 @@ name: Devereux sensor history watch
 # its full history. The first 5-minute reading was 2025-04-01 00:05 UTC (Mar 31, 5:05 PM
 # Pacific). If the earliest reading moves later, old data is being dropped and the site
 # should start saving raw readings itself; this opens an issue so that gets noticed.
-# The watch runs for a year: the run on or after Nov 29, 2027 does its last check, opens a
+# The watch runs for about a month: the run on or after Dec 21, 2026 does its last check, opens a
 # closing summary issue and disables this workflow.
 on:
   schedule:
@@ -51,12 +51,12 @@ jobs:
           if [ -z "$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[].number')" ]; then
             gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --body "The weekly check found the earliest 5-minute reading at ${{ steps.q.outputs.first }} (${{ steps.q.outputs.count }} readings between Apr 1 and Apr 11, 2025; a full record has about 2,880). The first reading used to be 2025-04-01 00:05 UTC, so LI-COR appears to be dropping old data. Time to start saving raw sensor readings in the site's own storage."
           fi
-      - name: End the watch after a year
+      - name: End the watch after a month
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "$(date -u +%Y-%m-%d)" \< "2027-11-29" ]; then echo "Watch continues until 2027-11-29."; exit 0; fi
+          if [ "$(date -u +%Y-%m-%d)" \< "2026-12-21" ]; then echo "Watch continues until 2026-12-21."; exit 0; fi
           if [ "${{ steps.q.outputs.ok }}" = "true" ]; then verdict="No data loss seen: the earliest reading is still ${{ steps.q.outputs.first }}."; elif [ -n "${{ steps.q.outputs.first }}" ]; then verdict="The last check found the earliest reading at ${{ steps.q.outputs.first }}; see the data-loss issue."; else verdict="The last check could not reach LI-COR."; fi
-          gh issue create -R "$GITHUB_REPOSITORY" --title "Devereux: LI-COR sensor history watch ended" --body "The weekly watch on the UC Davis sensor's oldest readings ran from Nov 2026 to Nov 2027 and has now switched itself off. $verdict"
+          gh issue create -R "$GITHUB_REPOSITORY" --title "Devereux: LI-COR sensor history watch ended" --body "The weekly watch on the UC Davis sensor's oldest readings ran from Nov 23 to Dec 21, 2026 and has now switched itself off. $verdict"
           gh workflow disable devereux-licor-retention.yml -R "$GITHUB_REPOSITORY"
