@@ -526,13 +526,13 @@ function render(s) {
     <div id="level-chart">${levelChart}</div>
     <p class="note" id="live-note">${liveNote(s)}</p>
     ${s.stage?.series?.length ? `<p class="after">${levelSummary(s)}</p>` : ""}
-    <p class="intro" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
+    <p class="note" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
   </section>
 
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off within about 6 to 8 hours after the rain stops. Scores are by calendar day, so the rain day itself scores highest, and the day after a big storm can score higher than before it because the slough's new high counts from then on. Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left, so finished rain stops showing as still to come. Rain forecasts get less reliable further out, so later days are scored as if they could get somewhat more rain than forecast (up to 1.5 times on day 10); a far-off day can read a level higher than its central forecast alone.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off about 6 to 8 hours after the rain stops, so a storm's rain day scores highest. On Likely and Imminent days the table gives the most likely breach hours: about two hours after the storm's rain passes 1.8 inches, the typical total that has set off past breaches.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label, "bar"]))}
@@ -540,6 +540,7 @@ function render(s) {
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
         ${legend([[css("--color-accent"), "observed", "bar"], [COLORS.mist, "forecast (Open-Meteo, watershed average)", "bar"]])}
         ${rainChart}
+        <p class="note">Faded bars are the past two weeks, scored with observed rain; solid bars use forecast rain. Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left. Rain forecasts get less reliable further out, so later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), and the higher level is shown.</p>
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
