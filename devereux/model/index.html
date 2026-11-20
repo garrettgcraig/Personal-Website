@@ -23,6 +23,9 @@
 		table.stats th { font-weight: 500; color: var(--color-muted); text-align: right; padding: 0 10px 8px; white-space: nowrap; }
 		table.stats td { text-align: right; padding: 8px 10px; border-top: 1px solid var(--color-border); }
 		table.stats th:first-child, table.stats td:first-child { text-align: left; padding-left: 0; }
+		table.stats th.grp { text-align: center; white-space: normal; border-bottom: 1px solid var(--color-border); padding-bottom: 6px; }
+		table.stats thead tr + tr th:first-child { text-align: right; padding-left: 10px; }
+		table.stats th[rowspan] { vertical-align: bottom; }
 		table.stats td { white-space: nowrap; }
 		table.stats td:first-child { white-space: normal; }
 		table.stats .unit { display: block; font-size: 0.8rem; color: var(--color-muted); }
