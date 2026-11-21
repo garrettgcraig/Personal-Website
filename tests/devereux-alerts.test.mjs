@@ -55,3 +55,16 @@ test("email validation", () => {
   assert.ok(!validEmail(`${"x".repeat(250)}@example.com`));
   assert.ok(!validEmail(undefined));
 });
+
+test("alert email carries the level's sign, the days ahead, and what the level has meant", async () => {
+  const { alertEmailHtml } = await import("../netlify/lib/devereux-delivery.mjs");
+  const s = { ...status(0.3), outlook: ["2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22", "2026-11-23"].map((date, i) => ({ date, p: i === 2 ? 0.3 : 0.01, rain_in: i === 2 ? 1.6 : 0, stage_ft: 7 + i / 10, breach_level_ft: 9.6 })),
+    model: { alert_threshold: 0.02, levels: LEVELS.map((l) => ({ ...l, caught: l.key === "low" ? null : 16, false_alarm_episodes: 2 })), levels_record: { breaches: 16 } } };
+  const msg = alertMessage(s);
+  assert.equal(msg.email.image, "https://garrettgcraig.com/devereux/media/email/sign-warning.jpg");
+  assert.deepEqual(msg.email.days.map((d) => d.level), ["No Chance", "No Chance", "Likely", "No Chance", "No Chance"]);
+  assert.match(msg.email.meaning, /Every one of the 16 recorded breaches reached Likely first/);
+  const html = alertEmailHtml(msg, "https://example.test/unsub");
+  assert.match(html, /sign-warning\.jpg/);
+  assert.match(html, /2\.48 ft below the typical breach level|about 2\.5 ft below/);
+});

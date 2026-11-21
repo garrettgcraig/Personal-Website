@@ -54,7 +54,33 @@ export function alertMessage(status) {
   const title = `Devereux Slough Breach Watch: ${phrase} ${when}`;
   const body = `Breach Watch for ${niceDay(pk.date)}: ${phrase}${rain}. Every recorded breach got at least a Possible Breach call first.`
     + (ft != null ? ` The slough is at ${ft.toFixed(2)} ft now.` : "");
-  return { title, body, url: PAGE };
+  // the email states the slough's level in its own line, so its lead leaves it out
+  const lead = `Breach Watch for ${niceDay(pk.date)}: ${phrase}${rain}. Every recorded breach got at least a Possible Breach call first.`;
+  return { title, body, url: PAGE, email: { lead, ...emailDetails(status, lv, phrase, ft) } };
+}
+
+const SHORT = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric" });
+
+/** Extra content for the email only: the sign image, the slough now, and the days ahead. */
+function emailDetails(status, lv, phrase, ft) {
+  const levels = status.model?.levels || LEVELS;
+  const levelOf = (p) => { const f = [...levels].reverse().find((l) => p >= l.min) || levels[0]; return LEVELS.find((l) => l.key === f.key)?.label ?? f.label; };
+  const n = status.model?.levels_record?.breaches;
+  const rec = levels.find((l) => l.key === lv.key);
+  const fa = rec?.false_alarm_episodes;
+  const meaning = rec?.caught != null && n
+    ? `${rec.caught === n ? `Every one of the ${n}` : `${rec.caught} of ${n}`} recorded breaches reached ${lv.label} first`
+      + (fa != null ? `, and it came up ${fa === 0 ? "with no false alarms" : `${fa === 1 ? "once" : `${fa} times`} without a breach`} over the record.` : ".")
+    : "";
+  const today = status.today;
+  const ahead = (status.outlook || []).filter((r) => r.date >= today);
+  const last = ahead.findIndex((r) => r.date === status.peak.date);
+  const days = ahead.slice(0, Math.min(ahead.length, Math.max(5, last + 2), 10)).map((r) => ({
+    day: r.date === today ? "Today" : SHORT(r.date),
+    rain_in: r.rain_in, stage_ft: r.stage_ft, level: levelOf(r.p ?? 0),
+  }));
+  const bl = ahead[0]?.breach_level_ft;
+  return { key: lv.key, phrase, image: `${PAGE}media/email/sign-${lv.key}.jpg`, meaning, slough_ft: ft ?? null, breach_level_ft: bl ?? null, days };
 }
 
 /** A test message, for checking delivery after setup. */

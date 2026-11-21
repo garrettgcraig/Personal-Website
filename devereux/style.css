@@ -270,6 +270,12 @@ header.top .wrap { gap: 24px; }
 .ev-card-d { font-size: 0.84rem; color: var(--color-muted); line-height: 1.4; margin-top: 4px; }
 .ev-tag.ev-later { font-weight: 500; }
 @media (max-width: 900px) { .ev-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ws-split { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; margin-top: var(--space-4); }
+.ws-map { width: 100%; aspect-ratio: 4 / 5; max-height: 640px; border-radius: 10px; overflow: hidden; background: var(--color-surface, #1B2530); }
+.ws-text p { margin: 0 0 var(--space-4); }
+.ws-label { font: 600 12px var(--font-ui); color: #1B2530; background: #F3EBDD; border: 0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); }
+.ws-label::before { display: none; }
+@media (max-width: 900px) { .ws-split { grid-template-columns: 1fr; } .ws-map { aspect-ratio: 1 / 1; } }
 .sat-split { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; margin-top: var(--space-4); }
 .sat-split .frames figcaption { display: none; }
 ol.stages { list-style: none; margin: 0; padding: 0; counter-reset: st; }
