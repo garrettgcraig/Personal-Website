@@ -15,7 +15,7 @@ START, END = '<!-- SEO -->', '<!-- /SEO -->'
 PAGES = {
     'index.html': ('Garrett G. Craig: conservation scientist and builder of tools for nature',
                    'Maps, models, and apps for biodiversity, restoration, and climate resilience, plus photography and trail notes from Garrett G. Craig.'),
-    'projects.html': ('Projects', 'Apps and maps for nature: KnowKi, SeedFinder, Santa Barbara Wildlife Crossings, the Public Lands Tracker, and the iNat Rarity Explorer.'),
+    'projects.html': ('Projects', 'Apps and maps for nature: KnowKi, SeedFinder, Santa Barbara Wildlife Crossings, Devereux Slough Breach Watch, the Public Lands Tracker, and the iNat Rarity Explorer.'),
     'research.html': ('Research', 'Research on conservation planning, climate risk, restoration ecology, and climate policy, from the Amazon to UC Santa Barbara.'),
     'project-amazon-climate.html': ('Climate Hazards in Amazonian IPLC Territories', "Master's capstone for Conservation International mapping wildfire, heat, flooding, and water stress across Indigenous Peoples' and local communities' territories in the Amazon."),
     'project-fossorial.html': ('Wildlife Use of Artificial Refuges', 'Camera-trap analysis of how wildlife used rubble refuges, logs, and boulders at a regraded UC Santa Barbara restoration site.'),
