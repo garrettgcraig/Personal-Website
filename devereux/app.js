@@ -158,7 +158,8 @@ function levelChartSvg(s, range) {
     series: [
       ...tide.series,
       { type: "band", color: css("--color-accent"), opacity: 0.18, points: series.map((r) => ({ x: dayNum(r.date), lo: r.lo, hi: r.hi })) },
-      { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.filter((r) => span > 31 || !subPts.length || r.x + 0.5 < subPts[0].x).map((r) => ({ x: r.x, y: r.ft })) },
+      // daily means stop where the hourly sensor line starts, so the two never overlap
+      { type: "line", color: css("--color-text"), width: span > 400 ? 1 : 1.6, gap: 2, opacity: 0.85, points: loggers.filter((r) => span > 400 || !subPts.length || r.x + 0.5 < subPts[0].x).map((r) => ({ x: r.x, y: r.ft })) },
       // observed range of past mature-berm breach peaks, across the whole chart
       ...(BLV ? [{ type: "band", color: COLORS.clay, opacity: 0.12, points: [{ x: start, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }, { x: end, lo: BLV.mature_min_ft, hi: BLV.mature_max_ft }] }] : []),
       { type: "line", color: COLORS.clay, width: 1.8, dash: "5 4", points: series.map((r) => ({ x: dayNum(r.date), y: s.mouth?.state === "open" ? null : r.breach_level_ft })) },
