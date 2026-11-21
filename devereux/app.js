@@ -629,7 +629,7 @@ function render(s) {
   <section class="block" id="watch">
     <h2>Breach Watch</h2>
     ${open ? "" : `
-    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off about 6 to 8 hours after the rain stops, so a storm's rain day scores highest. On Likely and Imminent days the table gives the most likely breach hours: about two hours after the storm's rain passes about 2 inches, the typical total that has set off past breaches.</p>
+    <p class="intro" style="margin-top:var(--space-8)">Each day's level comes from rain that day, rain so far this season, how long the berm has been building since the mouth closed, and the highest the slough has stood since then. The slough rises within hours of heavy rain and levels off about 6 to 8 hours after the rain stops, so a storm's rain day scores highest. On Likely and Imminent days the table also gives the most likely breach hours, a rough guide: past breaches came about 3 hours after the storm's heaviest hour of rain, so the window runs from 1 to 6 hours after that hour.</p>
     <div class="split">
       <div>
         ${legend(BANDS.map((b) => [b.color, b.label, "bar"]))}
@@ -641,7 +641,7 @@ function render(s) {
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
-        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td title="breach level ${r.breach_level_ft.toFixed(1)} ft">${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="lvl ${r.p >= 0.5 ? "likely" : ""}"><span class="dot" style="background:${bandOf(r.p).color}"></span>${bandOf(r.p).label}${r.breach_window ? `<span class="muted sub" title="When storm rain reaches the typical breach total (${r.breach_window.total_in.toFixed(2)} in forecast for this storm)">most likely ${windowText(r.breach_window)}</span>` : ""}</td></tr>`).join("")}</tbody>
+        <tbody>${ahead.map((r) => `<tr class="${r.date === s.today ? "today" : ""}"><td>${r.date === s.today ? "Today" : day(r.date)}</td><td>${rainCell(r)}</td><td>${r.stage_ft?.toFixed(2) ?? "n/a"}</td><td title="breach level ${r.breach_level_ft.toFixed(1)} ft">${r.below_breach_ft == null ? "n/a" : r.below_breach_ft.toFixed(2)}</td><td class="lvl ${r.p >= 0.5 ? "likely" : ""}"><span class="dot" style="background:${bandOf(r.p).color}"></span>${bandOf(r.p).label}${r.breach_window ? `<span class="muted sub" title="A rough guide: about 3 hours after this storm's heaviest hour of rain (${r.breach_window.peak_in.toFixed(2)} in)">most likely ${windowText(r.breach_window)}</span>` : ""}</td></tr>`).join("")}</tbody>
       </table>
       <p class="note">Breach level: ${ahead[0]?.breach_level_ft?.toFixed(1) ?? "n/a"} ft, the typical level of past breaches (lower for a young berm).</p></div>
     </div>`}

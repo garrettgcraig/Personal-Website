@@ -220,25 +220,35 @@ test("Coal Oil Point hourly feed sums rain by local standard day and skips missi
   assert.ok(Object.keys(r.hourly).every((k) => /^\d{4}-\d\d-\d\dT\d\d:00$/.test(k)));
 });
 
-test("breach hours: storm rain reaching the typical breach total, plus the median lead", () => {
+test("breach hours: the storm's wettest hour plus 3 h, window 2 h before to 3 h after", () => {
   const hrs = [];
-  for (let h = 0; h < 30; h++) hrs.push([`2026-12-02T${String(h % 24).padStart(2, "0")}:00`.replace("2026-12-02", h < 24 ? "2026-12-02" : "2026-12-03"), 0]);
-  // 0.3 in/h from 10:00 to 17:00 (8 hours, 2.4 in); 1.9 in is reached at the hour ending 16:00
-  for (let h = 10; h <= 17; h++) hrs[h][1] = 0.3;
+  for (let h = 0; h < 30; h++) hrs.push([`${h < 24 ? "2026-12-02" : "2026-12-03"}T${String(h % 24).padStart(2, "0")}:00`, 0]);
+  // rain from the hours ending 10:00 to 17:00; the wettest (0.6 in) is the hour ending 13:00
+  // and ties with the hour ending 15:00, so the first counts: it starts at 12:00
+  for (let h = 10; h <= 17; h++) hrs[h][1] = 0.2;
+  hrs[13][1] = 0.6; hrs[15][1] = 0.6;
   hrs[2][1] = 0.05; // an early shower more than 6 dry hours before is its own storm
   const st = breachHours(hrs);
   assert.equal(st.length, 2);
   const big = st[1];
   assert.equal(big.onset, "2026-12-02T10:00");
   assert.equal(big.total_in, 2.4);
-  assert.ok(big.reaches_need);
-  // 16:00 + 2 h; window 1 h before to 3 h after
-  assert.equal(big.predicted, "2026-12-02T18:00");
-  assert.equal(big.start, "2026-12-02T17:00");
-  assert.equal(big.finish, "2026-12-02T21:00");
-  // a storm that stops short of the total uses its last wet hour
-  assert.equal(st[0].reaches_need, false);
+  assert.equal(big.peak, "2026-12-02T13:00");
+  assert.equal(big.peak_in, 0.6);
+  assert.equal(big.predicted, "2026-12-02T15:00");
+  assert.equal(big.start, "2026-12-02T13:00");
+  assert.equal(big.finish, "2026-12-02T18:00");
   assert.equal(st[0].predicted, "2026-12-02T04:00");
+});
+
+test("breach hours: a storm lasts at most 72 h", () => {
+  const hrs = [];
+  for (let h = 0; h < 100; h++) hrs.push([new Date(Date.UTC(2026, 11, 2, h)).toISOString().slice(0, 13) + ":00", 0.05]);
+  hrs[90][1] = 0.4;
+  const st = breachHours(hrs);
+  assert.equal(st.length, 2);
+  assert.equal(st[1].onset, "2026-12-05T00:00");
+  assert.equal(st[1].peak, hrs[90][0]);
 });
 
 test("same-day response: a storm's rise lands on the rain day, a small carryover the next", () => {
