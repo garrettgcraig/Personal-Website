@@ -23,11 +23,11 @@ OUT = Path(__file__).resolve().parent.parent / "devereux"
 # tide, so waves running up the beach at high tide likely carry most of the water over.
 # In 2026 the tide itself ran unusually high (surge, then high sea level).
 EXAMPLES = {
-    "2026-05-16T05": ("Storm surge tops the berm, May 2026",
+    "2026-05-16T04": ("Storm surge tops the berm, May 2026",
                       "Spring tides ran about half a foot above the prediction. Three high tides "
                       "reached up to 7.2 ft and each one stepped the slough up, adding about 0.5 ft "
                       "with no rain."),
-    "2026-10-11T18": ("High sea level, October 2026",
+    "2026-10-11T17": ("High sea level, October 2026",
                       "October 2026 ran nearly a foot above normal sea level, the highest anomaly "
                       "in the record, as in El Niño years. A 7.3 ft tide, 1.5 ft above the "
                       "prediction, coincided with a 0.2 ft jump in the slough within an hour."),

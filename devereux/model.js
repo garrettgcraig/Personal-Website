@@ -248,16 +248,16 @@ export function breachWindow({ hourly, lo, hi, nowMs, horizonH = 48, fitHours = 
  * Most likely breach hours for a storm (devereux-breach analysis/berm/breach_hour.py, rule
  * "rainsum_shift"): a storm is a run of wet hours (>= 0.01 in, dry gaps of up to 6 h); the
  * breach comes about when the storm's rain reaches the median rain-to-breach of past breaches,
- * plus 2 h. That median is 1.77 in on the Santa Barbara airport (KSBA) gauge. The site feeds
+ * plus 2 h. That median is 1.80 in on the Santa Barbara airport (KSBA) gauge. The site feeds
  * Coal Oil Point (USCRN), which reads about 1.09x KSBA on storm days (CA-SB-1 read 1.22x COP and
- * 1.33x KSBA over 113 storm days), so the need here is ~1.9 in. Approximate: the Open-Meteo
- * watershed mean used for forecast hours has no calibration against KSBA, and gets the same 1.9 in. A storm that stops short uses its last wet hour + 2 h. The window runs
- * from 1 h before to 3 h after, since misses run late. Backtested on 16 breaches with perfect
- * rain: 75% within 4 h, median error 1.5 h.
+ * 1.33x KSBA over 113 storm days), so the need here is ~1.96 in. Approximate: the Open-Meteo
+ * watershed mean used for forecast hours has no calibration against KSBA, and gets the same 1.96 in. A storm that stops short uses its last wet hour + 2 h. The window runs
+ * from 1 h before to 3 h after, since misses run late. Backtested on 17 breaches with perfect
+ * rain: 10 within 3 h, 12 within 4 h, median error 1 h.
  *  hourly: [[key "YYYY-MM-DDTHH:00" local, rain in the hour ending then], ...] sorted.
  * Returns [{onset, end, total_in, predicted, start, finish}] with local keys.
  */
-export const BREACH_HOUR = { need_in: 1.9, lead_h: 2, before_h: 1, after_h: 3, wet_in: 0.01, gap_h: 6 };
+export const BREACH_HOUR = { need_in: 1.96, lead_h: 2, before_h: 1, after_h: 3, wet_in: 0.01, gap_h: 6 };
 export function breachHours(hourly, R = BREACH_HOUR) {
   const H = 3600000;
   const ms = (k) => Date.parse(`${k}:00Z`);
