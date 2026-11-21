@@ -246,18 +246,17 @@ export function breachWindow({ hourly, lo, hi, nowMs, horizonH = 48, fitHours = 
 
 /**
  * Most likely breach hours for a storm (devereux-breach analysis/berm/breach_hour.py, rule
- * "rainsum_shift"): a storm is a run of wet hours (>= 0.01 in, dry gaps of up to 6 h); the
- * breach comes about when the storm's rain reaches the median rain-to-breach of past breaches,
- * plus 2 h. That median is 1.80 in on the Santa Barbara airport (KSBA) gauge. The site feeds
- * Coal Oil Point (USCRN), which reads about 1.09x KSBA on storm days (CA-SB-1 read 1.22x COP and
- * 1.33x KSBA over 113 storm days), so the need here is ~1.96 in. Approximate: the Open-Meteo
- * watershed mean used for forecast hours has no calibration against KSBA, and gets the same 1.96 in. A storm that stops short uses its last wet hour + 2 h. The window runs
- * from 1 h before to 3 h after, since misses run late. Backtested on 17 breaches with perfect
- * rain: 10 within 3 h, 12 within 4 h, median error 1 h.
+ * "peak1"): a storm is a run of wet hours (>= 0.01 in) from its onset, with dry gaps of up to
+ * 6 h, lasting at most 72 h; a burst more than 6 h after the last wet hour starts a new storm.
+ * The breach comes about 3 h after the start of the storm's single wettest hour (the first if
+ * tied), measured on Coal Oil Point hourly rain in PST. The window runs from 2 h before to 3 h
+ * after. Checked with each season held out on the 17 breaches: 13 fell inside the window,
+ * 14 within 3 h, median error 2 h.
  *  hourly: [[key "YYYY-MM-DDTHH:00" local, rain in the hour ending then], ...] sorted.
- * Returns [{onset, end, total_in, predicted, start, finish}] with local keys.
+ * Returns [{onset, end, total_in, peak, peak_in, predicted, start, finish}] with local keys;
+ * peak is the hour-ending key of the wettest hour.
  */
-export const BREACH_HOUR = { need_in: 1.96, lead_h: 2, before_h: 1, after_h: 3, wet_in: 0.01, gap_h: 6 };
+export const BREACH_HOUR = { lag_h: 3, before_h: 2, after_h: 3, wet_in: 0.01, gap_h: 6, max_h: 72 };
 export function breachHours(hourly, R = BREACH_HOUR) {
   const H = 3600000;
   const ms = (k) => Date.parse(`${k}:00Z`);
@@ -266,12 +265,16 @@ export function breachHours(hourly, R = BREACH_HOUR) {
   const storms = [];
   for (const [t, v] of wet) {
     const cur = storms.at(-1);
-    if (cur && t - cur.end <= (R.gap_h + 1) * H) { cur.end = t; cur.total += v; if (cur.fire == null && cur.total >= R.need_in) cur.fire = t; }
-    else storms.push({ onset: t, end: t, total: v, fire: v >= R.need_in ? t : null });
+    if (cur && t - cur.end <= (R.gap_h + 1) * H && t - cur.onset < R.max_h * H) {
+      cur.end = t; cur.total += v;
+      if (v > cur.peak_in) { cur.peak = t; cur.peak_in = v; }
+    } else storms.push({ onset: t, end: t, total: v, peak: t, peak_in: v });
   }
   return storms.map((st) => {
-    const pred = (st.fire ?? st.end) + R.lead_h * H;
-    return { onset: key(st.onset), end: key(st.end), total_in: Math.round(st.total * 100) / 100, reaches_need: st.fire != null,
+    // keys mark the hour's end, so the wettest hour starts 1 h before its key
+    const pred = st.peak - H + R.lag_h * H;
+    return { onset: key(st.onset), end: key(st.end), total_in: Math.round(st.total * 100) / 100,
+      peak: key(st.peak), peak_in: Math.round(st.peak_in * 100) / 100,
       predicted: key(pred), start: key(pred - R.before_h * H), finish: key(pred + R.after_h * H) };
   });
 }
