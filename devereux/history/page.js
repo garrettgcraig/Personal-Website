@@ -180,7 +180,7 @@ function mountWatershedMap() {
   slot.replaceWith(wsMapEl);
   loadLeaflet().then(() => {
     const L = window.L;
-    wsMap = L.map(wsMapEl, { scrollWheelZoom: false, attributionControl: true });
+    wsMap = L.map(wsMapEl, { scrollWheelZoom: false, attributionControl: true, zoomSnap: 0.25 });
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
       maxZoom: 18, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics; watershed and creeks: USGS NHDPlus" }).addTo(wsMap);
     const ring = L.polygon(wsDecode(WS_RING), { color: "#E0B656", weight: 2.5, fillColor: "#E0B656", fillOpacity: 0.08 }).addTo(wsMap);
@@ -190,8 +190,8 @@ function mountWatershedMap() {
     const label = (ll, text, dir = "right") => L.circleMarker(ll, { radius: 5, color: "#1B2530", weight: 1.5, fillColor: "#F3EBDD", fillOpacity: 1 })
       .bindTooltip(text, { permanent: true, direction: dir, className: "ws-label" }).addTo(wsMap);
     label(slough.at(-1), "Slough mouth, Sands Beach", "left");
-    label(slough[0], "Upper slough, North Campus Open Space");
-    wsMap.fitBounds(ring.getBounds(), { padding: [12, 12] });
+    label(slough[0], "Upper slough, North Campus Open Space", "top");
+    wsMap.fitBounds(ring.getBounds(), { padding: [16, 16] });
   }).catch(() => { wsMapEl.innerHTML = `<p class="note">The map couldn't load.</p>`; });
 }
 
@@ -355,7 +355,7 @@ function render() {
     <div class="ws-split">
       <div id="ws-map-slot" class="ws-map"></div>
       <div class="ws-text">
-        <p>Rain on the Devereux Creek watershed, outlined in gold, drains down Devereux Creek and its branches (blue) into the slough. Most of it is Goleta and Isla Vista neighborhoods, roads and the UC Santa Barbara campus lands, so runoff reaches the slough within hours of heavy rain.</p>
+        <p>Rain on the Devereux Creek watershed, outlined in gold, drains down Devereux Creek and its branches (blue) into the slough. Much of it is neighborhoods and roads in western Goleta, so runoff reaches the slough within hours of heavy rain.</p>
         <p>The slough once reached much farther north. In the mid-1960s its upper half was filled with about 350,000 cubic yards of soil to build the Ocean Meadows Golf Course, taking out roughly half of the slough's estuarine habitat. The course flooded in winter storms.</p>
         <p>In 2013 the Trust for Public Land bought the 63-acre course with grant money and gave it to UC Santa Barbara. Starting in 2017, UCSB's Cheadle Center for Biodiversity and Ecological Restoration (CCBER) led the restoration: crews dug out nearly all of that fill, lowered the floodplain by almost two feet, and used the soil to build a mesa for native grassland on the site's southwest side. About 40 acres of coastal wetland came back, doubling the slough's wetland area, and trails opened to the public in October 2018. Today the 136-acre North Campus Open Space is managed by CCBER and joins the lower slough and Coal Oil Point Reserve.</p>
         <p class="note">Sources: <a href="https://www.fws.gov/story/2019-06/birdies-bird-habitat">U.S. Fish and Wildlife Service</a>, <a href="https://news.ucsb.edu/2017/017916/multi-benefit-project">UCSB News</a>, <a href="https://esassoc.com/projects/upper-devereux-slough-restoration/">ESA</a>, <a href="https://en.wikipedia.org/wiki/North_Campus_Open_Space">Wikipedia</a>. Watershed outline and creeks from USGS NHDPlus, approximate.</p>
