@@ -147,6 +147,54 @@ function initGallery() {
 
 // ------------------------------------------------------------- seasons
 // Water year: October through September, named for the year it ends in.
+// ------------------------------------------------------------- watershed map
+// Devereux Creek watershed outline and creeks: USGS NHDPlus (NLDI basin and upstream
+// flowlines for the slough's outlet reach, COMID 17596217), simplified to ~10 m. Points are
+// [lon, lat] * 1e5, delta-encoded.
+const WS_RING = "-11988063,3441095 31,117 -37,34 100,48 -42,250 -148,98 -215,77 -154,0 -360,297 -310,120 -924,142 -500,357 97,205 7,143 -134,104 71,182 73,57 122,51 124,139 252,121 -8,26 31,7 -8,26 32,6 -8,26 79,28 49,108 165,4 0,160 48,21 56,186 152,165 234,96 -31,236 51,202 159,98 81,230 -73,153 24,133 108,73 182,-197 149,-368 172,-47 105,-162 203,-129 -40,-86 -136,-69 -67,-149 119,-233 160,-113 125,-283 154,-24 115,-82 237,-269 44,-89 90,-62 106,-144 415,-94 107,-89 -45,-216 -3,-368 -69,-175 -231,-401 -97,-124 272,-109 168,-104 -4,-93 -176,-73 -393,27 -125,-15 105,-232 -278,-33 -104,9 -267,-167 -126,27 -48,88 56,56 -69,66";
+const WS_SLOUGH = "-11987352,3441715 -427,-584 -164,-102 -99,-33";
+const WS_CREEKS = [
+  "-11987821,3442031 -17,-53 17,-25 124,-16 180,-2 143,-133 19,-39 3,-48",
+  "-11989001,3442351 111,18 91,-38 196,-44 30,-25 31,-53 47,-39 83,-57 124,-59 22,-3 99,48 53,-6 69,-28 224,-34",
+  "-11988842,3445475 39,-32 58,-103 17,-107 -33,-117 3,-163 -17,-64 -3,-151 72,-176 0,-133 -49,-116 -50,-172 11,-69 80,-68 -16,-108 -28,-62 8,-43 28,-44 5,-66 17,-14 99,-25 119,-48 91,-85 45,-68 5,-48 -19,-110 33,-58 268,-254 130,-45 22,-16 33,-60 91,-73 3,-32 -108,-151 -36,-92 111,-235 -8,-236",
+  "-11990305,3443122 53,-114 0,-44 -63,-185 0,-78 30,-46 260,-252 49,-2 61,21 91,0 116,23 72,-16 83,-60 69,-30 83,-11 229,0 169,14 2,9",
+  "-11989794,3443500 25,-103 31,-51 240,-256 88,-62 14,-25 3,-238 30,-39 92,-57 168,-224 102,-94",
+];
+// decoded as Leaflet [lat, lon] pairs
+const wsDecode = (str) => { let x = 0, y = 0; return str.split(" ").map((t) => { const [a, b] = t.split(",").map(Number); x += a; y += b; return [y / 1e5, x / 1e5]; }); };
+const LEAFLET = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/";
+let wsMapEl = null, wsMap = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = LEAFLET + "leaflet.min.css"; document.head.append(css);
+  return new Promise((ok, fail) => { const js = document.createElement("script"); js.src = LEAFLET + "leaflet.min.js"; js.onload = ok; js.onerror = fail; document.head.append(js); });
+}
+// The map lives outside render(): each render leaves a slot and the same map element moves in,
+// so re-rendering (resize, theme) doesn't rebuild the map.
+function mountWatershedMap() {
+  const slot = document.getElementById("ws-map-slot");
+  if (!slot) return;
+  if (wsMapEl) { slot.replaceWith(wsMapEl); wsMap?.invalidateSize(); return; }
+  wsMapEl = document.createElement("div"); wsMapEl.id = "ws-map"; wsMapEl.className = "ws-map";
+  wsMapEl.setAttribute("role", "img"); wsMapEl.setAttribute("aria-label", "Satellite map of the Devereux Creek watershed, outlined from the foothills down to the slough mouth at Sands Beach");
+  slot.replaceWith(wsMapEl);
+  loadLeaflet().then(() => {
+    const L = window.L;
+    wsMap = L.map(wsMapEl, { scrollWheelZoom: false, attributionControl: true, zoomSnap: 0.25 });
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 18, attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics; watershed and creeks: USGS NHDPlus" }).addTo(wsMap);
+    const ring = L.polygon(wsDecode(WS_RING), { color: "#E0B656", weight: 2.5, fillColor: "#E0B656", fillOpacity: 0.08 }).addTo(wsMap);
+    for (const c of WS_CREEKS) L.polyline(wsDecode(c), { color: "#8FD0FF", weight: 2, opacity: 0.9 }).addTo(wsMap);
+    const slough = wsDecode(WS_SLOUGH);
+    L.polyline(slough, { color: "#8FD0FF", weight: 4, opacity: 0.95 }).addTo(wsMap);
+    const label = (ll, text, dir = "right") => L.circleMarker(ll, { radius: 5, color: "#1B2530", weight: 1.5, fillColor: "#F3EBDD", fillOpacity: 1 })
+      .bindTooltip(text, { permanent: true, direction: dir, className: "ws-label" }).addTo(wsMap);
+    label(slough.at(-1), "Slough mouth, Sands Beach", "left");
+    label(slough[0], "Upper slough, North Campus Open Space", "top");
+    wsMap.fitBounds(ring.getBounds(), { padding: [16, 16] });
+  }).catch(() => { wsMapEl.innerHTML = `<p class="note">The map couldn't load.</p>`; });
+}
+
 const LOGGED_FROM = "2018-10-01";
 const wyOf = (iso) => +iso.slice(0, 4) + (+iso.slice(5, 7) >= 10 ? 1 : 0);
 const median = (a) => { const b = a.slice().sort((x, y) => x - y), n = b.length; return n ? (n % 2 ? b[(n - 1) / 2] : (b[n / 2 - 1] + b[n / 2]) / 2) : null; };
@@ -302,6 +350,19 @@ function render() {
     </div>
   </section>
 
+  <section class="block" id="watershed">
+    <h2>The watershed and the restored upper slough</h2>
+    <div class="ws-split">
+      <div id="ws-map-slot" class="ws-map"></div>
+      <div class="ws-text">
+        <p>Rain on the Devereux Creek watershed, outlined in gold, drains down Devereux Creek and its branches (blue) into the slough. Much of it is neighborhoods and roads in western Goleta, so runoff reaches the slough within hours of heavy rain.</p>
+        <p>The slough once reached much farther north. In the mid-1960s its upper half was filled with about 350,000 cubic yards of soil to build the Ocean Meadows Golf Course, taking out roughly half of the slough's estuarine habitat. The course flooded in winter storms.</p>
+        <p>In 2013 the Trust for Public Land bought the 63-acre course with grant money and gave it to UC Santa Barbara. Starting in 2017, UCSB's Cheadle Center for Biodiversity and Ecological Restoration (CCBER) led the restoration: crews dug out nearly all of that fill, lowered the floodplain by almost two feet, and used the soil to build a mesa for native grassland on the site's southwest side. About 40 acres of coastal wetland came back, doubling the slough's wetland area, and trails opened to the public in October 2018. Today the 136-acre North Campus Open Space is managed by CCBER and joins the lower slough and Coal Oil Point Reserve.</p>
+        <p class="note">Sources: <a href="https://www.fws.gov/story/2019-06/birdies-bird-habitat">U.S. Fish and Wildlife Service</a>, <a href="https://news.ucsb.edu/2017/017916/multi-benefit-project">UCSB News</a>, <a href="https://esassoc.com/projects/upper-devereux-slough-restoration/">ESA</a>, <a href="https://en.wikipedia.org/wiki/North_Campus_Open_Space">Wikipedia</a>. Watershed outline and creeks from USGS NHDPlus, approximate.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="satellite">
     <h2>The cycle from space</h2>
     <div class="sat-split">
@@ -347,6 +408,7 @@ function render() {
     <div class="gallery">${GALLERY.map((g, i) => `<button type="button" data-gallery="${i}" aria-label="${esc(g.alt)}"><span class="ph"><img src="${MEDIA}${g.thumb}" alt="" loading="lazy" decoding="async" />${g.video ? `<span class="play" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M0 0L10 6L0 12Z"/></svg></span>` : ""}</span>${esc(g.time)}${g.video ? `, video ${g.video}` : ""}</button>`).join("")}</div>
   </section>`;
   document.getElementById("ev-rows").innerHTML = eventRows();
+  mountWatershedMap();
 }
 // the cards double as filters: jump to the table
 document.addEventListener("click", (e) => {

@@ -81,16 +81,37 @@ export async function sendConfirmEmail(email, key, token) {
   });
 }
 
+// The alert email's body: the sign, the call, the slough now, and the days ahead.
+export function alertEmailHtml(msg, unsub) {
+  const e = msg.email;
+  const fmt = (v, d = 2) => (v == null ? "n/a" : v.toFixed(d));
+  const cell = "padding:6px 10px;border-bottom:1px solid #E4E1D8;text-align:left";
+  const now = e && e.slough_ft != null
+    ? `<p>The slough is at <strong>${fmt(e.slough_ft)} ft</strong> now`
+      + (e.breach_level_ft != null ? `, about ${fmt(e.breach_level_ft - e.slough_ft, 1)} ft below the typical breach level of ${fmt(e.breach_level_ft, 1)} ft.` : ".") + `</p>`
+    : "";
+  const table = e?.days?.length
+    ? `<h3 style="font-size:16px;margin:20px 0 6px">The next few days</h3>`
+      + `<table style="border-collapse:collapse;font-size:14px;width:100%"><thead><tr><th style="${cell}">Day</th><th style="${cell}">Rain, in</th><th style="${cell}">Slough, ft</th><th style="${cell}">Level</th></tr></thead><tbody>`
+      + e.days.map((d) => `<tr><td style="${cell}">${esc(d.day)}</td><td style="${cell}">${fmt(d.rain_in)}</td><td style="${cell}">${fmt(d.stage_ft)}</td><td style="${cell}">${esc(d.level)}</td></tr>`).join("")
+      + `</tbody></table><p style="color:#56606A;font-size:13px">Rain is the forecast (measured so far, plus the forecast, for today). Slough levels are the model's estimate.</p>`
+    : "";
+  return shell((e?.image ? `<p style="margin:0 0 16px"><img src="${e.image}" width="520" alt="Breach Watch sign: ${esc(e.phrase)}" style="width:100%;max-width:520px;height:auto;border-radius:10px;display:block"/></p>` : "")
+    + `<h2 style="font-size:20px;margin:0 0 8px">${esc(msg.title)}</h2><p>${esc(e?.lead ?? msg.body)}</p>`
+    + (e?.meaning ? `<p>${esc(e.meaning)}</p>` : "")
+    + now + table
+    + `<p><a href="${msg.url}" style="color:#2D5A7B">See the full outlook</a> · <a href="${msg.url}history/" style="color:#2D5A7B">Past breaches</a></p>`
+    + `<p style="color:#56606A;font-size:13px"><a href="${unsub}" style="color:#56606A">Unsubscribe</a></p>`);
+}
+
 export async function sendAlertEmail(sub, msg) {
   const unsub = unsubscribeUrl(sub);
   try {
     await resend({
       to: sub.email,
       subject: msg.title,
-      text: `${msg.body}\n\nOutlook: ${msg.url}\n\nUnsubscribe: ${unsub}`,
-      html: shell(`<h2 style="font-size:20px;margin:0 0 8px">${esc(msg.title)}</h2><p>${esc(msg.body)}</p>`
-        + `<p><a href="${msg.url}" style="color:#2D5A7B">See the outlook</a></p>`
-        + `<p style="color:#56606A;font-size:13px"><a href="${unsub}" style="color:#56606A">Unsubscribe</a></p>`),
+      text: `${msg.body}${msg.email?.meaning ? `\n\n${msg.email.meaning}` : ""}\n\nOutlook: ${msg.url}\n\nUnsubscribe: ${unsub}`,
+      html: alertEmailHtml(msg, unsub),
       headers: { "List-Unsubscribe": `<${unsub}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
     });
     return "sent";
