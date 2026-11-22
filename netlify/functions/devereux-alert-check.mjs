@@ -1,4 +1,4 @@
-// Scheduled every 3 hours (production deploys only): rebuild the Devereux status and,
+// Scheduled hourly (production deploys only): rebuild the Devereux status and,
 // the first time the 10-day outlook shows Possible Breach or higher on the Breach Watch dial, alert push and email subscribers.
 // One alert per episode; see devereux/alerts.js. State lives in Netlify Blobs.
 import { decideAlert } from "../../devereux/alerts.js";
@@ -17,4 +17,4 @@ export default async () => {
   console.log(JSON.stringify({ send: d.send, peak: status.peak?.p, mouth: status.mouth?.state, result }));
 };
 
-export const config = { schedule: "0 */3 * * *" };
+export const config = { schedule: "5 * * * *" };
