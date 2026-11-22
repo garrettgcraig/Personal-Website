@@ -8,12 +8,13 @@ import { getStore } from "@netlify/blobs";
 import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
 import { addDays, breachHours, dateRange, detectMouthEvents, forecast, iso, stageOutlook, wyStart } from "../../devereux/model.js";
+import { correctedHourly, correction, forecastMaps, latestRun } from "../lib/devereux-gefs.mjs";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
 const HORIZON = 10; // forecast days including today
-// Rain multiplier for scoring a forecast day `lead` days out: 1 today, rising linearly to
-// LEAD_MAX on the last forecast day, for the growing error of multi-day rain forecasts.
+// Backup forecast only (Open-Meteo, when no GEFS run under a day old can be had): rain multiplier
+// for a forecast day `lead` days out, 1 today rising linearly to LEAD_MAX on the last day.
 const LEAD_MAX = 1.5;
 export const leadScale = (lead) => 1 + (LEAD_MAX - 1) * Math.min(1, Math.max(0, lead) / (HORIZON - 1));
 
@@ -188,7 +189,19 @@ export function meanSeries(list) {
   return Object.fromEntries(Object.entries(acc).map(([k, vs]) => [k, Math.round(vs.reduce((x, y) => x + y, 0) / vs.length * 1000) / 1000]));
 }
 
-// Daily forecast rain, plus hourly for the rest of today (local "YYYY-MM-DDTHH:00" keys), so a
+// Forecast rain: the newest NOAA GEFS ensemble-mean run, corrected to the Coal Oil Point gauge
+// (netlify/lib/devereux-gefs.mjs). Runs come every 6 hours; the hourly scheduled function
+// devereux-gefs.mjs saves each new one, and this fetches it itself if that hasn't happened yet.
+async function gefsForecast(blobs, nowMs) {
+  const run = await latestRun({ now: nowMs, blobs });
+  if (!run) throw new Error("no GEFS run");
+  if (nowMs - Date.parse(run.init) > 30 * 3600000) throw new Error(`GEFS run ${run.init} is over 30 hours old`);
+  const corr = await correction(blobs);
+  return { ...forecastMaps(correctedHourly(run, corr)), run: run.init, available_at: run.available_at,
+    correction: { kind: corr.kind, params: corr[corr.kind], source: corr.source, fitted_at: corr.fitted_at ?? null } };
+}
+
+// Backup forecast: daily forecast rain, plus hourly for the rest of today (local "YYYY-MM-DDTHH:00" keys), so a
 // forecast starting from a mid-day live reading still counts the rain to come that day.
 async function openMeteo() {
   const lat = WATERSHED.map((p) => p[0]).join(","), lon = WATERSHED.map((p) => p[1]).join(",");
@@ -314,11 +327,13 @@ export async function buildStatus(now = new Date()) {
   const yesterday = addDays(today, -1);
   const blobs = store();
   const status = {};
-  const [log, staff, cop, om, tide, wave, live, live5, crn] = await Promise.all([
+  const warnings0 = [];
+  const [log, staff, cop, gefs, tide, wave, live, live5, crn] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cop_gauge", () => copGauge(start, yesterday), blobs, status),
-    withFallback("open_meteo", openMeteo, blobs, status),
+    gefsForecast(blobs, now.getTime()).then((v) => { status.gefs = { ok: true, at: new Date().toISOString(), run: v.run }; return v; })
+      .catch((e) => { status.gefs = { ok: false, error: String(e.message || e) }; return null; }),
     withFallback("tides", () => tides(today), blobs, status),
     withFallback("waves", waves, blobs, status),
     withFallback("live_sensor", () => sensor(120), blobs, status),
@@ -326,6 +341,10 @@ export async function buildStatus(now = new Date()) {
     sensor(0.25, 5).catch(() => []),
     withFallback("cop_hourly", () => uscrn(today), blobs, status),
   ]);
+  // GEFS is the forecast; Open-Meteo only stands in when no GEFS run under 30 hours old can be had
+  const om = gefs || await withFallback("open_meteo", openMeteo, blobs, status);
+  const fcLabel = gefs ? "forecast (NOAA GEFS, corrected to the Coal Oil Point gauge)" : "forecast (Open-Meteo, backup)";
+  if (!gefs) warnings0.push("The NOAA GEFS forecast couldn't be loaded, so this outlook uses the backup forecast (Open-Meteo).");
 
   // Mouth state: CCBER's log and the site's own event list, plus openings/closings the
   // live sensor shows after the last logged event (CCBER's log can lag by days).
@@ -345,14 +364,14 @@ export async function buildStatus(now = new Date()) {
     }
   }
   const last = events.at(-1);
-  const warnings = [];
+  const warnings = [...warnings0];
   if (!last) warnings.push("No mouth-state record could be loaded.");
 
   // Rain: the Coal Oil Point gauge alone before today, Open-Meteo from today on.
   const rain = copDailyRain(dateRange(start, yesterday), cop, crn);
   const omDaily = om?.daily ?? om; // older cached copies are the daily map alone
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
-    rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : "forecast (Open-Meteo)" });
+    rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : fcLabel });
   }
   // Today: rain the Coal Oil Point gauge has measured so far plus only the forecast hours
   // after its latest hour, so rain that has already stopped isn't counted as coming. Until
@@ -411,11 +430,10 @@ export async function buildStatus(now = new Date()) {
   let stageSeries = [];
   if (last && !mouthOpen) {
     outlook = forecast({ rain, today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: addDays(today, -14) });
-    // Rain forecasts get less reliable with lead time, so each future day is also scored with
-    // its forecast rain (and the days before it) scaled up by leadScale, which grows from 1 today
-    // to LEAD_MAX on the last day. The stated level is the higher of the two scores; the level
-    // chart and table keep the central forecast.
-    const lib = forecast({ rain: rain.map((r) => (r.date > today && r.rain_in != null ? { ...r, rain_in: r.rain_in * leadScale(daysSince(today, r.date)) } : r)),
+    // Backup forecast only: Open-Meteo has no measured correction, so each future day is also
+    // scored with its forecast rain scaled up by leadScale (1 today to LEAD_MAX on the last day)
+    // and the stated level is the higher of the two. The GEFS forecast is already corrected.
+    const lib = gefs ? [] : forecast({ rain: rain.map((r) => (r.date > today && r.rain_in != null ? { ...r, rain_in: r.rain_in * leadScale(daysSince(today, r.date)) } : r)),
       today, closedSince: last.date, stage0, params, crestFloor, levelHistory, showFrom: today });
     const libBy = Object.fromEntries(lib.map((r) => [r.date, r]));
     outlook = outlook.map((r) => {
@@ -503,6 +521,8 @@ export async function buildStatus(now = new Date()) {
     },
     model: { exported: params.exported, thresholds: params.thresholds, skill: params.skill, crest: params.best?.crest || params.unified, best: params.best,
       breach_levels: params.breach_levels, levels: params.levels, levels_record: params.levels_record, alert_threshold: params.alert_threshold },
+    forecast: gefs ? { source: "NOAA GEFS ensemble mean", run: gefs.run, available_at: gefs.available_at, correction: gefs.correction }
+      : { source: "Open-Meteo (backup)" },
     sources: status,
     warnings,
   };
