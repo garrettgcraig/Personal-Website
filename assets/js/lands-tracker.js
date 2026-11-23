@@ -262,8 +262,9 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 	}
 
 	// ── Toggle visit ──
-	// Marking a unit also marks every unit it lies wholly inside (data/lands-containment.json).
-	// Unmarking one offers to unmark those containers, unless another visited unit still sits inside them.
+	// Marking a unit that lies inside exactly one other unit (data/lands-containment.json) marks that
+	// unit too, and so on up the chain. A unit spread across several units asks which of them to mark.
+	// Unmarking one offers to unmark its containers, unless another visited unit still sits inside them.
 	function unitName(unit) {
 		var d = featureData[unit.type] && featureData[unit.type][unit.key];
 		return d ? d.name : unit.key;
@@ -288,14 +289,37 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 		updateStats();
 		renderTable();
 	}
-	// Marks the not-yet-visited containers of `units` and returns them.
+	// Marks the single containers of `units` and returns { add, choices } (see LandsData.planContainers).
 	function markContainers(units, ops) {
-		var added = LandsData.containersToAdd(containment, visited, units, unitExists);
-		added.forEach(function (c) { setVisit(c.type, c.key, true, ops); });
-		return added;
+		var plan = LandsData.planContainers(containment, visited, units, unitExists);
+		plan.add.forEach(function (c) { setVisit(c.type, c.key, true, ops); });
+		return plan;
 	}
 	function containerNote(added, inner) {
 		return "Also marked " + listNames(added) + " visited, since " + inner + " lies inside " + (added.length > 1 ? "them." : "it.");
+	}
+	// Asks which of the containers in `choices` to mark, then marks them (and their single containers).
+	function askToMarkContainers(choices) {
+		var single = choices.length === 1;
+		var spread = single ? choices[0].unit : null;
+		askUnits({
+			title: single ? "Mark where you went in " + unitName(spread) + "?" : "Mark the larger areas you went to?",
+			text: single
+				? unitName(spread) + " spreads across more than one area. Check the ones you visited."
+				: "Some imported areas spread across more than one larger area. Check the ones you visited.",
+			groups: choices.map(function (c) { return { caption: single ? "" : unitName(c.unit) + " lies partly in:", units: c.options }; }),
+			checked: false,
+			confirmLabel: "Mark visited",
+			cancelLabel: "Skip",
+			onConfirm: function (picked) {
+				var ops = [];
+				picked.forEach(function (c) { if (!visited[c.type].has(c.key)) setVisit(c.type, c.key, true, ops); });
+				var more = markContainers(picked, ops).add;
+				if (!ops.length) return;
+				commitVisits(ops);
+				announce("Marked " + listNames(picked.concat(more)) + " visited.");
+			}
+		});
 	}
 
 	function toggleVisit(layerType, key) {
@@ -303,11 +327,12 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 		var unit = { type: layerType, key: key }, ops = [];
 		if (!visited[layerType].has(key)) {
 			setVisit(layerType, key, true, ops);
-			var added = markContainers([unit], ops);
+			var plan = markContainers([unit], ops);
 			commitVisits(ops);
-			var note = added.length ? containerNote(added, unitName(unit)) : "";
+			var note = plan.add.length ? containerNote(plan.add, unitName(unit)) : "";
 			announce(unitName(unit) + " marked visited." + (note ? " " + note : ""));
 			if (note) showToast(note);
+			if (plan.choices.length) askToMarkContainers(plan.choices);
 			return;
 		}
 		setVisit(layerType, key, false, ops);
@@ -315,6 +340,27 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 		announce(unitName(unit) + " removed from visits.");
 		var offer = LandsData.containersToOffer(containment, visited, unit).filter(unitExists);
 		if (offer.length) askToUnmarkContainers(unit, offer);
+	}
+	function askToUnmarkContainers(unit, offer) {
+		var many = offer.length > 1;
+		askUnits({
+			title: "Remove " + (many ? "these areas" : listNames(offer)) + " too?",
+			text: "You removed " + unitName(unit) + ", which lies inside " + (many ? "these visited areas. Uncheck any you still want to keep." : "this visited area."),
+			groups: [{ caption: "", units: offer }],
+			checked: true,
+			hideSingleBox: true,
+			confirmLabel: "Remove",
+			cancelLabel: "Keep",
+			danger: true,
+			onConfirm: function (picked) {
+				var ops = [];
+				picked.forEach(function (c) { if (visited[c.type].has(c.key)) setVisit(c.type, c.key, false, ops); });
+				if (!ops.length) return;
+				commitVisits(ops);
+				announce("Also removed " + listNames(picked) + " from visits.");
+			},
+			onCancel: function () { announce("Kept " + listNames(offer) + " in your visits."); }
+		});
 	}
 
 	// ── Toast on the map for automatic marks ──
@@ -332,41 +378,47 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 	}
 	toastEl.addEventListener("click", function () { clearTimeout(toastTimer); toastEl.hidden = true; });
 
-	// ── Dialog: unmark containers too? ──
-	var unmarkDialog = document.getElementById("unmark-dialog");
-	function askToUnmarkContainers(unit, offer) {
-		var removeChecked = function (keys) {
-			var ops = [];
-			offer.forEach(function (c, i) {
-				if (keys[i] && visited[c.type].has(c.key)) setVisit(c.type, c.key, false, ops);
-			});
-			if (!ops.length) return;
-			commitVisits(ops);
-			announce("Also removed " + listNames(ops.map(function (op) { return { type: op.type, key: op.key }; })) + " from visits.");
-		};
-		var many = offer.length > 1;
-		if (!unmarkDialog || typeof unmarkDialog.showModal !== "function") {
-			if (confirm(unitName(unit) + " lies inside " + listNames(offer) + ". Remove " + (many ? "them" : "it") + " from your visits too?")) removeChecked(offer.map(function () { return true; }));
+	// ── Dialog: pick units to mark or unmark. Requests made while it is open wait their turn. ──
+	var unitDialog = document.getElementById("unit-dialog");
+	var dialogQueue = [];
+	function askUnits(o) {
+		var all = [];
+		o.groups.forEach(function (g) { all = all.concat(g.units); });
+		if (!unitDialog || typeof unitDialog.showModal !== "function") {
+			if (confirm(o.title + "\n\n" + o.text + "\n\n" + listNames(all))) o.onConfirm(all);
+			else if (o.onCancel) o.onCancel();
 			return;
 		}
-		if (unmarkDialog.open) return;
-		document.getElementById("unmark-dialog-title").textContent = "Remove " + (many ? "these areas" : listNames(offer)) + " too?";
-		document.getElementById("unmark-dialog-text").textContent = "You removed " + unitName(unit) + ", which lies inside " + (many ? "these visited areas" : "this visited area") + ". " + (many ? "Uncheck any you still want to keep." : "");
-		var list = document.getElementById("unmark-dialog-list");
-		list.innerHTML = offer.map(function (c, i) {
-			return '<li><label><input type="checkbox" checked data-idx="' + i + '"' + (many ? "" : " hidden") + ' /> '
-				+ '<span class="type-dot" style="background:' + LAYERS[c.type].dotColor + ';" aria-hidden="true"></span>'
-				+ escHtml(unitName(c)) + "</label></li>";
+		if (unitDialog.open) { dialogQueue.push(o); return; }
+		var showBoxes = !(o.hideSingleBox && all.length === 1);
+		document.getElementById("unit-dialog-title").textContent = o.title;
+		document.getElementById("unit-dialog-text").textContent = o.text;
+		var i = 0;
+		document.getElementById("unit-dialog-list").innerHTML = o.groups.map(function (g) {
+			return (g.caption ? '<li class="unit-group">' + escHtml(g.caption) + "</li>" : "") + g.units.map(function (c) {
+				return '<li><label><input type="checkbox"' + (o.checked ? " checked" : "") + ' data-idx="' + (i++) + '"' + (showBoxes ? "" : " hidden") + " /> "
+					+ '<span class="type-dot" style="background:' + LAYERS[c.type].dotColor + ';" aria-hidden="true"></span>'
+					+ escHtml(unitName(c)) + "</label></li>";
+			}).join("");
 		}).join("");
-		unmarkDialog.returnValue = "";
-		unmarkDialog.onclose = function () {
-			unmarkDialog.onclose = null;
-			if (unmarkDialog.returnValue !== "remove") { announce("Kept " + listNames(offer) + " in your visits."); return; }
-			var boxes = list.querySelectorAll("input[type=checkbox]");
-			removeChecked(Array.prototype.map.call(boxes, function (b) { return b.checked; }));
+		var confirmBtn = document.getElementById("unit-dialog-confirm");
+		confirmBtn.textContent = o.confirmLabel;
+		confirmBtn.classList.toggle("is-danger", !!o.danger);
+		document.getElementById("unit-dialog-cancel").textContent = o.cancelLabel;
+		unitDialog.returnValue = "";
+		unitDialog.onclose = function () {
+			unitDialog.onclose = null;
+			if (unitDialog.returnValue === "confirm") {
+				var picked = [];
+				unitDialog.querySelectorAll("#unit-dialog-list input[type=checkbox]").forEach(function (box) {
+					if (box.checked) picked.push(all[Number(box.getAttribute("data-idx"))]);
+				});
+				if (picked.length) o.onConfirm(picked); else if (o.onCancel) o.onCancel();
+			} else if (o.onCancel) o.onCancel();
+			if (dialogQueue.length) askUnits(dialogQueue.shift());
 		};
-		unmarkDialog.showModal();
-		document.getElementById("unmark-dialog-remove").focus();
+		unitDialog.showModal();
+		(o.checked ? confirmBtn : unitDialog.querySelector("#unit-dialog-list input:not([hidden])") || confirmBtn).focus();
 	}
 
 	// ── Server sync (assets/js/lands-sync.js). The browser copy stays as an offline cache. ──
@@ -599,10 +651,11 @@ function migrateLegacyVisits() {
    }
   });
   if (changed) {
-   var added = markContainers(ops.map(function (op) { return { type: op.type, key: op.key }; }), ops);
+   var plan = markContainers(ops.map(function (op) { return { type: op.type, key: op.key }; }), ops);
    saveAllVisited();
    sync.recordMany(ops);
-   announce('Restored visits from the earlier wilderness tracker.' + (added.length ? ' Also marked ' + added.length + ' park' + (added.length === 1 ? ' or forest that contains them.' : 's and forests that contain them.') : ''));
+   announce('Restored visits from the earlier wilderness tracker.' + (plan.add.length ? ' Also marked ' + plan.add.length + ' park' + (plan.add.length === 1 ? ' or forest that contains them.' : 's and forests that contain them.') : ''));
+   if (plan.choices.length) askToMarkContainers(plan.choices);
   }
   localStorage.setItem('lands_legacy_wids_migrated', '1');
   // Never remove the old backup, including IDs absent from current boundaries.
@@ -755,13 +808,14 @@ importInput.addEventListener('change', async function () {
    setVisit(row.type, row.key, true, ops); added++;
    imported.push({ type: row.type, key: row.key });
   });
-  // Imported rows may sit inside units the file does not list; mark those like a click would.
-  var containers = markContainers(imported, ops);
+  // Imported rows may sit inside units the file does not list; treat them like a click would.
+  var plan = markContainers(imported, ops), containers = plan.add;
   saveAllVisited(); sync.recordMany(ops); updateStats(); renderTable();
   var note = containers.length === 1 ? 'Also marked ' + unitName(containers[0]) + ' visited, since an imported area lies inside it.'
    : containers.length ? 'Also marked ' + containers.length + ' larger areas visited, since imported areas lie inside them: ' + listNames(containers) + '.' : '';
   announce('Imported ' + added + ' new visits; ' + existing + ' already saved; ' + result.unmatched + ' unmatched rows. Existing visits were kept.' + (note ? ' ' + note : ''));
   if (containers.length) showToast(containers.length <= 3 ? note : 'Also marked ' + containers.length + ' larger areas visited, since imported areas lie inside them.');
+  if (plan.choices.length) askToMarkContainers(plan.choices);
  } catch (err) { announce('Import failed: ' + err.message); }
 });
 

@@ -224,14 +224,14 @@
 			<script src="assets/js/main.js"></script>
 
 		<!-- Public Lands Tracker App -->
-		<dialog id="unmark-dialog" class="lands-dialog" aria-labelledby="unmark-dialog-title" aria-describedby="unmark-dialog-text">
+		<dialog id="unit-dialog" class="lands-dialog" aria-labelledby="unit-dialog-title" aria-describedby="unit-dialog-text">
 			<form method="dialog">
-				<h2 id="unmark-dialog-title">Remove the larger area too?</h2>
-				<p id="unmark-dialog-text"></p>
-				<ul id="unmark-dialog-list" class="unmark-list"></ul>
+				<h2 id="unit-dialog-title"></h2>
+				<p id="unit-dialog-text"></p>
+				<ul id="unit-dialog-list" class="unit-list"></ul>
 				<div class="controls-row">
-					<button type="submit" value="keep" class="button small">Keep</button>
-					<button type="submit" value="remove" class="button small" id="unmark-dialog-remove">Remove</button>
+					<button type="submit" value="cancel" class="button small" id="unit-dialog-cancel">Skip</button>
+					<button type="submit" value="confirm" class="button small" id="unit-dialog-confirm">OK</button>
 				</div>
 			</form>
 		</dialog>
