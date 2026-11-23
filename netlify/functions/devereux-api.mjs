@@ -9,6 +9,7 @@ import params from "../../devereux/model-params.json" with { type: "json" };
 import localEvents from "../../devereux/mouth-events.json" with { type: "json" };
 import { addDays, breachHours, dateRange, detectMouthEvents, forecast, iso, stageOutlook, wyStart } from "../../devereux/model.js";
 import { correctedHourly, correction, forecastMaps, latestRun } from "../lib/devereux-gefs.mjs";
+import { MRMS_SCALE, mrmsLocal, store as mrmsStore, updateRecord } from "../lib/devereux-mrms.mjs";
 
 const UA = { "User-Agent": "garrettgcraig.com devereux-breach (https://garrettgcraig.com/devereux/)" };
 const CCBER_RAW = "https://raw.githubusercontent.com/ccber-restoration/hydrology/HEAD/";
@@ -133,16 +134,43 @@ export function parseUscrnHourly(text) {
   return { daily, hours, hourly, lastMs };
 }
 
-// Past days' rain from the Coal Oil Point gauge alone: the NCEI daily summary, else the
-// station's hourly feed (with `hours` when some of the day's hours are still missing), else
-// missing. No other gauge stands in for it.
-export function copDailyRain(days, cop, crn) {
+// The gauge's hourly keys for local-standard day d: hours ending 01:00 to 24:00 ("24:00" is the
+// next day's "T00:00").
+export const dayHourKeys = (d) => [...Array.from({ length: 23 }, (_, i) => `${d}T${String(i + 1).padStart(2, "0")}:00`), `${addDays(d, 1)}T00:00`];
+
+// Past days' rain at the Coal Oil Point gauge: the NCEI daily summary, else the station's hourly
+// feed. Hours the feed is missing are filled from the radar-and-gauge estimate (NOAA MRMS at the
+// gauge, scaled to it; `mrms` = { hourly } with the gauge's keys) and flagged: filled_hours and
+// filled_in. `hours` is how many hours the gauge itself has reported when under 24. Missing only
+// when neither has any hour.
+export function copDailyRain(days, cop, crn, mrms) {
+  const r2 = (v) => Math.round(v * 100) / 100;
   return days.map((d) => {
     if (cop?.[d] != null) return { date: d, rain_in: cop[d], src: "Coal Oil Point gauge" };
-    const h = crn?.hours?.[d] ?? 0;
-    if (h > 0) return { date: d, rain_in: Math.round(crn.daily[d] * 100) / 100, src: "Coal Oil Point gauge", ...(h < 24 ? { hours: h } : {}) };
-    return { date: d, rain_in: null, src: "missing" };
+    let gIn = 0, gN = 0, fIn = 0, fN = 0;
+    for (const k of dayHourKeys(d)) {
+      const g = crn?.hourly?.[k], m = mrms?.hourly?.[k];
+      if (g != null) { gIn += g; gN++; } else if (m != null) { fIn += m; fN++; }
+    }
+    if (!gN && !fN) return { date: d, rain_in: null, src: "missing" };
+    const row = { date: d, rain_in: r2(gIn + fIn), src: fN ? (gN ? "Coal Oil Point gauge + radar estimate" : "radar estimate") : "Coal Oil Point gauge" };
+    if (gN < 24) row.hours = gN;
+    if (fN) Object.assign(row, { filled_hours: fN, filled_in: r2(fIn), gauge_in: r2(gIn) });
+    return row;
   });
+}
+
+// Today's rain so far: the gauge's hours, with radar-estimate hours where the gauge has none,
+// through the latest hour either covers. as_of is that hour's end (epoch ms), or null.
+export function rainSoFar(today, crn, mrms) {
+  let soFar = 0, filled = 0, filledHours = 0, asOf = null;
+  for (const k of dayHourKeys(today)) {
+    const g = crn?.hourly?.[k], m = mrms?.hourly?.[k];
+    if (g == null && m == null) continue;
+    if (g != null) soFar += g; else { soFar += m; filled += m; filledHours++; }
+    asOf = Date.parse(`${k}:00Z`) + 8 * 3600000; // local standard time is UTC-8
+  }
+  return { so_far_in: soFar, filled_in: filled, filled_hours: filledHours, as_of: asOf };
 }
 
 async function uscrn(today) {
@@ -321,6 +349,23 @@ async function withFallback(name, fn, blobs, status) {
   }
 }
 
+// The saved radar-and-gauge record (devereux-mrms.mjs keeps it current every hour). If that
+// hasn't run for 2 hours, catch up on the newest few hours here.
+async function radarRecord(nowMs, status) {
+  try {
+    const blobs = mrmsStore();
+    let rec = blobs ? await blobs.get("mrms-hourly", { type: "json" }).catch(() => null) : null;
+    if (!rec || nowMs - Date.parse(rec.updated_at) > 2 * 3600000) {
+      rec = (await updateRecord({ now: nowMs, blobs, maxFetch: 8, budgetMs: 6000 })).rec;
+    }
+    status.radar = { ok: true, at: rec.updated_at, hours: Object.keys(rec.hours).length, scale: MRMS_SCALE };
+    return rec;
+  } catch (e) {
+    status.radar = { ok: false, error: String(e.message || e) };
+    return null;
+  }
+}
+
 export async function buildStatus(now = new Date()) {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(now);
   const start = wyStart(addDays(today, -120)); // full water year(s) for season-to-date rain
@@ -328,7 +373,7 @@ export async function buildStatus(now = new Date()) {
   const blobs = store();
   const status = {};
   const warnings0 = [];
-  const [log, staff, cop, gefs, tide, wave, live, live5, crn] = await Promise.all([
+  const [log, staff, cop, gefs, tide, wave, live, live5, crn, mrmsRec] = await Promise.all([
     withFallback("mouth_log", mouthLog, blobs, status),
     withFallback("staff_gauge", staffGauge, blobs, status),
     withFallback("cop_gauge", () => copGauge(start, yesterday), blobs, status),
@@ -340,7 +385,9 @@ export async function buildStatus(now = new Date()) {
     // newest 5-minute readings (the sensor's native interval) for the "now" value
     sensor(0.25, 5).catch(() => []),
     withFallback("cop_hourly", () => uscrn(today), blobs, status),
+    radarRecord(now.getTime(), status),
   ]);
+  const mrms = mrmsLocal(mrmsRec);
   // GEFS is the forecast; Open-Meteo only stands in when no GEFS run under 30 hours old can be had
   const om = gefs || await withFallback("open_meteo", openMeteo, blobs, status);
   const fcLabel = gefs ? "forecast (NOAA GEFS, corrected to the Coal Oil Point gauge)" : "forecast (Open-Meteo, backup)";
@@ -368,21 +415,22 @@ export async function buildStatus(now = new Date()) {
   if (!last) warnings.push("No mouth-state record could be loaded.");
 
   // Rain: the Coal Oil Point gauge alone before today, Open-Meteo from today on.
-  const rain = copDailyRain(dateRange(start, yesterday), cop, crn);
+  const rain = copDailyRain(dateRange(start, yesterday), cop, crn, mrms);
   const omDaily = om?.daily ?? om; // older cached copies are the daily map alone
   for (const d of dateRange(today, addDays(today, HORIZON - 1))) {
     rain.push({ date: d, rain_in: omDaily?.[d] ?? null, src: omDaily?.[d] == null ? "missing" : fcLabel });
   }
-  // Today: rain the Coal Oil Point gauge has measured so far plus only the forecast hours
-  // after its latest hour, so rain that has already stopped isn't counted as coming. Until
-  // the gauge reports an hour of today, today is the forecast alone.
-  const crnToday = crn?.lastMs != null && pacificDate(crn.lastMs) === today;
-  if (crnToday && om?.hourly) {
-    const soFar = crn.daily[today] ?? 0;
-    const left = restOfToday(crn.lastMs, today, om.hourly).rain_in;
+  // Today: rain measured so far (the Coal Oil Point gauge, with the radar estimate for hours it
+  // hasn't reported) plus only the forecast hours after the latest measured hour, so rain that has
+  // already stopped isn't counted as coming. Until an hour of today is measured, today is the
+  // forecast alone.
+  const sf = rainSoFar(today, crn, mrms);
+  if (sf.as_of != null && pacificDate(sf.as_of - 1) === today && om?.hourly) {
+    const left = restOfToday(sf.as_of, today, om.hourly).rain_in;
     const r0 = rain.find((r) => r.date === today);
-    Object.assign(r0, { rain_in: soFar + left, so_far_in: soFar, rest_in: left, so_far_as_of: new Date(crn.lastMs).toISOString(),
-      src: "so far (Coal Oil Point gauge) + forecast for the hours left" });
+    Object.assign(r0, { rain_in: sf.so_far_in + left, so_far_in: sf.so_far_in, rest_in: left, so_far_as_of: new Date(sf.as_of).toISOString(),
+      src: sf.filled_hours ? "so far (Coal Oil Point gauge and radar estimate) + forecast for the hours left" : "so far (Coal Oil Point gauge) + forecast for the hours left",
+      ...(sf.filled_hours ? { so_far_filled_in: Math.round(sf.filled_in * 100) / 100 } : {}) });
   }
   const missing = rain.filter((r) => r.rain_in == null && r.date >= addDays(today, -30)).length;
   if (missing) warnings.push(`${missing} recent or forecast days have no Coal Oil Point rain data and are treated as dry.`);
@@ -445,7 +493,8 @@ export async function buildStatus(now = new Date()) {
     // gauge for hours already measured, the watershed forecast after that)
     const hr = new Map();
     if (om?.hourly) for (const [k, v] of Object.entries(om.hourly)) hr.set(k, v);
-    if (crn?.hourly) for (const [k, v] of Object.entries(crn.hourly)) if (k >= `${addDays(today, -3)}T00:00`) hr.set(k, v);
+    // radar estimate first, so the gauge's own hours replace it
+    for (const src of [mrms.hourly, crn?.hourly]) if (src) for (const [k, v] of Object.entries(src)) if (k >= `${addDays(today, -3)}T00:00`) hr.set(k, v);
     const storms = breachHours([...hr].sort((a, b) => (a[0] < b[0] ? -1 : 1)));
     outlook = outlook.map((r) => {
       if (r.date < today || !["warning", "likely"].includes(r.level)) return r;
@@ -516,6 +565,7 @@ export async function buildStatus(now = new Date()) {
       rain: rain.filter((r) => r.date >= addDays(today, -30) && r.date < today),
       season_rain_in: rain.filter((r) => r.date >= wyStart(today) && r.date < today).reduce((a, r) => a + (r.rain_in || 0), 0),
       season_missing_days: rain.filter((r) => r.date >= wyStart(today) && r.date < today && r.rain_in == null).length,
+      season_filled_days: rain.filter((r) => r.date >= wyStart(today) && r.date < today && r.filled_hours).length,
       tides: tide,
       waves: wave,
     },
