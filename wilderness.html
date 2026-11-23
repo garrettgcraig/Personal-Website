@@ -108,7 +108,30 @@
 											<input type="file" id="import-input" accept=".csv" />
 										</div>
 
-										<div id="save-status" class="tracker-help" role="status">Visits save in this browser. Export a CSV for backup or transfer.</div>
+										<div id="save-status" class="tracker-help" role="status">Visits save in this browser only. Turn on sync below to keep them on the server, or export a CSV.</div>
+<details class="sync-box" id="sync-box">
+	<summary>Sync across devices</summary>
+	<div id="sync-off">
+		<p class="tracker-help">Saves your visits on this site's server under a private sync code, so they survive cleared browser data and show up on your other devices. No account needed.</p>
+		<button type="button" class="button small" id="btn-sync-start"><i class="fa fa-cloud-upload" aria-hidden="true"></i> Turn on sync</button>
+		<form id="sync-join-form" class="sync-join">
+			<label for="sync-code-input">Already have a code from another device?</label>
+			<div class="sync-join-row">
+				<input type="text" id="sync-code-input" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="xxxxx-xxxxx-xxxxx-xxxxx-xxxxxx" />
+				<button type="submit" class="button small">Use code</button>
+			</div>
+		</form>
+	</div>
+	<div id="sync-on" hidden>
+		<p class="tracker-help">Your sync code (keep it private, anyone with it can change your visits):</p>
+		<code id="sync-code" class="sync-code"></code>
+		<div class="controls-row">
+			<button type="button" class="button small" id="btn-sync-copy"><i class="fa fa-link" aria-hidden="true"></i> Copy link for another device</button>
+			<button type="button" class="button small" id="btn-sync-stop">Stop syncing here</button>
+		</div>
+	</div>
+	<div id="sync-status" class="tracker-status" role="status"></div>
+</details>
 <div id="action-status" class="tracker-status" role="status"></div>
 <!-- Visited list -->
 										<h2 class="sidebar-label">Visited Lands</h2>
@@ -202,6 +225,7 @@
 		<!-- Public Lands Tracker App -->
 		<script src="assets/js/lands-data.js"></script>
 		<script src="assets/js/lands-wid-names.js"></script>
+		<script src="assets/js/lands-sync.js"></script>
 		<script src="assets/js/lands-tracker.js"></script>
 
 	</body>

@@ -510,3 +510,19 @@ body.dark-mode .search-wrap input::placeholder { color: var(--tracker-muted) !im
 .stat-label, .legend-group-label, .sidebar-footer .credit { font-size: 0.75rem; }
 .map-legend { font-size: 0.75rem; }
 .progress-inner { transition: none; }
+
+/* Sync across devices */
+.sync-box { margin-bottom: 0.75rem; border: 1px solid var(--tracker-line); border-radius: 6px; padding: 0.5rem 0.7rem; background: var(--tracker-field); color: var(--tracker-fg); }
+.sync-box summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.sync-box[open] summary { margin-bottom: 0.4rem; }
+.sync-box p.tracker-help { margin: 0 0 0.5rem; }
+.sync-box > div > .button, .sync-join .button, body.dark-mode .sync-box .button { color: var(--tracker-fg) !important; background: var(--tracker-bg) !important; box-shadow: inset 0 0 0 1px var(--tracker-line) !important; min-height: 44px; height: auto; line-height: 1.4; font-size: 0.75rem; padding: 0.35rem 0.7rem; }
+.sync-join { margin: 0.6rem 0 0; }
+.sync-join label { font-size: 0.8rem; color: var(--tracker-muted); margin-bottom: 0.3rem; display: block; }
+.sync-join-row { display: flex; gap: 0.4rem; }
+.sync-join-row input[type="text"], body.dark-mode .sync-join-row input[type="text"] { flex: 1 1 auto; min-width: 0; height: 44px; font-size: 0.85rem; font-family: monospace; background: var(--tracker-bg) !important; color: var(--tracker-fg) !important; border: 1px solid var(--tracker-line); }
+.sync-code { display: block; font-size: 0.9rem; word-break: break-all; padding: 0.4rem 0.5rem; margin-bottom: 0.5rem; background: var(--tracker-bg); color: var(--tracker-fg); border-radius: 4px; user-select: all; }
+.sync-box .controls-row { margin-bottom: 0.3rem; }
+#sync-status { margin: 0.4rem 0 0; }
+#sync-status.is-error { color: #b3261e; }
+body.dark-mode #sync-status.is-error { color: #ffb4a9; }
