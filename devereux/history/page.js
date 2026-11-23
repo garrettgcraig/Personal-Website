@@ -321,6 +321,50 @@ function mouthYearsHtml(ev) {
     <p class="note">Water years run October 1 to September 30. A breach day counts as open. Every opening on record began with a rain breach, and nearly all tidal days fall between November and April. From CCBER's mouth log with corrections checked against the level record; the season in progress is counted from the events below. * Level logging covered only part of that year, so the mouth record leans more on CCBER's log. † Plus 4 days in February 2024 when king tides seeped through a closed berm.</p>`;
 }
 
+// ------------------------------------------------------------- days at each water level
+// Daily mean level (stage-history.json, the re-leveled record the Outlook uses), counted into
+// 1-ft bins per water year. Days with no reading get their own column.
+let STAGE = null;
+const LEVEL_BINS = [[-Infinity, 4, "below 4"], [4, 5, "4–5"], [5, 6, "5–6"], [6, 7, "6–7"], [7, 8, "7–8"], [8, 9, "8–9"], [9, Infinity, "9 and up"]];
+function levelDays() {
+  if (!STAGE?.stage?.length) return null;
+  const through = STAGE.stage.at(-1)[0];
+  const byWy = new Map();
+  for (const [d, ft] of STAGE.stage) {
+    if (d < LOGGED_FROM || ft == null) continue;
+    const wy = wyOf(d);
+    if (!byWy.has(wy)) byWy.set(wy, new Array(LEVEL_BINS.length).fill(0));
+    byWy.get(wy)[LEVEL_BINS.findIndex(([lo, hi]) => ft >= lo && ft < hi)]++;
+  }
+  const rows = [...byWy.keys()].sort((a, b) => b - a).map((wy) => {
+    const end = `${wy}-09-30` < through ? `${wy}-09-30` : through;
+    const total = daysBetween(`${wy - 1}-10-01`, end) + 1;
+    const bins = byWy.get(wy);
+    return { wy, bins, missing: Math.max(0, total - bins.reduce((a, b) => a + b, 0)), current: end === through && through < `${wy}-09-30`, through };
+  });
+  return { rows, max: Math.max(...rows.flatMap((r) => r.bins)) };
+}
+function levelDaysHtml() {
+  const L = levelDays();
+  if (!L) return `<p class="note">The level record didn't load.</p>`;
+  const dark = document.body.classList.contains("dark-mode");
+  const hue = dark ? COLORS.mist : COLORS.sky;
+  const sd = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const cell = (n, wy, label) => {
+    const f = n / L.max;
+    const bg = n ? `color-mix(in srgb, ${hue} ${Math.round(8 + 82 * Math.sqrt(f))}%, transparent)` : "transparent";
+    const ink = n && Math.sqrt(f) > 0.6 ? (dark ? "#0E1A24" : "#fff") : "var(--color-text)";
+    return `<td class="lvd" style="background:${bg};color:${n ? ink : "var(--color-muted)"}" title="${wy - 1}–${String(wy).slice(2)}: ${n} days ${label === "below 4" || label === "9 and up" ? label : "at " + label} ft">${n || "·"}</td>`;
+  };
+  return `
+    <p class="intro">How many days the slough spent at each water level in each water year, from the daily mean level. Most years it sits between 4 and 7 ft. Twice it held at 9 ft or more behind a tall berm for weeks before breaking: 70 days from Christmas 2019 to March 2020, and a month from late December 2023 to January 2024.</p>
+    <div class="table-scroll"><table class="days level-days">
+      <thead><tr><th>Water year</th>${LEVEL_BINS.map(([, , l]) => `<th>${l}${l === "below 4" ? " ft" : ""}</th>`).join("")}<th>No reading</th></tr></thead>
+      <tbody>${L.rows.map((r) => `<tr class="${r.current ? "today" : ""}"><td>${r.wy - 1}–${String(r.wy).slice(2)}${r.current ? ` <span class="muted sub">so far, to ${sd(r.through)}</span>` : ""}</td>${r.bins.map((n, k) => cell(n, r.wy, LEVEL_BINS[k][2])).join("")}<td class="lvd muted">${r.missing || "·"}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <p class="note">Bins are 1 ft of daily mean water level, ft NAVD88; the stronger the color, the more days. The breach level is usually between 9 and 10 ft. Levels come from CCBER's loggers and the live sensor, re-leveled to one datum, as on the Outlook. Days with no logger or sensor reading are counted under No reading.</p>`;
+}
+
 // ------------------------------------------------------------- render
 function render() {
   const ev = EVENTS.events;
@@ -384,6 +428,11 @@ function render() {
     ${mouthYearsHtml(ev)}
   </section>
 
+  <section class="block" id="level-days">
+    <h2>Days at each water level, by year</h2>
+    ${levelDaysHtml()}
+  </section>
+
   <section class="block" id="overtopping">
     <h2>Overtopping, up close</h2>
     ${legend([[css("--color-text"), "slough level", "line"], [OBS(), "tide, observed (NOAA Santa Barbara)", "line"], [PRED(), "tide, predicted", "dash"], [COLORS.ochre, "overtopping event", "vband", 0.3]])}
@@ -421,7 +470,9 @@ addEventListener("resize", () => {
   clearTimeout(window.__rz);
   window.__rz = setTimeout(() => { if (EVENTS && Math.abs(fullW() - lastW) > 40) { lastW = fullW(); render(); } }, 200);
 });
-fetch("/devereux/events.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((j) => {
+const stageP = fetch("/devereux/stage-history.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
+fetch("/devereux/events.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(async (j) => {
+  STAGE = await stageP;
   EVENTS = j; classify(EVENTS.events);
   // level logging starts Oct 1, 2018 (water year 2019): earlier seasons have no measured
   // levels, so they're left out (classify ran on the full log so berm ages stay right)
