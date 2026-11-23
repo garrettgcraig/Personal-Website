@@ -67,7 +67,51 @@
     });
     return { matches: matches, unmatched: unmatched };
   }
-  var api = { parseCSV: parseCSV, csvCell: csvCell, nameKey: nameKey, matchImport: matchImport };
+  // Containment (data/lands-containment.json): units that sit wholly inside other units.
+  // up[type][key] lists every unit containing it (already transitive); down is the reverse.
+  function containmentIndex(json) {
+    var up = Object.create(null), down = Object.create(null);
+    var contained = (json && json.contained) || {};
+    Object.keys(contained).forEach(function (type) {
+      Object.keys(contained[type]).forEach(function (key) {
+        (contained[type][key] || []).forEach(function (pair) {
+          var ct = String(pair[0]), ck = String(pair[1]);
+          (up[type] = up[type] || Object.create(null));
+          (up[type][key] = up[type][key] || []).push({ type: ct, key: ck });
+          (down[ct] = down[ct] || Object.create(null));
+          (down[ct][ck] = down[ct][ck] || []).push({ type: type, key: key });
+        });
+      });
+    });
+    return { up: up, down: down };
+  }
+  function has(visited, unit) { return !!(visited[unit.type] && visited[unit.type].has(unit.key)); }
+  function unitId(unit) { return unit.type + '\u0000' + unit.key; }
+  // Containers of the given units that are not visited yet. `exists(unit)` filters out
+  // units missing from the loaded boundaries.
+  function containersToAdd(index, visited, units, exists) {
+    var seen = Object.create(null), out = [];
+    units.forEach(function (unit) {
+      ((index.up[unit.type] || {})[unit.key] || []).forEach(function (c) {
+        var id = unitId(c);
+        if (seen[id] || has(visited, c) || (exists && !exists(c))) return;
+        seen[id] = true; out.push(c);
+      });
+    });
+    return out;
+  }
+  // After `unit` is unmarked: its visited containers that no other visited unit still sits inside.
+  function containersToOffer(index, visited, unit) {
+    var self = unitId(unit);
+    return ((index.up[unit.type] || {})[unit.key] || []).filter(function (c) {
+      if (!has(visited, c)) return false;
+      return !((index.down[c.type] || {})[c.key] || []).some(function (inner) {
+        return unitId(inner) !== self && has(visited, inner);
+      });
+    });
+  }
+  var api = { parseCSV: parseCSV, csvCell: csvCell, nameKey: nameKey, matchImport: matchImport,
+    containmentIndex: containmentIndex, containersToAdd: containersToAdd, containersToOffer: containersToOffer };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LandsData = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

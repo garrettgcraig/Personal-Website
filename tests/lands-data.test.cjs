@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const { parseCSV, csvCell, matchImport } = require('../assets/js/lands-data.js');
+const { parseCSV, csvCell, matchImport, containmentIndex, containersToAdd, containersToOffer } = require('../assets/js/lands-data.js');
 const scope = { window: {} };
 vm.runInNewContext(fs.readFileSync('assets/js/lands-wid-names.js', 'utf8'), scope);
 const widNames = scope.window.LANDS_WID_NAMES;
@@ -41,4 +41,42 @@ test('name-only legacy exports and ambiguous names are handled conservatively', 
   assert.equal(matchImport(parseCSV('name\nBeaver Basin Wilderness'), data, widNames).matches.length, 1);
   const ambiguous = { wilderness: { a: {name:'Same'} }, national_forest: { b: {name:'Same'} } };
   assert.equal(matchImport(parseCSV('name\nSame'), ambiguous, {}).unmatched, 1);
+});
+const containment = JSON.parse(fs.readFileSync('data/lands-containment.json'));
+const index = containmentIndex(containment);
+const sets = (obj) => Object.fromEntries(Object.entries(obj).map(([t, keys]) => [t, new Set(keys)]));
+test('containment file only names units in the bundled boundaries', () => {
+  for (const [type, units] of Object.entries(containment.contained)) {
+    for (const [key, containers] of Object.entries(units)) {
+      assert.ok(data[type][key], `${type} ${key} is missing`);
+      assert.ok(containers.length > 0);
+      for (const [ct, ck] of containers) {
+        assert.ok(data[ct][ck], `${ct} ${ck} is missing`);
+        assert.notEqual(ct, 'wilderness', 'a wilderness never contains another unit');
+        assert.ok(!(ct === type && ck === key));
+      }
+    }
+  }
+});
+test('known containments are present and neighbors are not', () => {
+  const up = (type, key) => (index.up[type][key] || []).map(c => c.key).sort();
+  assert.deepEqual(up('wilderness', 'Yosemite Wilderness'), ['YOSE']);
+  assert.deepEqual(up('wilderness', 'San Rafael Wilderness'), ['Los Padres National Forest']);
+  assert.deepEqual(up('wilderness', 'John Muir Wilderness'), ['Inyo National Forest', 'Sierra National Forest']);
+  // Buckhorn borders Olympic National Park; simplified edges overlap it a little.
+  assert.deepEqual(up('wilderness', 'Buckhorn Wilderness'), ['Olympic National Forest']);
+});
+test('marking a unit adds only containers not yet visited', () => {
+  const visited = sets({ wilderness: ['John Muir Wilderness'], nps: [], national_forest: ['Inyo National Forest'] });
+  const add = containersToAdd(index, visited, [{ type: 'wilderness', key: 'John Muir Wilderness' }]);
+  assert.deepEqual(add, [{ type: 'national_forest', key: 'Sierra National Forest' }]);
+  const none = containersToAdd(index, visited, [{ type: 'wilderness', key: 'John Muir Wilderness' }], () => false);
+  assert.deepEqual(none, []);
+});
+test('unmarking offers containers unless another visited unit still sits inside them', () => {
+  const visited = sets({ wilderness: ['Sespe Wilderness'], nps: [], national_forest: ['Los Padres National Forest'] });
+  const unit = { type: 'wilderness', key: 'San Rafael Wilderness' };
+  assert.deepEqual(containersToOffer(index, visited, unit), []);
+  visited.wilderness.delete('Sespe Wilderness');
+  assert.deepEqual(containersToOffer(index, visited, unit), [{ type: 'national_forest', key: 'Los Padres National Forest' }]);
 });
