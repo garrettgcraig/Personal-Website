@@ -13,10 +13,22 @@
      "Shoshone National Forest"
     ]
    ],
+   "Agua Tibia Wilderness": [
+    [
+     "national_forest",
+     "Cleveland National Forest"
+    ]
+   ],
    "Aldo Leopold Wilderness": [
     [
      "national_forest",
      "Gila National Forest"
+    ]
+   ],
+   "Alexander Springs Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Florida"
     ]
    ],
    "Alpine Lakes Wilderness": [
@@ -27,6 +39,12 @@
     [
      "national_forest",
      "Okanogan-Wenatchee National Forest"
+    ]
+   ],
+   "Alta Toquima Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
     ]
    ],
    "Anaconda Pintler Wilderness": [
@@ -55,6 +73,24 @@
      "Prescott National Forest"
     ]
    ],
+   "Apache Kid Wilderness": [
+    [
+     "national_forest",
+     "Cibola National Forest"
+    ]
+   ],
+   "Arc Dome Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Ashdown Gorge Wilderness": [
+    [
+     "national_forest",
+     "Dixie National Forest"
+    ]
+   ],
    "Badger Creek Wilderness": [
     [
      "national_forest",
@@ -71,6 +107,18 @@
     [
      "national_forest",
      "Shawnee National Forest"
+    ]
+   ],
+   "Bald Mountain Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Bald River Gorge Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
     ]
    ],
    "Bandelier Wilderness": [
@@ -133,6 +181,18 @@
      "Monongahela National Forest"
     ]
    ],
+   "Big Frog Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
+    ]
+   ],
+   "Big Gum Swamp Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Florida"
+    ]
+   ],
    "Big Island Lake Wilderness": [
     [
      "national_forest",
@@ -143,6 +203,24 @@
     [
      "national_forest",
      "Cherokee National Forest"
+    ]
+   ],
+   "Big Slough Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Texas"
+    ]
+   ],
+   "Billies Bay Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Florida"
+    ]
+   ],
+   "Birkhead Mountains Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
     ]
    ],
    "Black Canyon Wilderness": [
@@ -219,10 +297,22 @@
      "Mt. Baker-Snoqualmie National Forest"
     ]
    ],
+   "Boundary Peak Wilderness": [
+    [
+     "national_forest",
+     "Inyo National Forest"
+    ]
+   ],
    "Boundary Waters Canoe Area Wilderness": [
     [
      "national_forest",
      "Superior National Forest"
+    ]
+   ],
+   "Box-Death Hollow Wilderness": [
+    [
+     "national_forest",
+     "Dixie National Forest"
     ]
    ],
    "Bradwell Bay Wilderness": [
@@ -235,6 +325,12 @@
     [
      "national_forest",
      "Chattahoochee-Oconee National Forests"
+    ]
+   ],
+   "Breadloaf Wilderness": [
+    [
+     "national_forest",
+     "Green Mountain and Finger Lakes National Forests"
     ]
    ],
    "Bridge Canyon Wilderness": [
@@ -253,6 +349,12 @@
     [
      "national_forest",
      "Bridger-Teton National Forest"
+    ]
+   ],
+   "Bristol Cliffs Wilderness": [
+    [
+     "national_forest",
+     "Green Mountain and Finger Lakes National Forests"
     ]
    ],
    "Brush Mountain East Wilderness": [
@@ -325,10 +427,22 @@
      "Arapaho and Roosevelt National Forests"
     ]
    ],
+   "Cahuilla Mountain Wilderness": [
+    [
+     "national_forest",
+     "San Bernardino National Forest"
+    ]
+   ],
    "Caney Creek Wilderness": [
     [
      "national_forest",
      "Ouachita National Forest"
+    ]
+   ],
+   "Capitan Mountains Wilderness": [
+    [
+     "national_forest",
+     "Lincoln National Forest"
     ]
    ],
    "Caribou Wilderness": [
@@ -371,10 +485,22 @@
      "Prescott National Forest"
     ]
    ],
+   "Catfish Lake South Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
    "Cecil D. Andrus-White Clouds Wilderness": [
     [
      "national_forest",
      "Sawtooth National Forest"
+    ]
+   ],
+   "Cedar Bench Wilderness": [
+    [
+     "national_forest",
+     "Prescott National Forest"
     ]
    ],
    "Chama River Canyon Wilderness": [
@@ -387,6 +513,12 @@
     [
      "national_forest",
      "Shasta-Trinity National Forest"
+    ]
+   ],
+   "Charles C. Deam Wilderness": [
+    [
+     "national_forest",
+     "Hoosier National Forest"
     ]
    ],
    "Cheaha Wilderness": [
@@ -407,10 +539,22 @@
      "Coronado National Forest"
     ]
    ],
+   "Chuck River Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
    "Chumash Wilderness": [
     [
      "national_forest",
      "Los Padres National Forest"
+    ]
+   ],
+   "Citico Creek Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
     ]
    ],
    "Clackamas Wilderness": [
@@ -447,6 +591,10 @@
     [
      "national_forest",
      "Chattahoochee-Oconee National Forests"
+    ],
+    [
+     "national_forest",
+     "Cherokee National Forest"
     ]
    ],
    "Collegiate Peaks Wilderness": [
@@ -469,6 +617,12 @@
      "Olympic National Forest"
     ]
    ],
+   "Columbine-Hondo Wilderness": [
+    [
+     "national_forest",
+     "Carson National Forest"
+    ]
+   ],
    "Comanche Peak Wilderness": [
     [
      "national_forest",
@@ -485,6 +639,12 @@
     [
      "national_forest",
      "Rogue River-Siskiyou National Forests"
+    ]
+   ],
+   "Coronation Island Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Cottonwood Forest Wilderness": [
@@ -533,10 +693,22 @@
      "Siuslaw National Forest"
     ]
    ],
+   "Currant Mountain Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "Daniel J. Evans Wilderness": [
     [
      "nps",
      "OLYM"
+    ]
+   ],
+   "Dark Canyon Wilderness": [
+    [
+     "national_forest",
+     "Manti-La Sal National Forest"
     ]
    ],
    "Death Valley Wilderness": [
@@ -545,10 +717,22 @@
      "DEVA"
     ]
    ],
+   "Delirium Wilderness": [
+    [
+     "national_forest",
+     "Hiawatha National Forest"
+    ]
+   ],
    "Denali Wilderness": [
     [
      "nps",
      "DENA"
+    ]
+   ],
+   "Deseret Peak Wilderness": [
+    [
+     "national_forest",
+     "Uinta-Wasatch-Cache National Forest"
     ]
    ],
    "Desolation Wilderness": [
@@ -559,6 +743,12 @@
     [
      "national_forest",
      "Lake Tahoe Basin Management Unit"
+    ]
+   ],
+   "Devils Backbone Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
     ]
    ],
    "Diamond Peak Wilderness": [
@@ -631,16 +821,48 @@
      "Ozark-St. Francis National Forest"
     ]
    ],
+   "East Humboldts Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "El Toro Wilderness": [
     [
      "national_forest",
      "El Yunque National Forest"
     ]
    ],
+   "Ellicott Rock Wilderness": [
+    [
+     "national_forest",
+     "Chattahoochee-Oconee National Forests"
+    ],
+    [
+     "national_forest",
+     "Francis Marion and Sumter National Forests"
+    ],
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
    "Emigrant Wilderness": [
     [
      "national_forest",
      "Stanislaus National Forest"
+    ]
+   ],
+   "Encampment River Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
+   "Endicott River Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Escudilla Wilderness": [
@@ -655,10 +877,26 @@
      "Shoshone National Forest"
     ]
    ],
+   "Flat Tops Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ],
+    [
+     "national_forest",
+     "White River National Forest"
+    ]
+   ],
    "Flatside Wilderness": [
     [
      "national_forest",
      "Ouachita National Forest"
+    ]
+   ],
+   "Forrester Island Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Fossil Ridge Wilderness": [
@@ -697,6 +935,12 @@
      "Salmon-Challis National Forest"
     ]
    ],
+   "Galiuro Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
    "Garcia Wilderness": [
     [
      "national_forest",
@@ -721,10 +965,28 @@
      "GAAR"
     ]
    ],
+   "Gates of the Mountains Wilderness": [
+    [
+     "national_forest",
+     "Helena-Lewis and Clark National Forest"
+    ]
+   ],
+   "Gaylord Nelson Wilderness": [
+    [
+     "nps",
+     "APIS"
+    ]
+   ],
    "Gearhart Mountain Wilderness": [
     [
      "national_forest",
      "Fremont-Winema National Forest"
+    ]
+   ],
+   "Gee Creek Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
     ]
    ],
    "George D. Aiken Wilderness": [
@@ -799,6 +1061,12 @@
      "Tahoe National Forest"
     ]
    ],
+   "Grant Range Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "Grassy Knob Wilderness": [
     [
      "national_forest",
@@ -823,6 +1091,12 @@
      "GRSA"
     ]
    ],
+   "Greenhorn Mountain Wilderness": [
+    [
+     "national_forest",
+     "Pike and San Isabel National Forests"
+    ]
+   ],
    "Gros Ventre Wilderness": [
     [
      "national_forest",
@@ -833,6 +1107,12 @@
     [
      "nps",
      "GUMO"
+    ]
+   ],
+   "Gulf Islands Wilderness": [
+    [
+     "nps",
+     "GUIS"
     ]
    ],
    "Hain Wilderness": [
@@ -859,6 +1139,12 @@
      "Chequamegon-Nicolet National Forest"
     ]
    ],
+   "Hell Hole Bay Wilderness": [
+    [
+     "national_forest",
+     "Francis Marion and Sumter National Forests"
+    ]
+   ],
    "Hellsgate Wilderness": [
     [
      "national_forest",
@@ -881,6 +1167,12 @@
      "Okanogan-Wenatchee National Forest"
     ]
    ],
+   "Hercules-Glades Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
+    ]
+   ],
    "Hermosa Creek Wilderness": [
     [
      "national_forest",
@@ -891,6 +1183,12 @@
     [
      "national_forest",
      "Allegheny National Forest"
+    ]
+   ],
+   "High Schells Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
     ]
    ],
    "High Uintas Wilderness": [
@@ -923,6 +1221,12 @@
      "Inyo National Forest"
     ]
    ],
+   "Horseshoe Bay Wilderness": [
+    [
+     "national_forest",
+     "Hiawatha National Forest"
+    ]
+   ],
    "Hunter-Fryingpan Wilderness": [
     [
      "national_forest",
@@ -941,16 +1245,34 @@
      "Ozark-St. Francis National Forest"
     ]
    ],
+   "Huston Park Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
    "Indian Heaven Wilderness": [
     [
      "national_forest",
      "Gifford Pinchot National Forest"
     ]
    ],
+   "Indian Mounds Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Texas"
+    ]
+   ],
    "Indian Peaks Wilderness": [
     [
      "national_forest",
      "Arapaho and Roosevelt National Forests"
+    ]
+   ],
+   "Irish Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
     ]
    ],
    "Ishi Wilderness": [
@@ -971,6 +1293,18 @@
      "Arapaho and Roosevelt National Forests"
     ]
    ],
+   "James River Face Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Jarbidge Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "Jay S. Hammond Wilderness": [
     [
      "nps",
@@ -981,6 +1315,12 @@
     [
      "national_forest",
      "Caribou-Targhee National Forest"
+    ]
+   ],
+   "Jennie Lakes Wilderness": [
+    [
+     "national_forest",
+     "Sequoia National Forest"
     ]
    ],
    "Jimbilnan Wilderness": [
@@ -1005,16 +1345,38 @@
      "Sierra National Forest"
     ]
    ],
+   "Joseph Battell Wilderness": [
+    [
+     "national_forest",
+     "Green Mountain and Finger Lakes National Forests"
+    ]
+   ],
    "Joshua Tree Wilderness": [
     [
      "nps",
      "JOTR"
     ]
    ],
+   "Joyce Kilmer-Slickrock Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
+    ],
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
    "Juniper Mesa Wilderness": [
     [
      "national_forest",
      "Prescott National Forest"
+    ]
+   ],
+   "Juniper Prairie Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Florida"
     ]
    ],
    "Kachina Peaks Wilderness": [
@@ -1035,10 +1397,26 @@
      "Rogue River-Siskiyou National Forests"
     ]
    ],
+   "Karta River Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
    "Katmai Wilderness": [
     [
      "nps",
      "KATM"
+    ]
+   ],
+   "Kendrick Mountain Wilderness": [
+    [
+     "national_forest",
+     "Coconino National Forest"
+    ],
+    [
+     "national_forest",
+     "Kaibab National Forest"
     ]
    ],
    "Kimberling Creek Wilderness": [
@@ -1047,10 +1425,28 @@
      "George Washington and Jefferson National Forest"
     ]
    ],
+   "Kisatchie Hills Wilderness": [
+    [
+     "national_forest",
+     "Kisatchie National Forest"
+    ]
+   ],
    "Kobuk Valley Wilderness": [
     [
      "nps",
      "KOVA"
+    ]
+   ],
+   "Kootznoowoo Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
+   "Kuiu Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "La Garita Wilderness": [
@@ -1073,6 +1469,12 @@
     [
      "nps",
      "LAVO"
+    ]
+   ],
+   "Latir Peak Wilderness": [
+    [
+     "national_forest",
+     "Carson National Forest"
     ]
    ],
    "Laurel Fork North Wilderness": [
@@ -1099,10 +1501,78 @@
      "National Forests in Mississippi"
     ]
    ],
+   "Leatherwood Wilderness": [
+    [
+     "national_forest",
+     "Ozark-St. Francis National Forest"
+    ]
+   ],
+   "Lee Metcalf Wilderness": [
+    [
+     "national_forest",
+     "Beaverhead-Deerlodge National Forest"
+    ],
+    [
+     "national_forest",
+     "Custer Gallatin National Forest"
+    ]
+   ],
+   "Lewis Fork Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Linville Gorge Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
+   "Little Dry Run Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Little Frog Mountain Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
+    ]
+   ],
    "Little Lake Creek Wilderness": [
     [
      "national_forest",
      "National Forests in Texas"
+    ]
+   ],
+   "Little Lake George Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Florida"
+    ]
+   ],
+   "Little Wambaw Swamp Wilderness": [
+    [
+     "national_forest",
+     "Francis Marion and Sumter National Forests"
+    ]
+   ],
+   "Little Wilson Creek Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Lizard Head Wilderness": [
+    [
+     "national_forest",
+     "Grand Mesa, Uncompahgre and Gunnison National Forests"
+    ],
+    [
+     "national_forest",
+     "San Juan National Forest"
     ]
    ],
    "Lone Peak Wilderness": [
@@ -1135,10 +1605,22 @@
      "Los Padres National Forest"
     ]
    ],
+   "Mackinac Wilderness": [
+    [
+     "national_forest",
+     "Hiawatha National Forest"
+    ]
+   ],
    "Magic Mountain Wilderness": [
     [
      "national_forest",
      "Angeles National Forest"
+    ]
+   ],
+   "Manzano Mountain Wilderness": [
+    [
+     "national_forest",
+     "Cibola National Forest"
     ]
    ],
    "Marble Mountain Wilderness": [
@@ -1195,6 +1677,12 @@
      "Tonto National Forest"
     ]
    ],
+   "McCormick Wilderness": [
+    [
+     "national_forest",
+     "Ottawa National Forest"
+    ]
+   ],
    "Menagerie Wilderness": [
     [
      "national_forest",
@@ -1225,10 +1713,22 @@
      "Ochoco National Forest"
     ]
    ],
+   "Miller Peak Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
    "Mission Mountains Wilderness": [
     [
      "national_forest",
      "Flathead National Forest"
+    ]
+   ],
+   "Misty Fjords National Monument Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Mojave Wilderness": [
@@ -1249,6 +1749,26 @@
     [
      "national_forest",
      "Stanislaus National Forest"
+    ]
+   ],
+   "Monarch Wilderness": [
+    [
+     "national_forest",
+     "Sequoia National Forest"
+    ],
+    [
+     "national_forest",
+     "Sierra National Forest"
+    ]
+   ],
+   "Monument Rock Wilderness": [
+    [
+     "national_forest",
+     "Malheur National Forest"
+    ],
+    [
+     "national_forest",
+     "Wallowa-Whitman National Forest"
     ]
    ],
    "Mount Adams Wilderness": [
@@ -1313,6 +1833,12 @@
      "Uinta-Wasatch-Cache National Forest"
     ]
    ],
+   "Mount Nebo Wilderness": [
+    [
+     "national_forest",
+     "Uinta-Wasatch-Cache National Forest"
+    ]
+   ],
    "Mount Olympus Wilderness": [
     [
      "national_forest",
@@ -1329,6 +1855,12 @@
     [
      "national_forest",
      "Olympic National Forest"
+    ]
+   ],
+   "Mount Sneffels Wilderness": [
+    [
+     "national_forest",
+     "Grand Mesa, Uncompahgre and Gunnison National Forests"
     ]
    ],
    "Mount Thielsen Wilderness": [
@@ -1361,10 +1893,28 @@
      "Willamette National Forest"
     ]
    ],
+   "Mount Zirkel Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
    "Mountain Lake Wilderness": [
     [
      "national_forest",
      "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Mountain Lakes Wilderness": [
+    [
+     "national_forest",
+     "Fremont-Winema National Forest"
+    ]
+   ],
+   "Mt. Charleston Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
     ]
    ],
    "Mt. Rose Wilderness": [
@@ -1381,6 +1931,12 @@
     [
      "national_forest",
      "Shasta-Trinity National Forest"
+    ]
+   ],
+   "Mt. Wrightson Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
     ]
    ],
    "Mud Swamp/New River Wilderness": [
@@ -1411,6 +1967,16 @@
     [
      "national_forest",
      "Arapaho and Roosevelt National Forests"
+    ]
+   ],
+   "Never Summer Wilderness": [
+    [
+     "national_forest",
+     "Arapaho and Roosevelt National Forests"
+    ],
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
     ]
    ],
    "Noatak Wilderness": [
@@ -1445,6 +2011,16 @@
     [
      "national_forest",
      "Shoshone National Forest"
+    ]
+   ],
+   "North Fork John Day Wilderness": [
+    [
+     "national_forest",
+     "Umatilla National Forest"
+    ],
+    [
+     "national_forest",
+     "Wallowa-Whitman National Forest"
     ]
    ],
    "North Fork Umatilla Wilderness": [
@@ -1483,10 +2059,42 @@
      "Inyo National Forest"
     ]
    ],
+   "Paddy Creek Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
+    ]
+   ],
+   "Pajarita Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
    "Panther Den Wilderness": [
     [
      "national_forest",
      "Shawnee National Forest"
+    ]
+   ],
+   "Pasayten Wilderness": [
+    [
+     "national_forest",
+     "Colville National Forest"
+    ],
+    [
+     "national_forest",
+     "Okanogan-Wenatchee National Forest"
+    ]
+   ],
+   "Pecos Wilderness": [
+    [
+     "national_forest",
+     "Carson National Forest"
+    ],
+    [
+     "national_forest",
+     "Santa Fe National Forest"
     ]
    ],
    "Pemigewasset Wilderness": [
@@ -1507,6 +2115,12 @@
      "George Washington and Jefferson National Forest"
     ]
    ],
+   "Petersburg Creek-Duncan Salt Chuck Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
    "Petrified Forest National Wilderness Area": [
     [
      "nps",
@@ -1525,10 +2139,26 @@
      "Cleveland National Forest"
     ]
    ],
+   "Pine Mountain Wilderness": [
+    [
+     "national_forest",
+     "Prescott National Forest"
+    ],
+    [
+     "national_forest",
+     "Tonto National Forest"
+    ]
+   ],
    "Pine Valley Mountain Wilderness": [
     [
      "national_forest",
      "Dixie National Forest"
+    ]
+   ],
+   "Piney Creek Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
     ]
    ],
    "Pinto Valley Wilderness": [
@@ -1537,16 +2167,52 @@
      "LAKE"
     ]
    ],
+   "Platte River Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
    "Pleasant View Ridge Wilderness": [
     [
      "national_forest",
      "Angeles National Forest"
     ]
    ],
+   "Pleasant/Lemusurier/Inian Islands Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
+   "Pocosin Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
    "Pond Mountain Wilderness": [
     [
      "national_forest",
      "Cherokee National Forest"
+    ]
+   ],
+   "Pond Pine Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
+   "Popo Agie Wilderness": [
+    [
+     "national_forest",
+     "Shoshone National Forest"
+    ]
+   ],
+   "Porcupine Lake Wilderness": [
+    [
+     "national_forest",
+     "Chequamegon-Nicolet National Forest"
     ]
    ],
    "Poteau Mountain Wilderness": [
@@ -1561,10 +2227,34 @@
      "White Mountain National Forest"
     ]
    ],
+   "Priest Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
    "Ptarmigan Peak Wilderness": [
     [
      "national_forest",
      "White River National Forest"
+    ]
+   ],
+   "Pusch Ridge Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
+   "Quinn Canyon Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Raccoon Branch Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
     ]
    ],
    "Raggeds Wilderness": [
@@ -1577,10 +2267,22 @@
      "White River National Forest"
     ]
    ],
+   "Rainbow Lake Wilderness": [
+    [
+     "national_forest",
+     "Chequamegon-Nicolet National Forest"
+    ]
+   ],
    "Ramseys Draft Wilderness": [
     [
      "national_forest",
      "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Rattlesnake Wilderness": [
+    [
+     "national_forest",
+     "Lolo National Forest"
     ]
    ],
    "Raven Cliffs Wilderness": [
@@ -1625,6 +2327,12 @@
      "Ozark-St. Francis National Forest"
     ]
    ],
+   "Rincon Mountain Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
    "Roaring Plains West Wilderness": [
     [
      "national_forest",
@@ -1649,16 +2357,50 @@
      "Hiawatha National Forest"
     ]
    ],
+   "Rockpile Mountain Wilderness": [
+    [
+     "national_forest",
+     "Mark Twain National Forest"
+    ]
+   ],
    "Rocky Mountain National Park Wilderness": [
     [
      "nps",
      "ROMO"
     ]
    ],
+   "Rogue-Umpqua Divide Wilderness": [
+    [
+     "national_forest",
+     "Rogue River-Siskiyou National Forests"
+    ],
+    [
+     "national_forest",
+     "Umpqua National Forest"
+    ]
+   ],
    "Rough Mountain Wilderness": [
     [
      "national_forest",
      "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Round Island Wilderness": [
+    [
+     "national_forest",
+     "Hiawatha National Forest"
+    ]
+   ],
+   "Ruby Mountains Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Russell Fjord Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Russian Wilderness": [
@@ -1671,6 +2413,28 @@
     [
      "national_forest",
      "Kaibab National Forest"
+    ]
+   ],
+   "Saguaro Wilderness": [
+    [
+     "nps",
+     "SAGU"
+    ]
+   ],
+   "Saint Mary's Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Salmo-Priest Wilderness": [
+    [
+     "national_forest",
+     "Colville National Forest"
+    ],
+    [
+     "national_forest",
+     "Idaho Panhandle National Forests"
     ]
    ],
    "Salmon-Huckleberry Wilderness": [
@@ -1703,6 +2467,18 @@
      "Angeles National Forest"
     ]
    ],
+   "San Jacinto Wilderness": [
+    [
+     "national_forest",
+     "San Bernardino National Forest"
+    ]
+   ],
+   "San Mateo Canyon Wilderness": [
+    [
+     "national_forest",
+     "Cleveland National Forest"
+    ]
+   ],
    "San Pedro Parks Wilderness": [
     [
      "national_forest",
@@ -1715,10 +2491,30 @@
      "Los Padres National Forest"
     ]
    ],
+   "Sandia Mountain Wilderness": [
+    [
+     "national_forest",
+     "Cibola National Forest"
+    ]
+   ],
    "Sandwich Range Wilderness": [
     [
      "national_forest",
      "White Mountain National Forest"
+    ]
+   ],
+   "Sangre de Cristo Wilderness": [
+    [
+     "national_forest",
+     "Pike and San Isabel National Forests"
+    ],
+    [
+     "national_forest",
+     "Rio Grande National Forest"
+    ],
+    [
+     "nps",
+     "GRSA"
     ]
    ],
    "Sanhedrin Wilderness": [
@@ -1727,10 +2523,44 @@
      "Mendocino National Forest"
     ]
    ],
+   "Santa Rosa-Paradise Peak Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Santa Teresa Wilderness": [
+    [
+     "national_forest",
+     "Coronado National Forest"
+    ]
+   ],
+   "Sarvis Creek Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
+   "Savage Run Wilderness": [
+    [
+     "national_forest",
+     "Medicine Bow-Routt National Forest"
+    ]
+   ],
    "Sawtooth Wilderness": [
     [
      "national_forest",
      "Sawtooth National Forest"
+    ]
+   ],
+   "Scapegoat Wilderness": [
+    [
+     "national_forest",
+     "Helena-Lewis and Clark National Forest"
+    ],
+    [
+     "national_forest",
+     "Lolo National Forest"
     ]
    ],
    "Selway-Bitterroot Wilderness": [
@@ -1771,6 +2601,18 @@
      "Angeles National Forest"
     ]
    ],
+   "Sheep Ridge Wilderness": [
+    [
+     "national_forest",
+     "National Forests in North Carolina"
+    ]
+   ],
+   "Shellback Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "Shenandoah Wilderness": [
     [
      "nps",
@@ -1789,6 +2631,18 @@
      "Tonto National Forest"
     ]
    ],
+   "Silver Peak Wilderness": [
+    [
+     "national_forest",
+     "Los Padres National Forest"
+    ]
+   ],
+   "Sipsey Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Alabama"
+    ]
+   ],
    "Siskiyou Wilderness": [
     [
      "national_forest",
@@ -1803,10 +2657,56 @@
      "Six Rivers National Forest"
     ]
    ],
+   "Sky Lakes Wilderness": [
+    [
+     "national_forest",
+     "Fremont-Winema National Forest"
+    ],
+    [
+     "national_forest",
+     "Rogue River-Siskiyou National Forests"
+    ]
+   ],
+   "Sleeping Bear Dunes Wilderness": [
+    [
+     "nps",
+     "SLBE"
+    ]
+   ],
    "Snow Mountain Wilderness": [
     [
      "national_forest",
      "Mendocino National Forest"
+    ]
+   ],
+   "Soldier Creek Wilderness": [
+    [
+     "national_forest",
+     "Nebraska National Forest"
+    ]
+   ],
+   "South Baranof Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
+   "South Etolin Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
+   "South Fork San Jacinto Wilderness": [
+    [
+     "national_forest",
+     "San Bernardino National Forest"
+    ]
+   ],
+   "South Prince of Wales Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "South San Juan Wilderness": [
@@ -1829,6 +2729,12 @@
      "Sequoia National Forest"
     ]
    ],
+   "South Warner Wilderness": [
+    [
+     "national_forest",
+     "Modoc National Forest"
+    ]
+   ],
    "Southern Nantahala Wilderness": [
     [
      "national_forest",
@@ -1837,6 +2743,12 @@
     [
      "national_forest",
      "National Forests in North Carolina"
+    ]
+   ],
+   "Spanish Peaks Wilderness": [
+    [
+     "national_forest",
+     "Pike and San Isabel National Forests"
     ]
    ],
    "Spice Run Wilderness": [
@@ -1849,6 +2761,32 @@
     [
      "nps",
      "LAKE"
+    ]
+   ],
+   "Stephen Mather Wilderness": [
+    [
+     "nps",
+     "LACH"
+    ],
+    [
+     "nps",
+     "NOCA"
+    ],
+    [
+     "nps",
+     "ROLA"
+    ]
+   ],
+   "Stikine-LeConte Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
+   "Stone Mountain Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
     ]
    ],
    "Strawberry Crater Wilderness": [
@@ -1875,16 +2813,42 @@
      "Tonto National Forest"
     ]
    ],
+   "Sycamore Canyon Wilderness": [
+    [
+     "national_forest",
+     "Coconino National Forest"
+    ],
+    [
+     "national_forest",
+     "Kaibab National Forest"
+    ],
+    [
+     "national_forest",
+     "Prescott National Forest"
+    ]
+   ],
    "Sylvania Wilderness": [
     [
      "national_forest",
      "Ottawa National Forest"
     ]
    ],
+   "Table Mountain Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
+    ]
+   ],
    "Tatoosh Wilderness": [
     [
      "national_forest",
      "Gifford Pinchot National Forest"
+    ]
+   ],
+   "Tebenkof Bay Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Teton Wilderness": [
@@ -1899,10 +2863,22 @@
      "Olympic National Forest"
     ]
    ],
+   "Theodore Roosevelt Wilderness": [
+    [
+     "nps",
+     "THRO"
+    ]
+   ],
    "Thousand Lakes Wilderness": [
     [
      "national_forest",
      "Lassen National Forest"
+    ]
+   ],
+   "Three Ridges Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
     ]
    ],
    "Three Sisters Wilderness": [
@@ -1913,6 +2889,18 @@
     [
      "national_forest",
      "Willamette National Forest"
+    ]
+   ],
+   "Thunder Ridge Wilderness": [
+    [
+     "national_forest",
+     "George Washington and Jefferson National Forest"
+    ]
+   ],
+   "Tracy Arm-Fords Terror Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
     ]
    ],
    "Trapper Creek Wilderness": [
@@ -1941,6 +2929,12 @@
      "Six Rivers National Forest"
     ]
    ],
+   "Turkey Hill Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Texas"
+    ]
+   ],
    "Twin Peaks Wilderness": [
     [
      "national_forest",
@@ -1948,6 +2942,24 @@
     ]
    ],
    "Unaka Mountain Wilderness": [
+    [
+     "national_forest",
+     "Cherokee National Forest"
+    ]
+   ],
+   "Uncompahgre Wilderness": [
+    [
+     "national_forest",
+     "Grand Mesa, Uncompahgre and Gunnison National Forests"
+    ]
+   ],
+   "Upland Island Wilderness": [
+    [
+     "national_forest",
+     "National Forests in Texas"
+    ]
+   ],
+   "Upper Bald River Wilderness": [
     [
      "national_forest",
      "Cherokee National Forest"
@@ -1971,16 +2983,46 @@
      "Arapaho and Roosevelt National Forests"
     ]
    ],
+   "Ventana Wilderness": [
+    [
+     "national_forest",
+     "Los Padres National Forest"
+    ]
+   ],
    "Waldo Lake Wilderness": [
     [
      "national_forest",
      "Willamette National Forest"
     ]
    ],
+   "Wambaw Creek Wilderness": [
+    [
+     "national_forest",
+     "Francis Marion and Sumter National Forests"
+    ]
+   ],
+   "Wambaw Swamp Wilderness": [
+    [
+     "national_forest",
+     "Francis Marion and Sumter National Forests"
+    ]
+   ],
+   "Warren Island Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
    "Washakie Wilderness": [
     [
      "national_forest",
      "Shoshone National Forest"
+    ]
+   ],
+   "Welcome Creek Wilderness": [
+    [
+     "national_forest",
+     "Lolo National Forest"
     ]
    ],
    "Wellsville Mountain Wilderness": [
@@ -2005,6 +3047,12 @@
      "Umatilla National Forest"
     ]
    ],
+   "West Chichagof-Yakobi Wilderness": [
+    [
+     "national_forest",
+     "Tongass National Forest"
+    ]
+   ],
    "West Clear Creek Wilderness": [
     [
      "national_forest",
@@ -2023,10 +3071,28 @@
      "Coconino National Forest"
     ]
    ],
+   "Wheeler Peak Wilderness": [
+    [
+     "national_forest",
+     "Carson National Forest"
+    ]
+   ],
    "Whisker Lake Wilderness": [
     [
      "national_forest",
      "Chequamegon-Nicolet National Forest"
+    ]
+   ],
+   "White Mountain Wilderness": [
+    [
+     "national_forest",
+     "Lincoln National Forest"
+    ]
+   ],
+   "White Pine Range Wilderness": [
+    [
+     "national_forest",
+     "Humboldt-Toiyabe National Forest"
     ]
    ],
    "Wild River Wilderness": [
@@ -2057,16 +3123,34 @@
      "Caribou-Targhee National Forest"
     ]
    ],
+   "Withington Wilderness": [
+    [
+     "national_forest",
+     "Cibola National Forest"
+    ]
+   ],
    "Wonder Mountain Wilderness": [
     [
      "national_forest",
      "Olympic National Forest"
     ]
    ],
+   "Woodchute Wilderness": [
+    [
+     "national_forest",
+     "Prescott National Forest"
+    ]
+   ],
    "Wovoka Wilderness": [
     [
      "national_forest",
      "Humboldt-Toiyabe National Forest"
+    ]
+   ],
+   "Wrangell-Saint Elias Wilderness": [
+    [
+     "nps",
+     "WRST"
     ]
    ],
    "Yolla Bolly-Middle Eel Wilderness": [
@@ -2115,6 +3199,12 @@
      "Modoc National Forest"
     ]
    ],
+   "MIMI": [
+    [
+     "national_forest",
+     "Nebraska National Forest"
+    ]
+   ],
    "MORU": [
     [
      "national_forest",
@@ -2131,6 +3221,12 @@
     [
      "national_forest",
      "Uinta-Wasatch-Cache National Forest"
+    ]
+   ],
+   "WABA": [
+    [
+     "national_forest",
+     "Cibola National Forest"
     ]
    ]
   },
