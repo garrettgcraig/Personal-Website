@@ -510,3 +510,20 @@ body.dark-mode .search-wrap input::placeholder { color: var(--tracker-muted) !im
 .stat-label, .legend-group-label, .sidebar-footer .credit { font-size: 0.75rem; }
 .map-legend { font-size: 0.75rem; }
 .progress-inner { transition: none; }
+
+/* Back to Home pill: center the label vertically and keep it sized like the other tracker pills. */
+.sidebar-footer { padding-top: 1rem; }
+.sidebar-footer .button {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: 0.4rem;
+	font-size: 0.7rem;
+	padding: 0.35rem 1.5rem;
+	min-height: 44px;
+	height: auto;
+	line-height: 1.2;
+	border-radius: 44px;
+}
+.sidebar-footer .credit { margin-top: 0.85rem; line-height: 1.6; }
+.sidebar-footer .credit a { display: inline-block; padding: 0.15rem 0; }
