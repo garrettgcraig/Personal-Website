@@ -6,7 +6,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { bestScore, breachHours, dateRange, forecast, crestFt, stageOutlook, detectMouthEvents, chanceWithin, breachWindow, levelOf } from "../devereux/model.js";
-import { copDailyRain, parseCsv, restOfToday, parseUscrnHourly } from "../netlify/functions/devereux-api.mjs";
+import { copDailyRain, dayHourKeys, parseCsv, rainSoFar, restOfToday, parseUscrnHourly } from "../netlify/functions/devereux-api.mjs";
+import { mrmsLocal, mrmsUrl, pngPixel } from "../netlify/lib/devereux-mrms.mjs";
+import { deflateSync } from "node:zlib";
 
 const live = JSON.parse(readFileSync(new URL("../devereux/model-params.json", import.meta.url)));
 // the earlier crest-curve hazard, still the fallback when params.best is absent
@@ -80,15 +82,76 @@ test("levels: each score maps to the highest level whose cutoff it meets", () =>
   assert.equal(L[1].caught, params.levels_record.breaches, "Watch caught every recorded breach");
 });
 
-test("past rain comes from the Coal Oil Point gauge alone, gaps stay missing", () => {
-  const days = ["2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"];
+// gauge-style hourly map: n hours of day d starting at hour-ending 01:00, each `v` inches
+const hoursOf = (d, n, v, from = 1) => Object.fromEntries(dayHourKeys(d).slice(from - 1, from - 1 + n).map((k) => [k, v]));
+
+test("past rain: the gauge first, radar estimate only for hours the gauge lacks", () => {
+  const days = ["2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-21"];
   const cop = { "2026-11-17": 0, "2026-11-18": 0.27 };
-  const crn = { daily: { "2026-11-18": 0.3, "2026-11-19": 1.6535 }, hours: { "2026-11-18": 24, "2026-11-19": 17 } };
-  const out = copDailyRain(days, cop, crn);
-  assert.deepEqual(out.map((r) => r.rain_in), [0, 0.27, 1.65, null]);
+  const crn = { hourly: { ...hoursOf("2026-11-18", 24, 0.0125), ...hoursOf("2026-11-19", 17, 0.1) } };
+  // no radar record: gauge alone, gaps stay missing
+  let out = copDailyRain(days, cop, crn);
+  assert.deepEqual(out.map((r) => r.rain_in), [0, 0.27, 1.7, null, null]);
   assert.equal(out[2].hours, 17);
   assert.equal(out[1].hours, undefined);
   assert.equal(out[3].src, "missing");
+  // radar fills the 7 hours of the 19th the gauge lacks (not the 17 it has) and the whole 20th
+  const mrms = { hourly: { ...hoursOf("2026-11-19", 24, 0.05), ...hoursOf("2026-11-20", 24, 0.01) } };
+  out = copDailyRain(days, cop, crn, mrms);
+  assert.deepEqual(out.map((r) => r.rain_in), [0, 0.27, 2.05, 0.24, null]);
+  assert.equal(out[2].hours, 17);
+  assert.equal(out[2].filled_hours, 7);
+  assert.equal(out[2].filled_in, 0.35);
+  assert.equal(out[2].gauge_in, 1.7);
+  assert.equal(out[2].src, "Coal Oil Point gauge + radar estimate");
+  assert.equal(out[3].hours, 0);
+  assert.equal(out[3].filled_hours, 24);
+  assert.equal(out[3].src, "radar estimate");
+  assert.equal(out[1].filled_hours, undefined, "the NCEI daily summary is never mixed with radar");
+});
+
+test("gauge hour keys: hour ending 24:00 is the next day's T00:00", () => {
+  const k = dayHourKeys("2026-11-30");
+  assert.equal(k.length, 24);
+  assert.equal(k[0], "2026-11-30T01:00");
+  assert.equal(k.at(-1), "2026-12-01T00:00");
+});
+
+test("rain so far today: gauge hours, radar after the gauge's last hour", () => {
+  const d = "2026-11-23";
+  const crn = { hourly: hoursOf(d, 5, 0.1) }; // 01:00 to 05:00
+  const mrms = { hourly: hoursOf(d, 9, 0.02) }; // 01:00 to 09:00
+  const r = rainSoFar(d, crn, mrms);
+  assert.ok(Math.abs(r.so_far_in - (0.5 + 4 * 0.02)) < 1e-9);
+  assert.ok(Math.abs(r.filled_in - 0.08) < 1e-9);
+  assert.equal(new Date(r.as_of).toISOString(), "2026-11-23T17:00:00.000Z"); // 09:00 PST
+  assert.equal(rainSoFar(d, {}, {}).as_of, null);
+});
+
+test("MRMS: radar hours keyed like the gauge (UTC-8, hour ending) and scaled", () => {
+  const { hourly } = mrmsLocal({ hours: { "2026-11-20T08:00:00.000Z": 0.1, "2026-11-20T09:00:00.000Z": 0 } }, 1.24);
+  assert.deepEqual(hourly, { "2026-11-20T00:00": 0.124, "2026-11-20T01:00": 0 });
+  assert.equal(mrmsUrl(Date.UTC(2026, 10, 19, 20)),
+    "https://noaa-mrms-pds.s3.amazonaws.com/CONUS/MultiSensor_QPE_01H_Pass2_00.00/20261119/MRMS_MultiSensor_QPE_01H_Pass2_00.00_20261119-200000.grib2.gz");
+});
+
+test("MRMS: PNG-packed GRIB2 value at a point", () => {
+  // 3x2 grid, 16-bit gray PNG, rows filtered with Sub, Up and Paeth
+  const W = 3, H = 2, vals = [[0, 10, 20], [300, 65535, 7]];
+  const raw = [];
+  let prev = new Uint8Array(W * 2);
+  vals.forEach((row, r) => {
+    const cur = new Uint8Array(row.flatMap((v) => [v >> 8, v & 255]));
+    const f = r === 0 ? 1 : 2;
+    raw.push(f, ...cur.map((x, i) => (f === 1 ? x - (i >= 2 ? cur[i - 2] : 0) : x - prev[i]) & 255));
+    prev = cur;
+  });
+  const chunk = (type, data) => { const b = Buffer.alloc(12 + data.length); b.writeUInt32BE(data.length, 0); b.write(type, 4, "latin1"); data.copy(b, 8); return b; };
+  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(W, 0); ihdr.writeUInt32BE(H, 4); ihdr[8] = 16; ihdr[9] = 0;
+  const png = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(Buffer.from(raw))), chunk("IEND", Buffer.alloc(0))]);
+  assert.equal(pngPixel(png, 1, 1), 65535);
+  assert.equal(pngPixel(png, 0, 2), 20);
+  assert.equal(pngPixel(png, 1, 0), 300);
 });
 
 test("berm crest rebuilds from c0 toward c_inf", () => {

@@ -511,20 +511,28 @@ function render(s) {
   const levelChart = levelChartSvg(s, levelRange);
 
   // --- recent rain (30 days)
+  // A day the gauge hasn't fully reported is a stacked bar: the gauge's hours (sage) under the
+  // radar estimate for the rest (mist). Bars stay faded while some hours have neither.
   const rr = s.recent.rain.map((r) => ({ x: dayNum(r.date), r }));
+  const covered = (r) => (r.hours ?? 24) + (r.filled_hours ?? 0);
+  const rainTip = (r) => r.rain_in == null ? "" : `${day(r.date)}: ${r.rain_in.toFixed(2)} in`
+    + (r.filled_hours ? ` (${r.hours ? `gauge ${r.gauge_in.toFixed(2)} in over ${r.hours} hours, ` : ""}radar estimate ${r.filled_in.toFixed(2)} in over ${r.filled_hours} hour${r.filled_hours > 1 ? "s" : ""} the gauge hasn't reported)` : "")
+    + (!r.filled_hours && r.hours ? ` (${r.hours} of 24 hours reported so far)` : "");
   const recentRain = chart({
     width: panelW(), height: 180, yMin: 0, yFmt: (v) => v.toFixed(1), yLabel: "rain, in/day",
     series: [
       // every day gets a bar (a missing day's is empty) so bar widths stay daily
-      { type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.rain_in ?? 0, color: SAGE(), opacity: r.hours ? 0.45 : 1,
-        title: r.rain_in == null ? "" : `${day(r.date)}: ${r.rain_in.toFixed(2)} in${r.hours ? ` (${r.hours} of 24 hours reported so far)` : ""}` })) },
+      { type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.filled_hours ? r.rain_in : 0, color: COLORS.mist, opacity: covered(r) < 24 ? 0.45 : 1, title: rainTip(r) })) },
+      { type: "bar", points: rr.map(({ x, r }) => ({ x, y: r.filled_hours ? r.gauge_in : r.rain_in ?? 0, color: SAGE(), opacity: covered(r) < 24 ? 0.45 : 1, title: rainTip(r) })) },
       { type: "dots", color: css("--color-muted"), r: 3, points: rr.filter(({ r }) => r.rain_in == null).map(({ x, r }) => ({ x, y: 0, title: `${day(r.date)}: no reading` })) },
     ],
     xTicks: everyN(rr.map((p) => p.x), 7), xFmt: shortDay,
   });
 
-  const partial = s.recent.rain.filter((r) => r.hours), gaps = s.recent.season_missing_days || 0;
-  const recentRainNote = (partial.length ? `. Faded bars are days the gauge hasn't finished reporting (${partial.map((r) => `${day(r.date)}: ${r.hours} of 24 hours`).join(", ")}).` : "")
+  const filledDays = s.recent.rain.filter((r) => r.filled_hours);
+  const partial = s.recent.rain.filter((r) => r.hours != null && covered(r) < 24), gaps = s.recent.season_missing_days || 0;
+  const recentRainNote = (filledDays.length ? `. Blue is NOAA's radar-and-gauge estimate (MRMS) for hours the Coal Oil Point gauge hasn't reported yet, scaled up to match the gauge, which it has run about 20% below. The gauge's own numbers replace it when they arrive.` : "")
+    + (partial.length ? ` Faded bars are days with hours not yet reported (${partial.map((r) => `${day(r.date)}: ${covered(r)} of 24 hours`).join(", ")}).` : "")
     + (gaps ? ` ${gaps} day${gaps > 1 ? "s" : ""} this season ${gaps > 1 ? "have" : "has"} no reading yet (gray dot${gaps > 1 ? "s" : ""}) and count${gaps > 1 ? "" : "s"} as dry.` : "");
 
   const rainCell = (r) => r.date === s.today && r.so_far_in != null
@@ -637,7 +645,7 @@ function render(s) {
         <h3 style="margin:var(--space-6) 0 0">Rain, inches per day</h3>
         ${legend([[OBS(), "observed", "bar"], [PRED(), s.forecast?.source === "NOAA GEFS ensemble mean" ? "forecast (NOAA GEFS, corrected to the gauge)" : "forecast (Open-Meteo, backup)", "bar"]])}
         ${rainChart}
-        <p class="note">Today counts the rain already measured at the Coal Oil Point gauge plus the forecast for the hours left. ${s.forecast?.source === "NOAA GEFS ensemble mean" ? "Forecast rain is NOAA's GEFS ensemble mean, which has run light here, corrected against the gauge (see the Model tab); it updates every 6 hours." : "The usual forecast (NOAA GEFS) couldn't be reached, so this uses Open-Meteo as a backup, and later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), showing the higher level."}</p>
+        <p class="note">Today counts the rain already measured at the Coal Oil Point gauge (or the radar estimate for hours the gauge hasn't reported yet) plus the forecast for the hours left. ${s.forecast?.source === "NOAA GEFS ensemble mean" ? "Forecast rain is NOAA's GEFS ensemble mean, which has run light here, corrected against the gauge (see the Model tab); it updates every 6 hours." : "The usual forecast (NOAA GEFS) couldn't be reached, so this uses Open-Meteo as a backup, and later days are also scored as if they could get more rain than forecast (up to 1.5 times on day 10), showing the higher level."}</p>
       </div>
       <div class="table-scroll"><table class="days">
         <thead><tr><th>Day</th><th>Rain, in</th><th>Slough, ft</th><th title="How far the slough sits below the typical breach level">Below breach, ft</th><th>Level</th></tr></thead>
@@ -657,7 +665,7 @@ function render(s) {
       </div>` : ""}
       <div>
         <h3>Rain, last 30 days</h3>
-        ${legend([[SAGE(), "Coal Oil Point gauge", "bar"]])}
+        ${legend([[SAGE(), "Coal Oil Point gauge", "bar"], ...(filledDays.length ? [[COLORS.mist, "radar estimate, until the gauge reports", "bar"]] : [])])}
         ${recentRain}
         <p class="note">Water year to date: <span class="num">${s.recent.season_rain_in.toFixed(2)} in</span>${recentRainNote}</p>
       </div>
