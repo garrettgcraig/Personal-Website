@@ -433,6 +433,9 @@ function render(s) {
   const heavyUp = !open && peak && heavy && BANDS.indexOf(bandOf(heavy.p)) > BANDS.indexOf(bandOf(peak.p));
   // first Likely or Imminent day ahead with a storm to time: its most likely breach hours
   const bw = open ? null : (s.outlook || []).find((r) => r.date >= s.today && r.breach_window);
+  // first forecast day whose upper level range reaches this closure's breach level
+  const reachHi = open ? null : (s.stage?.series || []).find((r) => r.date >= s.today && r.phase === "forecast" && r.breach_level_ft != null && r.hi >= r.breach_level_ft);
+  const lowAhead = !open && peak && bandOf(peak.p).key === "low";
 
   const nowFt = s.stage?.sensor_now?.ft ?? s.stage?.today_est_ft;
   const nowWhen = s.stage?.sensor_now
@@ -476,6 +479,9 @@ function render(s) {
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day.` : ".")
       + (near ? ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${day(near.date, { month: "short", day: "numeric" })}`
         + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : ".") : "");
+    // the level chart's upper range can touch the breach level while every day still scores No Chance
+    if (lowAhead && reachHi && !heavyUp) outlook += ` The top of the level chart's range is a what-if: ${heavy?.scale ?? 1.5} times the forecast rain plus a typical forecast miss.`
+      + ` Breaches have come on days of heavy rain, and even with ${heavy?.scale ?? 1.5} times the forecast rain no day ahead scores above <strong>No Chance</strong>.`;
     if (heavyUp) outlook += ` With ${heavy.scale ?? 1.5} times the forecast rain, the outlook would reach <strong>${bandOf(heavy.p).label}</strong> on ${day(heavy.date)}.`;
   }
 
@@ -597,7 +603,7 @@ function render(s) {
         ${dialSvg(p48, open || !peak)}
         <p class="sign-read">${open ? "The slough is tidal. The watch starts again when the berm closes."
           : !peak ? "No outlook right now."
-          : (bandOf(peak.p).key === "low" ? "Next 10 days: no chance of breach." : `Next 10 days peak: <strong>${bandOf(peak.p).label}</strong>, ${day(peak.date).replace(/ /g, "\u00a0")}.`)
+          : (bandOf(peak.p).key === "low" ? "Next 10 days: no chance of breach." + (reachHi && !heavyUp ? ` Only rain well above the forecast would bring the slough up to the breach level, around ${day(reachHi.date).replace(/ /g, "\u00a0")}.` : "") : `Next 10 days peak: <strong>${bandOf(peak.p).label}</strong>, ${day(peak.date).replace(/ /g, "\u00a0")}.`)
             + (heavyUp ? `<br/>If rain runs heavy: <strong>${bandOf(heavy.p).label}</strong>.` : "")
             + (bw ? `<br/>Most likely breach: <strong>${windowText(bw.breach_window).replace(/ /g, "\u00a0")}</strong>.` : "")}</p>
       </div>
