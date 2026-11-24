@@ -264,9 +264,93 @@ document.getElementById('visited-tbody').addEventListener('keydown', function (e
 		var idx = featureIndex[layerType];
 		if (idx && idx[key]) styleFeature(idx[key], layerType, vis.has(key));
 		saveVisited(layerType);
+		sync.record(layerType, key, vis.has(key));
 		announce(featureData[layerType][key].name + (vis.has(key) ? " marked visited." : " removed from visits."));
 		updateStats();
 		renderTable();
+	}
+
+	// ── Server sync (assets/js/lands-sync.js). The browser copy stays as an offline cache. ──
+	function setVisits(next) {
+		Object.keys(LAYERS).forEach(function (lt) {
+			var nextSet = new Set((next[lt] || []).map(String));
+			var old = visited[lt] || new Set();
+			var idx = featureIndex[lt] || {};
+			old.forEach(function (key) { if (!nextSet.has(key) && idx[key]) styleFeature(idx[key], lt, false); });
+			nextSet.forEach(function (key) { if (!old.has(key) && idx[key]) styleFeature(idx[key], lt, true); });
+			visited[lt] = nextSet;
+		});
+		saveAllVisited(); updateStats(); renderTable();
+	}
+	var syncUI = {
+		off: document.getElementById('sync-off'),
+		on: document.getElementById('sync-on'),
+		code: document.getElementById('sync-code'),
+		status: document.getElementById('sync-status'),
+		box: document.getElementById('sync-box'),
+		input: document.getElementById('sync-code-input')
+	};
+	var sync = LandsSync.create({
+		types: Object.keys(LAYERS),
+		getVisits: function () {
+			var out = {};
+			Object.keys(LAYERS).forEach(function (lt) { out[lt] = Array.from(visited[lt] || []); });
+			return out;
+		},
+		setVisits: setVisits,
+		onChange: function (state) {
+			syncUI.off.hidden = !!state.code;
+			syncUI.on.hidden = !state.code;
+			syncUI.code.textContent = state.code ? LandsSync.formatCode(state.code) : '';
+			syncUI.status.textContent = state.status;
+			syncUI.status.classList.toggle('is-error', state.error);
+			storageWarning(state.code ? 'Visits sync to the server under your sync code. A CSV export is still a good extra backup.' : 'Visits save in this browser only. Turn on sync below to keep them on the server, or export a CSV.');
+		}
+	});
+	var syncStarted = false;
+	// A link from "Copy link for another device" carries the code in the fragment (#sync=...).
+	function joinFromLink() {
+		var hash = /(?:^#|&)sync=([^&]+)/.exec(location.hash);
+		if (!hash) return false;
+		history.replaceState(null, '', location.pathname + location.search);
+		var linkCode = LandsSync.normalizeCode(decodeURIComponent(hash[1]));
+		if (!linkCode || linkCode === sync.state.code) return false;
+		syncUI.box.open = true;
+		sync.join(linkCode);
+		return true;
+	}
+	function startSync() {
+		if (syncStarted) return;
+		syncStarted = true;
+		if (!joinFromLink()) sync.pull();
+	}
+	window.addEventListener('hashchange', function () { if (syncStarted) joinFromLink(); });
+	document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && syncStarted) sync.pull(); });
+	window.addEventListener('online', function () { if (syncStarted) sync.flush(); });
+	document.getElementById('btn-sync-start').addEventListener('click', function () {
+		if (!dataReady) { syncUI.status.textContent = 'Wait for the map to finish loading, then try again.'; return; }
+		sync.start();
+	});
+	document.getElementById('sync-join-form').addEventListener('submit', function (e) {
+		e.preventDefault();
+		if (!dataReady) { syncUI.status.textContent = 'Wait for the map to finish loading, then try again.'; return; }
+		sync.join(syncUI.input.value).then(function (ok) { if (ok) syncUI.input.value = ''; });
+	});
+	document.getElementById('btn-sync-copy').addEventListener('click', function () {
+		var link = location.origin + location.pathname + '#sync=' + sync.state.code;
+		var done = function () { announce('Link copied. Open it on another device to see the same visits. Anyone with the link can change them, so keep it private.'); };
+		if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, function () { window.prompt('Copy this link:', link); });
+		else window.prompt('Copy this link:', link);
+	});
+	document.getElementById('btn-sync-stop').addEventListener('click', function () {
+		if (!confirm('Stop syncing in this browser? Your visits stay here, and stay on the server under the code. Write the code down first if you want to reconnect later.')) return;
+		sync.stop();
+	});
+	if (sync.state.code) {
+		syncUI.box.open = true;
+		syncUI.off.hidden = true; syncUI.on.hidden = false;
+		syncUI.code.textContent = LandsSync.formatCode(sync.state.code);
+		syncUI.status.textContent = 'Connecting to your sync code…';
 	}
 
 	// ── Map setup ──
@@ -400,16 +484,18 @@ function migrateLegacyVisits() {
   if (!raw || !geojsonLayers.wilderness || localStorage.getItem('lands_legacy_wids_migrated') === '1') return;
   var ids = JSON.parse(raw);
   if (!Array.isArray(ids)) return;
-  var changed = false;
+  var changed = false, ops = [];
   ids.forEach(function (id) {
    var name = window.LANDS_WID_NAMES[String(Number(id))];
    var key = name && LandsData.nameKey(featureData.wilderness, name);
    if (key && !visited.wilderness.has(key)) {
     visited.wilderness.add(key); styleFeature(featureIndex.wilderness[key], 'wilderness', true); changed = true;
+    ops.push({ type: 'wilderness', key: key, on: true });
    }
   });
   if (changed) {
    localStorage.setItem(LAYERS.wilderness.storageKey, JSON.stringify(Array.from(visited.wilderness)));
+   sync.recordMany(ops);
    announce('Restored visits from the earlier wilderness tracker.');
   }
   localStorage.setItem('lands_legacy_wids_migrated', '1');
@@ -430,6 +516,7 @@ function loadMissingLayers() {
    if (result.status === 'rejected') { loadErrors.push(LAYERS[missing[i]].label); console.error('Boundary load failed:', missing[i], result.reason); }
   });
   buildSearchIndex(); migrateLegacyVisits(); updateStats(); renderTable();
+  startSync();
   document.getElementById('data-status').textContent = loadErrors.length ? 'Could not load ' + loadErrors.join(', ') + '. Other loaded layers still work. Retry to restore full search and totals.' : '';
   document.getElementById('retry-data').hidden = !loadErrors.length;
   document.getElementById('btn-import').disabled = !!loadErrors.length;
@@ -547,13 +634,14 @@ importInput.addEventListener('change', async function () {
  if (file.size > 5 * 1024 * 1024) { announce('CSV is too large. Choose a visit backup smaller than 5 MB.'); return; }
  try {
   var result = LandsData.matchImport(LandsData.parseCSV(await file.text()), featureData, window.LANDS_WID_NAMES);
-  var added = 0, existing = 0;
+  var added = 0, existing = 0, ops = [];
   result.matches.forEach(function (row) {
    if (visited[row.type].has(row.key)) { existing++; return; }
    visited[row.type].add(row.key); added++;
+   ops.push({ type: row.type, key: row.key, on: true });
    styleFeature(featureIndex[row.type][row.key], row.type, true);
   });
-  saveAllVisited(); updateStats(); renderTable();
+  saveAllVisited(); sync.recordMany(ops); updateStats(); renderTable();
   announce('Imported ' + added + ' new visits; ' + existing + ' already saved; ' + result.unmatched + ' unmatched rows. Existing visits were kept.');
  } catch (err) { announce('Import failed: ' + err.message); }
 });
@@ -564,10 +652,12 @@ importInput.addEventListener('change', async function () {
 		var totalVisited = 0;
 		Object.keys(LAYERS).forEach(function (lt) { totalVisited += visited[lt].size; });
 		if (totalVisited === 0) return;
-		if (!confirm("Clear all " + totalVisited + " visited areas across all layers?")) return;
+		if (!confirm("Clear all " + totalVisited + " visited areas across all layers?" + (sync.linked() ? " This also clears them on every device using your sync code." : ""))) return;
 
+		var ops = [];
 		Object.keys(LAYERS).forEach(function (lt) {
 			visited[lt].forEach(function (key) {
+				ops.push({ type: lt, key: key, on: false });
 				if (featureIndex[lt][key]) styleFeature(featureIndex[lt][key], lt, false);
 			});
 			visited[lt].clear();
@@ -575,6 +665,7 @@ importInput.addEventListener('change', async function () {
  try { localStorage.removeItem("wilderness_visited_wids"); } catch (_) {}
 
 		saveAllVisited();
+		sync.recordMany(ops);
 		announce("All visits cleared. Import a CSV backup to restore them.");
 		updateStats();
 		renderTable();
