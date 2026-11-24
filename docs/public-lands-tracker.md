@@ -40,13 +40,13 @@ When a visitor marks a unit that lies wholly inside a single other unit (a wilde
 
 The relationships are precomputed in `data/lands-containment.json` by `scripts/build_lands_containment.py` (needs `shapely` and `pyproj`). Rerun it after refreshing any boundary file. A unit counts as contained when at least 96% of it lies within 1 km of the overlapping units and at least 90% lies inside them with no buffer, which absorbs the 500 to 600 m simplification in the bundled boundaries. A neighbor is named as a container only when it holds most of the unit or a real interior share of it, so simplified edges that spill a sliver over a neighbor do not count. A wilderness is never treated as containing a park or forest. Each unit lists only its nearest containers; the browser follows them upward. If the file fails to load, the tracker works as before without automatic marks.
 
-The bundled boundaries limit what can be detected. Many national forests in `national_forests.geojson` keep only one part of a multi-part forest (for example, the southern half of the Cherokee and most of the Tongass are missing), and 127 small NPS units have empty geometry. Wilderness areas in the missing parts are not linked to their forests until the forest file is rebuilt from the full USFS layer.
-
 Map layers stack in fixed panes (forests at the bottom, then parks, then wilderness), so the smaller unit stays clickable where they overlap.
 
 NPS polygons sharing a unit code are one tracked unit: all constituent boundaries update together and their acreage is summed. Existing NPS code keys remain valid. Wilderness and forest keys retain their existing names.
 
 ## Boundary refresh
+
+The national forest and NPS files were rebuilt in November 2026 by `scripts/rebuild_lands_boundaries.py` from complete downloads of the USFS administrative forest layer and the NPS boundary layer (the script's docstring has the download queries). The earlier R output had kept only one part of many multi-part forests and left 127 small NPS units with empty geometry. The rebuild keeps every property and key, drops forest parcels and holes under 1 km² (NPS: 0.02 km²), simplifies at 600 m (NPS: 300 m), and fills in acreage for NPS units that had none. Rerun `scripts/build_lands_containment.py` after any boundary change.
 
 R is retained as a preparation tool in `data/build_layers.R`, using `sf`, `dplyr` and `esri2sf`. From `data/`, run `Rscript build_layers.R`. The script skips existing GeoJSON files; archive a file before regenerating its layer. Review changes in names, codes, geometry and totals before committing. Counts reflect the bundled snapshot, not a promise of real-time nationwide coverage.
 
