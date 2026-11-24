@@ -169,6 +169,7 @@
 								<div class="map-panel">
 									<div id="map" aria-label="Public lands map"></div>
 <div id="map-status" class="map-status" role="status" hidden></div>
+<div id="map-toast" class="map-toast" aria-hidden="true" hidden></div>
 									<div class="map-legend">
 										<div class="legend-group">
 											<span class="legend-group-label">Wilderness</span>
@@ -223,6 +224,17 @@
 			<script src="assets/js/main.js"></script>
 
 		<!-- Public Lands Tracker App -->
+		<dialog id="unit-dialog" class="lands-dialog" aria-labelledby="unit-dialog-title" aria-describedby="unit-dialog-text">
+			<form method="dialog">
+				<h2 id="unit-dialog-title"></h2>
+				<p id="unit-dialog-text"></p>
+				<ul id="unit-dialog-list" class="unit-list"></ul>
+				<div class="controls-row">
+					<button type="submit" value="cancel" class="button small" id="unit-dialog-cancel">Skip</button>
+					<button type="submit" value="confirm" class="button small" id="unit-dialog-confirm">OK</button>
+				</div>
+			</form>
+		</dialog>
 		<script src="assets/js/lands-data.js"></script>
 		<script src="assets/js/lands-wid-names.js"></script>
 		<script src="assets/js/lands-sync.js"></script>
