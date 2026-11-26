@@ -7,3 +7,6 @@
 # It is not a secret, so keep Netlify's secret scan from failing deploys on it.
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "DEVEREUX_VAPID_SUBJECT"
+# Apple's app-link file must list the Apple team ID, which is public by design. The same ID
+# is set as WEATHERKIT_TEAM_ID, so skip that one file rather than the key everywhere.
+  SECRETS_SCAN_OMIT_PATHS = ".well-known/apple-app-site-association"
