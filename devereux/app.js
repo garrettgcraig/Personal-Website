@@ -474,11 +474,21 @@ function render(s) {
     // runoff from the whole watershed has drained in (not just on the rain day).
     const f = (s.stage?.series || []).filter((r) => r.date >= s.today && r.breach_level_ft != null);
     const near = f.reduce((m, r) => (m == null || r.breach_level_ft - r.ft < m.breach_level_ft - m.ft ? r : m), null);
+    const short = (d) => day(d, { month: "short", day: "numeric" });
     const nearHi = f.reduce((m, r) => Math.min(m, r.breach_level_ft - r.hi), Infinity);
     outlook = `Over the next 10 days the outlook peaks at <strong>${bandOf(peak.p).label}</strong> on ${day(peak.date)}`
       + (peak.rain_in >= 0.1 ? `, with ${peak.rain_in.toFixed(2)} in of rain forecast that day.` : ".")
-      + (near ? ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${day(near.date, { month: "short", day: "numeric" })}`
-        + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : ".") : "");
+      + (!near ? ""
+        : near.breach_level_ft - near.ft < 0.05
+          // the middle forecast reaches the breach level: say when it first gets there
+          ? (() => {
+            const cross = f.find((r) => r.ft >= r.breach_level_ft - 0.05);
+            const over = near.ft - near.breach_level_ft;
+            return ` If the mouth stays closed, the slough is forecast to reach the breach level around ${short(cross.date)}`
+              + (over >= 0.1 ? `, rising to about ${over.toFixed(1)} ft above it by ${short(near.date)}.` : ".");
+          })()
+          : ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${short(near.date)}`
+            + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : "."));
     // the level chart's upper range can touch the breach level while every day still scores No Chance
     if (lowAhead && reachHi && !heavyUp) outlook += ` The top of the level chart's range is a what-if: ${heavy?.scale ?? 1.5} times the forecast rain plus a typical forecast miss.`
       + ` Breaches have come on days of heavy rain, and even with ${heavy?.scale ?? 1.5} times the forecast rain no day ahead scores above <strong>No Chance</strong>.`;
