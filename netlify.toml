@@ -5,8 +5,6 @@
 
 # The Web Push "subject" is the page's public URL, which appears in ordinary site files.
 # It is not a secret, so keep Netlify's secret scan from failing deploys on it.
+# The Apple Team ID (WeatherKit) is public too: it is in .well-known/apple-app-site-association.
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "DEVEREUX_VAPID_SUBJECT"
-# Apple's app-link file must list the Apple team ID, which is public by design. The same ID
-# is set as WEATHERKIT_TEAM_ID, so skip that one file rather than the key everywhere.
-  SECRETS_SCAN_OMIT_PATHS = ".well-known/apple-app-site-association"
+  SECRETS_SCAN_OMIT_KEYS = "DEVEREUX_VAPID_SUBJECT,WEATHERKIT_TEAM_ID"

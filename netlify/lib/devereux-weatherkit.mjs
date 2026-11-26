@@ -9,6 +9,7 @@
 //   WEATHERKIT_KEY_ID      the key's 10-character ID
 //   WEATHERKIT_TEAM_ID     Apple Developer Team ID
 //   WEATHERKIT_SERVICE_ID  the Services ID registered for WeatherKit
+// Netlify hands new or changed values to functions only after the next deploy.
 import { createPrivateKey, sign } from "node:crypto";
 import { POINT } from "./devereux-gefs.mjs";
 
