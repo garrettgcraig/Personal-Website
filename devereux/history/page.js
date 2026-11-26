@@ -435,6 +435,16 @@ function render() {
   app.innerHTML = `
   <section class="page-intro">
     <h1>How the slough opens and closes</h1>
+    <figure class="pano-fig">
+      <div class="pano-wrap">
+        <img src="/devereux/media/panorama/slough-panorama-2048.webp" srcset="/devereux/media/panorama/slough-panorama-1200.webp 1200w, /devereux/media/panorama/slough-panorama-2048.webp 2048w" sizes="(max-width: 1200px) 100vw, 1104px" width="2048" height="634" alt="Panorama looking north from the dunes at Sands Beach: surf on the Pacific Ocean at left, the sand berm closing the mouth in the middle, Devereux Slough behind it at right, and the Santa Ynez Mountains beyond" />
+        <span class="pano-tag" style="left: 13%; top: 62%" aria-hidden="true">Pacific Ocean</span>
+        <span class="pano-tag" style="left: 44%; top: 73%" aria-hidden="true">Sand berm<span class="pano-x"> (mouth closed)</span></span>
+        <span class="pano-tag" style="left: 72%; top: 79%" aria-hidden="true">Devereux Slough</span>
+        <span class="pano-tag" style="left: 63%; top: 13%" aria-hidden="true">Santa Ynez Mountains</span>
+      </div>
+      <figcaption>Looking north from the dunes at Sands Beach on November 25, 2026, around a high El Ni&ntilde;o king tide, when waves can wash over the berm (see <a href="#overtopping">Overtopping, up close</a>). The berm holds the slough back from the surf. Photo: Garrett Craig</figcaption>
+    </figure>
     <div class="prose">
       <p>Devereux Slough is a small coastal lagoon at Coal Oil Point that drains a watershed of 3.62 square miles (<a href="https://www.ncos.ccber.ucsb.edu/sites/default/files/docs/Final_Restoration_Plan_NCOS_2016_1221.pdf">CCBER</a>). For most of the year a sand berm, built by waves, cuts it off from the ocean. While the mouth is closed, the slough gains water from rain, runoff and the occasional high tide washing over the berm, and loses it slowly to evaporation and seepage.</p>
       <p>Once the mouth closes in spring, waves keep piling sand onto the berm through summer and fall, so by the first big winter storm it stands well above the water. That is why <strong>the season's first breach</strong> usually needs a full slough: since 2019 it has broken at a median ${mf?.toFixed(1)} ft. When water tops the berm it cuts a channel, and the slough drains to about 4 ft within hours and then rises and falls with the tide.</p>
