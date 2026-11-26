@@ -239,6 +239,10 @@ header.top .wrap { gap: 24px; }
 #events h3 { font: 600 1.05rem var(--font-ui); margin: var(--space-8) 0 var(--space-2); }
 .ev-examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) 40px; }
 .ev-example { margin: 0; }
+.ot-videos { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4) 20px; margin: var(--space-4) 0 var(--space-6); align-items: start; }
+.ot-video { margin: 0; }
+.ot-video video { display: block; width: 100%; height: auto; background: var(--color-surface); border-radius: 3px; }
+.ot-video figcaption { font: 0.92rem/1.5 var(--font-ui); color: var(--color-text); margin-top: var(--space-2); }
 .ev-example figcaption { font: 0.92rem/1.5 var(--font-ui); color: var(--color-text); margin-top: var(--space-2); }
 .ev-table-wrap { overflow-x: auto; margin-top: var(--space-3); }
 .ev-table td, .ev-table th { text-align: left !important; }
