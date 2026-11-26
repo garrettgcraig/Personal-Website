@@ -188,6 +188,9 @@ function levelSummary(s) {
   const last = f.at(-1);
   if (!last) return "";
   const r = s.stage.latest_reading;
+  const hit = s.mouth?.state !== "open" ? f.find((x) => x.breach_level_ft != null && x.ft >= x.breach_level_ft - 0.05) : null;
+  if (hit) return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
+    + `The slough is forecast to reach the estimated breach level, near ${hit.breach_level_ft.toFixed(1)} ft, around ${day(hit.date, { weekday: "short", month: "short", day: "numeric" })}. The forecast line stops there.`;
   return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
     + `By ${day(last.date, { weekday: "short", month: "short", day: "numeric" })} the slough is forecast at about ${last.ft.toFixed(1)} ft `
     + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
@@ -483,9 +486,7 @@ function render(s) {
           // the middle forecast reaches the breach level: say when it first gets there
           ? (() => {
             const cross = f.find((r) => r.ft >= r.breach_level_ft - 0.05);
-            const over = near.ft - near.breach_level_ft;
-            return ` If the mouth stays closed, the slough is forecast to reach the breach level around ${short(cross.date)}`
-              + (over >= 0.1 ? `, rising to about ${over.toFixed(1)} ft above it by ${short(near.date)}.` : ".");
+            return ` The slough is forecast to reach the estimated breach level around ${short(cross.date)}.`;
           })()
           : ` The slough should come within about ${(near.breach_level_ft - near.ft).toFixed(1)} ft of the breach level around ${short(near.date)}`
             + (Number.isFinite(nearHi) ? (nearHi > 0 ? `, or ${nearHi.toFixed(1)} ft if rain runs heavy.` : `, and could reach it if rain runs heavy.`) : "."));
@@ -510,7 +511,7 @@ function render(s) {
     series: [{
       type: "bar", points: pts.map(({ x, r }) => ({
         x, y: BANDS.indexOf(bandOf(r.p)) + 1, color: bandOf(r.p).color,
-        title: `${day(r.date)}: ${bandOf(r.p).label}` + (r.margin_ft == null ? " (rain only)" : `, slough ${Math.abs(r.below_breach_ft).toFixed(1)} ft ${r.below_breach_ft > 0 ? "below" : "above"} the breach level, ${(r.rain_in ?? 0).toFixed(2)} in rain`),
+        title: `${day(r.date)}: ${bandOf(r.p).label}` + (r.margin_ft == null ? " (rain only)" : (r.below_breach_ft > 0.05 ? `, slough ${r.below_breach_ft.toFixed(1)} ft below the breach level,` : ", slough at the breach level,") + ` ${(r.rain_in ?? 0).toFixed(2)} in rain`),
       })),
     }],
     xTicks: everyN(pts.map((p) => p.x), 3), xFmt: (x) => day(new Date(x * 86400000).toISOString().slice(0, 10), { month: "short", day: "numeric" }),
@@ -812,6 +813,22 @@ async function initAlerts() {
   });
 }
 
+// The slough can't rise past the breach level: once it gets there the mouth breaches. Forecast
+// levels (middle line, range, table) stop at the breach level for display; the model's scores
+// are computed upstream and are unchanged.
+function capAtBreach(s) {
+  if (s.mouth?.state === "open") return;
+  for (const r of s.stage?.series || []) {
+    const bl = r.breach_level_ft;
+    if (bl == null || r.date < s.today || r.phase === "reading") continue;
+    for (const k of ["ft", "lo", "hi"]) if (r[k] != null && r[k] > bl) r[k] = bl;
+  }
+  for (const r of s.outlook || []) {
+    if (r.date < s.today || r.breach_level_ft == null || r.stage_ft == null) continue;
+    if (r.stage_ft > r.breach_level_ft) { r.stage_ft = r.breach_level_ft; r.below_breach_ft = 0; }
+  }
+}
+
 async function load() {
   try {
     const [r, h] = await Promise.all([fetch("/devereux/api/status"), fetch("stage-history.json").catch(() => null)]);
@@ -821,6 +838,7 @@ async function load() {
     const s = await r.json();
     // keep the newer of the status's latest reading and the last live poll
     if (LIVE.length && s.stage && LIVE.at(-1).t > (s.stage.sensor_now?.t ?? 0)) s.stage.sensor_now = LIVE.at(-1);
+    capAtBreach(s);
     window.__devereux = s;
     render(s);
     if (!window.__alertsInit) { window.__alertsInit = true; initAlerts(); }
