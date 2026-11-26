@@ -190,7 +190,7 @@ function levelSummary(s) {
   const r = s.stage.latest_reading;
   const hit = s.mouth?.state !== "open" ? f.find((x) => x.breach_level_ft != null && x.ft >= x.breach_level_ft - 0.05) : null;
   if (hit) return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
-    + `The slough is forecast to reach the estimated breach level, near ${hit.breach_level_ft.toFixed(1)} ft, around ${day(hit.date, { weekday: "short", month: "short", day: "numeric" })}. The forecast line stops there.`;
+    + `The slough is forecast to reach the estimated breach level, near ${hit.breach_level_ft.toFixed(1)} ft, around ${day(hit.date, { weekday: "short", month: "short", day: "numeric" })}.`;
   return `Latest reading ${r.ft.toFixed(2)} ft on ${day(r.date, { month: "short", day: "numeric" })}. `
     + `By ${day(last.date, { weekday: "short", month: "short", day: "numeric" })} the slough is forecast at about ${last.ft.toFixed(1)} ft `
     + `(range ${last.lo.toFixed(1)} to ${last.hi.toFixed(1)} ft)` + (last.breach_level_ft != null && s.mouth?.state !== "open" ? `, against an estimated breach level near ${last.breach_level_ft.toFixed(1)} ft.` : ".");
@@ -813,16 +813,11 @@ async function initAlerts() {
   });
 }
 
-// The slough can't rise past the breach level: once it gets there the mouth breaches. Forecast
-// levels (middle line, range, table) stop at the breach level for display; the model's scores
-// are computed upstream and are unchanged.
+// The slough can't rise past the breach level: once it gets there the mouth breaches. The
+// 10-day table's forecast level stops at the breach level (the level chart is left as forecast);
+// the model's scores are computed upstream and are unchanged.
 function capAtBreach(s) {
   if (s.mouth?.state === "open") return;
-  for (const r of s.stage?.series || []) {
-    const bl = r.breach_level_ft;
-    if (bl == null || r.date < s.today || r.phase === "reading") continue;
-    for (const k of ["ft", "lo", "hi"]) if (r[k] != null && r[k] > bl) r[k] = bl;
-  }
   for (const r of s.outlook || []) {
     if (r.date < s.today || r.breach_level_ft == null || r.stage_ft == null) continue;
     if (r.stage_ft > r.breach_level_ft) { r.stage_ft = r.breach_level_ft; r.below_breach_ft = 0; }
