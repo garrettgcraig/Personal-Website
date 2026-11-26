@@ -30,14 +30,14 @@ function eventRows() {
   }).join("");
 }
 
-function exampleChart(x) {
+function exampleChart(x, w, h = 190) {
   const H = (iso) => Date.parse(iso + ":00Z") / 3600000; // local clock hours
   const pts = x.hourly.map(([t, lv, o, p]) => ({ h: H(t), lv, o, p }));
   const ys = pts.flatMap((q) => [q.lv, q.o]).filter((v) => v != null);
   const xs = pts.map((q) => q.h);
   const mids = []; for (let h = Math.ceil(xs[0] / 24) * 24; h <= xs.at(-1); h += 24) mids.push(h);
   return chart({
-    width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190,
+    width: w ?? (wide() ? Math.round((fullW() - 40) / 2) : fullW()), height: h,
     yMin: Math.floor(Math.min(...ys) - 0.3), yMax: Math.ceil(Math.max(...ys) + 0.3), yFmt: (v) => v.toFixed(0), yLabel: "water level, ft NAVD88",
     bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
     series: [
@@ -57,6 +57,55 @@ document.addEventListener("click", (e) => {
   document.querySelectorAll("[data-evf]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   document.getElementById("ev-rows").innerHTML = eventRows();
 });
+
+// ------------------------------------------------------------- Nov 25, 2026 overtopping, on video
+// Hand-added (overtopping-2026-11-25.json; videos in media/overtopping-2026-11-25/): hourly level and tide around the event,
+// and its row for the event table, merged in below if a rebuild of events.json leaves it out.
+const OT = "/devereux/media/overtopping-2026-11-25/";
+let OT_EVENT = null;
+const OT_VIDEOS = [
+  { file: "IMG_7788.mp4", poster: "IMG_7788-poster.jpg", time: "8:50 AM", alt: "Video: thin sheets of white water running far up the beach toward the slough, with the dunes and the Santa Ynez Mountains behind.", caption: "8:50 AM. Waves run up the beach toward the slough near the top of the high tide." },
+  { file: "IMG_7792.mp4", poster: "IMG_7792-poster.jpg", time: "8:53 AM", alt: "Video: foamy wave wash spilling over the sand berm into the calm slough, with driftwood floating in the slough.", caption: "8:53 AM. Wave wash spills over the berm into the slough." },
+];
+// slough level alone, on a tight axis so the 0.2 ft step shows
+function otLevelChart(x) {
+  const H = (iso) => Date.parse(iso + ":00Z") / 3600000;
+  const pts = x.hourly.map(([t, lv]) => ({ x: H(t), y: lv })).filter((q) => q.y != null);
+  const mids = []; for (let h = Math.ceil(pts[0].x / 24) * 24; h <= pts.at(-1).x; h += 24) mids.push(h);
+  return chart({
+    width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190, left: 44,
+    yMin: 7.9, yMax: 8.2, yFmt: (v) => v.toFixed(2), yLabel: "slough level, ft NAVD88",
+    bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
+    series: [{ type: "line", color: css("--color-text"), width: 2.2, points: pts }],
+    xTicks: mids, xFmt: (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" }),
+  });
+}
+function overtopHtml() {
+  if (!OT_EVENT) return "";
+  return `
+  <section class="block" id="overtopping-2026-11-25">
+    <h2>Waves over the berm, November 25, 2026</h2>
+    <p class="intro">On the morning of November 25 one of the year's highest tides came in higher than predicted, and waves running up on top of it spilled over the closed berm into the slough. The Santa Barbara tide gauge peaked at ${OT_EVENT.tide_high_ft.toFixed(1)} ft around 9 AM, about ${OT_EVENT.surge_ft.toFixed(1)} ft above the prediction. With no rain, the slough rose about ${OT_EVENT.total_rise_ft.toFixed(1)} ft, from 7.95 to 8.15 ft, between 8 and 10:30 AM, then held there. The mouth stayed closed: overtopping adds water to the slough but doesn't cut a channel the way a breach does.</p>
+    <div class="ot-videos">${OT_VIDEOS.map((v) => `
+      <figure class="ot-video">
+        <video src="${OT}${v.file}" poster="${OT}${v.poster}" controls muted playsinline preload="none" aria-label="${esc(v.alt)}"></video>
+        <figcaption>${esc(v.caption)}</figcaption>
+      </figure>`).join("")}</div>
+    <div class="ev-examples">
+      <figure class="ev-example">
+        ${legend([[css("--color-text"), "slough level", "line"], [COLORS.ochre, "overtopping", "vband", 0.3]])}
+        ${otLevelChart(OT_EVENT)}
+        <figcaption><strong>The slough, zoomed in.</strong> A flat line for two days, then a 0.2 ft step up in the two and a half hours around high tide.</figcaption>
+      </figure>
+      <figure class="ev-example">
+        ${legend([[css("--color-text"), "slough level", "line"], [OBS(), "tide, observed (NOAA Santa Barbara)", "line"], [PRED(), "tide, predicted", "dash"]])}
+        ${exampleChart(OT_EVENT)}
+        <figcaption><strong>The tide.</strong> Each morning's high tide ran about a foot over the prediction, and on November 25 it reached the slough's own level.</figcaption>
+      </figure>
+    </div>
+    <p class="note">Hourly slough level from the live sensor and NOAA 9411340 tide (highest reading each hour), in ft NAVD88, Pacific time. Videos start muted. The Breach Watch model doesn't use tides, but the water the waves added stays in the slough, so the forecast starts from the higher level.</p>
+  </section>`;
+}
 
 // ------------------------------------------------------------- satellite frames
 // The clearest image of each stage of the cycle. Sentinel-2 L2A true color (10 m) for the
@@ -394,6 +443,8 @@ function render() {
     </div>
   </section>
 
+  ${overtopHtml()}
+
   <section class="block" id="watershed">
     <h2>The watershed and the restored upper slough</h2>
     <div class="ws-split">
@@ -470,9 +521,14 @@ addEventListener("resize", () => {
   clearTimeout(window.__rz);
   window.__rz = setTimeout(() => { if (EVENTS && Math.abs(fullW() - lastW) > 40) { lastW = fullW(); render(); } }, 200);
 });
+const otP = fetch("/devereux/overtopping-2026-11-25.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
 const stageP = fetch("/devereux/stage-history.json").then((r) => (r.ok ? r.json() : null)).catch(() => null);
 fetch("/devereux/events.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(async (j) => {
   STAGE = await stageP;
+  OT_EVENT = await otP;
+  if (OT_EVENT?.event && !j.events.some((e) => e.type === "overtopping" && e.start.slice(0, 10) === OT_EVENT.event.start.slice(0, 10))) {
+    j.events.push(OT_EVENT.event); j.events.sort((a, b) => a.start.localeCompare(b.start));
+  }
   EVENTS = j; classify(EVENTS.events);
   // level logging starts Oct 1, 2018 (water year 2019): earlier seasons have no measured
   // levels, so they're left out (classify ran on the full log so berm ages stay right)

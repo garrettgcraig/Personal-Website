@@ -647,6 +647,7 @@ function render(s) {
     <div id="tide-legend">${showTide && TIDES ? tideLegend() : ""}</div>
     <div id="level-chart">${levelChart}</div>
     <p class="note" id="live-note">${liveNote(s)}</p>
+    ${s.today <= "2026-12-25" ? `<p class="after">On the morning of November 25, a very high tide with waves on top of it washed over the berm and raised the slough about 0.2 ft. <a href="/devereux/history/#overtopping-2026-11-25">Watch it on video</a>.</p>` : ""}
     ${s.stage?.series?.length ? `<p class="after">${levelSummary(s)}</p>` : ""}
     <p class="note" style="margin-top:var(--space-3)">Daily means from CCBER's water-level loggers (2018 to 2025) and the UC Davis / State Parks live sensor (2025 on), re-leveled to the weekly staff gauge at Venoco Bridge. From the latest reading on, the level rolls forward with a rain-driven water balance, using observed rain up to today and forecast rain after. The forecast range covers half to 1.5 times the forecast rain plus the model's typical error. The pale band spans the levels where berms closed for months have breached (${BLV ? `${BLV.mature_min_ft.toFixed(1)} to ${BLV.mature_max_ft.toFixed(1)} ft, ${BLV.mature_n} breaches since 2019` : "past breaches"}); the dashed line is the estimate for the current closure, lower while the berm is young. Feet, NAVD88.</p>
   </section>
