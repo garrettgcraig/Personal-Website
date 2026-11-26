@@ -236,6 +236,8 @@ header.top .wrap { gap: 24px; }
 @media (max-width: 400px) { .alert-btn { padding: 7px 10px; } .site-title { font-size: 1rem; } }
 
 /* events: breaches, closures, overtopping */
+#overtopping h3 { font: 600 1.05rem var(--font-ui); margin: var(--space-6) 0 var(--space-2); }
+.ot-feature { margin-bottom: var(--space-8); }
 #events h3 { font: 600 1.05rem var(--font-ui); margin: var(--space-8) 0 var(--space-2); }
 .ev-examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) 40px; }
 .ev-example { margin: 0; }
