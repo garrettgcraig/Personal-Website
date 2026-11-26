@@ -554,7 +554,8 @@ export async function buildStatus(now = new Date()) {
       readings: readings.slice(-16),
       series: stageSeries,
       sensor_daily: sensorDays,
-      sensor_hourly: hourly.filter((h) => h.t >= Date.now() - 7 * 86400000),
+      // whole Pacific days, so the level chart's daily means hand off to it at midnight
+      sensor_hourly: hourly.filter((h) => pacificDate(h.t) >= addDays(today, -7)),
       sensor_now: live5.at(-1) || hourly.at(-1) || null,
       export: staff?.export ?? null,
     } : null,
