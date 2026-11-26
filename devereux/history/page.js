@@ -74,7 +74,7 @@ function otLevelChart(x) {
   const mids = []; for (let h = Math.ceil(pts[0].x / 24) * 24; h <= pts.at(-1).x; h += 24) mids.push(h);
   return chart({
     width: wide() ? Math.round((fullW() - 40) / 2) : fullW(), height: 190, left: 44,
-    yMin: 7.9, yMax: 8.2, yFmt: (v) => v.toFixed(2), yLabel: "slough level, ft NAVD88",
+    yMin: 7.9, yMax: 8.3, yFmt: (v) => v.toFixed(1), yLabel: "slough level, ft NAVD88",
     bands: [{ x0: H(x.start), x1: H(x.end) + 1, color: COLORS.ochre, opacity: 0.16 }],
     series: [{ type: "line", color: css("--color-text"), width: 2.2, points: pts }],
     xTicks: mids, xFmt: (h) => new Date(h * 3600000).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" }),
@@ -83,8 +83,8 @@ function otLevelChart(x) {
 function overtopHtml() {
   if (!OT_EVENT) return "";
   return `
-  <section class="block" id="overtopping-2026-11-25">
-    <h2>Waves over the berm, November 25, 2026</h2>
+  <div class="ot-feature" id="overtopping-2026-11-25">
+    <h3>On video: waves over the berm, November 25, 2026</h3>
     <p class="intro">On the morning of November 25 one of the year's highest tides came in higher than predicted, and waves running up on top of it spilled over the closed berm into the slough. The Santa Barbara tide gauge peaked at ${OT_EVENT.tide_high_ft.toFixed(1)} ft around 9 AM, about ${OT_EVENT.surge_ft.toFixed(1)} ft above the prediction. With no rain, the slough rose about ${OT_EVENT.total_rise_ft.toFixed(1)} ft, from 7.95 to 8.15 ft, between 8 and 10:30 AM, then held there. The mouth stayed closed: overtopping adds water to the slough but doesn't cut a channel the way a breach does.</p>
     <div class="ot-videos">${OT_VIDEOS.map((v) => `
       <figure class="ot-video">
@@ -104,7 +104,7 @@ function overtopHtml() {
       </figure>
     </div>
     <p class="note">Hourly slough level from the live sensor and NOAA 9411340 tide (highest reading each hour), in ft NAVD88, Pacific time. Videos start muted. The Breach Watch model doesn't use tides, but the water the waves added stays in the slough, so the forecast starts from the higher level.</p>
-  </section>`;
+  </div>`;
 }
 
 // ------------------------------------------------------------- satellite frames
@@ -443,8 +443,6 @@ function render() {
     </div>
   </section>
 
-  ${overtopHtml()}
-
   <section class="block" id="watershed">
     <h2>The watershed and the restored upper slough</h2>
     <div class="ws-split">
@@ -486,6 +484,8 @@ function render() {
 
   <section class="block" id="overtopping">
     <h2>Overtopping, up close</h2>
+    ${overtopHtml()}
+    ${OT_EVENT ? `<h3>Earlier overtopping in the record</h3>` : ""}
     ${legend([[css("--color-text"), "slough level", "line"], [OBS(), "tide, observed (NOAA Santa Barbara)", "line"], [PRED(), "tide, predicted", "dash"], [COLORS.ochre, "overtopping event", "vband", 0.3]])}
     <div class="ev-examples">${EVENTS.examples.map((x) => `
       <figure class="ev-example">
