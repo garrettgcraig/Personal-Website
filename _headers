@@ -18,6 +18,12 @@
 # Netlify serves .webmanifest files as octet-stream by default.
 /chronosono/manifest.webmanifest
   Content-Type: application/manifest+json
+/seedfinder/manifest.webmanifest
+  Content-Type: application/manifest+json
+
+# SeedFinder's service worker must always be revalidated so a deploy reaches phones.
+/seedfinder/sw.js
+  Cache-Control: no-cache
 
 /trail-*.md
   Content-Type: text/markdown; charset=utf-8
