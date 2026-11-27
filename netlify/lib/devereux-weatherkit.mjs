@@ -24,13 +24,20 @@ export function credentials(get = (k) => (typeof Netlify !== "undefined" ? Netli
   return ENV.every((k) => c[k]) ? c : null;
 }
 
+// The .p8 key as pasted: with or without its BEGIN/END lines, and with line breaks kept, turned
+// into spaces or written as "\n". Only the base64 body matters, read as PKCS#8 DER.
+export function privateKey(text) {
+  const body = text.replace(/\\[nr]/g, "\n").replace(/-----(BEGIN|END)[^-]*-----/g, "").replace(/[^A-Za-z0-9+/=]/g, "");
+  return createPrivateKey({ key: Buffer.from(body, "base64"), format: "der", type: "pkcs8" });
+}
+
 // ES256 developer token (https://developer.apple.com/documentation/weatherkitrestapi/request_authentication_for_weatherkit_rest_api)
 export function token(c, now = Date.now()) {
   const header = { alg: "ES256", kid: c.WEATHERKIT_KEY_ID, id: `${c.WEATHERKIT_TEAM_ID}.${c.WEATHERKIT_SERVICE_ID}` };
   const iat = Math.floor(now / 1000);
   const payload = { iss: c.WEATHERKIT_TEAM_ID, iat, exp: iat + 3600, sub: c.WEATHERKIT_SERVICE_ID };
   const input = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(payload))}`;
-  const key = createPrivateKey(c.WEATHERKIT_KEY.replace(/\\n/g, "\n"));
+  const key = privateKey(c.WEATHERKIT_KEY);
   return `${input}.${b64url(sign("sha256", Buffer.from(input), { key, dsaEncoding: "ieee-p1363" }))}`;
 }
 
