@@ -322,6 +322,7 @@
   .prop input,.prop select{padding:.42rem .5rem;font-size:.85rem}
   .prop label{font-size:.76rem;margin-bottom:.15rem}
   .readout{font-size:.78rem;font-weight:700;color:var(--accent)}
+  .calbtn{width:auto;margin-top:.4rem;padding:.4rem .75rem;font-size:.82rem}
   .readout.late{color:var(--alert)} .readout.active{color:var(--warn)}
   .hint{font-size:.72rem;color:var(--muted);font-style:italic}
   /* ---- lot photos ---- */
@@ -407,7 +408,8 @@
     font-size:.76rem;border-top:1px solid var(--line)}
   footer p{max-width:78ch;margin:0 0 .8rem}
   footer p:last-child{margin-bottom:0}
-  .log-rail .row:last-child{grid-template-columns:1fr;gap:.35rem}
+  .importnote{font-size:.82rem;line-height:1.45;color:var(--ink);margin-top:.35rem}
+  .importnote:empty{display:none}
   @media (max-width: 999px){ .log-main{margin-top:1rem} }
   a{color:var(--accent)}
   .hidden{display:none}
@@ -618,10 +620,13 @@
       <button id="r-export" class="ghost">Export CSV</button>
       <button id="r-exportj" class="ghost">Export JSON</button>
     </div>
-    <div class="row">
-      <button id="r-exportp" class="ghost">Download all photos</button>
-      <span class="quota" id="storageuse" style="align-self:center"></span>
+    <div class="row" style="margin-bottom:.5rem">
+      <button id="r-import" class="ghost">Import records</button>
+      <button id="r-exportp" class="ghost">Download photos</button>
     </div>
+    <input type="file" id="r-importfile" accept="application/json,.json" hidden>
+    <div class="quota" id="storageuse"></div>
+    <div class="importnote" id="r-importnote" role="status"></div>
     </div>
     <div class="log-main">
       <div id="attention"></div>
@@ -1726,7 +1731,10 @@ function propPanel(rec, taxon, photos = []){
     ? `<div class="hint">Handling note: ${esc(taxon.tips.handling)}</div>` : '';
   const strat = lc.stratEnd
     ? `<div class="readout ${lc.due ? (lc.due.left > 0 ? 'active' : 'late') : ''}">
-         ${lc.due ? esc(lc.due.text) : `finished ${isoDate(lc.stratEnd)}`}</div>` : '';
+         ${lc.due ? esc(lc.due.text) : `finished ${isoDate(lc.stratEnd)}`}</div>
+       ${lc.due && lc.due.left > 0
+         ? `<button type="button" class="ghost calbtn" data-cal="${esc(rec.id)}">Add reminder to calendar</button>`
+         : ''}` : '';
   const germ = lc.rate != null
     ? `<div class="readout">${Math.round(lc.rate*100)}% germinated
         (${+p.germ.count} of ${+p.sown.count})${lc.days != null ? ' · ' + lc.days + ' days from sowing' : ''}</div>` : '';
@@ -2070,6 +2078,37 @@ $('r-here').onclick = () => {
 };
 $('r-frommap').onclick = () => setRecPos(POS.lat, POS.lng);
 
+/* A calendar event for the day stratification ends. A web page cannot schedule
+   a notification months ahead, but every calendar can; on a phone the file
+   opens straight into Add to Calendar. The iOS app schedules a local
+   notification for the same day instead. All-day event with a 9 am alert. */
+const icsText = s => String(s).replace(/[\\;,]/g, m => '\\' + m).replace(/\n/g, '\\n');
+const icsDay = d => isoDate(d).replace(/-/g, '');
+function stratificationICS(rec){
+  const lc = lifecycle(rec), st = rec.prop.stratify;
+  const name = rec.common || rec.species;
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SeedFinder//Stratification//EN', 'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:strat-${rec.id}@seedfinder`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;VALUE=DATE:${icsDay(lc.stratEnd)}`,
+    `DTEND;VALUE=DATE:${icsDay(addDays(lc.stratEnd, 1))}`,
+    `SUMMARY:${icsText(`Ready to sow: ${name} (${batchCode(rec)})`)}`,
+    `DESCRIPTION:${icsText(`${st.method} stratification started ${st.start} for ${st.days} days. Logged in SeedFinder.`)}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER:PT9H',
+    `DESCRIPTION:${icsText(`Ready to sow: ${name}`)}`, 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR', ''].join('\r\n');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-cal]');
+  if (!b) return;
+  const rec = records().find(r => r.id === b.dataset.cal);
+  if (!rec || !lifecycle(rec).stratEnd) return;
+  const who = (rec.common || rec.species).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  download(`sow-${who}-${isoDate(lifecycle(rec).stratEnd)}.ics`, stratificationICS(rec), 'text/calendar');
+});
+
 function download(name, text, type){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([text], {type}));
@@ -2115,6 +2154,49 @@ $('r-exportj').onclick = async () => {
   }
   const out = records().map(r => ({...r, photos: byRec.get(r.id) || []}));
   download('seedfinder-records.json', JSON.stringify(out, null, 2), 'application/json');
+};
+
+/* Import. Accepts this app's JSON export and the iOS export bundle, so records
+   can move between a phone and a browser in either direction. Records merge by
+   id and existing ones win, so importing the same file twice adds nothing.
+   Photos are not inside either export (they are separate files), so only the
+   records and their schedules come across. */
+const EMPTY_PROP = () => ({storage:{}, scarify:{}, stratify:{}, sown:{}, germ:{}});
+function normalizeImported(r){
+  // iOS writes elevation/quantity; this client has always used elev/qty.
+  const {photos, elevation, quantity, ...rest} = r;
+  const prop = {...EMPTY_PROP(), ...(r.prop && typeof r.prop === 'object' ? r.prop : {})};
+  return {...rest, elev: r.elev ?? elevation ?? null, qty: r.qty ?? quantity ?? null, prop};
+}
+$('r-import').onclick = () => $('r-importfile').click();
+$('r-importfile').onchange = async e => {
+  const file = e.target.files[0];
+  e.target.value = '';                    // the same file can be chosen again
+  if (!file) return;
+  const note = $('r-importnote');
+  let data;
+  try { data = JSON.parse(await file.text()); }
+  catch { note.textContent = 'That file could not be read as a SeedFinder export.'; return; }
+  const incoming = Array.isArray(data) ? data : (Array.isArray(data?.records) ? data.records : null);
+  if (!incoming){ note.textContent = 'That file could not be read as a SeedFinder export.'; return; }
+  const usable = incoming.filter(r => r && typeof r.id === 'string' && typeof r.species === 'string'
+                                      && /^\d{4}-\d{2}-\d{2}$/.test(r.date || ''));
+  const current = records();
+  const known = new Set(current.map(r => r.id));
+  const fresh = [];
+  for (const r of usable) if (!known.has(r.id)){ known.add(r.id); fresh.push(normalizeImported(r)); }
+  try { saveRecords([...current, ...fresh]); }
+  catch (err){ note.textContent = 'Could not save the imported records: ' + err.message; return; }
+  const skipped = incoming.length - usable.length;
+  const dupes = usable.length - fresh.length;
+  const parts = [fresh.length
+    ? `Imported ${fresh.length} record${fresh.length === 1 ? '' : 's'}.`
+    : 'Nothing new to import.'];
+  if (dupes) parts.push(`${dupes} already here.`);
+  if (skipped) parts.push(`${skipped} could not be read.`);
+  if (fresh.length) parts.push('Photos travel separately and were not included.');
+  note.textContent = parts.join(' ');
+  renderLog();
 };
 
 $('r-exportp').onclick = async () => {
