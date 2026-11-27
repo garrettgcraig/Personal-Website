@@ -26,6 +26,15 @@ test("developer token is a valid ES256 JWT in Apple's format", () => {
   assert.ok(verify("sha256", Buffer.from(`${h}.${p}`), { key: publicKey, dsaEncoding: "ieee-p1363" }, sig));
 });
 
+test("key is read however the .p8 was pasted", () => {
+  const body = pem.replace(/-----[^-]+-----/g, "").replace(/\s/g, "");
+  for (const text of [pem, pem.replace(/\n/g, " "), pem.replace(/\n/g, "\r\n"), pem.replace(/\n/g, "\\n"), body, `  ${pem}  `]) {
+    const [h, p, s] = token({ ...creds, WEATHERKIT_KEY: text }).split(".");
+    const sig = Buffer.from(s.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+    assert.ok(verify("sha256", Buffer.from(`${h}.${p}`), { key: publicKey, dsaEncoding: "ieee-p1363" }, sig));
+  }
+});
+
 test("request covers the next 240 hours at the slough", () => {
   const u = new URL(hourlyUrl(Date.UTC(2026, 10, 26, 22, 37)));
   assert.equal(u.pathname, "/api/v1/weather/en/34.41/-119.88");
